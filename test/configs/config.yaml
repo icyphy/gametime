@@ -1,4 +1,5 @@
-# This is the XML file that configures GameTime for a specific project.
+---
+# This is the YAML file that configures GameTime for a specific project.
 gametime-project:
   # Information about the function to analyze.
   file:
@@ -41,7 +42,8 @@ gametime-project:
     #can be specified, and the names must be a string array.
     inline: null
     #Bool for whether or not to unroll loops
-    unroll-loops: No
+    #uncomment to unroll loops
+    # unroll-loops: Yes
 
   analysis:
     maximum-error-scale-factor: 10

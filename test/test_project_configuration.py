@@ -1,6 +1,6 @@
 import unittest
 
-from src.configuration_parser import YAMLConfigurationParser
+from src.project_configuration_parser import YAMLConfigurationParser
 
 
 class MyTestCase(unittest.TestCase):

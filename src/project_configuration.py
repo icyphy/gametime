@@ -2,6 +2,9 @@
 
 import os
 
+from gametime_error import GameTimeError
+
+
 class DebugConfiguration(object):
     """Stores debugging configuration information, which
     determines the debugging information that is shown and
@@ -141,7 +144,7 @@ class ProjectConfiguration(object):
     def __init__(self, locationFile, func, smtSolverName,
                  startLabel="", endLabel="", included=None, merged=None,
                  inlined=None, unrollLoops=False, randomizeInitialBasis=False,
-                 maximumErrorScaleFactor = 10,
+                 maximumErrorScaleFactor=10,
                  determinantThreshold=0.001, maxInfeasiblePaths=100,
                  modelAsNestedArrays=False, preventBasisRefinement=False,
                  ilpSolverName="", debugConfig=None):
@@ -239,7 +242,7 @@ class ProjectConfiguration(object):
         # a 2-barycentric spanner.
         self.PREVENT_BASIS_REFINEMENT = preventBasisRefinement
 
-        #TODO: comment here
+        # TODO: comment here
         self.OVER_COMPLETE_BASIS = False
         self.OB_EXTRACTION = False
 
@@ -318,7 +321,7 @@ class ProjectConfiguration(object):
         # Initialize the PuLP solver object that interfaces with
         # the ILP solver whose name is provided.
         self.setIlpSolver(ilpSolverName)
-        #self.setIlpSolver("cplex")
+        # self.setIlpSolver("cplex")
 
         # Initialize the Solver and ModelParser objects.
         self.setSmtSolverAndModelParser(smtSolverName)
