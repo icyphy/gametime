@@ -24,21 +24,21 @@ logging_helper.initialize(logger)
 
 # This import is done later, so that the module
 # :module:`~gametime.configuration` can use the GameTime logger.
-import configuration
+import gametime_configuration
 
 
 #: Default directory that contains the source files of GameTime.
-sourceDir = os.path.dirname(os.path.abspath(__file__))
+source_dir = os.path.dirname(os.path.abspath(__file__))
 #: Default configuration XML file.
-configFile = os.path.join(sourceDir, "config.xml")
+config_file = os.path.join(source_dir, "config.yaml")
 
 #: Default directory that contains the GameTime GUI.
-guiDir = os.path.join(sourceDir, "gui")
+gui_dir = os.path.join(source_dir, "gui")
 
-logger.info("Reading GameTime configuration in %s..." % configFile)
+logger.info("Reading GameTime configuration in %s..." % config_file)
 logger.info("")
-#: Default :class:`~gametime.configuration.Configuration` object
+#: Default :class:`~gametime.configuration.GametimeConfiguration` object
 #: that represents the configuration of GameTime.
-config = configuration.readConfigFile(configFile)
+config: gametime_configuration.GametimeConfiguration = gametime_configuration.readConfigFile(config_file)
 logger.info("Successfully configured GameTime.")
 logger.info("")

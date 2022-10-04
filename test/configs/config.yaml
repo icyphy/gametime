@@ -19,7 +19,7 @@ gametime-project:
     #at its end.
     end-label: null
 
-  #Configuration options for preprocessing the file using
+  #GametimeConfiguration options for preprocessing the file using
   #source-to-source transformations before analysis.
   preprocess:
     #Locations of directories that contain other files that need to be

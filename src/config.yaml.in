@@ -1,0 +1,64 @@
+!!python/object:gametime_configuration.GametimeConfiguration
+
+## gametime
+# TODO: Point to new URL
+WEBSITE_URL: http://verifun.eecs.berkeley.edu/gametime
+VERSION: 1.5 # TODO: Find way to not hardcode this value
+LATEST_VERSION_INFO_URL: http://verifun.eecs.berkeley.edu/gametime/static/php/version.php?latest
+
+## memory
+WORD_BITSIZE: 32
+ENDIANESS: little
+
+## Annotations
+ANNOTATION_ASSUME: __gt_assume
+ANNOTATION_SIMULATE: __gt_simulate
+
+## Identifiers
+IDENT_AGGREGATE: __gtAGG_
+IDENT_CONSTRAINT: __gtCONSTRAINT
+IDENT_EFC: __gtEFC
+IDENT_FILED: __gtFIELD
+IDENT_TEMPINDEX: __gtINDEX
+IDENT_TEMPPTR: __gtPTR
+IDENT_TEMPVAR: __gt
+
+## temps
+TEMP_PROJECT_CONFIG: project-config
+TEMP_MERGED: merged
+TEMP_LOOP_CONFIG: loop-config
+TEMP_SUFFIX: gt
+TEMP_SUFFIX_MERGED: merged
+TEMP_SUFFIX_UNROLLED: unrolled
+TEMP_SUFFIX_INLINED: inlined
+TEMP_SUFFIX_LINE_NUMS: -line-nums
+TEMP_PHX_CREATE_DAG: create-dag
+TEMP_DAG: dag
+TEMP_DAG_ID_MAP: dag-id-map
+TEMP_PHX_IR: ir
+TEMP_PHX_FIND_CONDITIONS: find-conditions
+TEMP_PATH_ILP_PROBLEM: path-ilp-problem
+TEMP_PATH_NODES: path-nodes
+TEMP_PATH_CONDITIONS: path-line-numbers
+TEMP_PATH_CONDITION_EDGES: path-conditions
+TEMP_PATH_CONDITION_TRUTHS: path-condition-edges
+TEMP_PATH_LINE_NUMBERS: path-condition-truths
+TEMP_PATH_ARRAY_ACCESSES: path-array-accesses
+TEMP_PATH_AGG_INDEX_EXPRS: path-agg-index-exprs
+TEMP_PATH_PREDICTED_VALUE: path-value-predicted
+TEMP_PATH_MEASURED_VALUE: path-value-measured
+TEMP_PATH_ALL: path-all
+TEMP_PATH_QUERY: path-query
+TEMP_SMT_MODEL: smt-model
+TEMP_PATH_QUERY_ALL: path-query-all
+TEMP_CASE: case
+TEMP_BASIS_MATRIX: basis-matrix
+TEMP_MEASUREMENT: measurement
+TEMP_BASIS_VALUES: basis-values
+TEMP_DAG_WEIGHTS: dag-weights
+TEMP_DISTRIBUTION: distribution
+
+## tools
+TOOL_CIL: cil
+TOOL_PHOENIX: bin/GameTime.dll
+

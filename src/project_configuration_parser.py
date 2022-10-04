@@ -9,6 +9,7 @@ from typing import Any, List
 from yaml import load, dump
 
 from defaults import config, logger
+
 from gametime_error import GameTimeError, GameTimeWarning
 
 try:
@@ -16,7 +17,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from src.project_configuration import ProjectConfiguration
+from src.project_configuration import ProjectConfiguration, DebugConfiguration
 
 
 class ConfigurationParser(object):
@@ -73,7 +74,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                 case "start-label":
                     start_label = file_configs[key]
                 case "end-label":
-                    end_name = file_configs[key]
+                    end_label = file_configs[key]
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
@@ -151,11 +152,23 @@ class YAMLConfigurationParser(ConfigurationParser):
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
+        debug_configuration: DebugConfiguration = DebugConfiguration(keep_cil_temps, dump_ir,
+                                                                     keep_ilp_solver_output, dump_instruction_trace,
+                                                                     dump_path, dump_all_paths, dump_smt_trace,
+                                                                     dump_all_queries, keep_parser_output,
+                                                                     keep_simulator_output)
+
+        project_config: ProjectConfiguration = ProjectConfiguration(location_file, func, smt_solver_name,
+                                                                    start_label, end_label, included,
+                                                                    merged, inlined, unroll_loops,
+                                                                    randomize_initial_basis,
+                                                                    maximum_error_scale_factor,
+                                                                    determinant_threshold, max_infeasible_paths,
+                                                                    model_as_nested_arrays, prevent_basis_refinement,
+                                                                    ilp_solver_name, debug_configuration)
         logger.info("Successfully loaded project.")
         logger.info("")
-
-
-
+        return project_config
 
 
 def get_dir_paths(dir_paths_str: str, dir_location: str = None) -> List[str]:
@@ -181,7 +194,8 @@ def get_dir_paths(dir_paths_str: str, dir_location: str = None) -> List[str]:
         result.append(os.path.normpath(dir_path))
     return result
 
-def get_file_paths(file_paths_str:str, dir_location:str=None) -> List[str]:
+
+def get_file_paths(file_paths_str: str, dir_location: str = None) -> List[str]:
     """
     Gets a list of file paths from the string provided, where the file
     paths are separated by whitespaces or commas. The paths can also be
@@ -205,5 +219,6 @@ def get_file_paths(file_paths_str:str, dir_location:str=None) -> List[str]:
         for location in glob.iglob(file_path):
             result.append(os.path.normpath(location))
     return result
+
 
 extension_parser_map = {".yaml": YAMLConfigurationParser}
