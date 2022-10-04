@@ -51,5 +51,3 @@ gametime-project:
     max-infeasible-paths: 100
     ilp-solver: glpk
     smt-solver: z3
-
-  debug:

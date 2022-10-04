@@ -111,7 +111,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                     model_as_nested_arrays = bool(analysis_config[key])
                 case "prevent-basis-refinement":
                     prevent_basis_refinement = bool(analysis_config[key])
-                case "ilp_solver":
+                case "ilp-solver":
                     ilp_solver_name = analysis_config[key]
                 case "smt-solver":
                     smt_solver_name = analysis_config[key]

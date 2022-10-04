@@ -62,3 +62,10 @@ TEMP_DISTRIBUTION: distribution
 TOOL_CIL: cil
 TOOL_PHOENIX: bin/GameTime.dll
 
+## smt-solvers
+SOLVER_BOOLECTOR: "@BOOLECTOR_EXE@"
+SOLVER_Z3: "@Z3_PYC@"
+
+## simulators
+SIMULATOR_TOOL_GNU_ARM: "@GNU_ARM@"
+SIMULATOR_PTARM: "@PTARM@"
