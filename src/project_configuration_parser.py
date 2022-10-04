@@ -4,12 +4,11 @@ import os
 import re
 import warnings
 from abc import abstractmethod
-from typing import Any, List
+from typing import Any, List, Type
 
-from yaml import load, dump
+from yaml import load
 
-from defaults import config, logger
-
+from defaults import logger
 from gametime_error import GameTimeError, GameTimeWarning
 
 try:
@@ -221,4 +220,4 @@ def get_file_paths(file_paths_str: str, dir_location: str = None) -> List[str]:
     return result
 
 
-extension_parser_map = {".yaml": YAMLConfigurationParser}
+extension_parser_map: dict[str, Type[ConfigurationParser]] = {".yaml": YAMLConfigurationParser}

@@ -15,7 +15,7 @@ import logging
 import sys
 
 
-def initialize(logger):
+def initialize(logger: logging.Logger) -> None:
     """Initializes the logger provided with
     :class:`~logging.Formatter` and :class:`~logging.StreamHandler`
     objects appropriate for GameTime.
@@ -29,12 +29,12 @@ def initialize(logger):
 
     formatter = logging.Formatter("%(message)s")
 
-    stdoutHandler = logging.StreamHandler(sys.stdout)
-    stdoutHandler.setLevel(logging.INFO)
-    stdoutHandler.setFormatter(formatter)
-    logger.addHandler(stdoutHandler)
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setLevel(logging.INFO)
+    stdout_handler.setFormatter(formatter)
+    logger.addHandler(stdout_handler)
 
-    stderrHandler = logging.StreamHandler(sys.stderr)
-    stderrHandler.setLevel(logging.ERROR)
-    stderrHandler.setFormatter(formatter)
-    logger.addHandler(stderrHandler)
+    stderr_handler = logging.StreamHandler(sys.stderr)
+    stderr_handler.setLevel(logging.ERROR)
+    stderr_handler.setFormatter(formatter)
+    logger.addHandler(stderr_handler)
