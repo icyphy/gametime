@@ -15,7 +15,7 @@ main: main.bc
 	clang -o main main.bc
 
 .main.dot: main.bc
-	opt -dot-cfg -S main.bc -disable-output -enable-new-pm=0
+	opt -dot-cfg -S main.bc -disable-output
 
 main.png: .main.dot
 	dot -Tpng .main.dot -o main.png
