@@ -21,10 +21,16 @@ class TestGenerateCFG(unittest.TestCase):
         print(source_file, os.path.isfile(source_file))
         self.assertEqual(True, True)  # add assertion here
 
-    def test_generate_cfg_from_c_file_using_clang_helper(self):
+    def test_generate_bc_from_c_file_using_clang_helper(self):
         output_path: str = clang_helper.compile_to_llvm(self.project_config)
         self.assertTrue(os.path.isfile(output_path))
         self.assertEqual(os.path.split(output_path)[1], "main.bc")
+
+    def test_generate_dot_from_c_file_using_clang_helper(self):
+        output_path: str = clang_helper.compile_to_llvm(self.project_config)
+        output_path = clang_helper.generate_dot_file(output_path, self.project_config)
+        self.assertTrue(os.path.isfile(output_path))
+        self.assertEqual(os.path.split(output_path)[1], ".main.dot")
 
 
 if __name__ == '__main__':

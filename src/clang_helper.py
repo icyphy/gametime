@@ -3,6 +3,7 @@
 """ Functions to help interacting with clang on the command
 line. Allows creation of dags
 """
+import shutil
 from types import NoneType
 
 import os
@@ -21,11 +22,25 @@ def compile_to_llvm(project_config: ProjectConfiguration) -> str:
         analysis
     :return: path of the output .bc file
     """
-    temp_dir: str = project_config.locationTempDir
     file_to_compile: str = project_config.locationOrigFile
-    output_file: str = "%s.bc" % project_config.nameOrigNoExtension
-    output_file = os.path.join(temp_dir, output_file)
+    output_file: str = project_config.get_temp_filename_with_extension(".bc")
 
     commands: List[str] = ["clang", "-emit-llvm", "-o", output_file, "-c", file_to_compile]
     subprocess.run(commands, check=True)
+    return output_file
+
+def generate_dot_file(bc_file: str, project_config: ProjectConfiguration) -> str:
+    """ Create dag from .bc file using opt through executing shell commands
+
+    :param bc_file: location of the compiled llvm .bc file
+    :param project_config: configuration object of the current gametime
+        analysis
+    :return: path of the output .dot file
+    """
+    output_file: str = project_config.get_temp_filename_with_extension(".dot", ".main")
+    cur_cwd: str = os.getcwd()
+    os.chdir(project_config.locationTempDir) # opt generates .dot in cwd
+    commands: List[str] = ["opt", "-enable-new-pm=0", "-dot-cfg", "-S", bc_file, "-disable-output"]
+    subprocess.check_call(commands)
+    os.chdir(cur_cwd)
     return output_file

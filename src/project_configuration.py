@@ -342,3 +342,34 @@ class ProjectConfiguration(object):
         """
         # TODO: Make it real
         self.smtSolver = smt_solver_name
+
+    def get_temp_filename_with_extension(self, extension: str, name: str = None) -> str:
+        """ Return path of temporary file with name and extension. Extension should
+        be preceded by a period. For example, calling this function with extension
+        ".bc" should return something like ".... maingt/main.bc"
+
+        :param extension: extension of the temporary file
+        :param name: name of the temporary file (defaults to self.nameOrigNoExtension)
+        :return: path of the temporary file
+        """
+        if name is None:
+            name = self.nameOrigNoExtension
+        filename: str = name + extension
+        temp_filename: str = os.path.join(self.locationTempDir, filename)
+        return temp_filename
+
+    def get_orig_filename_with_extension(self, extension: str, name: str = None) -> str:
+        """ Return path of file with name and extension. Extension should
+        be preceded by a period. For example, calling this function with extension
+        ".bc" should return something like ".... /main.bc"
+
+        :param extension: extension of the file
+        :param name: name of the file (defaults to self.nameOrigNoExtension)
+        :return: path of the file in the original directory.
+        """
+        if name is None:
+            name = self.nameOrigNoExtension
+        filename: str = name + extension
+        orig_filename: str = os.path.join(self.locationOrigDir, filename)
+        return orig_filename
+
