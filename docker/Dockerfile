@@ -62,4 +62,4 @@ ENV LLVM_VERSION 14.0.0
 
 # Install Clang and LLVM
 COPY docker/install.Unix.sh .
-RUN ./install.Unix.sh
+RUN bash ./install.Unix.sh
