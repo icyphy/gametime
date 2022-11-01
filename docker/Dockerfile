@@ -13,6 +13,8 @@ RUN if [ -f "/tmp/conda-tmp/conda_environment.yml" ]; then umask 0002 && /opt/co
     && rm -rf /tmp/conda-tmp
 
 # [Optional] Uncomment this section to install additional OS packages.
+
+# Install clang with default distro versions
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 #     && apt-get -y install --no-install-recommends clang-format \
 #     clang-tidy clang-tools clang clangd libc++-dev libc++1 libc++abi-dev libc++abi1 \ 
