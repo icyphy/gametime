@@ -8,4 +8,7 @@
     <orderEntry type="jdk" jdkName="Remote Python 3.10.4 Docker (lf-docker:latest)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="requirementsPath" value="" />
+  </component>
 </module>

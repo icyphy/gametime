@@ -2,6 +2,7 @@ import unittest
 
 import yaml
 
+from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
 from test_load_class_from_yaml import MyClass as MyClass
 
@@ -11,9 +12,12 @@ except ImportError:
     from yaml import Loader, Dumper
 
 
-class MyTestCase(unittest.TestCase):
+class TestParsing(unittest.TestCase):
+
+
     def test_YAML_parser(self):
-        YAMLConfigurationParser.parse("configs/config.yaml")
+        config: ProjectConfiguration = YAMLConfigurationParser.parse("test_c/config.yaml")
+        print(config.nameOrigFile, config.nameXmlFile, config.locationTempDir)
         self.assertEqual(True, True)  # add assertion here
 
 
