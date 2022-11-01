@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Pycharm Gametime" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="imageTag" value="lf-docker:latest" />
+        <option name="containerName" value="PyCharmGametime" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
