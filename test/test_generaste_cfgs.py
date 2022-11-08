@@ -1,6 +1,7 @@
 import subprocess
 import unittest
 import os
+from os.path import exists
 
 import clang_helper
 import nx_helper
@@ -36,7 +37,18 @@ class TestGenerateCFG(unittest.TestCase):
     def test_read_dag_from_dot_file(self):
         output_path: str = clang_helper.compile_to_llvm(self.project_config)
         output_path = clang_helper.generate_dot_file(output_path, self.project_config)
-        nx_helper.constructDag(output_path)
+        dag: nx_helper.Dag = nx_helper.construct_dag(output_path)
+        self.assertIsNotNone(dag)
+        self.assertTrue(nx_helper.has_cycles(dag))
+        self.assertIsNotNone(nx_helper.get_random_path(dag, dag.source, dag.sink))
+
+    def test_read_write_dag(self):
+        input_dag_path: str = clang_helper.compile_to_llvm(self.project_config)
+        input_dag_path = clang_helper.generate_dot_file(input_dag_path, self.project_config)
+        dag: nx_helper.Dag = nx_helper.construct_dag(input_dag_path)
+        output_dag_path: str = self.project_config.get_temp_filename_with_extension(".dot", "test_output")
+        nx_helper.write_dag_to_dot_file(dag, output_dag_path)
+        self.assertTrue(exists(output_dag_path))
 
 if __name__ == '__main__':
     unittest.main()
