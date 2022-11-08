@@ -1,7 +1,7 @@
 # gametime
 
 ## Docker
-To build the docker file, run from home folder `docker build -t lf-docker -f docker/Dockerfile .`
+To build the docker file, run from home folder `docker build -t gametime -f docker/Dockerfile .`
 
 To run the docker file, run `docker run -it lf-docker bash`
 

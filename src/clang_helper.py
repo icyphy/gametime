@@ -3,14 +3,11 @@
 """ Functions to help interacting with clang on the command
 line. Allows creation of dags
 """
-import shutil
-from types import NoneType
 
 import os
 import subprocess
 from typing import List
 
-from defaults import config
 from project_configuration import ProjectConfiguration
 
 

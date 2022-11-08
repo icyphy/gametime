@@ -3,6 +3,7 @@ import unittest
 import os
 
 import clang_helper
+import nx_helper
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
 
@@ -32,6 +33,10 @@ class TestGenerateCFG(unittest.TestCase):
         self.assertTrue(os.path.isfile(output_path))
         self.assertEqual(os.path.split(output_path)[1], ".main.dot")
 
+    def test_read_dag_from_dot_file(self):
+        output_path: str = clang_helper.compile_to_llvm(self.project_config)
+        output_path = clang_helper.generate_dot_file(output_path, self.project_config)
+        nx_helper.constructDag(output_path)
 
 if __name__ == '__main__':
     unittest.main()
