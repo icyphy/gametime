@@ -14,7 +14,6 @@ for details on the GameTime license and authors.
 
 import os
 
-from os import linesep as lsep
 from random import randrange
 
 import networkx as nx

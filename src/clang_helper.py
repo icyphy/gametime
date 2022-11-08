@@ -12,17 +12,22 @@ from project_configuration import ProjectConfiguration
 
 
 def compile_to_llvm(project_config: ProjectConfiguration) -> str:
-    """ Compile .c file to .bc file using clang through executing
+    """ Compile .c file to .bc and .ll file using clang through executing
     shell commands.
 
     :param project_config: configuration object of the current gametime
         analysis
     :return: path of the output .bc file
     """
+    # compile bc file
     file_to_compile: str = project_config.locationOrigFile
     output_file: str = project_config.get_temp_filename_with_extension(".bc")
-
     commands: List[str] = ["clang", "-emit-llvm", "-o", output_file, "-c", file_to_compile]
+    subprocess.run(commands, check=True)
+
+    # translate for .ll automatically. (optional)
+    ll_output_file: str = project_config.get_temp_filename_with_extension(".ll")
+    commands = ["llvm-dis", output_file, "-o", ll_output_file]
     subprocess.run(commands, check=True)
     return output_file
 
