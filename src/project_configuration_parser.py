@@ -81,7 +81,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         preprocess_configs: dict[str, Any] = raw_config.get("preprocess", {})
         for key in preprocess_configs.keys():
             match key:
-                case "unroll_loops":
+                case "unroll-loops":
                     unroll_loops = bool(preprocess_configs[key])
                 case "include":
                     if preprocess_configs[key]:

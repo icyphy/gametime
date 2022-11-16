@@ -34,13 +34,23 @@ class TestGenerateCFG(unittest.TestCase):
         self.assertTrue(os.path.isfile(output_path))
         self.assertEqual(os.path.split(output_path)[1], ".main.dot")
 
-    def test_read_dag_from_dot_file(self):
+    def test_read_dag_from_dot_file_compiled_from_c(self):
         output_path: str = clang_helper.compile_to_llvm(self.project_config)
         output_path = clang_helper.generate_dot_file(output_path, self.project_config)
         dag: nx_helper.Dag = nx_helper.construct_dag(output_path)
         self.assertIsNotNone(dag)
         self.assertTrue(nx_helper.has_cycles(dag))
         self.assertIsNotNone(nx_helper.get_random_path(dag, dag.source, dag.sink))
+
+    def test_read_loop_unrolled_dag_from_dot_file_compiled_from_c(self):
+        output_path: str = clang_helper.compile_to_llvm(self.project_config)
+        output_path: str = clang_helper.unroll_loops(output_path, self.project_config)
+        output_path = clang_helper.generate_dot_file(output_path, self.project_config)
+        dag: nx_helper.Dag = nx_helper.construct_dag(output_path)
+        self.assertIsNotNone(dag)
+        self.assertFalse(nx_helper.has_cycles(dag))
+        self.assertIsNotNone(nx_helper.get_random_path(dag, dag.source, dag.sink))
+        self.assertEqual(nx_helper.num_paths(dag, dag.source, dag.sink), 2)
 
     def test_read_write_dag(self):
         input_dag_path: str = clang_helper.compile_to_llvm(self.project_config)

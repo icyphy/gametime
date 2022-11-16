@@ -5,8 +5,21 @@
 #include "main.h"
 #include <stdio.h>
 
-int main() {
+int main(int argc, char *argv[]) {
   int j = 0;
-  for (int i = 0; i < 10; i++) j += i;
-  printf("%d\n", j);
+
+  #pragma clang loop unroll(full)
+  for (int i = 0; i < 10; i++) {
+    printf("%d \n", j);
+    j+=i;
+    j %= (2*i);
+    j*=i;
+    j %= (2*i);
+  }
+
+  if (j > argc) {
+    j = (j + 100) % 33;
+  }
+  return j;
+  // printf("%d\n", j);
 }
