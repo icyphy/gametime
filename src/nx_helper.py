@@ -275,6 +275,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     Note:
         Passed in DAG must be actually acyclic.
     """
+    # TODO: make programs that have cycles work
     if has_cycles(dag):
         err_msg = ("The dag has cycles, so number of path is infinite. "
                    "Get rid of cycles before analyzing")

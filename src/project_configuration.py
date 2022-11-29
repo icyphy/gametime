@@ -273,10 +273,10 @@ class ProjectConfiguration(object):
         if extension.lower() == ".c":
             self.locationOrigNoExtension = location_orig_no_extension
         else:
-            errMsg = ("Error running the project configuration "
+            err_msg = ("Error running the project configuration "
                       "reader: the name of the file to analyze "
                       "does not end with a `.c` extension.")
-            raise GameTimeError(errMsg)
+            raise GameTimeError(err_msg)
 
         # Infer the directory that contains the file to analyze.
         location_orig_dir = os.path.dirname(location_orig_with_extension)

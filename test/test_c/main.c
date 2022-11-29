@@ -5,17 +5,22 @@
 #include "main.h"
 #include <stdio.h>
 
-int main(int argc, char *argv[]) {
-  int j = 0;
-
+int foo(int j) {
   #pragma clang loop unroll(full)
   for (int i = 0; i < 10; i++) {
-    printf("%d \n", j);
+    // printf("%d \n", j);
     j+=i;
     j %= (2*i);
     j*=i;
     j %= (2*i);
   }
+  return j;
+}
+
+int main(int argc, char *argv[]) {
+  int j = 0;
+
+  j = foo(j);
 
   if (j > argc) {
     j = (j + 100) % 33;
@@ -23,3 +28,4 @@ int main(int argc, char *argv[]) {
   return j;
   // printf("%d\n", j);
 }
+

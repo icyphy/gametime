@@ -25,7 +25,7 @@ import gametime_configuration
 
 #: Default directory that contains the source files of GameTime.
 source_dir: str = os.path.dirname(os.path.abspath(__file__))
-#: Default configuration XML file.
+#: Default configuration YAML file.
 config_file: str = os.path.join(source_dir, "config.yaml.in")
 
 #: Default directory that contains the GameTime GUI.
@@ -36,5 +36,6 @@ logger.info("")
 #: Default :class:`~gametime.configuration.GametimeConfiguration` object
 #: that represents the configuration of GameTime.
 config: gametime_configuration.GametimeConfiguration = gametime_configuration.read_gametime_config_yaml(config_file)
+
 logger.info("Successfully configured GameTime.")
 logger.info("")

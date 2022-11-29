@@ -44,6 +44,7 @@ class TestGenerateCFG(unittest.TestCase):
 
     def test_read_loop_unrolled_dag_from_dot_file_compiled_from_c(self):
         output_path: str = clang_helper.compile_to_llvm(self.project_config)
+        output_path: str = clang_helper.inline_functions(output_path, self.project_config)
         output_path: str = clang_helper.unroll_loops(output_path, self.project_config)
         output_path = clang_helper.generate_dot_file(output_path, self.project_config)
         dag: nx_helper.Dag = nx_helper.construct_dag(output_path)
@@ -59,6 +60,9 @@ class TestGenerateCFG(unittest.TestCase):
         output_dag_path: str = self.project_config.get_temp_filename_with_extension(".dot", "test_output")
         nx_helper.write_dag_to_dot_file(dag, output_dag_path)
         self.assertTrue(exists(output_dag_path))
+
+    def test_clean_temp_dir(self):
+        clang_helper.remove_temp_cil_files(self.project_config)
 
 if __name__ == '__main__':
     unittest.main()
