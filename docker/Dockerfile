@@ -59,9 +59,21 @@ ENV LLVM_VERSION 14.0.0
 COPY docker/install.Unix.sh .
 RUN bash ./install.Unix.sh
 
+## Install ILP Solvers
+RUN apt-get -qq update && \
+#    apt-add-repository universe && \
+    apt install -qqy --no-install-recommends \
+        coinor-cbc coinor-libcbc-dev \
+        glpk-utils libglpk-dev glpk-doc python3-swiglpk && \
+    rm -rf /var/lib/apt/lists/*
+
+# RUN /opt/conda/bin/conda install cryptography=38.0.4
+
 # Since conda environment changes the most, it needs to be run last
 # Copy environment.yml (if found) to a temp location so we update the environment. Also
 # copy "noop.txt" so the COPY instruction does not fail if no environment.yml exists.
-COPY conda_environment.yml .devcontainer/noop.txt /tmp/conda-tmp/
+COPY conda_environment.yml docker/noop.txt /tmp/conda-tmp/
 RUN if [ -f "/tmp/conda-tmp/conda_environment.yml" ]; then umask 0002 && /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/conda_environment.yml; fi \
     && rm -rf /tmp/conda-tmp
+
+RUN yes | pysmt-install --z3 --btor

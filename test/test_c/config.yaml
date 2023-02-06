@@ -40,7 +40,7 @@ gametime-project:
     merge: null
     #Functions to inline, if any. More than one function
     #can be specified, and the names must be a string array.
-    inline: null
+    inline: yes
     #Bool for whether or not to unroll loops
     #uncomment to unroll loops
     unroll-loops: Yes

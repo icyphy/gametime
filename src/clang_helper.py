@@ -104,11 +104,14 @@ def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_f
         output_file = project_config.get_temp_filename_with_extension(".bc", "unrolled-gt")
 
     commands = ["opt",
-                "-mem2reg", "-simplifycfg", "-loops",
-                "-lcssa", "-loop-simplify", "-loop-rotate",
-                "-always-inline",
-               #  "-inline", "-inline-threshold=1000000",
-                "-loop-unroll", "-S", input_file,
+                # "-indvars",
+                "-mem2reg",
+                "-simplifycfg",
+                "-loops",
+                "-lcssa",  "-loop-simplify",
+                "-loop-rotate",
+                "-loop-unroll", # "-unroll-threshold=10000000", "-unroll-count=1000",
+                "-S", input_file,
                 "-o", output_file]
 
     logger.info(subprocess.run(commands, check=True))
