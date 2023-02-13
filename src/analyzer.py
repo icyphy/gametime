@@ -419,7 +419,7 @@ class Analyzer(object):
             logger.info("Finding a candidate path using an integer "
                         "linear program...")
             logger.info("")
-            candidatePathNodes, ilpProblem = pulpHelper.findExtremePath(self)
+            candidatePathNodes, ilpProblem = pulpHelper.find_extreme_path(self)
             logger.info("")
 
             if ilpProblem.objVal is None:
@@ -542,7 +542,7 @@ class Analyzer(object):
                             "linear program...")
                 logger.info("")
                 candidatePathNodes, ilpProblem = \
-                    pulpHelper.findExtremePath(self)
+                    pulpHelper.find_extreme_path(self)
                 logger.info("")
 
                 if ilpProblem.objVal is None:
