@@ -7,14 +7,6 @@ from typing import List, Optional, Dict, Tuple
 
 from src import Analyzer, ProjectConfiguration
 
-# from src import Analyzer
-
-"""See the LICENSE file, located in the root directory of
-the source distribution and
-at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
-for details on the GameTime license and authors.
-"""
-
 import os
 
 import pulp
@@ -24,6 +16,14 @@ from file_helper import move_files, remove_file
 from interval import Interval
 
 from nx_helper import Dag
+
+# from src import Analyzer
+
+"""See the LICENSE file, located in the root directory of
+the source distribution and
+at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
+for details on the GameTime license and authors.
+"""
 
 
 class Extremum(object):
@@ -117,7 +117,7 @@ def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -
     keep_ilp_solver_output = project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT
     for ilpSolverClass in _nameIlpSolverMap[ilp_solver_name]:
         ilp_solver = ilpSolverClass(keepFiles=keep_ilp_solver_output,
-                                   msg=keep_ilp_solver_output)
+                                    msg=keep_ilp_solver_output)
         if ilp_solver.available():
             return ilp_solver
     return None
@@ -201,7 +201,9 @@ def _get_edge_flow_var(analyzer: Analyzer,
     return edge_flow_vars[analyzer.dag.edgesIndices[edge]]
 
 
-def _get_edge_flow_vars(analyzer, edge_flow_vars, edges):
+def _get_edge_flow_vars(analyzer: Analyzer,
+                        edge_flow_vars: Dict[int, pulp.LpVariable],
+                        edges: List[Tuple[str, str]]) -> List[pulp.LpVariable]:
     """
     Arguments:
         analyzer:
@@ -222,7 +224,7 @@ def _get_edge_flow_vars(analyzer, edge_flow_vars, edges):
     return [_get_edge_flow_var(analyzer, edge_flow_vars, edge) for edge in edges]
 
 
-def findLeastCompatibleMuMax(analyzer, paths):
+def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
     """This function returns the least dealta in the underlying graph, as
        specified by 'analyzer', that is feasible with the given set of
        measurements as specified by 'paths'. The method does not take into
@@ -238,57 +240,56 @@ def findLeastCompatibleMuMax(analyzer, paths):
                edges in the order in which they are visited by the path
 
        Returns:
-           A floting point value---the least delta compatible with the
+           A floating point value---the least delta compatible with the
            measurements
     """
     dag = analyzer.dag
     source = dag.source
     sink = dag.sink
-    numEdges = dag.numEdges
+    num_edges = dag.numEdges
     edges = dag.edges()
-    numPaths = len(paths)
+    num_paths = len(paths)
 
-    projectConfig = analyzer.projectConfig
+    project_config = analyzer.projectConfig
 
-    nodesExceptSourceSink = dag.nodesExceptSourceSink
+    nodes_except_source_sink = dag.nodesExceptSourceSink
 
     # Set up the linear programming problem.
-    logger.info("Number of paths: %d " % numPaths)
+    logger.info("Number of paths: %d " % num_paths)
     logger.info("Setting up the integer linear programming problem...")
     problem = IlpProblem(_LP_NAME)
 
     logger.info("Creating variables")
     # Set up the variables that correspond to weights of each edge. 
     # Each edge is restricted to be a nonnegative real number
-    edgeWeights = pulp.LpVariable.dicts("we", range(0, numEdges), 0)
+    edge_weights = pulp.LpVariable.dicts("we", range(0, num_edges), 0)
     # Create the variable that shall correspond to the least delta
     delta = pulp.LpVariable("delta", 0)
     for path in paths:
-        pathWeights = \
-            _get_edge_flow_vars(analyzer, edgeWeights, dag.getEdges(path.nodes))
-        problem += pulp.lpSum(pathWeights) <= delta + path.measuredValue
-        problem += pulp.lpSum(pathWeights) >= -delta + path.measuredValue
-        print
-        "LENGTH:", path.measuredValue
+        path_weights = \
+            _get_edge_flow_vars(analyzer, edge_weights, dag.getEdges(path.nodes))
+        problem += pulp.lpSum(path_weights) <= delta + path.measuredValue
+        problem += pulp.lpSum(path_weights) >= -delta + path.measuredValue
+        print("LENGTH:", path.measuredValue)
 
     # Optimize for the least delta
     problem += delta
     logger.info("Finding the minimum value of the objective function...")
 
     problem.sense = pulp.LpMinimize
-    problemStatus = problem.solve(solver=projectConfig.ilpSolver)
-    if problemStatus != pulp.LpStatusOptimal:
+    problem_status = problem.solve(solver=project_config.ilpSolver)
+    if problem_status != pulp.LpStatusOptimal:
         logger.info("Maximum value not found.")
         return []
-    objValMin = pulp.value(delta)
+    obj_val_min = pulp.value(delta)
 
-    logger.info("Minimum compatible delta found: %g" % objValMin)
+    logger.info("Minimum compatible delta found: %g" % obj_val_min)
 
-    if projectConfig.debugConfig.KEEP_ILP_SOLVER_OUTPUT:
-        _move_ilp_files(os.getcwd(), projectConfig.locationTempDir)
+    if project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT:
+        _move_ilp_files(os.getcwd(), project_config.locationTempDir)
     else:
         _remove_temp_ilp_files()
-    return objValMin
+    return obj_val_min
 
 
 # compact
@@ -349,7 +350,7 @@ def make_compact(dag):
     edge_map = {}
 
     def dfs(node, edge_index):
-        if (node in processed):
+        if node in processed:
             return node
         processed[node] = node
         index = node
@@ -531,7 +532,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
         problem.sense = pulp.LpMinimize
     problem_status = problem.solve(solver=project_config.ilpSolver)
 
-    if (print_problem): logger.info(problem)
+    if print_problem: logger.info(problem)
 
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Maximum value not found.")
@@ -544,18 +545,18 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     logger.info("Finding the path that corresponds to the maximum value...")
     # Determine the edges along the extreme path using the solution.
     max_path = [edges[edgeNum] for edgeNum in edgeFlows
-               if edgeFlows[edgeNum].value() > 0.1]
+                if edgeFlows[edgeNum].value() > 0.1]
     logger.info("Path found.")
 
     total_length = sum([product_vars[edgeNum].value() for edgeNum in edgeFlows
-                       if edgeFlows[edgeNum].value() == 1])
+                        if edgeFlows[edgeNum].value() == 1])
     logger.info("Total length of the path %.2f" % total_length)
     obj_val_max = total_length
 
     max_path = [edgeNum for edgeNum in range(0, new_edges)
-               if edgeFlows[edgeNum].value() > 0.1]
+                if edgeFlows[edgeNum].value() > 0.1]
     extreme_path = []
-    # reverse exremePath according to the compact edgeMap
+    # reverse extreme_path according to the compact edgeMap
     for edge in max_path:
         map_to = [source for source in compact if compact[source] == edge]
         extreme_path.extend(map_to)
@@ -707,7 +708,7 @@ def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
         Returns:
                List of paths satisfying the condition stated above
     """
-
+    project_config = analyzer.projectConfig
     dag = analyzer.dag
     source = dag.soure
     sink = dag.sink
@@ -752,7 +753,7 @@ def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
     problem += objective
     problem.sense = pulp.LpMinimize
 
-    problem_status = problem.solve(solver=projectConfig.ilpSolver)
+    problem_status = problem.solve(solver=project_config.ilpSolver)
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Minimum value not found.")
         return [], problem
