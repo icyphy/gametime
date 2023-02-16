@@ -488,7 +488,7 @@ class Analyzer(object):
                     logger.info("Replacement is infeasible.")
                     logger.info("Finding the edges to exclude...")
                     unsatCore = resultPath.smtQuery.unsatCore
-                    excludeEdges = resultPath.getEdgesForConditions(unsatCore)
+                    excludeEdges = resultPath.get_edges_for_conditions(unsatCore)
                     logger.info("Edges to be excluded found.")
                     logger.info("Adding a constraint to exclude "
                                 "these edges...")
@@ -591,7 +591,7 @@ class Analyzer(object):
                         logger.info("Finding the edges to exclude...")
                         unsatCore = resultPath.smtQuery.unsatCore
                         excludeEdges = \
-                            resultPath.getEdgesForConditions(unsatCore)
+                            resultPath.get_edges_for_conditions(unsatCore)
                         logger.info("Edges to be excluded found.")
                         logger.info("Adding a constraint to exclude "
                                     "these edges...")
