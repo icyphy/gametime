@@ -11,7 +11,6 @@ at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
 for details on the GameTime license and authors.
 """
 
-
 import os
 
 from random import randrange
@@ -106,14 +105,13 @@ class Dag(nx.DiGraph):
         self.source = [node for node in nodes if self.in_degree(node) == 0][0]
         self.sink = [node for node in nodes if self.out_degree(node) == 0][0]
         self.nodesExceptSink = [node for node in self.allNodes
-                                 if node != self.sink]
+                                if node != self.sink]
         self.nodesExceptSourceSink = [node for node in self.allNodes
-                                       if node != self.source and
-                                       node != self.sink]
+                                      if node != self.source and
+                                      node != self.sink]
 
         self.numPaths = (0 if has_cycles(self) else
                          num_paths(self, self.source, self.sink))
-
 
         # Initialize dictionaries that map nodes and edges to their indices
         # in the node list and edge list, respectively.
@@ -125,7 +123,6 @@ class Dag(nx.DiGraph):
             self.nodesExceptSourceSinkIndices[node] = nodeIndex
         for edgeIndex, edge in enumerate(self.allEdges):
             self.edgesIndices[edge] = edgeIndex
-
 
     def load_variables(self):
         """Loads the instance variables of this object with appropriate
@@ -165,7 +162,7 @@ class Dag(nx.DiGraph):
             self.edgesReducedIndices[edge] = list(self.allEdges).index(edge)
 
     @staticmethod
-    def get_edges(nodes):
+    def get_edges(nodes: List[str]) -> List[Tuple[str, str]]:
         """
         Arguments:
             nodes:
@@ -174,13 +171,13 @@ class Dag(nx.DiGraph):
         Returns:
             List of edges that lie along the path.
         """
-        return zip(nodes[:-1], nodes[1:])
+        return list(zip(nodes[:-1], nodes[1:]))
 
 
-def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str="",
-                          edges_to_labels: Dict[Tuple[str, str], str]=None,
-                          highlighted_edges: List[Tuple[str, str]]=None,
-                          highlight_color: str="red"):
+def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
+                          edges_to_labels: Dict[Tuple[str, str], str] = None,
+                          highlighted_edges: List[Tuple[str, str]] = None,
+                          highlight_color: str = "red"):
     """Writes the directed acyclic graph provided to a file in DOT format.
 
     Arguments:
@@ -228,11 +225,12 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str="",
         dag_dot_file_handler = open(location, "w")
     except EnvironmentError as e:
         err_msg = ("Error writing the DAG to a file located at %s: %s" %
-                  (location, e))
+                   (location, e))
         raise GameTimeError(err_msg)
     else:
         with dag_dot_file_handler:
             dag_dot_file_handler.write("\n".join(contents))
+
 
 def construct_dag(location: str) -> Dag:
     """Constructs a :class:`~gametime.nxHelper.Dag` object to represent
@@ -252,13 +250,14 @@ def construct_dag(location: str) -> Dag:
             graph_from_dot = nx.nx_agraph.read_dot(f)
 
     except EnvironmentError as e:
-        err_msg : str = ("Error opening the DOT file, located at %s, that contains "
-                  "the directed acyclic graph to analyze: %s") % (location, e)
+        err_msg: str = ("Error opening the DOT file, located at %s, that contains "
+                        "the directed acyclic graph to analyze: %s") % (location, e)
         raise GameTimeError(err_msg)
 
     dag: Dag = Dag(graph_from_dot)
     dag.load_variables()
     return dag
+
 
 def num_paths(dag: Dag, source: str, sink: str) -> int:
     """
@@ -288,7 +287,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     nodes_to_visit: List[str] = list(nx.topological_sort(dag))
     if nodes_to_visit.pop(0) != source:
         err_msg = ("The source node should be the first node in "
-                  "a topological sort of the control-flow graph.")
+                   "a topological sort of the control-flow graph.")
         raise GameTimeError(err_msg)
 
     while len(nodes_to_visit) > 0:
@@ -300,6 +299,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
         nodes_to_num_paths[curr_node] = num_paths_to_node
 
     return nodes_to_num_paths[sink]
+
 
 def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
     """
@@ -335,6 +335,7 @@ def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
             # Restart.
             result_path, curr_node = [], source
     return result_path
+
 
 def has_cycles(dag: Dag) -> bool:
     """

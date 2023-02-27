@@ -854,10 +854,10 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     # the number of edges in the constraint. Hence, if a constraint
     # contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.
     # This way, all three of these edges can never be taken together.
-    for constraintNum, path in enumerate(path_exclusive_constraints):
+    for constraint_num, path in enumerate(path_exclusive_constraints):
         edge_flows_in_constraint = _get_edge_flow_vars(analyzer, edge_flows, path)
         problem += (pulp.lpSum(edge_flows_in_constraint) <= (len(path) - 1),
-                    "Path exclusive constraint %d" % (constraintNum + 1))
+                    "Path exclusive constraint %d" % (constraint_num + 1))
 
     # Add constraints for the bundled path constraints. If a constraint
     # contains edges e_a, e_b, e_c, e_d, and each edge *must* be taken,
@@ -865,22 +865,22 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     # than the number of edges in the path constraint). Hence, the flow
     # constraint is e_b + e_c + e_d = -3 * e_a. By default, we scale
     # the first edge in a constraint with this negative value.
-    for constraintNum, path in enumerate(path_bundled_constraints):
+    for constraint_num, path in enumerate(path_bundled_constraints):
         first_edge = path[0]
         first_edge_flow = _get_edge_flow_var(analyzer, edge_flows, first_edge)
         edge_flows_for_rest = _get_edge_flow_vars(analyzer, edge_flows, path[1:])
         problem += \
             (pulp.lpSum(edge_flows_for_rest) == (len(path) - 1) * first_edge_flow,
-             "Path bundled constraint %d" % (constraintNum + 1))
+             "Path bundled constraint %d" % (constraint_num + 1))
 
     # There may be bounds on the values of the paths that are generated
     # by this function: we add constraints for these bounds. For this,
     # we weight the PuLP variables for the edges using the list of
     # edge weights provided, and then impose bounds on the sum.
     weighted_edge_flow_vars = []
-    for edgeIndex, edgeFlowVar in edge_flows.items():
-        edge_weight = edge_weights[edgeIndex]
-        weighted_edge_flow_vars.append(edge_weight * edgeFlowVar)
+    for edge_index, edge_flow_var in edge_flows.items():
+        edge_weight = edge_weights[edge_index]
+        weighted_edge_flow_vars.append(edge_weight * edge_flow_var)
     interval = interval or Interval()
     if interval.hasFiniteLowerBound():
         problem += \
