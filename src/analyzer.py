@@ -17,6 +17,7 @@ from defaults import config, logger
 from file_helper import remove_all_except
 from gametime_error import GameTimeError
 from nx_helper import Dag
+from path import Path
 from project_configuration import ProjectConfiguration
 
 from numpy import dot, exp, eye, genfromtxt, savetxt
@@ -384,7 +385,7 @@ class Analyzer(object):
         pulp_helper.find_minimal_overcomplete_basis(self, feasible, k)
 
     def iteratively_find_overcomplete_basis(self, initial_paths: List[List[Tuple[str, str]]], k: int):
-        """Generates overcomplete basis such the the lenth of the longest
+        """Generates overcomplete basis such the lenth of the longest
            feasible path is at most 'k'. The basis is computed by iteratively
            extending the basis with the longest path.  Parameter 'initial_paths'
            specifies the set of paths the iterative algorithm begins with. This
@@ -411,6 +412,9 @@ class Analyzer(object):
             candidate_path_edges = Dag.get_edges(candidate_path_nodes)
 
             # TODO: add feasibility
+            edge_node_paths.append(candidate_path_edges)
+            result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+            self.basisPaths.append(result_path)
             edge_node_paths.append(candidate_path_edges)
             # logger.info("Checking if the found path is feasible...")
             # result_path = self.check_feasibility(candidate_path_nodes,
@@ -585,42 +589,46 @@ class Analyzer(object):
                 num_paths_unsat = 0
             else:  # Row is good, check feasibility
                 logger.info("Possible replacement for row found.")
-                logger.info("Checking if replacement is feasible...")
+                # logger.info("Checking if replacement is feasible...")
                 logger.info("")
-                result_path = self.check_feasibility(candidate_path_nodes,
-                                                     ilp_problem)
-                query_satisfiability = result_path.smtQuery.satisfiability
-                if query_satisfiability == Satisfiability.SAT:  # Replace and move on
-                    # Sanity check:
-                    # A row should not be replaced if it replaces a good
-                    # row and decreases the determinant. However,
-                    # replacing a bad row and decreasing the determinant
-                    # is okay. (TODO: Are we actually doing this?)
-                    logger.info("Replacement is feasible.")
-                    logger.info("Row %d replaced." % (current_row + 1))
-
-                    basis_paths.append(result_path)
-                    current_row += 1
-                    num_paths_unsat = 0
-                elif query_satisfiability == Satisfiability.UNSAT:
-                    # loops back and tries again with current row
-                    logger.info("Replacement is infeasible.")
-                    logger.info("Finding the edges to exclude...")
-                    unsat_core = result_path.smtQuery.unsatCore
-                    exclude_edges = result_path.get_edges_for_conditions(unsat_core)
-                    logger.info("Edges to be excluded found.")
-                    logger.info("Adding a constraint to exclude "
-                                "these edges...")
-                    if len(exclude_edges) > 0:
-                        self.add_path_exclusive_constraint(exclude_edges)
-                        infeasible.append(exclude_edges)
-                    else:
-                        self.add_path_exclusive_constraint(candidate_path_edges)
-                        infeasible.append(candidate_path_edges)
-                    logger.info("Constraint added.")
-
-                    self.basisMatrix[current_row] = prev_matrix_row
-                    num_paths_unsat += 1
+                result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+                basis_paths.append(result_path)
+                current_row += 1
+                num_paths_unsat = 0
+                # result_path = self.check_feasibility(candidate_path_nodes,
+                #                                      ilp_problem)
+                # query_satisfiability = result_path.smtQuery.satisfiability
+                # if query_satisfiability == Satisfiability.SAT:  # Replace and move on
+                #     # Sanity check:
+                #     # A row should not be replaced if it replaces a good
+                #     # row and decreases the determinant. However,
+                #     # replacing a bad row and decreasing the determinant
+                #     # is okay. (TODO: Are we actually doing this?)
+                #     logger.info("Replacement is feasible.")
+                #     logger.info("Row %d replaced." % (current_row + 1))
+                #
+                #     basis_paths.append(result_path)
+                #     current_row += 1
+                #     num_paths_unsat = 0
+                # elif query_satisfiability == Satisfiability.UNSAT:
+                #     # loops back and tries again with current row
+                #     logger.info("Replacement is infeasible.")
+                #     logger.info("Finding the edges to exclude...")
+                #     unsat_core = result_path.smtQuery.unsatCore
+                #     exclude_edges = result_path.get_edges_for_conditions(unsat_core)
+                #     logger.info("Edges to be excluded found.")
+                #     logger.info("Adding a constraint to exclude "
+                #                 "these edges...")
+                #     if len(exclude_edges) > 0:
+                #         self.add_path_exclusive_constraint(exclude_edges)
+                #         infeasible.append(exclude_edges)
+                #     else:
+                #         self.add_path_exclusive_constraint(candidate_path_edges)
+                #         infeasible.append(candidate_path_edges)
+                #     logger.info("Constraint added.")
+                #
+                #     self.basisMatrix[current_row] = prev_matrix_row
+                #     num_paths_unsat += 1
 
             logger.info("")
             logger.info("")
@@ -691,39 +699,43 @@ class Analyzer(object):
 
                 if new_basis_matrix_det > 2 * old_basis_matrix_det:
                     logger.info("Possible replacement for row found.")
-                    logger.info("Checking if replacement is feasible...")
+                    # logger.info("Checking if replacement is feasible...")
                     logger.info("")
-                    result_path = self.check_feasibility(candidate_path_nodes,
-                                                         ilp_problem)
-                    query_satisfiability = result_path.smtQuery.satisfiability
-                    if query_satisfiability == Satisfiability.SAT:
-                        logger.info("Replacement is feasible.")
-                        is_two_barycentric = False
-                        basis_paths[current_row] = result_path
-                        logger.info("Row %d replaced." % (current_row + 1))
-
-                        current_row += 1
-                        num_paths_unsat = 0
-                    elif query_satisfiability == Satisfiability.UNSAT:
-                        logger.info("Replacement is infeasible.")
-
-                        logger.info("Finding the edges to exclude...")
-                        unsat_core = result_path.smtQuery.unsatCore
-                        exclude_edges = \
-                            result_path.get_edges_for_conditions(unsat_core)
-                        logger.info("Edges to be excluded found.")
-                        logger.info("Adding a constraint to exclude "
-                                    "these edges...")
-                        if len(exclude_edges) > 0:
-                            self.add_path_exclusive_constraint(exclude_edges)
-                            infeasible.append(exclude_edges)
-                        else:
-                            self.add_path_exclusive_constraint(candidate_path_edges)
-                            infeasible.append(candidate_path_edges)
-                        logger.info("Constraint added.")
-
-                        self.basisMatrix[current_row] = prev_matrix_row
-                        num_paths_unsat += 1
+                    result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+                    basis_paths[current_row] = result_path
+                    current_row += 1
+                    num_paths_unsat = 0
+                    # result_path = self.check_feasibility(candidate_path_nodes,
+                    #                                      ilp_problem)
+                    # query_satisfiability = result_path.smtQuery.satisfiability
+                    # if query_satisfiability == Satisfiability.SAT:
+                    #     logger.info("Replacement is feasible.")
+                    #     is_two_barycentric = False
+                    #     basis_paths[current_row] = result_path
+                    #     logger.info("Row %d replaced." % (current_row + 1))
+                    #
+                    #     current_row += 1
+                    #     num_paths_unsat = 0
+                    # elif query_satisfiability == Satisfiability.UNSAT:
+                    #     logger.info("Replacement is infeasible.")
+                    #
+                    #     logger.info("Finding the edges to exclude...")
+                    #     unsat_core = result_path.smtQuery.unsatCore
+                    #     exclude_edges = \
+                    #         result_path.get_edges_for_conditions(unsat_core)
+                    #     logger.info("Edges to be excluded found.")
+                    #     logger.info("Adding a constraint to exclude "
+                    #                 "these edges...")
+                    #     if len(exclude_edges) > 0:
+                    #         self.add_path_exclusive_constraint(exclude_edges)
+                    #         infeasible.append(exclude_edges)
+                    #     else:
+                    #         self.add_path_exclusive_constraint(candidate_path_edges)
+                    #         infeasible.append(candidate_path_edges)
+                    #     logger.info("Constraint added.")
+                    #
+                    #     self.basisMatrix[current_row] = prev_matrix_row
+                    #     num_paths_unsat += 1
                 else:
                     logger.info("No replacement for row %d found." %
                                 (current_row + 1))
@@ -933,7 +945,7 @@ class Analyzer(object):
     #     return Path(ilp_problem, path_nodes, lineNumbers,
     #                 conditions, conditionEdges, conditionTruths,
     #                 arrayAccesses, aggIndexExprs,
-    #                 smtQuery, assignments)
+    #                 smtQuery,)
 
     def estimate_edge_weights(self):
         """Estimates the weights on the edges of the DAG, using the values
