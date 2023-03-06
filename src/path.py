@@ -305,7 +305,7 @@ class Path(object):
                 conditions = conditions_file_handler.readlines()
                 conditions = [condition.strip() for condition in conditions]
                 conditions = [condition for condition in conditions
-                              if condition is not ""]
+                              if condition != ""]
                 return conditions
 
     def get_condition_edges(self) -> str:

@@ -3,9 +3,12 @@
 """Exposes functions to interact with different
 linear programming solvers through the PuLP package.
 """
-from typing import List, Optional, Dict, Tuple
+from __future__ import annotations  # remove in 3.11
 
-from src import Analyzer, ProjectConfiguration
+from typing import List, Optional, Dict, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src import Analyzer, ProjectConfiguration
 
 import os
 
@@ -94,7 +97,7 @@ def get_ilp_solver_names() -> List[str]:
     Returns:
         List of the names of the supported integer linear programming solvers.
     """
-    return [name for name in _nameIlpSolverMap.keys() if name is not ""]
+    return [name for name in _nameIlpSolverMap.keys() if name != ""]
 
 
 def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -> Optional[pulp.LpSolver]:

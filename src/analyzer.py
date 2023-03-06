@@ -395,12 +395,12 @@ class Analyzer(object):
         infeasible = []
         edge_node_paths = initial_paths
         optimal_bound = 1
-        start_time = time.clock()
+        start_time = time.perf_counter()
         while True:
-            before_time = time.clock()
+            before_time = time.perf_counter()
             length, path, ilp_problem = \
                 pulp_helper.find_worst_expressible_path(self, self.basisPaths, 0)
-            after_time = time.clock()
+            after_time = time.perf_counter()
             logger.info("Found a candidate path of length %.2f in %d seconds" %
                         (length, after_time - before_time))
 
@@ -462,7 +462,7 @@ class Analyzer(object):
 
         logger.info("Generating the basis paths...")
         logger.info("")
-        start_time = time.clock()
+        start_time = time.perf_counter()
 
         logger.info("Initializing the basis matrix...")
         self._init_basis_matrix()
@@ -490,7 +490,7 @@ class Analyzer(object):
             # self.resetPathExclusiveConstraints()
 
             logger.info("Time taken to generate paths: %.2f seconds." %
-                        (time.clock() - start_time))
+                        (time.perf_counter() - start_time))
 
             logger.info("Basis paths generated.")
 
@@ -506,7 +506,7 @@ class Analyzer(object):
                     edge_paths, self.projectConfig.MAXIMUM_ERROR_SCALE_FACTOR)
                 logger.info("Number of paths generated: %d" % len(result))
                 logger.info("Time taken to generate paths: %.2f seconds." %
-                            (time.clock() - start_time))
+                            (time.perf_counter() - start_time))
                 return result
             else:
                 return self.basisPaths
