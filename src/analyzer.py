@@ -96,6 +96,8 @@ class Analyzer(object):
         # The in predictions is error is 2 * inferredMuMax * errorScaleFactor
         self.errorScaleFactor: int = 0
 
+        self.dag_path: str = ""
+
         # Finally, preprocess the file before analysis.
         self._preprocess()
 
@@ -155,6 +157,8 @@ class Analyzer(object):
         # to reduce the C file to the subset of constructs used by CIL
         # for ease of analysis.
         # self._runCil()
+
+        self.dag_path = clang_helper.generate_dot_file(processing, self.projectConfig)
 
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
@@ -324,6 +328,56 @@ class Analyzer(object):
         for k in range(row_len):
             row_to_swap_out[k] = row_to_swap_in[k]
             row_to_swap_in[k] = temp_row_to_swap_out[k]
+
+    ### GRAPH FUNCTIONS ###
+    def create_dag(self):
+        """Creates the DAG corresponding to the code being analyzed
+        and dumps the DAG, in DOT format, to a temporary file for further
+        analysis. This method also stores a local copy in a data
+        structure that represents the DAG.
+        """
+        logger.info("Generating the DAG and associated information...")
+
+        # if nx_helper.construct_dag(self.dag_path):
+        #     err_msg = "Error running the Phoenix program analyzer."
+        #     raise GameTimeError(err_msg)
+
+        location = os.path.join(self.projectConfig.locationTempDir,
+                                config.TEMP_DAG)
+        self.load_dag_from_dot_file(location)
+
+        num_edges_reduced = len(self.dag.edgesReduced)
+        self.pathDimension = self.dag.numEdges - self.dag.numNodes + 2
+        if num_edges_reduced != self.pathDimension:
+            err_msg = ("The number of non-special edges is different "
+                      "from the dimension of the path.")
+            raise GameTimeError(err_msg)
+
+        logger.info("DAG generated.")
+
+        if nx_helper.has_cycles(self.dag):
+            logger.warn("The control-flow graph has cycles.")
+            self._runLoopDetector()
+        else:
+            logger.info("The control-flow graph has %d nodes and %d edges, "
+                        "with at most %d possible paths." %
+                        (self.dag.numNodes, self.dag.numEdges,
+                         self.dag.numPaths))
+            logger.info("There are at most %d possible basis paths." %
+                        self.pathDimension)
+        logger.info("")
+
+    def load_dag_from_dot_file(self, location: str):
+        """Loads the DAG that corresponds to the code being analyzed
+        from a DOT file.
+
+        @param location Location of the file.
+        """
+        self.dag = nx_helper.construct_dag(location)
+
+        # Reset variables of this "Analyzer" object.
+        self.reset_path_exclusive_constraints()
+        self.reset_path_bundled_constraints()
 
     ### PATH GENERATION FUNCTIONS ###
     def add_path_exclusive_constraint(self, edges: List[Tuple[str, str]]):
@@ -661,7 +715,7 @@ class Analyzer(object):
                 if num_paths_unsat == 0:
                     # Calculate the subdeterminants only if the replacement
                     # of this row has not yet been attempted.
-                    self.dag.resetEdgeWeights()
+                    self.dag.reset_edge_weights()
                     self.dag.edgeWeights = self._calculate_subdets(current_row)
                 logger.info("Calculation complete.")
 

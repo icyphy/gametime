@@ -15,7 +15,7 @@ import os
 import pulp
 
 from defaults import logger
-from file_helper import move_files, remove_file
+from file_helper import move_files, remove_files
 from interval import Interval
 
 from nx_helper import Dag
@@ -808,7 +808,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     num_edges = dag.numEdges
 
     nodes_except_source_sink = dag.nodesExceptSourceSink
-    edges = dag.allEdges
+    edges = list(dag.allEdges)
     edge_weights = dag.edgeWeights
 
     path_exclusive_constraints = analyzer.pathExclusiveConstraints
@@ -905,7 +905,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     logger.info("Finding the maximum value of the objective function...")
 
     problem.sense = pulp.LpMaximize
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilpSolver, project_config))
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Maximum value not found.")
         return [], problem
@@ -915,14 +915,14 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
 
     logger.info("Finding the path that corresponds to the maximum value...")
     # Determine the edges along the extreme path using the solution.
-    max_path = [edges[edgeNum] for edgeNum in edge_flows
-                if edge_flows[edgeNum].value() == 1]
+
+    max_path = [edges[edge_num] for edge_num in edge_flows.keys() if (edge_flows[edge_num].value() == 1)]
     logger.info("Path found.")
 
     logger.info("Finding the minimum value of the objective function...")
 
     problem.sense = pulp.LpMinimize
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilpSolver, project_config))
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Minimum value not found.")
         return [], problem
@@ -999,4 +999,4 @@ def _remove_temp_ilp_files():
     """Removes the temporary files that are generated when an
     integer linear program is solved.
     """
-    remove_file([r".*\.lp", r".*\.mps", r".*\.prt", r".*\.sol"], os.getcwd())
+    remove_files([r".*\.lp", r".*\.mps", r".*\.prt", r".*\.sol"], os.getcwd())

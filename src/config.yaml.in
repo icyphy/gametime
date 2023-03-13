@@ -33,7 +33,7 @@ TEMP_SUFFIX_UNROLLED: unrolled
 TEMP_SUFFIX_INLINED: inlined
 TEMP_SUFFIX_LINE_NUMS: -line-nums
 TEMP_PHX_CREATE_DAG: create-dag
-TEMP_DAG: dag
+TEMP_DAG: .main.dot
 TEMP_DAG_ID_MAP: dag-id-map
 TEMP_PHX_IR: ir
 TEMP_PHX_FIND_CONDITIONS: find-conditions

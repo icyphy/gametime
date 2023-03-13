@@ -23,7 +23,7 @@ class GameTime(object):
         """
         try:
             gametime_analyzer: Analyzer = Analyzer(project_config)
-            gametime_analyzer.createDag()
+            gametime_analyzer.create_dag()
             return gametime_analyzer
         except GameTimeError as e:
             logger.error(str(e))

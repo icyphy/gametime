@@ -17,5 +17,5 @@ class TestAnalyzer(unittest.TestCase):
     def test_basis_path_generation(self):
         print("hello")
         analyzer = Analyzer(self.project_config)
-        print(analyzer.generate_basis_paths())
-        print(analyzer.basisPaths)
+        analyzer.create_dag()
+        print(list(map(str, (analyzer.generate_basis_paths()))))

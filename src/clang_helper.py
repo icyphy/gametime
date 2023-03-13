@@ -28,7 +28,6 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     if output_name is None:
         output_name = "compile-gt"
 
-
     # compile bc file
     file_to_compile: str = project_config.locationOrigFile
     output_file: str = project_config.get_temp_filename_with_extension(".bc", output_name)
@@ -45,6 +44,7 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     subprocess.run(commands, check=True)
     return output_file
 
+
 def generate_dot_file(bc_file: str, project_config: ProjectConfiguration) -> str:
     """ Create dag from .bc file using opt through executing shell commands
 
@@ -55,11 +55,12 @@ def generate_dot_file(bc_file: str, project_config: ProjectConfiguration) -> str
     """
     output_file: str = project_config.get_temp_filename_with_extension(".dot", ".main")
     cur_cwd: str = os.getcwd()
-    os.chdir(project_config.locationTempDir) # opt generates .dot in cwd
+    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
     commands: List[str] = ["opt", "-enable-new-pm=0", "-dot-cfg", "-S", bc_file, "-disable-output"]
     subprocess.check_call(commands)
     os.chdir(cur_cwd)
     return output_file
+
 
 def inline_functions(input_file: str, project_config: ProjectConfiguration, output_file: str = None) -> str:
     """ Unrolls the probided input file and output the unrolled version in
@@ -79,7 +80,7 @@ def inline_functions(input_file: str, project_config: ProjectConfiguration, outp
 
     commands = ["opt",
                 "-always-inline",
-               "-inline", "-inline-threshold=10000000",
+                "-inline", "-inline-threshold=10000000",
                 "-S", input_file,
                 "-o", output_file]
 
@@ -108,14 +109,15 @@ def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_f
                 "-mem2reg",
                 "-simplifycfg",
                 "-loops",
-                "-lcssa",  "-loop-simplify",
+                "-lcssa", "-loop-simplify",
                 "-loop-rotate",
-                "-loop-unroll", # "-unroll-threshold=10000000", "-unroll-count=1000",
+                "-loop-unroll",  # "-unroll-threshold=10000000", "-unroll-count=1000",
                 "-S", input_file,
                 "-o", output_file]
 
     logger.info(subprocess.run(commands, check=True))
     return output_file
+
 
 def remove_temp_cil_files(project_config: ProjectConfiguration) -> None:
     """Removes the temporary files created by CIL during its analysis.
