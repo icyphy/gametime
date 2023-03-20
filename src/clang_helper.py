@@ -49,11 +49,15 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
 def compile_to_object(bc_file: str, project_config: ProjectConfiguration) -> str:
     # compile bc file
     output_file: str = project_config.get_temp_filename_with_extension(".o", "compiled")
-    cur_cwd: str = os.getcwd()
-    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
     commands: List[str] = ["clang", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
-    os.chdir(cur_cwd)
+
+    ## object dump
+    dump_file: str = project_config.get_temp_filename_with_extension(".dump", "compiled")
+    commands = ["llvm-objdump", "-S", "-d", output_file]
+    dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
+    subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
+    dumping.wait()
     return output_file
 
 def dump_object(object_file: str, project_config: ProjectConfiguration) -> str:
