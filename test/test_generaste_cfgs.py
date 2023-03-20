@@ -61,6 +61,12 @@ class TestGenerateCFG(unittest.TestCase):
         nx_helper.write_dag_to_dot_file(dag, output_dag_path)
         self.assertTrue(exists(output_dag_path))
 
+    def test_compile(self):
+        output_path: str = clang_helper.compile_to_llvm(self.project_config)
+        output_path = clang_helper.inline_functions(output_path, self.project_config)
+        output_path = clang_helper.unroll_loops(output_path, self.project_config)
+        clang_helper.compile_to_object(output_path, self.project_config)
+
     def test_clean_temp_dir(self):
         clang_helper.remove_temp_cil_files(self.project_config)
 

@@ -33,6 +33,7 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     output_file: str = project_config.get_temp_filename_with_extension(".bc", output_name)
     commands: List[str] = ["clang", "-Xclang",
                            "-O1", "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
+                           # "--target=riscv32", "-march=rv32i",
                            # "-disable-O0-optnone", "-emit-llvm", "-O0",
                            # "-g",
                            "-o", output_file, "-c", file_to_compile]
@@ -44,6 +45,25 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     subprocess.run(commands, check=True)
     return output_file
 
+
+def compile_to_object(bc_file: str, project_config: ProjectConfiguration) -> str:
+    # compile bc file
+    output_file: str = project_config.get_temp_filename_with_extension(".o", "compiled")
+    cur_cwd: str = os.getcwd()
+    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
+    commands: List[str] = ["clang", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
+    subprocess.check_call(commands)
+    os.chdir(cur_cwd)
+    return output_file
+
+def dump_object(object_file: str, project_config: ProjectConfiguration) -> str:
+    output_file: str = project_config.get_temp_filename_with_extension(".dmp", "dumped")
+    cur_cwd: str = os.getcwd()
+    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
+    commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
+    subprocess.check_call(commands)
+    os.chdir(cur_cwd)
+    return output_file
 
 def generate_dot_file(bc_file: str, project_config: ProjectConfiguration) -> str:
     """ Create dag from .bc file using opt through executing shell commands

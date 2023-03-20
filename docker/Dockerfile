@@ -45,6 +45,8 @@ RUN apt-get -qq update && \
         dirmngr gnupg2 lbzip2 wget xz-utils libtinfo5 && \
     rm -rf /var/lib/apt/lists/*
 
+
+
 # Signing keys
 ENV GPG_KEYS 09C4E7007CB2EFFB A2C794A986419D8A B4468DF4E95C63DC D23DD2C20DD88BA2 8F0871F202119294 0FC3042E345AD05D
 
@@ -58,6 +60,16 @@ ENV LLVM_VERSION 14.0.0
 # Install Clang and LLVM
 COPY docker/install.Unix.sh .
 RUN bash ./install.Unix.sh
+
+# Install RISCV Toolchains
+RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
+# RUN ls
+RUN mkdir /opt/riscv && \
+    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
+    export PATH=$PATH:/opt/riscv/bin && \
+    riscv32-unknown-elf-gcc -v
+
+
 
 ## Install ILP Solvers
 RUN apt-get -qq update && \
@@ -77,3 +89,4 @@ RUN if [ -f "/tmp/conda-tmp/conda_environment.yml" ]; then umask 0002 && /opt/co
     && rm -rf /tmp/conda-tmp
 
 RUN yes | pysmt-install --z3 --btor
+
