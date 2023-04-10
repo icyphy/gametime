@@ -176,6 +176,15 @@ class Dag(nx.DiGraph):
         """
         return list(zip(nodes[:-1], nodes[1:]))
 
+    def get_node_label(self, node: int) -> str:
+        """
+        gets node label from node ID
+        :param node: ID of the node of interest
+        :return: label corresponding to the node. (code corresponding to
+        the node in LLVM IR)
+        """
+        return self.allNodesWithDescription[node][1]["label"]
+
 
 def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
                           edges_to_labels: Dict[Tuple[str, str], str] = None,

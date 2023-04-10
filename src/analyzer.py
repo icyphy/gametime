@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 import shutil
 import time
 from copy import deepcopy
@@ -159,7 +160,7 @@ class Analyzer(object):
         # self._runCil()
 
         self.dag_path = clang_helper.generate_dot_file(processing, self.projectConfig)
-
+        self.preprocessed_path: str = processing
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
         logger.info("")
@@ -1029,3 +1030,22 @@ class Analyzer(object):
             self.dag.edgeWeights[self.dag.edgesReducedIndices[reducedEdge]] = \
                 reduced_edge_weights[reducedEdgeIndex]
         logger.info("List generated.")
+
+    ### NEW Functions ####
+    def compile_based_on_path(self, path: Path) -> None:
+        with open(self.preprocessed_path, "r") as preprocessed_file:
+            preprocessed_program_str = preprocessed_file.read()
+        print(preprocessed_program_str)
+
+        for node in path.nodes:
+            print(node)
+            label = self.dag.get_node_label(self.dag.nodesIndices[node])
+            index = label.rfind("br")
+            if index == -1:
+                continue
+            condition = label[index:]
+            index = condition.find('\\')
+            condition = condition[:index]
+            print(condition)
+
+
