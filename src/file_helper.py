@@ -71,7 +71,7 @@ def remove_files(patterns: List[str], dir_location: str) -> None:
                 os.remove(os.path.join(dir_location, filename))
 
 def remove_all_except(patterns: List[str], dir_location: str) -> None:
-    """Removes all of the files and directories from the directory whose
+    """Removes all_temp_files of the files and directories from the directory whose
     location is provided, *except* for those files whose names match any
     of the patterns in the list provided.
 

@@ -77,7 +77,7 @@ class Analyzer(object):
         # Number of `bad' rows in the basis matrix.
         self.numBadRows: int = 0
 
-        # List of the Path objects associated with all basis paths
+        # List of the Path objects associated with all_temp_files basis paths
         # generated so far.
         self.basisPaths = []
 
@@ -429,10 +429,10 @@ class Analyzer(object):
         """Generates an overcomplete basis so that each feasible path can be
            written as a liner combination of the paths in the basis so that the
            L1 norm is at most 'k'. This method is for testing purposes
-           only as it exhaustively generates all paths in the graph!. Use the
+           only as it exhaustively generates all_temp_files paths in the graph!. Use the
            function below for a scalable version.
         """
-        logger.info("Generating all paths")
+        logger.info("Generating all_temp_files paths")
         paths = nx.all_simple_paths(self.dag, self.dag.source, self.dag.sink)
         feasible = list(paths)
         logger.info("Find minimal overcomplete basis")
@@ -571,7 +571,7 @@ class Analyzer(object):
                         "under analysis, which is the only basis path.")
             logger.warn(warn_msg)
 
-        # Collects all infeasible paths discovered during the computation
+        # Collects all_temp_files infeasible paths discovered during the computation
         infeasible = []
         current_row, num_paths_unsat = 0, 0
         while current_row < (self.pathDimension - self.numBadRows):
@@ -1024,7 +1024,7 @@ class Analyzer(object):
 
         # Generate the list of edge weights that the integer linear
         # programming problem will use.
-        logger.info("Generating the list of weights on all edges...")
+        logger.info("Generating the list of weights on all_temp_files edges...")
         for reducedEdgeIndex, reducedEdge in enumerate(self.dag.edgesReduced):
             self.dag.edgeWeights[self.dag.edgesReducedIndices[reducedEdge]] = \
                 reduced_edge_weights[reducedEdgeIndex]

@@ -48,12 +48,12 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
 
 def compile_to_object(bc_file: str, project_config: ProjectConfiguration) -> str:
     # compile bc file
-    output_file: str = project_config.get_temp_filename_with_extension(".o", "compiled")
+    output_file: str = project_config.get_temp_filename_with_extension(".o", "riscv-gt")
     commands: List[str] = ["clang", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
 
     ## object dump
-    dump_file: str = project_config.get_temp_filename_with_extension(".dump", "compiled")
+    dump_file: str = project_config.get_temp_filename_with_extension(".dump", "riscv-gt")
     commands = ["llvm-objdump", "-S", "-d", output_file]
     dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
     subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
@@ -143,15 +143,22 @@ def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_f
     return output_file
 
 
-def remove_temp_cil_files(project_config: ProjectConfiguration) -> None:
+def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:
     """Removes the temporary files created by CIL during its analysis.
 
     Arguments:
         project_config:
             :class:`~gametime.projectConfiguration.ProjectConfiguration`
             object that represents the configuration of a GameTime project.
+        all_temp_files:
+            :bool: flag to clear all files in temporary directory (if True)
+            or only -gt files (if False).
     """
     # Remove the files with extension ".cil.*".
+    if all_temp_files:
+        remove_files([r".*"], project_config.locationTempDir)
+        return
+
     other_temp_files = r".*\.dot"
     remove_files([other_temp_files], project_config.locationTempDir)
 
@@ -166,3 +173,4 @@ def remove_temp_cil_files(project_config: ProjectConfiguration) -> None:
     # Remove these files.
     other_temp_files = r".*-gt\.[^c]+"
     remove_files([other_temp_files], project_config.locationTempDir)
+

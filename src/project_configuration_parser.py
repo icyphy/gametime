@@ -138,11 +138,11 @@ class YAMLConfigurationParser(ConfigurationParser):
                     dump_instruction_trace = value
                 case "dump-path":
                     dump_path = value
-                case "dump-all-paths":
+                case "dump-all_temp_files-paths":
                     dump_all_paths = value
                 case "dump-smt-trace":
                     dump_smt_trace = value
-                case "dump-all-queries":
+                case "dump-all_temp_files-queries":
                     dump_all_queries = value
                 case "keep-parser-output":
                     keep_parser_output = value

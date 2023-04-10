@@ -29,13 +29,13 @@ class DebugConfiguration(object):
             True if information about the path being traced is to be dumped;
             False otherwise.
         dump_all_paths:
-            True if information about all of the paths that have been traced
+            True if information about all_temp_files of the paths that have been traced
             during analysis are to be dumped to a file; False otherwise.
         dump_smt_trace:
             True if information produced during the creation of an SMT query
             is to be dumped; False otherwise.
         dump_all_queries:
-            True if information about all of the SMT queries that have been
+            True if information about all_temp_files of the SMT queries that have been
             made during analysis are to be dumped to a file; False otherwise.
         keep_parser_output:
             True if the debugging information and temporary files produced by
@@ -68,14 +68,14 @@ class DebugConfiguration(object):
         #: Dump information about the path being traced.
         self.DUMP_PATH = dump_path
 
-        #: Dump information about all of the paths that have been traced
+        #: Dump information about all_temp_files of the paths that have been traced
         #: during analysis to a file.
         self.DUMP_ALL_PATHS = dump_all_paths
 
         #: Dump information produced when an SMT query is created.
         self.DUMP_SMT_TRACE = dump_smt_trace
 
-        #: Dump information about all of the SMT queries that
+        #: Dump information about all_temp_files of the SMT queries that
         #: have been made during analysis to a file.
         self.DUMP_ALL_QUERIES = dump_all_queries
 

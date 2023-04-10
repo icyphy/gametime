@@ -70,5 +70,9 @@ class TestGenerateCFG(unittest.TestCase):
     def test_clean_temp_dir(self):
         clang_helper.remove_temp_cil_files(self.project_config)
 
+    def test_clean_temp_all(self):
+        clang_helper.remove_temp_cil_files(self.project_config, all_temp_files=True)
+
+
 if __name__ == '__main__':
     unittest.main()
