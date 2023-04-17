@@ -46,14 +46,14 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     return output_file
 
 
-def compile_to_object(bc_file: str, project_config: ProjectConfiguration) -> str:
+def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output_name: str = "riscv-gt") -> str:
     # compile bc file
-    output_file: str = project_config.get_temp_filename_with_extension(".o", "riscv-gt")
+    output_file: str = project_config.get_temp_filename_with_extension(".o", output_name)
     commands: List[str] = ["clang", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
 
     ## object dump
-    dump_file: str = project_config.get_temp_filename_with_extension(".dump", "riscv-gt")
+    dump_file: str = project_config.get_temp_filename_with_extension(".dump", output_name)
     commands = ["llvm-objdump", "-S", "-d", output_file]
     dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
     subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
