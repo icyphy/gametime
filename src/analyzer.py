@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import re
 import shutil
 import time
 from copy import deepcopy
@@ -77,7 +78,7 @@ class Analyzer(object):
         # Number of `bad' rows in the basis matrix.
         self.numBadRows: int = 0
 
-        # List of the Path objects associated with all basis paths
+        # List of the Path objects associated with all_temp_files basis paths
         # generated so far.
         self.basisPaths = []
 
@@ -159,7 +160,7 @@ class Analyzer(object):
         # self._runCil()
 
         self.dag_path = clang_helper.generate_dot_file(processing, self.projectConfig)
-
+        self.preprocessed_path: str = processing
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
         logger.info("")
@@ -429,10 +430,10 @@ class Analyzer(object):
         """Generates an overcomplete basis so that each feasible path can be
            written as a liner combination of the paths in the basis so that the
            L1 norm is at most 'k'. This method is for testing purposes
-           only as it exhaustively generates all paths in the graph!. Use the
+           only as it exhaustively generates all_temp_files paths in the graph!. Use the
            function below for a scalable version.
         """
-        logger.info("Generating all paths")
+        logger.info("Generating all_temp_files paths")
         paths = nx.all_simple_paths(self.dag, self.dag.source, self.dag.sink)
         feasible = list(paths)
         logger.info("Find minimal overcomplete basis")
@@ -571,7 +572,7 @@ class Analyzer(object):
                         "under analysis, which is the only basis path.")
             logger.warn(warn_msg)
 
-        # Collects all infeasible paths discovered during the computation
+        # Collects all_temp_files infeasible paths discovered during the computation
         infeasible = []
         current_row, num_paths_unsat = 0, 0
         while current_row < (self.pathDimension - self.numBadRows):
@@ -1024,8 +1025,60 @@ class Analyzer(object):
 
         # Generate the list of edge weights that the integer linear
         # programming problem will use.
-        logger.info("Generating the list of weights on all edges...")
+        logger.info("Generating the list of weights on all_temp_files edges...")
         for reducedEdgeIndex, reducedEdge in enumerate(self.dag.edgesReduced):
             self.dag.edgeWeights[self.dag.edgesReducedIndices[reducedEdge]] = \
                 reduced_edge_weights[reducedEdgeIndex]
         logger.info("List generated.")
+
+    ### NEW Functions ####
+    def change_bt_based_on_path(self, path: Path) -> str:
+        """Change LLVM code to drive program down a path specified by the
+        path parameter. Writes the LLVM file back to the maingt folder.
+
+        :param path: Path object corresponding to the path to drive.
+        """
+        # read from file
+        with open(self.preprocessed_path, "r") as preprocessed_file:
+            program_str = preprocessed_file.read()
+
+        # assemble path
+        bc_file_name = "path"
+
+        prev_condition: str = ""
+        prev_block_number: int = 0
+
+        for node in path.nodes:
+            node_label = self.dag.get_node_label(self.dag.nodesIndices[node])
+            block_number = node_label[node_label.find("%"):node_label.find(":")]  # find %4 for {%4:...
+            if prev_condition:  # update prev condition to point to this node
+                prev_block_begin_index = program_str.find("{}:".format(prev_block_number))
+                prev_block = program_str[prev_block_begin_index:]
+                condition_begin_index = prev_block.find(prev_condition)
+                prev_condition_index = prev_block_begin_index + condition_begin_index
+                program_str = program_str[:prev_condition_index] \
+                              + "br label {}".format(block_number) \
+                              + program_str[prev_condition_index + len(prev_condition):]
+
+
+            index = node_label.rfind("br")  # find the last branch (assume last branch contains conditions)
+            if index == -1:  # in case it is sink (no more branches)
+                continue
+            condition = node_label[index:]
+            index = condition.find('\\')
+            condition = condition[:index]
+            if condition.count("label") > 1:  # branch rather than jump
+                prev_condition = condition
+            else:
+                prev_condition = ""
+            prev_block_number = int(block_number[1:])
+            bc_file_name += "-{}".format(prev_block_number)
+
+        bc_file_name += "-gt"
+
+        # write to file
+        output_path = self.projectConfig.get_temp_filename_with_extension(".bc", bc_file_name)
+        with open(output_path, "w") as output_file:
+            output_file.write(program_str)
+
+        return output_path

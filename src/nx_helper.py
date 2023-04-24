@@ -33,6 +33,7 @@ class Dag(nx.DiGraph):
         super(Dag, self).__init__(*args, **kwargs)
 
         #: Source of the DAG.
+
         self.source: str = ""
 
         #: Sink of the DAG.
@@ -49,8 +50,9 @@ class Dag(nx.DiGraph):
 
         #: List of nodes in the DAG.
         self.allNodes: List[str] = []
+        self.allNodesWithDescription: List[Tuple[str, Dict[str, str]]] = []
 
-        #: Dictionary that maps nodes to their indices in the list of all nodes.
+        #: Dictionary that maps nodes to their indices in the list of all_temp_files nodes.
         #: This is maintained for efficiency purposes.
         self.nodesIndices: Dict[str, int] = {}
 
@@ -60,7 +62,7 @@ class Dag(nx.DiGraph):
         self.nodesExceptSink: List[str] = []
 
         #: Dictionary that maps nodes (except the sink) to their indices in
-        #: the list of all nodes (except the sink). This is maintained for
+        #: the list of all_temp_files nodes (except the sink). This is maintained for
         #: efficiency purposes.
         self.nodesExceptSinkIndices: Dict[str, int] = {}
 
@@ -70,14 +72,14 @@ class Dag(nx.DiGraph):
         self.nodesExceptSourceSink: List[str] = []
 
         #: Dictionary that maps nodes (except the source and the sink) to their
-        #: indices in the list of all nodes (except the source and the sink).
+        #: indices in the list of all_temp_files nodes (except the source and the sink).
         #: This is maintained for efficiency purposes.
         self.nodesExceptSourceSinkIndices: Dict[str, int] = {}
 
         #: List of edges in the DAG.
         self.allEdges: List[Tuple[str, str]] = []
 
-        #: Dictionary that maps edges to their indices in the list of all edges.
+        #: Dictionary that maps edges to their indices in the list of all_temp_files edges.
         #: This is maintained for efficiency purposes.
         self.edgesIndices: Dict[Tuple[str, str]: int] = {}
 
@@ -85,20 +87,21 @@ class Dag(nx.DiGraph):
         self.edgesReduced: List[Tuple[str, str]] = []
 
         #: Dictionary that maps non-special edges to their indices in the
-        #: list of all edges. This is maintained for efficiency purposes.
+        #: list of all_temp_files edges. This is maintained for efficiency purposes.
         self.edgesReducedIndices: Dict[Tuple[str, str], int] = {}
 
         #: Dictionary that maps nodes to the special ('default') edges.
         self.specialEdges: Dict[str, Tuple[str, str]] = {}
 
         #: List of the weights assigned to the edges in the DAG, arranged
-        #: in the same order as the edges are in the list of all edges.
+        #: in the same order as the edges are in the list of all_temp_files edges.
         self.edgeWeights: List[int] = []
 
     def initialize_dictionaries(self):
         self.numNodes = self.number_of_nodes()
         self.numEdges = self.number_of_edges()
         self.allNodes = nodes = sorted(self.nodes())
+        self.allNodesWithDescription = sorted(self.nodes.data(), key=lambda x: x[0])
         self.allEdges = self.edges()
 
         # We assume there is only one source and one sink.
@@ -145,7 +148,7 @@ class Dag(nx.DiGraph):
         flow enters the node, but no outgoing edge is 'visibly' selected.
         In other words, it is the 'default' edge for the node.
 
-        This method initializes all of the data structures necessary
+        This method initializes all_temp_files of the data structures necessary
         to keep track of these special edges.
         """
         self.edgesReduced = list(self.allEdges)
@@ -172,6 +175,15 @@ class Dag(nx.DiGraph):
             List of edges that lie along the path.
         """
         return list(zip(nodes[:-1], nodes[1:]))
+
+    def get_node_label(self, node: int) -> str:
+        """
+        gets node label from node ID
+        :param node: ID of the node of interest
+        :return: label corresponding to the node. (code corresponding to
+        the node in LLVM IR)
+        """
+        return self.allNodesWithDescription[node][1]["label"]
 
 
 def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
@@ -209,6 +221,15 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
 
     dag_name = " %s" % dag_name.strip()
     contents = ["digraph%s {" % dag_name]
+
+    for node in dag.allNodesWithDescription:
+        line: str = "  %s" % node[0]
+        attributes: List[str] = []
+        for key in node[1]:
+            attributes.append(' %s="%s"' % (key, node[1][key]))
+        line += " [%s]" % ", ".join(attributes)
+        contents.append("%s;" % line)
+
     for edge in dag.edges():
         line = "  %s -> %s" % edge
         attributes = []
@@ -247,7 +268,7 @@ def construct_dag(location: str) -> Dag:
     """
     try:
         with open(location, "r") as f:
-            graph_from_dot = nx.nx_agraph.read_dot(f)
+            graph_from_dot: nx.Graph = nx.nx_agraph.read_dot(f)
 
     except EnvironmentError as e:
         err_msg: str = ("Error opening the DOT file, located at %s, that contains "

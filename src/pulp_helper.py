@@ -231,7 +231,7 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
     """This function returns the least dealta in the underlying graph, as
        specified by 'analyzer', that is feasible with the given set of
        measurements as specified by 'paths'. The method does not take into
-       account which paths are feasible and which not; it considers all the
+       account which paths are feasible and which not; it considers all_temp_files the
        paths in the graph.
 
        Arguments:
@@ -472,15 +472,15 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
         problem += pulp.lpSum(path_weights) <= path_function_upper(path)
         problem += pulp.lpSum(path_weights) >= path_function_lower(path)
 
-    # Add a constraint for the flow from the source. The flow through all of
+    # Add a constraint for the flow from the source. The flow through all_temp_files of
     # the edges out of the source should sum up to exactly 1.
     edge_flows_from_source = \
         get_new_indices(compact, edgeFlows, dag.out_edges(source))
     problem += pulp.lpSum(edge_flows_from_source) == 1, "Flows from source"
 
     # Add constraints for the rest of the nodes (except sink). The flow
-    # through all of the edges into a node should equal the flow through
-    # all of the edges out of the node. Hence, for node n, if e_i and e_j
+    # through all_temp_files of the edges into a node should equal the flow through
+    # all_temp_files of the edges out of the node. Hence, for node n, if e_i and e_j
     # enter a node, and e_k and e_l exit a node, the corresponding flow
     # equation is e_i + e_j = e_k + e_l.
     for node in nodes_except_source_sink:
@@ -494,7 +494,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
             (pulp.lpSum(edge_flows_to_node) == pulp.lpSum(edge_flows_from_node),
              "Flows through %s" % node)
 
-    # Add a constraint for the flow to the sink. The flow through all of
+    # Add a constraint for the flow to the sink. The flow through all_temp_files of
     # the edges into the sink should sum up to exactly 1.
     edge_flows_to_sink = get_new_indices(compact, edgeFlows,
                                          dag.in_edges(sink))
@@ -502,10 +502,10 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     # Add constraints for the exclusive path constraints. To ensure that
     # the edges in each constraint are not taken together, the total flow
-    # through all the edges should add to at least one unit less than
+    # through all_temp_files the edges should add to at least one unit less than
     # the number of edges in the constraint. Hence, if a constraint
     # contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.
-    # This way, all three of these edges can never be taken together.
+    # This way, all_temp_files three of these edges can never be taken together.
     for constraintNum, path in enumerate(path_exclusive_constraints):
         edge_flows_in_constraint = get_new_indices(compact, edgeFlows, path)
         problem += (pulp.lpSum(edge_flows_in_constraint) <=
@@ -595,7 +595,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 def find_worst_expressible_path(analyzer, paths, bound):
     """
         Function to find the longest path in the underlying graph of 'analyzer'
-        assuming the lengths of all measured paths are between -1 and 1. 
+        assuming the lengths of all_temp_files measured paths are between -1 and 1.
         Arguments
            analyzer:
                ``Analyzer`` object that maintains information about
@@ -663,7 +663,7 @@ def find_goodness_of_fit(analyzer, paths, basis):
         problem += abs_values[index] >= -coeffs[index]
 
     for i in range(num_paths):
-        # all coefficients expressing path i
+        # all_temp_files coefficients expressing path i
         all_coeff_expressing = [abs_values[(i, j)] for j in range(num_basis)]
         problem += pulp.lpSum(all_coeff_expressing) <= bound
         # express path i as a linear combination of basis paths
@@ -743,7 +743,7 @@ def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
 
     for i in range(num_paths):
         logger.info("Processing path number %d" % i)
-        # all coefficients expressing path i
+        # all_temp_files coefficients expressing path i
         all_coeff_expressing = [abs_values[(i, j)] for j in range(num_paths)]
         problem += pulp.lpSum(all_coeff_expressing) <= k
         for edge in edges:
@@ -783,7 +783,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
             ``Interval`` object that represents the interval of values
             that the generated paths can have. If no ``Interval`` object
             is provided, the interval of values is considered to be
-            all real numbers.
+            all_temp_files real numbers.
 
     Returns:
         Tuple whose first element is the longest or the shortest path
@@ -825,15 +825,15 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     edge_flows = pulp.LpVariable.dicts("EdgeFlow", range(0, num_edges),
                                        0, 1, pulp.LpBinary)
 
-    # Add a constraint for the flow from the source. The flow through all of
+    # Add a constraint for the flow from the source. The flow through all_temp_files of
     # the edges out of the source should sum up to exactly 1.
     edge_flows_from_source = _get_edge_flow_vars(analyzer, edge_flows,
                                                  dag.out_edges(source))
     problem += pulp.lpSum(edge_flows_from_source) == 1, "Flows from source"
 
     # Add constraints for the rest of the nodes (except sink). The flow
-    # through all of the edges into a node should equal the flow through
-    # all of the edges out of the node. Hence, for node n, if e_i and e_j
+    # through all_temp_files of the edges into a node should equal the flow through
+    # all_temp_files of the edges out of the node. Hence, for node n, if e_i and e_j
     # enter a node, and e_k and e_l exit a node, the corresponding flow
     # equation is e_i + e_j = e_k + e_l.
     for node in nodes_except_source_sink:
@@ -845,7 +845,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
             (pulp.lpSum(edge_flows_to_node) == pulp.lpSum(edge_flows_from_node),
              "Flows through %s" % node)
 
-    # Add a constraint for the flow to the sink. The flow through all of
+    # Add a constraint for the flow to the sink. The flow through all_temp_files of
     # the edges into the sink should sum up to exactly 1.
     edge_flows_to_sink = _get_edge_flow_vars(analyzer, edge_flows,
                                              dag.in_edges(sink))
@@ -853,10 +853,10 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
 
     # Add constraints for the exclusive path constraints. To ensure that
     # the edges in each constraint are not taken together, the total flow
-    # through all the edges should add to at least one unit less than
+    # through all_temp_files the edges should add to at least one unit less than
     # the number of edges in the constraint. Hence, if a constraint
     # contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.
-    # This way, all three of these edges can never be taken together.
+    # This way, all_temp_files three of these edges can never be taken together.
     for constraint_num, path in enumerate(path_exclusive_constraints):
         edge_flows_in_constraint = _get_edge_flow_vars(analyzer, edge_flows, path)
         problem += (pulp.lpSum(edge_flows_in_constraint) <= (len(path) - 1),
