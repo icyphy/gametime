@@ -1,7 +1,7 @@
 # See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/python-3-anaconda/.devcontainer/base.Dockerfile
 
 FROM mcr.microsoft.com/vscode/devcontainers/miniconda:3
-
+USER root
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
@@ -18,6 +18,36 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 # # FROM debian:bullseye 
 # Note: Microsoft uses debian:bullseye in the first place. 
+
+
+### riscv-gnu-toolchain
+RUN git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
+WORKDIR /riscv-gnu-toolchain
+RUN apt-get -qq update; \
+    apt-get install -qqy --no-install-recommends autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build
+RUN rm -rf /var/lib/apt/lists/*
+RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
+RUN make
+WORKDIR /
+
+### install newest verilator not from apt-get
+RUN git clone https://github.com/verilator/verilator
+WORKDIR /verilator
+RUN apt-get install git help2man perl python3 make clang libfl2 libfl-dev zlibc zlib1g zlib1g-dev git autoconf flex bison
+RUN unset VERILATOR_ROOT
+RUN autoconf
+RUN ./configure
+RUN make
+RUN make install
+WORKDIR /
+
+### flexpret
+RUN git clone https://github.com/pretis/flexpret.git
+WORKDIR /flexpret
+CMD ["git submodule update --init --recursive"]
+RUN make verilog_raw
+RUN make emulator
+WORKDIR /
 
 # Install dependencies
 RUN apt-get -qq update; \
@@ -89,4 +119,8 @@ RUN if [ -f "/tmp/conda-tmp/conda_environment.yml" ]; then umask 0002 && /opt/co
     && rm -rf /tmp/conda-tmp
 
 RUN yes | pysmt-install --z3 --btor
+
+CMD ["/sbin/my_init"]
+
+
 
