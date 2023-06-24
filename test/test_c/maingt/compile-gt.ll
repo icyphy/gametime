@@ -4,44 +4,34 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-unknown-linux-gnu"
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @foo(i32 noundef %0) #0 {
-  %2 = alloca i32, align 4
-  store i32 %0, i32* %2, align 4, !tbaa !4
-  %3 = load i32, i32* %2, align 4, !tbaa !4
-  %4 = add nsw i32 %3, 1
-  store i32 %4, i32* %2, align 4, !tbaa !4
-  %5 = load i32, i32* %2, align 4, !tbaa !4
-  ret i32 %5
-}
-
-; Function Attrs: nounwind uwtable
 define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %3 = alloca i32, align 4
   %4 = alloca i32, align 4
-  %5 = alloca i32, align 4
-  %6 = alloca i8**, align 8
-  %7 = alloca i32, align 4
-  store i32 0, i32* %4, align 4
-  store i32 %0, i32* %5, align 4, !tbaa !4
-  store i8** %1, i8*** %6, align 8, !tbaa !8
-  %8 = bitcast i32* %7 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %8) #2
-  store i32 0, i32* %7, align 4, !tbaa !4
-  %9 = load i32, i32* %7, align 4, !tbaa !4
-  %10 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.start.p0i8(i64 4, i8* %10)
-  store i32 %9, i32* %3, align 4, !tbaa !4
-  %11 = load i32, i32* %3, align 4, !tbaa !4
-  %12 = add nsw i32 %11, 1
-  store i32 %12, i32* %3, align 4, !tbaa !4
-  %13 = load i32, i32* %3, align 4, !tbaa !4
-  %14 = bitcast i32* %3 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %14)
-  store i32 %13, i32* %7, align 4, !tbaa !4
-  %15 = load i32, i32* %7, align 4, !tbaa !4
-  %16 = bitcast i32* %7 to i8*
-  call void @llvm.lifetime.end.p0i8(i64 4, i8* %16) #2
-  ret i32 %15
+  %5 = alloca i8**, align 8
+  %6 = alloca i32, align 4
+  store i32 0, i32* %3, align 4
+  store i32 %0, i32* %4, align 4, !tbaa !4
+  store i8** %1, i8*** %5, align 8, !tbaa !8
+  %7 = bitcast i32* %6 to i8*
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %7) #2
+  store i32 0, i32* %6, align 4, !tbaa !4
+  %8 = load i32, i32* %6, align 4, !tbaa !4
+  %9 = load i32, i32* %4, align 4, !tbaa !4
+  %10 = icmp sgt i32 %8, %9
+  br i1 %10, label %11, label %15
+
+11:                                               ; preds = %2
+  %12 = load i32, i32* %6, align 4, !tbaa !4
+  %13 = add nsw i32 %12, 100
+  %14 = srem i32 %13, 33
+  store i32 %14, i32* %6, align 4, !tbaa !4
+  br label %15
+
+15:                                               ; preds = %11, %2
+  %16 = load i32, i32* %6, align 4, !tbaa !4
+  %17 = bitcast i32* %6 to i8*
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %17) #2
+  ret i32 %16
 }
 
 ; Function Attrs: argmemonly nofree nosync nounwind willreturn

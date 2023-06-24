@@ -51,7 +51,7 @@ class TestGenerateCFG(unittest.TestCase):
         self.assertIsNotNone(dag)
         self.assertFalse(nx_helper.has_cycles(dag))
         self.assertIsNotNone(nx_helper.get_random_path(dag, dag.source, dag.sink))
-        self.assertEqual(nx_helper.num_paths(dag, dag.source, dag.sink), 1)
+        self.assertEqual(nx_helper.num_paths(dag, dag.source, dag.sink), 2)
 
     def test_read_write_dag(self):
         input_dag_path: str = clang_helper.compile_to_llvm(self.project_config)

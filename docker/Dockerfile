@@ -18,41 +18,7 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 #     libomp5 lld lldb llvm-dev llvm-runtime llvm python3-clang 
 
 # # FROM debian:bullseye 
-# Note: Microsoft uses debian:bullseye in the first place. 
-
-
-### riscv-gnu-toolchain
-RUN git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
-WORKDIR /riscv-gnu-toolchain
-RUN apt-get -qq update; \
-    apt-get install -qqy --no-install-recommends autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build
-RUN rm -rf /var/lib/apt/lists/*
-RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
-RUN make
-WORKDIR /
-
-### install newest verilator not from apt-get
-RUN git clone https://github.com/verilator/verilator
-WORKDIR /verilator
-RUN apt-get install git help2man perl python3 make clang libfl2 libfl-dev zlibc zlib1g zlib1g-dev git autoconf flex bison
-RUN unset VERILATOR_ROOT
-RUN autoconf
-RUN ./configure
-RUN make
-RUN make install
-WORKDIR /
-
-### flexpret
-RUN git clone https://github.com/pretis/flexpret.git
-WORKDIR /flexpret
-CMD ["git submodule update --init --recursive"]
-RUN make verilog_raw
-RUN make emulator
-WORKDIR /
-
-
-
-
+# Note: Microsoft uses debian:bullseye in the first place.
 
 # Install dependencies
 RUN apt-get -qq update; \
@@ -104,6 +70,39 @@ RUN mkdir /opt/riscv && \
     export PATH=$PATH:/opt/riscv/bin && \
     riscv32-unknown-elf-gcc -v
 
+
+### install newest verilator not from apt-get
+RUN git clone https://github.com/verilator/verilator
+WORKDIR /verilator
+RUN apt-get -qq update; \
+    apt-get install -y git help2man perl python3 make clang libfl2 libfl-dev zlib1g zlib1g-dev git autoconf flex bison
+RUN unset VERILATOR_ROOT
+RUN autoconf
+RUN ./configure
+RUN make
+RUN make install
+WORKDIR /
+
+RUN apt-get update; \
+    apt-get install -y default-jdk
+RUN apt-get update; \
+    apt-get install apt-transport-https curl gnupg -yqq; \
+    echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list; \
+    echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list; \
+    curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo -H gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/scalasbt-release.gpg --import; \
+    chmod 644 /etc/apt/trusted.gpg.d/scalasbt-release.gpg; \
+    apt-get update; \
+    apt-get install -y sbt
+
+### flexpret
+ADD ./simulator_backend/flexpret /flexpret
+WORKDIR /flexpret
+CMD ["git submodule update --init --recursive"]
+RUN make verilog_raw
+RUN make emulator
+#export emulator to path: export PATH="$(pwd)/emulator:$PATH"
+ENV PATH="${PATH}:/flexpret/emulator"
+WORKDIR /
 
 
 ## Install ILP Solvers

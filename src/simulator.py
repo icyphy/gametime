@@ -43,15 +43,3 @@ class Simulator(object):
         self._measurementDir = os.path.join(projectConfig.locationTempDir,
                                             "%s-%s" % (config.TEMP_MEASUREMENT,
                                                        self.name.lower()))
-
-    def measure(self, path):
-        """
-        Arguments:
-            path:
-                :class:`~gametime.path.Path` object that represents the path
-                whose value needs to be measured.
-        Returns:
-            Value of the path, as measured on the simulator
-            that is represented by this object.
-        """
-        return 0
