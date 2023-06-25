@@ -2,3 +2,4 @@ test/test_c/main.png
 test/test_c/.main.dot
 test/test_c/main.bc
 test/__pycache__/test_load_class_from_yaml.cpython-310.pyc
+/Dockerfile*
