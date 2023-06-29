@@ -1,22 +1,39 @@
-import subprocess
 import unittest
-import os
-from os.path import exists
 
-import simulator
-import flexpret_simulator
+import time
+import clang_helper
+
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
+from simulator.flexpret_simulator import flexpret_simulator
+from src import Analyzer
 
 
 class TestFlexpret(unittest.TestCase):
     def setUp(self):
         self.project_config: ProjectConfiguration = \
-            YAMLConfigurationParser.parse("test_c/config.yaml")
+            YAMLConfigurationParser.parse("test_flexpret_simulator/programs/add/config.yaml")
 
-    def test_simulate_add(self):
-        mem_file_dir_path = "/test_flexpret_simulator/programs/add"
-        mem_file_name = "add"
+    def test_compile_c(self):
+        analyzer = Analyzer(self.project_config)
+        analyzer.create_dag()
+        paths = analyzer.generate_basis_paths()
+        self.assertIsNotNone(paths[0], "no paths were found")
+        output_file = analyzer.change_bt_based_on_path(paths[0])
+        object_file_path = clang_helper.compile_to_object(output_file, self.project_config)
+        object_file_name = object_file_path[object_file_path.rfind('/')+1:-2]
+        print(object_file_name)
+
+    def test_compile_path(self):
+        analyzer = Analyzer(self.project_config)
+        analyzer.create_dag()
+        paths = analyzer.generate_basis_paths()
+        self.assertIsNotNone(paths[0], "no paths were found")
+        output_file = analyzer.change_bt_based_on_path(paths[0])
+        object_file_path = clang_helper.compile_to_object(output_file, self.project_config)
+        object_file_name = object_file_path[object_file_path.rfind('/') + 1:-2]
+
         fp_simulator = flexpret_simulator.FlexpretSimulator(self.project_config)
-        count = fp_simulator.measure(mem_file_dir_path, mem_file_name)
-        print("\n count is", count)
+        generated_mem_file_path = fp_simulator.object_file_to_mem(object_file_name)
+        print(generated_mem_file_path)
+

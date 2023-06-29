@@ -10,7 +10,7 @@ class TestAnalyzer(unittest.TestCase):
     def setUp(self):
         print("setup")
         self.project_config: ProjectConfiguration = \
-            YAMLConfigurationParser.parse("test_c/config.yaml")
+            YAMLConfigurationParser.parse("test_analyzer/programs/config.yaml")
 
     def test_preprocessing_completes_without_error(self):
         analyzer = Analyzer(self.project_config)

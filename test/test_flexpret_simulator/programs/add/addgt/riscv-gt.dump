@@ -1,0 +1,41 @@
+
+/opt/project/test/test_flexpret_simulator/programs/add/addgt/riscv-gt.o:	file format elf32-littleriscv
+
+Disassembly of section .text:
+
+00000000 <add>:
+       0: 13 01 01 ff  	addi	sp, sp, -16
+       4: 23 26 11 00  	sw	ra, 12(sp)
+       8: 23 24 81 00  	sw	s0, 8(sp)
+       c: 13 04 01 01  	addi	s0, sp, 16
+      10: 33 05 b5 00  	add	a0, a0, a1
+      14: 83 20 c1 00  	lw	ra, 12(sp)
+      18: 03 24 81 00  	lw	s0, 8(sp)
+      1c: 13 01 01 01  	addi	sp, sp, 16
+      20: 67 80 00 00  	ret
+
+00000024 <main>:
+      24: 13 01 01 ff  	addi	sp, sp, -16
+      28: 23 26 11 00  	sw	ra, 12(sp)
+      2c: 23 24 81 00  	sw	s0, 8(sp)
+      30: 13 04 01 01  	addi	s0, sp, 16
+      34: 37 c5 aa ba  	lui	a0, 764588
+      38: 13 05 a5 aa  	addi	a0, a0, -1366
+      3c: 73 10 e5 51  	csrw	1310, a0
+      40: 93 05 10 00  	li	a1, 1
+      44: 73 90 e5 51  	csrw	1310, a1
+      48: 73 10 e5 51  	csrw	1310, a0
+      4c: 13 05 20 00  	li	a0, 2
+      50: 73 10 e5 51  	csrw	1310, a0
+      54: 6f 00 40 00  	j	0x58 <main+0x34>
+      58: 37 c5 aa ba  	lui	a0, 764588
+      5c: 13 05 a5 aa  	addi	a0, a0, -1366
+      60: 73 10 e5 51  	csrw	1310, a0
+      64: 13 05 30 00  	li	a0, 3
+      68: 73 10 e5 51  	csrw	1310, a0
+      6c: 6f 00 40 00  	j	0x70 <main+0x4c>
+      70: 13 05 00 00  	li	a0, 0
+      74: 83 20 c1 00  	lw	ra, 12(sp)
+      78: 03 24 81 00  	lw	s0, 8(sp)
+      7c: 13 01 01 01  	addi	sp, sp, 16
+      80: 67 80 00 00  	ret

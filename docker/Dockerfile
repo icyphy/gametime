@@ -70,6 +70,13 @@ RUN mkdir /opt/riscv && \
     export PATH=$PATH:/opt/riscv/bin && \
     riscv32-unknown-elf-gcc -v
 
+## Install ILP Solvers
+RUN apt-get -qq update && \
+#    apt-add-repository universe && \
+    apt install -qqy --no-install-recommends \
+        coinor-cbc coinor-libcbc-dev \
+        glpk-utils libglpk-dev glpk-doc python3-swiglpk && \
+    rm -rf /var/lib/apt/lists/*
 
 ### install newest verilator not from apt-get
 RUN git clone https://github.com/verilator/verilator
@@ -95,7 +102,7 @@ RUN apt-get update; \
     apt-get install -y sbt
 
 ### flexpret
-ADD ./simulator_backend/flexpret /flexpret
+COPY ./simulator_backend/flexpret /flexpret
 WORKDIR /flexpret
 CMD ["git submodule update --init --recursive"]
 RUN make verilog_raw
@@ -105,13 +112,6 @@ ENV PATH="${PATH}:/flexpret/emulator"
 WORKDIR /
 
 
-## Install ILP Solvers
-RUN apt-get -qq update && \
-#    apt-add-repository universe && \
-    apt install -qqy --no-install-recommends \
-        coinor-cbc coinor-libcbc-dev \
-        glpk-utils libglpk-dev glpk-doc python3-swiglpk && \
-    rm -rf /var/lib/apt/lists/*
 
 # RUN /opt/conda/bin/conda install cryptography=38.0.4
 
@@ -123,8 +123,5 @@ RUN if [ -f "/tmp/conda-tmp/conda_environment.yml" ]; then umask 0002 && /opt/co
     && rm -rf /tmp/conda-tmp
 
 RUN yes | pysmt-install --z3 --btor
-
-CMD ["/sbin/my_init"]
-
 
 

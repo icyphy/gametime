@@ -1,0 +1,10 @@
+digraph "CFG for 'main' function" {
+	label="CFG for 'main' function";
+
+	Node0x5c2e260 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%2:\l  %3 = icmp sgt i32 0, %0\l  br i1 %3, label %4, label %7\l|{<s0>T|<s1>F}}"];
+	Node0x5c2e260:s0 -> Node0x5c2e960;
+	Node0x5c2e260:s1 -> Node0x5c2e9b0;
+	Node0x5c2e960 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{%4:\l4:                                                \l  %5 = add nsw i32 0, 100\l  %6 = srem i32 %5, 33\l  br label %7\l}"];
+	Node0x5c2e960 -> Node0x5c2e9b0;
+	Node0x5c2e9b0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%7:\l7:                                                \l  %.0 = phi i32 [ %6, %4 ], [ 0, %2 ]\l  ret i32 %.0\l}"];
+}

@@ -148,7 +148,7 @@ class ProjectConfiguration(object):
                  maximum_error_scale_factor=10,
                  determinant_threshold=0.001, max_infeasible_paths=100,
                  model_as_nested_arrays=False, prevent_basis_refinement=False,
-                 ilp_solver_name="", debug_config=None):
+                 ilp_solver_name="", debug_config=None, flexpret_path="", gametime_path=""):
         ### FILE INFORMATION ###
         # Location of the directory that contains the file to be analyzed.
         self.locationOrigDir = ""
@@ -326,6 +326,12 @@ class ProjectConfiguration(object):
 
         # Initialize the Solver and ModelParser objects.
         self.set_smt_solver_and_model_parser(smt_solver_name)
+
+        # Relative path to the FlexPRET repository from the GameTime repo. Needed to run FlexPRET Simulator.
+        self.flexpret_path = flexpret_path
+
+        # Relative path to the GameTime repo from the simulated file. Needed to run FlexPRET Simulator.
+        self.gametime_path = gametime_path
 
     def set_ilp_solver(self, ilp_solver_name):
         """

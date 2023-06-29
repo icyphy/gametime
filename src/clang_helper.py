@@ -31,8 +31,10 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     # compile bc file
     file_to_compile: str = project_config.locationOrigFile
     output_file: str = project_config.get_temp_filename_with_extension(".bc", output_name)
+
     commands: List[str] = ["clang", "-Xclang",
                            "-O1", "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
+                           f"-I{project_config.gametime_path}/{project_config.flexpret_path}/programs/lib/include",
                            # "--target=riscv32", "-march=rv32i",
                            # "-disable-O0-optnone", "-emit-llvm", "-O0",
                            # "-g",

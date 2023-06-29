@@ -1,0 +1,5 @@
+digraph "CFG for 'add' function" {
+	label="CFG for 'add' function";
+
+	Node0x60945e0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%2:\l  %3 = add i32 %0, %1\l  ret i32 %3\l}"];
+}

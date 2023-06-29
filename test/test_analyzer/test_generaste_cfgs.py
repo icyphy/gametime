@@ -12,12 +12,12 @@ from project_configuration_parser import YAMLConfigurationParser
 class TestGenerateCFG(unittest.TestCase):
     def setUp(self):
         self.project_config: ProjectConfiguration = \
-            YAMLConfigurationParser.parse("test_c/config.yaml")
+            YAMLConfigurationParser.parse("test_analyzer/programs/config.yaml")
 
     def test_generate_cfg_from_c_file(self):
-        source_path = os.path.relpath("test_c")
+        source_path = os.path.relpath("test_analyzer/programs")
         source_file = os.path.join(source_path, "main.c")
-        compile_command = ["clang", "-emit-llvm", "-o", "test_c/object.bc", "-c", source_file]
+        compile_command = ["clang", "-emit-llvm", "-o", "test_analyzer/programs/object.bc", "-c", source_file]
         exit_code = subprocess.run(compile_command)
         print(exit_code)
         print(source_file, os.path.isfile(source_file))

@@ -34,12 +34,10 @@ class Simulator(object):
         #: Name of the simulator that this object represents.
         self.name = name
 
-        #: GameTime project configuration for the code that
-        #: is being analyzed.
+        #: GameTime project configuration for the code that is being analyzed.
         self.projectConfig = projectConfig
 
-        #: Path to the temporary directory that will store
-        #: the temporary files that are generated during measurement.
+        #: Path to the temporary directory that will store the temporary files that are generated during measurement.
         self._measurementDir = os.path.join(projectConfig.locationTempDir,
                                             "%s-%s" % (config.TEMP_MEASUREMENT,
                                                        self.name.lower()))
