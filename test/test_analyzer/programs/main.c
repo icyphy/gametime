@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 
   // j = foo(j);
 
-  if (j > argc) {
+  if (j > 0) {
     j = (j + 100) % 33;
   }
   return j;

@@ -70,6 +70,16 @@ RUN mkdir /opt/riscv && \
     export PATH=$PATH:/opt/riscv/bin && \
     riscv32-unknown-elf-gcc -v
 
+#### install new gnu toolchain
+#RUN git clone https://github.com/riscv/riscv-gnu-toolchain
+#WORKDIR /riscv-gnu-toolchain
+#RUN apt-get -qq update; \
+#    apt-get install -y autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
+#RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
+#ENV PATH="${PATH}:/opt/riscv/bin"
+#RUN make
+#WORKDIR /
+
 ## Install ILP Solvers
 RUN apt-get -qq update && \
 #    apt-add-repository universe && \

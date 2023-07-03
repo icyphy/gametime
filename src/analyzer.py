@@ -132,7 +132,7 @@ class Analyzer(object):
                 remove_all_except([], project_temp_dir)
         else:
             os.mkdir(project_temp_dir)
-
+        os.chmod(project_temp_dir, 0o777) # make dir read and write by everyone
         # Make a temporary copy of the original file to preprocess.
         preprocessed_file = self.projectConfig.locationTempFile
         shutil.copyfile(orig_file, preprocessed_file)

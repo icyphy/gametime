@@ -38,3 +38,6 @@ class TestAnalyzer(unittest.TestCase):
         output_file = analyzer.change_bt_based_on_path(paths[0])
         clang_helper.compile_to_object(output_file, self.project_config)
 
+if __name__ == '__main__':
+    unittest.main()
+

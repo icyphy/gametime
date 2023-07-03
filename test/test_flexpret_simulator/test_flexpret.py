@@ -1,6 +1,5 @@
 import unittest
 
-import time
 import clang_helper
 
 from project_configuration import ProjectConfiguration

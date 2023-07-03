@@ -114,10 +114,12 @@ class YAMLConfigurationParser(ConfigurationParser):
                     ilp_solver_name = analysis_config[key]
                 case "smt-solver":
                     smt_solver_name = analysis_config[key]
-                case "flexpret_path":
-                    flexpret_path = analysis_config[key]
-                case "gametime_path":
+                case "gametime-flexpret-path":
+                    gametime_flexpret_path = analysis_config[key]
+                case "gametime-path":
                     gametime_path = analysis_config[key]
+                case "gametime-file-path":
+                    gametime_file_path = analysis_config[key]
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
@@ -168,8 +170,8 @@ class YAMLConfigurationParser(ConfigurationParser):
                                                                     maximum_error_scale_factor,
                                                                     determinant_threshold, max_infeasible_paths,
                                                                     model_as_nested_arrays, prevent_basis_refinement,
-                                                                    ilp_solver_name, debug_configuration, flexpret_path,
-                                                                    gametime_path)
+                                                                    ilp_solver_name, debug_configuration, gametime_flexpret_path,
+                                                                    gametime_path, gametime_file_path)
         logger.info("Successfully loaded project.")
         logger.info("")
         return project_config

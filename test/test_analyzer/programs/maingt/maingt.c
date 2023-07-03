@@ -1,11 +1,11 @@
-; ModuleID = '/opt/project/test/test_c/maingt/maingtinlined.bt'
-source_filename = "/opt/project/test/test_c/main.c"
+; ModuleID = '/opt/project/test/test_analyzer/programs/maingt/maingtinlined.bt'
+source_filename = "/opt/project/test/test_analyzer/programs/main.c"
 target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-unknown-linux-gnu"
 
 ; Function Attrs: nounwind uwtable
 define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
-  %3 = icmp sgt i32 0, %0
+  %3 = icmp sgt i32 0, 0
   br i1 %3, label %4, label %7
 
 4:                                                ; preds = %2
