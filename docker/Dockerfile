@@ -62,23 +62,23 @@ ENV LLVM_VERSION 14.0.0
 COPY docker/install.Unix.sh .
 RUN bash ./install.Unix.sh
 
-# Install RISCV Toolchains
-RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
-# RUN ls
-RUN mkdir /opt/riscv && \
-    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
-    export PATH=$PATH:/opt/riscv/bin && \
-    riscv32-unknown-elf-gcc -v
+## Install RISCV Toolchains
+#RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
+## RUN ls
+#RUN mkdir /opt/riscv && \
+#    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
+#    export PATH=$PATH:/opt/riscv/bin && \
+#    riscv32-unknown-elf-gcc -v
 
-#### install new gnu toolchain
-#RUN git clone https://github.com/riscv/riscv-gnu-toolchain
-#WORKDIR /riscv-gnu-toolchain
-#RUN apt-get -qq update; \
-#    apt-get install -y autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
-#RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
-#ENV PATH="${PATH}:/opt/riscv/bin"
-#RUN make
-#WORKDIR /
+### install new gnu toolchain
+RUN git clone https://github.com/riscv/riscv-gnu-toolchain
+WORKDIR /riscv-gnu-toolchain
+RUN apt-get -qq update; \
+    apt-get install -y autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
+RUN ./configure --prefix=/opt/riscv --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32 --with-isa-spec=2.2
+RUN make
+ENV PATH="${PATH}:/opt/riscv/bin"
+WORKDIR /
 
 ## Install ILP Solvers
 RUN apt-get -qq update && \
@@ -112,9 +112,12 @@ RUN apt-get update; \
     apt-get install -y sbt
 
 ### flexpret
-COPY ./simulator_backend/flexpret /flexpret
+#COPY ./simulator_backend/flexpret /flexpret
+RUN git clone https://github.com/pretis/flexpret.git
 WORKDIR /flexpret
-CMD ["git submodule update --init --recursive"]
+#RUN git switch gametime-support
+RUN git checkout 0f20ec37e9a9c2edacfb7650b5fddd9a8022704f
+RUN git submodule update --init --recursive
 RUN make verilog_raw
 RUN make emulator
 #export emulator to path: export PATH="$(pwd)/emulator:$PATH"

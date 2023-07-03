@@ -1,41 +1,3300 @@
 
-/opt/project/test/test_flexpret_simulator/programs/add/addgt/riscv-gt.o:	file format elf32-littleriscv
+riscv-gt.riscv:     file format elf32-littleriscv
+
 
 Disassembly of section .text:
 
-00000000 <add>:
-       0: 13 01 01 ff  	addi	sp, sp, -16
-       4: 23 26 11 00  	sw	ra, 12(sp)
-       8: 23 24 81 00  	sw	s0, 8(sp)
-       c: 13 04 01 01  	addi	s0, sp, 16
-      10: 33 05 b5 00  	add	a0, a0, a1
-      14: 83 20 c1 00  	lw	ra, 12(sp)
-      18: 03 24 81 00  	lw	s0, 8(sp)
-      1c: 13 01 01 01  	addi	sp, sp, 16
-      20: 67 80 00 00  	ret
+00000000 <_start>:
+    li t1, 0x88888888
+    csrw 0x50d, t1 // 0x50c = GpoProtection CSR
+.endm
 
-00000024 <main>:
-      24: 13 01 01 ff  	addi	sp, sp, -16
-      28: 23 26 11 00  	sw	ra, 12(sp)
-      2c: 23 24 81 00  	sw	s0, 8(sp)
-      30: 13 04 01 01  	addi	s0, sp, 16
-      34: 37 c5 aa ba  	lui	a0, 764588
-      38: 13 05 a5 aa  	addi	a0, a0, -1366
-      3c: 73 10 e5 51  	csrw	1310, a0
-      40: 93 05 10 00  	li	a1, 1
-      44: 73 90 e5 51  	csrw	1310, a1
-      48: 73 10 e5 51  	csrw	1310, a0
-      4c: 13 05 20 00  	li	a0, 2
-      50: 73 10 e5 51  	csrw	1310, a0
-      54: 6f 00 40 00  	j	0x58 <main+0x34>
-      58: 37 c5 aa ba  	lui	a0, 764588
-      5c: 13 05 a5 aa  	addi	a0, a0, -1366
-      60: 73 10 e5 51  	csrw	1310, a0
-      64: 13 05 30 00  	li	a0, 3
-      68: 73 10 e5 51  	csrw	1310, a0
-      6c: 6f 00 40 00  	j	0x70 <main+0x4c>
-      70: 13 05 00 00  	li	a0, 0
-      74: 83 20 c1 00  	lw	ra, 12(sp)
-      78: 03 24 81 00  	lw	s0, 8(sp)
-      7c: 13 01 01 01  	addi	sp, sp, 16
-      80: 67 80 00 00  	ret
+_start:
+    setHartid
+       0:	50b022f3          	csrr	t0,0x50b
+    setStackPointer
+       4:	20006137          	lui	sp,0x20006
+       8:	00a29313          	sll	t1,t0,0xa
+       c:	40610133          	sub	sp,sp,t1
+    setGlobalPointer
+      10:	20001197          	auipc	gp,0x20001
+      14:	c1818193          	add	gp,gp,-1000 # 20000c28 <__global_pointer$>
+    setDMemProtection
+      18:	88889337          	lui	t1,0x88889
+      1c:	88830313          	add	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
+      20:	50c31073          	csrw	0x50c,t1
+    setGpoProtection
+      24:	88889337          	lui	t1,0x88889
+      28:	88830313          	add	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
+      2c:	50d31073          	csrw	0x50d,t1
+    call Reset_Handler
+      30:	0e0000ef          	jal	110 <Reset_Handler>
+
+00000034 <malloc>:
+int main(void);
+
+/**
+ * Allocate a requested memory and return a pointer to it.
+ */
+void *malloc(size_t size) {
+      34:	fe010113          	add	sp,sp,-32 # 20005fe0 <__global_pointer$+0x53b8>
+      38:	00112e23          	sw	ra,28(sp)
+      3c:	00812c23          	sw	s0,24(sp)
+      40:	02010413          	add	s0,sp,32
+      44:	fea42623          	sw	a0,-20(s0)
+    return ta_alloc(size);
+      48:	fec42503          	lw	a0,-20(s0)
+      4c:	149010ef          	jal	1994 <ta_alloc>
+      50:	00050793          	mv	a5,a0
+}
+      54:	00078513          	mv	a0,a5
+      58:	01c12083          	lw	ra,28(sp)
+      5c:	01812403          	lw	s0,24(sp)
+      60:	02010113          	add	sp,sp,32
+      64:	00008067          	ret
+
+00000068 <calloc>:
+
+/**
+ * Allocate a requested memory, initial the memory to 0,
+ * and return a pointer to it.
+ */
+void *calloc(size_t nitems, size_t size) {
+      68:	fe010113          	add	sp,sp,-32
+      6c:	00112e23          	sw	ra,28(sp)
+      70:	00812c23          	sw	s0,24(sp)
+      74:	02010413          	add	s0,sp,32
+      78:	fea42623          	sw	a0,-20(s0)
+      7c:	feb42423          	sw	a1,-24(s0)
+    return ta_calloc(nitems, size);
+      80:	fe842583          	lw	a1,-24(s0)
+      84:	fec42503          	lw	a0,-20(s0)
+      88:	1f1010ef          	jal	1a78 <ta_calloc>
+      8c:	00050793          	mv	a5,a0
+}
+      90:	00078513          	mv	a0,a5
+      94:	01c12083          	lw	ra,28(sp)
+      98:	01812403          	lw	s0,24(sp)
+      9c:	02010113          	add	sp,sp,32
+      a0:	00008067          	ret
+
+000000a4 <realloc>:
+/**
+ * resize the memory block pointed to by ptr
+ * that was previously allocated with a call
+ * to malloc or calloc.
+ */
+void *realloc(void *ptr, size_t size) {
+      a4:	fe010113          	add	sp,sp,-32
+      a8:	00112e23          	sw	ra,28(sp)
+      ac:	00812c23          	sw	s0,24(sp)
+      b0:	02010413          	add	s0,sp,32
+      b4:	fea42623          	sw	a0,-20(s0)
+      b8:	feb42423          	sw	a1,-24(s0)
+    return ta_realloc(ptr, size);
+      bc:	fe842583          	lw	a1,-24(s0)
+      c0:	fec42503          	lw	a0,-20(s0)
+      c4:	3e1010ef          	jal	1ca4 <ta_realloc>
+      c8:	00050793          	mv	a5,a0
+}
+      cc:	00078513          	mv	a0,a5
+      d0:	01c12083          	lw	ra,28(sp)
+      d4:	01812403          	lw	s0,24(sp)
+      d8:	02010113          	add	sp,sp,32
+      dc:	00008067          	ret
+
+000000e0 <free>:
+
+/**
+ * Deallocate the memory previously allocated by a call to calloc, malloc, or realloc.
+ */
+void free(void *ptr) {
+      e0:	fe010113          	add	sp,sp,-32
+      e4:	00112e23          	sw	ra,28(sp)
+      e8:	00812c23          	sw	s0,24(sp)
+      ec:	02010413          	add	s0,sp,32
+      f0:	fea42623          	sw	a0,-20(s0)
+    ta_free(ptr);
+      f4:	fec42503          	lw	a0,-20(s0)
+      f8:	564010ef          	jal	165c <ta_free>
+}
+      fc:	00000013          	nop
+     100:	01c12083          	lw	ra,28(sp)
+     104:	01812403          	lw	s0,24(sp)
+     108:	02010113          	add	sp,sp,32
+     10c:	00008067          	ret
+
+00000110 <Reset_Handler>:
+ * Initialize initialized global variables, set uninitialized global variables
+ * to zero, configure tinyalloc, and jump to main.
+ */
+
+lock_t _lock = LOCK_INITIALIZER;
+void Reset_Handler() {
+     110:	fa010113          	add	sp,sp,-96
+     114:	04112e23          	sw	ra,92(sp)
+     118:	04812c23          	sw	s0,88(sp)
+     11c:	06010413          	add	s0,sp,96
+    // Get hartid
+    uint32_t hartid = read_hartid();
+     120:	50b027f3          	csrr	a5,0x50b
+     124:	fcf42823          	sw	a5,-48(s0)
+     128:	fd042783          	lw	a5,-48(s0)
+     12c:	fcf42623          	sw	a5,-52(s0)
+
+    // Only thread 0 performs the setup,
+    // the other threads busy wait until ready.
+    if (hartid == 0) {
+     130:	fcc42783          	lw	a5,-52(s0)
+     134:	16079a63          	bnez	a5,2a8 <Reset_Handler+0x198>
+        // Copy .data section into the RAM
+        uint32_t size   = &__data_end__ - &__data_start__;
+     138:	81018713          	add	a4,gp,-2032 # 20000438 <__ready__>
+     13c:	200007b7          	lui	a5,0x20000
+     140:	00078793          	mv	a5,a5
+     144:	40f707b3          	sub	a5,a4,a5
+     148:	4027d793          	sra	a5,a5,0x2
+     14c:	fcf42423          	sw	a5,-56(s0)
+        uint32_t *pDst  = (uint32_t*)&__data_start__;       // RAM
+     150:	200007b7          	lui	a5,0x20000
+     154:	00078793          	mv	a5,a5
+     158:	fef42623          	sw	a5,-20(s0)
+        uint32_t *pSrc  = (uint32_t*)&__etext;              // ROM
+     15c:	000027b7          	lui	a5,0x2
+     160:	1b478793          	add	a5,a5,436 # 21b4 <__etext>
+     164:	fef42423          	sw	a5,-24(s0)
+
+        for (uint32_t i = 0; i < size; i++) {
+     168:	fe042223          	sw	zero,-28(s0)
+     16c:	0300006f          	j	19c <Reset_Handler+0x8c>
+            *pDst++ = *pSrc++;
+     170:	fe842703          	lw	a4,-24(s0)
+     174:	00470793          	add	a5,a4,4
+     178:	fef42423          	sw	a5,-24(s0)
+     17c:	fec42783          	lw	a5,-20(s0)
+     180:	00478693          	add	a3,a5,4
+     184:	fed42623          	sw	a3,-20(s0)
+     188:	00072703          	lw	a4,0(a4)
+     18c:	00e7a023          	sw	a4,0(a5)
+        for (uint32_t i = 0; i < size; i++) {
+     190:	fe442783          	lw	a5,-28(s0)
+     194:	00178793          	add	a5,a5,1
+     198:	fef42223          	sw	a5,-28(s0)
+     19c:	fe442703          	lw	a4,-28(s0)
+     1a0:	fc842783          	lw	a5,-56(s0)
+     1a4:	fcf766e3          	bltu	a4,a5,170 <Reset_Handler+0x60>
+        }
+
+                // Init. the .bss section to zero in RAM
+        size = (uint32_t)&__bss_end__ - (uint32_t)&__bss_start__;
+     1a8:	d4018713          	add	a4,gp,-704 # 20000968 <__bss_end__>
+     1ac:	81018793          	add	a5,gp,-2032 # 20000438 <__ready__>
+     1b0:	40f707b3          	sub	a5,a4,a5
+     1b4:	fcf42423          	sw	a5,-56(s0)
+        pDst = (uint32_t*)&__bss_start__;
+     1b8:	81018793          	add	a5,gp,-2032 # 20000438 <__ready__>
+     1bc:	fef42623          	sw	a5,-20(s0)
+        for(uint32_t i = 0; i < size; i++) {
+     1c0:	fe042023          	sw	zero,-32(s0)
+     1c4:	0200006f          	j	1e4 <Reset_Handler+0xd4>
+            *pDst++ = 0;
+     1c8:	fec42783          	lw	a5,-20(s0)
+     1cc:	00478713          	add	a4,a5,4
+     1d0:	fee42623          	sw	a4,-20(s0)
+     1d4:	0007a023          	sw	zero,0(a5)
+        for(uint32_t i = 0; i < size; i++) {
+     1d8:	fe042783          	lw	a5,-32(s0)
+     1dc:	00178793          	add	a5,a5,1
+     1e0:	fef42023          	sw	a5,-32(s0)
+     1e4:	fe042703          	lw	a4,-32(s0)
+     1e8:	fc842783          	lw	a5,-56(s0)
+     1ec:	fcf76ee3          	bltu	a4,a5,1c8 <Reset_Handler+0xb8>
+        }
+
+    // Initialize tinyalloc.
+    ta_init( 
+     1f0:	00400713          	li	a4,4
+     1f4:	01000693          	li	a3,16
+     1f8:	3e800613          	li	a2,1000
+     1fc:	200065b7          	lui	a1,0x20006
+     200:	d4018513          	add	a0,gp,-704 # 20000968 <__bss_end__>
+     204:	364010ef          	jal	1568 <ta_init>
+         */
+        // Signal all the other (currently HRTT) threads
+        // to wake up and execute up to here,
+        // by allocating the slots to them.
+        slot_t slots[8];
+        for (int i = 0; i < NUM_THREADS; i++)
+     208:	fc042e23          	sw	zero,-36(s0)
+     20c:	0280006f          	j	234 <Reset_Handler+0x124>
+            slots[i] = i;
+     210:	fdc42703          	lw	a4,-36(s0)
+     214:	fdc42783          	lw	a5,-36(s0)
+     218:	00279793          	sll	a5,a5,0x2
+     21c:	ff078793          	add	a5,a5,-16
+     220:	008787b3          	add	a5,a5,s0
+     224:	fae7ac23          	sw	a4,-72(a5)
+        for (int i = 0; i < NUM_THREADS; i++)
+     228:	fdc42783          	lw	a5,-36(s0)
+     22c:	00178793          	add	a5,a5,1
+     230:	fcf42e23          	sw	a5,-36(s0)
+     234:	fdc42703          	lw	a4,-36(s0)
+     238:	00300793          	li	a5,3
+     23c:	fce7dae3          	bge	a5,a4,210 <Reset_Handler+0x100>
+        // Disable slots with ID >= NUM_THREADS,
+        for (int j = NUM_THREADS; j < SLOTS_SIZE; j++)
+     240:	00400793          	li	a5,4
+     244:	fcf42c23          	sw	a5,-40(s0)
+     248:	0280006f          	j	270 <Reset_Handler+0x160>
+            slots[j] = SLOT_D;
+     24c:	fd842783          	lw	a5,-40(s0)
+     250:	00279793          	sll	a5,a5,0x2
+     254:	ff078793          	add	a5,a5,-16
+     258:	008787b3          	add	a5,a5,s0
+     25c:	00f00713          	li	a4,15
+     260:	fae7ac23          	sw	a4,-72(a5)
+        for (int j = NUM_THREADS; j < SLOTS_SIZE; j++)
+     264:	fd842783          	lw	a5,-40(s0)
+     268:	00178793          	add	a5,a5,1
+     26c:	fcf42c23          	sw	a5,-40(s0)
+     270:	fd842703          	lw	a4,-40(s0)
+     274:	00700793          	li	a5,7
+     278:	fce7dae3          	bge	a5,a4,24c <Reset_Handler+0x13c>
+        hwlock_acquire();
+     27c:	715000ef          	jal	1190 <hwlock_acquire>
+        slot_set(slots, 8);
+     280:	fa840793          	add	a5,s0,-88
+     284:	00800593          	li	a1,8
+     288:	00078513          	mv	a0,a5
+     28c:	4d0000ef          	jal	75c <slot_set>
+        hwlock_release();
+     290:	739000ef          	jal	11c8 <hwlock_release>
+
+        // FIXME: Wait for a worker thread to signal
+        // ready-to-sleep and put it to sleep.
+
+        // Signal everything is ready.
+        hwlock_acquire();
+     294:	6fd000ef          	jal	1190 <hwlock_acquire>
+        __ready__ = true;
+     298:	00100713          	li	a4,1
+     29c:	80e18823          	sb	a4,-2032(gp) # 20000438 <__ready__>
+        hwlock_release();
+     2a0:	729000ef          	jal	11c8 <hwlock_release>
+     2a4:	0180006f          	j	2bc <Reset_Handler+0x1ac>
+    } else {
+        // FIXME: Signal thread 0 to put
+        // the worker thread to sleep.
+
+        // Wait for thread 0 to finish setup.
+        while (!__ready__);
+     2a8:	00000013          	nop
+     2ac:	8101c783          	lbu	a5,-2032(gp) # 20000438 <__ready__>
+     2b0:	0017c793          	xor	a5,a5,1
+     2b4:	0ff7f793          	zext.b	a5,a5
+     2b8:	fe079ae3          	bnez	a5,2ac <Reset_Handler+0x19c>
+    }
+
+    // Setup exception handling
+    setup_exceptions();
+     2bc:	4b5010ef          	jal	1f70 <setup_exceptions>
+
+    // Call main().
+    if (hartid == 0) {
+     2c0:	fcc42783          	lw	a5,-52(s0)
+     2c4:	00079663          	bnez	a5,2d0 <Reset_Handler+0x1c0>
+        main();
+     2c8:	0a0000ef          	jal	368 <main>
+     2cc:	0080006f          	j	2d4 <Reset_Handler+0x1c4>
+    } else {
+        worker_main();
+     2d0:	48d000ef          	jal	f5c <worker_main>
+    }
+
+    // Shutdown the program.
+    if (hartid == 0) {
+     2d4:	fcc42783          	lw	a5,-52(s0)
+     2d8:	06079463          	bnez	a5,340 <Reset_Handler+0x230>
+        /* Make sure all worker threads properly shutdown. */
+
+        // Wait for all hardware worker threads
+        // to finish their ongoing routines.
+        while (num_threads_busy > 0);
+     2dc:	00000013          	nop
+     2e0:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
+     2e4:	fe079ee3          	bnez	a5,2e0 <Reset_Handler+0x1d0>
+
+        // Signal all threads besides T0 to exit.
+        hwlock_acquire();
+     2e8:	6a9000ef          	jal	1190 <hwlock_acquire>
+        for (int i = 1; i < NUM_THREADS; i++) {
+     2ec:	00100793          	li	a5,1
+     2f0:	fcf42a23          	sw	a5,-44(s0)
+     2f4:	0240006f          	j	318 <Reset_Handler+0x208>
+            exit_requested[i] = true;
+     2f8:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+     2fc:	fd442783          	lw	a5,-44(s0)
+     300:	00f707b3          	add	a5,a4,a5
+     304:	00100713          	li	a4,1
+     308:	00e78023          	sb	a4,0(a5)
+        for (int i = 1; i < NUM_THREADS; i++) {
+     30c:	fd442783          	lw	a5,-44(s0)
+     310:	00178793          	add	a5,a5,1
+     314:	fcf42a23          	sw	a5,-44(s0)
+     318:	fd442703          	lw	a4,-44(s0)
+     31c:	00300793          	li	a5,3
+     320:	fce7dce3          	bge	a5,a4,2f8 <Reset_Handler+0x1e8>
+            // FIXME: If the thread is sleeping,
+            // wake up the thread.
+        }
+        hwlock_release();
+     324:	6a5000ef          	jal	11c8 <hwlock_release>
+
+        // Wait for all hardware worker threads to exit.
+        while (num_threads_exited < NUM_THREADS-1);
+     328:	00000013          	nop
+     32c:	d3c1a703          	lw	a4,-708(gp) # 20000964 <num_threads_exited>
+     330:	00200793          	li	a5,2
+     334:	fee7fce3          	bgeu	a5,a4,32c <Reset_Handler+0x21c>
+
+        // FIXME: Execute the main thread
+        // clean up handlers here.
+
+        // Exit the program.
+        _exit(0);
+     338:	00000513          	li	a0,0
+     33c:	0f0000ef          	jal	42c <_exit>
+    } else {
+        while (1);
+     340:	0000006f          	j	340 <Reset_Handler+0x230>
+
+00000344 <add>:
+     344:	ff010113          	add	sp,sp,-16
+     348:	00112623          	sw	ra,12(sp)
+     34c:	00812423          	sw	s0,8(sp)
+     350:	01010413          	add	s0,sp,16
+     354:	00b50533          	add	a0,a0,a1
+     358:	00c12083          	lw	ra,12(sp)
+     35c:	00812403          	lw	s0,8(sp)
+     360:	01010113          	add	sp,sp,16
+     364:	00008067          	ret
+
+00000368 <main>:
+     368:	ff010113          	add	sp,sp,-16
+     36c:	00112623          	sw	ra,12(sp)
+     370:	00812423          	sw	s0,8(sp)
+     374:	01010413          	add	s0,sp,16
+     378:	baaac537          	lui	a0,0xbaaac
+     37c:	aaa50513          	add	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     380:	51e51073          	csrw	0x51e,a0
+     384:	00100593          	li	a1,1
+     388:	51e59073          	csrw	0x51e,a1
+     38c:	51e51073          	csrw	0x51e,a0
+     390:	00200513          	li	a0,2
+     394:	51e51073          	csrw	0x51e,a0
+     398:	0040006f          	j	39c <main+0x34>
+     39c:	baaac537          	lui	a0,0xbaaac
+     3a0:	aaa50513          	add	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     3a4:	51e51073          	csrw	0x51e,a0
+     3a8:	00300513          	li	a0,3
+     3ac:	51e51073          	csrw	0x51e,a0
+     3b0:	0040006f          	j	3b4 <main+0x4c>
+     3b4:	00000513          	li	a0,0
+     3b8:	00c12083          	lw	ra,12(sp)
+     3bc:	00812403          	lw	s0,8(sp)
+     3c0:	01010113          	add	sp,sp,16
+     3c4:	00008067          	ret
+
+000003c8 <_fp_finish>:
+
+// FIXME: Does this also work on the FPGA?
+void _exit(int rc) {
+    _fp_finish();
+    while(1) {}
+    __builtin_unreachable();
+     3c8:	ff010113          	add	sp,sp,-16
+     3cc:	00812623          	sw	s0,12(sp)
+     3d0:	01010413          	add	s0,sp,16
+     3d4:	deade7b7          	lui	a5,0xdeade
+     3d8:	ead78793          	add	a5,a5,-339 # deaddead <BUS_END+0x9eaddaad>
+     3dc:	51e79073          	csrw	0x51e,a5
+     3e0:	00000013          	nop
+     3e4:	00c12403          	lw	s0,12(sp)
+     3e8:	01010113          	add	sp,sp,16
+     3ec:	00008067          	ret
+
+000003f0 <_close>:
+int _close(int fildes) {
+     3f0:	fe010113          	add	sp,sp,-32
+     3f4:	00112e23          	sw	ra,28(sp)
+     3f8:	00812c23          	sw	s0,24(sp)
+     3fc:	02010413          	add	s0,sp,32
+     400:	fea42623          	sw	a0,-20(s0)
+    errno = ENOSYS;
+     404:	4e3010ef          	jal	20e6 <__errno>
+     408:	00050713          	mv	a4,a0
+     40c:	05800793          	li	a5,88
+     410:	00f72023          	sw	a5,0(a4)
+    return -1;
+     414:	fff00793          	li	a5,-1
+}
+     418:	00078513          	mv	a0,a5
+     41c:	01c12083          	lw	ra,28(sp)
+     420:	01812403          	lw	s0,24(sp)
+     424:	02010113          	add	sp,sp,32
+     428:	00008067          	ret
+
+0000042c <_exit>:
+void _exit(int rc) {
+     42c:	fe010113          	add	sp,sp,-32
+     430:	00112e23          	sw	ra,28(sp)
+     434:	00812c23          	sw	s0,24(sp)
+     438:	02010413          	add	s0,sp,32
+     43c:	fea42623          	sw	a0,-20(s0)
+    _fp_finish();
+     440:	f89ff0ef          	jal	3c8 <_fp_finish>
+    while(1) {}
+     444:	0000006f          	j	444 <_exit+0x18>
+
+00000448 <_fstat>:
+}
+
+int _fstat(int fildes, struct stat *st) {
+     448:	fe010113          	add	sp,sp,-32
+     44c:	00112e23          	sw	ra,28(sp)
+     450:	00812c23          	sw	s0,24(sp)
+     454:	02010413          	add	s0,sp,32
+     458:	fea42623          	sw	a0,-20(s0)
+     45c:	feb42423          	sw	a1,-24(s0)
+    errno = ENOSYS;
+     460:	487010ef          	jal	20e6 <__errno>
+     464:	00050713          	mv	a4,a0
+     468:	05800793          	li	a5,88
+     46c:	00f72023          	sw	a5,0(a4)
+    return -1;
+     470:	fff00793          	li	a5,-1
+}
+     474:	00078513          	mv	a0,a5
+     478:	01c12083          	lw	ra,28(sp)
+     47c:	01812403          	lw	s0,24(sp)
+     480:	02010113          	add	sp,sp,32
+     484:	00008067          	ret
+
+00000488 <_getpid>:
+
+int _getpid(void){
+     488:	ff010113          	add	sp,sp,-16
+     48c:	00112623          	sw	ra,12(sp)
+     490:	00812423          	sw	s0,8(sp)
+     494:	01010413          	add	s0,sp,16
+    errno = ENOSYS;
+     498:	44f010ef          	jal	20e6 <__errno>
+     49c:	00050713          	mv	a4,a0
+     4a0:	05800793          	li	a5,88
+     4a4:	00f72023          	sw	a5,0(a4)
+    return -1;
+     4a8:	fff00793          	li	a5,-1
+}
+     4ac:	00078513          	mv	a0,a5
+     4b0:	00c12083          	lw	ra,12(sp)
+     4b4:	00812403          	lw	s0,8(sp)
+     4b8:	01010113          	add	sp,sp,16
+     4bc:	00008067          	ret
+
+000004c0 <_isatty>:
+
+int _isatty(int file) {
+     4c0:	fe010113          	add	sp,sp,-32
+     4c4:	00112e23          	sw	ra,28(sp)
+     4c8:	00812c23          	sw	s0,24(sp)
+     4cc:	02010413          	add	s0,sp,32
+     4d0:	fea42623          	sw	a0,-20(s0)
+    errno = ENOSYS;
+     4d4:	413010ef          	jal	20e6 <__errno>
+     4d8:	00050713          	mv	a4,a0
+     4dc:	05800793          	li	a5,88
+     4e0:	00f72023          	sw	a5,0(a4)
+    return 0;
+     4e4:	00000793          	li	a5,0
+}
+     4e8:	00078513          	mv	a0,a5
+     4ec:	01c12083          	lw	ra,28(sp)
+     4f0:	01812403          	lw	s0,24(sp)
+     4f4:	02010113          	add	sp,sp,32
+     4f8:	00008067          	ret
+
+000004fc <_kill>:
+
+int _kill(int pid, int sig) {
+     4fc:	fe010113          	add	sp,sp,-32
+     500:	00112e23          	sw	ra,28(sp)
+     504:	00812c23          	sw	s0,24(sp)
+     508:	02010413          	add	s0,sp,32
+     50c:	fea42623          	sw	a0,-20(s0)
+     510:	feb42423          	sw	a1,-24(s0)
+    errno = ENOSYS;
+     514:	3d3010ef          	jal	20e6 <__errno>
+     518:	00050713          	mv	a4,a0
+     51c:	05800793          	li	a5,88
+     520:	00f72023          	sw	a5,0(a4)
+    return -1;
+     524:	fff00793          	li	a5,-1
+}
+     528:	00078513          	mv	a0,a5
+     52c:	01c12083          	lw	ra,28(sp)
+     530:	01812403          	lw	s0,24(sp)
+     534:	02010113          	add	sp,sp,32
+     538:	00008067          	ret
+
+0000053c <_lseek>:
+
+int _lseek(int file, int ptr, int dir) {
+     53c:	fe010113          	add	sp,sp,-32
+     540:	00112e23          	sw	ra,28(sp)
+     544:	00812c23          	sw	s0,24(sp)
+     548:	02010413          	add	s0,sp,32
+     54c:	fea42623          	sw	a0,-20(s0)
+     550:	feb42423          	sw	a1,-24(s0)
+     554:	fec42223          	sw	a2,-28(s0)
+    errno = ENOSYS;
+     558:	38f010ef          	jal	20e6 <__errno>
+     55c:	00050713          	mv	a4,a0
+     560:	05800793          	li	a5,88
+     564:	00f72023          	sw	a5,0(a4)
+    return -1;
+     568:	fff00793          	li	a5,-1
+}
+     56c:	00078513          	mv	a0,a5
+     570:	01c12083          	lw	ra,28(sp)
+     574:	01812403          	lw	s0,24(sp)
+     578:	02010113          	add	sp,sp,32
+     57c:	00008067          	ret
+
+00000580 <_read>:
+
+int _read (int file, char *ptr, int len) {
+     580:	fe010113          	add	sp,sp,-32
+     584:	00112e23          	sw	ra,28(sp)
+     588:	00812c23          	sw	s0,24(sp)
+     58c:	02010413          	add	s0,sp,32
+     590:	fea42623          	sw	a0,-20(s0)
+     594:	feb42423          	sw	a1,-24(s0)
+     598:	fec42223          	sw	a2,-28(s0)
+  	errno = ENOSYS;
+     59c:	34b010ef          	jal	20e6 <__errno>
+     5a0:	00050713          	mv	a4,a0
+     5a4:	05800793          	li	a5,88
+     5a8:	00f72023          	sw	a5,0(a4)
+  	return -1;
+     5ac:	fff00793          	li	a5,-1
+}
+     5b0:	00078513          	mv	a0,a5
+     5b4:	01c12083          	lw	ra,28(sp)
+     5b8:	01812403          	lw	s0,24(sp)
+     5bc:	02010113          	add	sp,sp,32
+     5c0:	00008067          	ret
+
+000005c4 <_sbrk>:
+
+// FIXME: This should not be actually called because of tinyalloc.
+void *_sbrk(int incr) {
+     5c4:	fd010113          	add	sp,sp,-48
+     5c8:	02812623          	sw	s0,44(sp)
+     5cc:	03010413          	add	s0,sp,48
+     5d0:	fca42e23          	sw	a0,-36(s0)
+   extern char   end; /* Set by linker.  */
+   static char * heap_end;
+   char *        prev_heap_end;
+
+   if (heap_end == 0)
+     5d4:	8141a783          	lw	a5,-2028(gp) # 2000043c <heap_end.0>
+     5d8:	00079663          	bnez	a5,5e4 <_sbrk+0x20>
+     heap_end = & end;
+     5dc:	d4018713          	add	a4,gp,-704 # 20000968 <__bss_end__>
+     5e0:	80e1aa23          	sw	a4,-2028(gp) # 2000043c <heap_end.0>
+
+   prev_heap_end = heap_end;
+     5e4:	8141a783          	lw	a5,-2028(gp) # 2000043c <heap_end.0>
+     5e8:	fef42623          	sw	a5,-20(s0)
+   heap_end += incr;
+     5ec:	8141a703          	lw	a4,-2028(gp) # 2000043c <heap_end.0>
+     5f0:	fdc42783          	lw	a5,-36(s0)
+     5f4:	00f70733          	add	a4,a4,a5
+     5f8:	80e1aa23          	sw	a4,-2028(gp) # 2000043c <heap_end.0>
+
+   return (void *) prev_heap_end;
+     5fc:	fec42783          	lw	a5,-20(s0)
+}
+     600:	00078513          	mv	a0,a5
+     604:	02c12403          	lw	s0,44(sp)
+     608:	03010113          	add	sp,sp,48
+     60c:	00008067          	ret
+
+00000610 <_write>:
+
+int _write (int file, char *ptr, int len) {
+     610:	fe010113          	add	sp,sp,-32
+     614:	00112e23          	sw	ra,28(sp)
+     618:	00812c23          	sw	s0,24(sp)
+     61c:	02010413          	add	s0,sp,32
+     620:	fea42623          	sw	a0,-20(s0)
+     624:	feb42423          	sw	a1,-24(s0)
+     628:	fec42223          	sw	a2,-28(s0)
+  	errno = ENOSYS;
+     62c:	2bb010ef          	jal	20e6 <__errno>
+     630:	00050713          	mv	a4,a0
+     634:	05800793          	li	a5,88
+     638:	00f72023          	sw	a5,0(a4)
+  	return -1;
+     63c:	fff00793          	li	a5,-1
+}
+     640:	00078513          	mv	a0,a5
+     644:	01c12083          	lw	ra,28(sp)
+     648:	01812403          	lw	s0,24(sp)
+     64c:	02010113          	add	sp,sp,32
+     650:	00008067          	ret
+
+00000654 <_fp_print>:
+ * These functions assume that a lock is held
+ * by the caller.
+ *************************************************/
+
+/**
+ * @brief Set a complete schedule.
+     654:	fe010113          	add	sp,sp,-32
+     658:	00812e23          	sw	s0,28(sp)
+     65c:	02010413          	add	s0,sp,32
+     660:	fea42623          	sw	a0,-20(s0)
+ * 
+ * This function assumes that a mutex lock
+     664:	baaac7b7          	lui	a5,0xbaaac
+     668:	aaa78793          	add	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     66c:	51e79073          	csrw	0x51e,a5
+ * is held by the caller.
+     670:	fec42783          	lw	a5,-20(s0)
+     674:	51e79073          	csrw	0x51e,a5
+ * 
+ * @param slots An array of slot values
+     678:	00000013          	nop
+     67c:	01c12403          	lw	s0,28(sp)
+     680:	02010113          	add	sp,sp,32
+     684:	00008067          	ret
+
+00000688 <_fp_abort>:
+ * @return int If success, return 0, otherwise an error code.
+ */
+int slot_set(slot_t slots[], uint32_t length) {
+    if (length > 8) {
+        assert(false);
+        return 1;
+     688:	ff010113          	add	sp,sp,-16
+     68c:	00812623          	sw	s0,12(sp)
+     690:	01010413          	add	s0,sp,16
+    }
+     694:	deadc7b7          	lui	a5,0xdeadc
+     698:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+     69c:	51e79073          	csrw	0x51e,a5
+    uint32_t val = 0;
+     6a0:	00000013          	nop
+     6a4:	00c12403          	lw	s0,12(sp)
+     6a8:	01010113          	add	sp,sp,16
+     6ac:	00008067          	ret
+
+000006b0 <gpo_write>:
+    for (int i = 0; i < length; i++) {
+        val |= slots[i] << (i * 4);
+    }
+    write_csr(CSR_SLOTS, val);
+    return 0;
+}
+     6b0:	fe010113          	add	sp,sp,-32
+     6b4:	00112e23          	sw	ra,28(sp)
+     6b8:	00812c23          	sw	s0,24(sp)
+     6bc:	02010413          	add	s0,sp,32
+     6c0:	fea42623          	sw	a0,-20(s0)
+     6c4:	feb42423          	sw	a1,-24(s0)
+
+     6c8:	fec42703          	lw	a4,-20(s0)
+     6cc:	00300793          	li	a5,3
+     6d0:	06f70263          	beq	a4,a5,734 <gpo_write+0x84>
+     6d4:	fec42703          	lw	a4,-20(s0)
+     6d8:	00300793          	li	a5,3
+     6dc:	06e7e263          	bltu	a5,a4,740 <gpo_write+0x90>
+     6e0:	fec42703          	lw	a4,-20(s0)
+     6e4:	00200793          	li	a5,2
+     6e8:	04f70063          	beq	a4,a5,728 <gpo_write+0x78>
+     6ec:	fec42703          	lw	a4,-20(s0)
+     6f0:	00200793          	li	a5,2
+     6f4:	04e7e663          	bltu	a5,a4,740 <gpo_write+0x90>
+     6f8:	fec42783          	lw	a5,-20(s0)
+     6fc:	00078a63          	beqz	a5,710 <gpo_write+0x60>
+     700:	fec42703          	lw	a4,-20(s0)
+     704:	00100793          	li	a5,1
+     708:	00f70a63          	beq	a4,a5,71c <gpo_write+0x6c>
+     70c:	0340006f          	j	740 <gpo_write+0x90>
+/**
+     710:	fe842783          	lw	a5,-24(s0)
+     714:	cc479073          	csrw	0xcc4,a5
+     718:	0300006f          	j	748 <gpo_write+0x98>
+ * @brief Allocate a slot for a hard real-time thread (HRTT).
+     71c:	fe842783          	lw	a5,-24(s0)
+     720:	cc579073          	csrw	0xcc5,a5
+     724:	0240006f          	j	748 <gpo_write+0x98>
+ * 
+     728:	fe842783          	lw	a5,-24(s0)
+     72c:	cc679073          	csrw	0xcc6,a5
+     730:	0180006f          	j	748 <gpo_write+0x98>
+ * This function assumes that a mutex lock
+     734:	fe842783          	lw	a5,-24(s0)
+     738:	cc779073          	csrw	0xcc7,a5
+     73c:	00c0006f          	j	748 <gpo_write+0x98>
+ * is held by the caller.
+     740:	f49ff0ef          	jal	688 <_fp_abort>
+ * 
+ * @param slot The slot to be allocated
+     744:	00000013          	nop
+     748:	00000013          	nop
+     74c:	01c12083          	lw	ra,28(sp)
+     750:	01812403          	lw	s0,24(sp)
+     754:	02010113          	add	sp,sp,32
+     758:	00008067          	ret
+
+0000075c <slot_set>:
+int slot_set(slot_t slots[], uint32_t length) {
+     75c:	fd010113          	add	sp,sp,-48
+     760:	02112623          	sw	ra,44(sp)
+     764:	02812423          	sw	s0,40(sp)
+     768:	03010413          	add	s0,sp,48
+     76c:	fca42e23          	sw	a0,-36(s0)
+     770:	fcb42c23          	sw	a1,-40(s0)
+    if (length > 8) {
+     774:	fd842703          	lw	a4,-40(s0)
+     778:	00800793          	li	a5,8
+     77c:	00e7fc63          	bgeu	a5,a4,794 <slot_set+0x38>
+        assert(false);
+     780:	f09ff0ef          	jal	688 <_fp_abort>
+     784:	0ff00593          	li	a1,255
+     788:	00000513          	li	a0,0
+     78c:	f25ff0ef          	jal	6b0 <gpo_write>
+     790:	0000006f          	j	790 <slot_set+0x34>
+    uint32_t val = 0;
+     794:	fe042623          	sw	zero,-20(s0)
+    for (int i = 0; i < length; i++) {
+     798:	fe042423          	sw	zero,-24(s0)
+     79c:	03c0006f          	j	7d8 <slot_set+0x7c>
+        val |= slots[i] << (i * 4);
+     7a0:	fe842783          	lw	a5,-24(s0)
+     7a4:	00279793          	sll	a5,a5,0x2
+     7a8:	fdc42703          	lw	a4,-36(s0)
+     7ac:	00f707b3          	add	a5,a4,a5
+     7b0:	0007a703          	lw	a4,0(a5)
+     7b4:	fe842783          	lw	a5,-24(s0)
+     7b8:	00279793          	sll	a5,a5,0x2
+     7bc:	00f717b3          	sll	a5,a4,a5
+     7c0:	fec42703          	lw	a4,-20(s0)
+     7c4:	00f767b3          	or	a5,a4,a5
+     7c8:	fef42623          	sw	a5,-20(s0)
+    for (int i = 0; i < length; i++) {
+     7cc:	fe842783          	lw	a5,-24(s0)
+     7d0:	00178793          	add	a5,a5,1
+     7d4:	fef42423          	sw	a5,-24(s0)
+     7d8:	fe842783          	lw	a5,-24(s0)
+     7dc:	fd842703          	lw	a4,-40(s0)
+     7e0:	fce7e0e3          	bltu	a5,a4,7a0 <slot_set+0x44>
+    write_csr(CSR_SLOTS, val);
+     7e4:	fec42783          	lw	a5,-20(s0)
+     7e8:	50379073          	csrw	0x503,a5
+    return 0;
+     7ec:	00000793          	li	a5,0
+}
+     7f0:	00078513          	mv	a0,a5
+     7f4:	02c12083          	lw	ra,44(sp)
+     7f8:	02812403          	lw	s0,40(sp)
+     7fc:	03010113          	add	sp,sp,48
+     800:	00008067          	ret
+
+00000804 <slot_set_hrtt>:
+ * @param hartid The hartid of the HRTT
+ * @return int If success, return 0, otherwise an error code.
+ */
+int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
+     804:	fd010113          	add	sp,sp,-48
+     808:	02112623          	sw	ra,44(sp)
+     80c:	02812423          	sw	s0,40(sp)
+     810:	03010413          	add	s0,sp,48
+     814:	fca42e23          	sw	a0,-36(s0)
+     818:	fcb42c23          	sw	a1,-40(s0)
+    if (slot > 7) {
+     81c:	fdc42703          	lw	a4,-36(s0)
+     820:	00700793          	li	a5,7
+     824:	00e7fc63          	bgeu	a5,a4,83c <slot_set_hrtt+0x38>
+        // FIXME: Panic.
+        assert(false);
+     828:	e61ff0ef          	jal	688 <_fp_abort>
+     82c:	0ff00593          	li	a1,255
+     830:	00000513          	li	a0,0
+     834:	e7dff0ef          	jal	6b0 <gpo_write>
+     838:	0000006f          	j	838 <slot_set_hrtt+0x34>
+        return 1;
+    }
+    if (hartid > NUM_THREADS) {
+     83c:	fd842703          	lw	a4,-40(s0)
+     840:	00400793          	li	a5,4
+     844:	00e7fc63          	bgeu	a5,a4,85c <slot_set_hrtt+0x58>
+        // FIXME: Panic.
+        assert(false);
+     848:	e41ff0ef          	jal	688 <_fp_abort>
+     84c:	0ff00593          	li	a1,255
+     850:	00000513          	li	a0,0
+     854:	e5dff0ef          	jal	6b0 <gpo_write>
+     858:	0000006f          	j	858 <slot_set_hrtt+0x54>
+        return 2;
+    }
+    uint32_t mask = 0xf << (slot * 4);
+     85c:	fdc42783          	lw	a5,-36(s0)
+     860:	00279793          	sll	a5,a5,0x2
+     864:	00f00713          	li	a4,15
+     868:	00f717b3          	sll	a5,a4,a5
+     86c:	fef42623          	sw	a5,-20(s0)
+    uint32_t val_prev = read_csr(CSR_SLOTS);
+     870:	503027f3          	csrr	a5,0x503
+     874:	fef42423          	sw	a5,-24(s0)
+     878:	fe842783          	lw	a5,-24(s0)
+     87c:	fef42223          	sw	a5,-28(s0)
+    // Use hartid. Each slot is 4-bit wide.
+    uint32_t val_new = (val_prev & ~mask) | (hartid << (slot * 4));
+     880:	fec42783          	lw	a5,-20(s0)
+     884:	fff7c713          	not	a4,a5
+     888:	fe442783          	lw	a5,-28(s0)
+     88c:	00f77733          	and	a4,a4,a5
+     890:	fdc42783          	lw	a5,-36(s0)
+     894:	00279793          	sll	a5,a5,0x2
+     898:	fd842683          	lw	a3,-40(s0)
+     89c:	00f697b3          	sll	a5,a3,a5
+     8a0:	00f767b3          	or	a5,a4,a5
+     8a4:	fef42023          	sw	a5,-32(s0)
+    write_csr(CSR_SLOTS, val_new);
+     8a8:	fe042783          	lw	a5,-32(s0)
+     8ac:	50379073          	csrw	0x503,a5
+    return 0;
+     8b0:	00000793          	li	a5,0
+}
+     8b4:	00078513          	mv	a0,a5
+     8b8:	02c12083          	lw	ra,44(sp)
+     8bc:	02812403          	lw	s0,40(sp)
+     8c0:	03010113          	add	sp,sp,48
+     8c4:	00008067          	ret
+
+000008c8 <slot_set_srtt>:
+ * is held by the caller.
+ * 
+ * @param slot The slot to be allocated
+ * @return int If success, return 0, otherwise an error code.
+ */
+int slot_set_srtt(uint32_t slot) {
+     8c8:	fd010113          	add	sp,sp,-48
+     8cc:	02812623          	sw	s0,44(sp)
+     8d0:	03010413          	add	s0,sp,48
+     8d4:	fca42e23          	sw	a0,-36(s0)
+    if (slot > 7) {
+     8d8:	fdc42703          	lw	a4,-36(s0)
+     8dc:	00700793          	li	a5,7
+     8e0:	00e7f663          	bgeu	a5,a4,8ec <slot_set_srtt+0x24>
+        // FIXME: Panic.
+        return 1;
+     8e4:	00100793          	li	a5,1
+     8e8:	05c0006f          	j	944 <slot_set_srtt+0x7c>
+    }
+    uint32_t mask = 0xf << (slot * 4);
+     8ec:	fdc42783          	lw	a5,-36(s0)
+     8f0:	00279793          	sll	a5,a5,0x2
+     8f4:	00f00713          	li	a4,15
+     8f8:	00f717b3          	sll	a5,a4,a5
+     8fc:	fef42623          	sw	a5,-20(s0)
+    uint32_t val_prev = read_csr(CSR_SLOTS);
+     900:	503027f3          	csrr	a5,0x503
+     904:	fef42423          	sw	a5,-24(s0)
+     908:	fe842783          	lw	a5,-24(s0)
+     90c:	fef42223          	sw	a5,-28(s0)
+    // Use SLOT_S. Each slot is 4-bit wide.
+    uint32_t val_new = (val_prev & ~mask) | (SLOT_S << (slot * 4));
+     910:	fec42783          	lw	a5,-20(s0)
+     914:	fff7c713          	not	a4,a5
+     918:	fe442783          	lw	a5,-28(s0)
+     91c:	00f777b3          	and	a5,a4,a5
+     920:	fdc42703          	lw	a4,-36(s0)
+     924:	00271713          	sll	a4,a4,0x2
+     928:	00e00693          	li	a3,14
+     92c:	00e69733          	sll	a4,a3,a4
+     930:	00e7e7b3          	or	a5,a5,a4
+     934:	fef42023          	sw	a5,-32(s0)
+    write_csr(CSR_SLOTS, val_new);
+     938:	fe042783          	lw	a5,-32(s0)
+     93c:	50379073          	csrw	0x503,a5
+    return 0;
+     940:	00000793          	li	a5,0
+}
+     944:	00078513          	mv	a0,a5
+     948:	02c12403          	lw	s0,44(sp)
+     94c:	03010113          	add	sp,sp,48
+     950:	00008067          	ret
+
+00000954 <slot_disable>:
+ * @brief Disable a slot in the FlexPRET schedule.
+ * 
+ * @param slot The slot to be disabled
+ * @return int If success, return 0, otherwise an error code.
+ */
+int slot_disable(uint32_t slot) {
+     954:	fd010113          	add	sp,sp,-48
+     958:	02812623          	sw	s0,44(sp)
+     95c:	03010413          	add	s0,sp,48
+     960:	fca42e23          	sw	a0,-36(s0)
+    if (slot > 7) {
+     964:	fdc42703          	lw	a4,-36(s0)
+     968:	00700793          	li	a5,7
+     96c:	00e7f663          	bgeu	a5,a4,978 <slot_disable+0x24>
+        // FIXME: Panic.
+        return 1;
+     970:	00100793          	li	a5,1
+     974:	05c0006f          	j	9d0 <slot_disable+0x7c>
+    }
+    uint32_t mask = 0xf << (slot * 4);
+     978:	fdc42783          	lw	a5,-36(s0)
+     97c:	00279793          	sll	a5,a5,0x2
+     980:	00f00713          	li	a4,15
+     984:	00f717b3          	sll	a5,a4,a5
+     988:	fef42623          	sw	a5,-20(s0)
+    uint32_t val_prev = read_csr(CSR_SLOTS);
+     98c:	503027f3          	csrr	a5,0x503
+     990:	fef42423          	sw	a5,-24(s0)
+     994:	fe842783          	lw	a5,-24(s0)
+     998:	fef42223          	sw	a5,-28(s0)
+    // Use SLOT_D. Each slot is 4-bit wide.
+    uint32_t val_new = (val_prev & ~mask) | (SLOT_D << (slot * 4));
+     99c:	fec42783          	lw	a5,-20(s0)
+     9a0:	fff7c713          	not	a4,a5
+     9a4:	fe442783          	lw	a5,-28(s0)
+     9a8:	00f777b3          	and	a5,a4,a5
+     9ac:	fdc42703          	lw	a4,-36(s0)
+     9b0:	00271713          	sll	a4,a4,0x2
+     9b4:	00f00693          	li	a3,15
+     9b8:	00e69733          	sll	a4,a3,a4
+     9bc:	00e7e7b3          	or	a5,a5,a4
+     9c0:	fef42023          	sw	a5,-32(s0)
+    write_csr(CSR_SLOTS, val_new);
+     9c4:	fe042783          	lw	a5,-32(s0)
+     9c8:	50379073          	csrw	0x503,a5
+    return 0;
+     9cc:	00000793          	li	a5,0
+}
+     9d0:	00078513          	mv	a0,a5
+     9d4:	02c12403          	lw	s0,44(sp)
+     9d8:	03010113          	add	sp,sp,48
+     9dc:	00008067          	ret
+
+000009e0 <tmode_get>:
+ * @brief Get the thread mode of a hardware thread.
+ * 
+ * @param hartid The hardware thread ID
+ * @return tmode_t The current thread mode
+ */
+tmode_t tmode_get(uint32_t hartid) {
+     9e0:	fd010113          	add	sp,sp,-48
+     9e4:	02812623          	sw	s0,44(sp)
+     9e8:	03010413          	add	s0,sp,48
+     9ec:	fca42e23          	sw	a0,-36(s0)
+    if (hartid > NUM_THREADS) {
+     9f0:	fdc42703          	lw	a4,-36(s0)
+     9f4:	00400793          	li	a5,4
+     9f8:	00e7f663          	bgeu	a5,a4,a04 <tmode_get+0x24>
+        // FIXME: Panic.
+        return 1;
+     9fc:	00100793          	li	a5,1
+     a00:	0440006f          	j	a44 <tmode_get+0x64>
+    }
+    uint32_t mask = 0xf << (hartid * 2);
+     a04:	fdc42783          	lw	a5,-36(s0)
+     a08:	00179793          	sll	a5,a5,0x1
+     a0c:	00f00713          	li	a4,15
+     a10:	00f717b3          	sll	a5,a4,a5
+     a14:	fef42623          	sw	a5,-20(s0)
+    uint32_t val_prev = read_csr(CSR_TMODES);
+     a18:	504027f3          	csrr	a5,0x504
+     a1c:	fef42423          	sw	a5,-24(s0)
+     a20:	fe842783          	lw	a5,-24(s0)
+     a24:	fef42223          	sw	a5,-28(s0)
+    return (val_prev & ~mask) >> (hartid * 2);
+     a28:	fec42783          	lw	a5,-20(s0)
+     a2c:	fff7c713          	not	a4,a5
+     a30:	fe442783          	lw	a5,-28(s0)
+     a34:	00f77733          	and	a4,a4,a5
+     a38:	fdc42783          	lw	a5,-36(s0)
+     a3c:	00179793          	sll	a5,a5,0x1
+     a40:	00f757b3          	srl	a5,a4,a5
+}
+     a44:	00078513          	mv	a0,a5
+     a48:	02c12403          	lw	s0,44(sp)
+     a4c:	03010113          	add	sp,sp,48
+     a50:	00008067          	ret
+
+00000a54 <tmode_set>:
+ * 
+ * @param hartid The hardware thread ID
+ * @param val The thread mode to be set
+ * @return int If success, return 0, otherwise an error code.
+ */
+int tmode_set(uint32_t hartid, tmode_t val) {
+     a54:	fd010113          	add	sp,sp,-48
+     a58:	02812623          	sw	s0,44(sp)
+     a5c:	03010413          	add	s0,sp,48
+     a60:	fca42e23          	sw	a0,-36(s0)
+     a64:	fcb42c23          	sw	a1,-40(s0)
+    if (hartid > NUM_THREADS) {
+     a68:	fdc42703          	lw	a4,-36(s0)
+     a6c:	00400793          	li	a5,4
+     a70:	00e7f663          	bgeu	a5,a4,a7c <tmode_set+0x28>
+        // FIXME: Panic.
+        return 1;
+     a74:	00100793          	li	a5,1
+     a78:	05c0006f          	j	ad4 <tmode_set+0x80>
+    }
+    uint32_t mask = 0xf << (hartid * 2);
+     a7c:	fdc42783          	lw	a5,-36(s0)
+     a80:	00179793          	sll	a5,a5,0x1
+     a84:	00f00713          	li	a4,15
+     a88:	00f717b3          	sll	a5,a4,a5
+     a8c:	fef42623          	sw	a5,-20(s0)
+    uint32_t val_prev = read_csr(CSR_TMODES);
+     a90:	504027f3          	csrr	a5,0x504
+     a94:	fef42423          	sw	a5,-24(s0)
+     a98:	fe842783          	lw	a5,-24(s0)
+     a9c:	fef42223          	sw	a5,-28(s0)
+    uint32_t val_new = (val_prev & ~mask) | (val << (hartid * 2));
+     aa0:	fec42783          	lw	a5,-20(s0)
+     aa4:	fff7c713          	not	a4,a5
+     aa8:	fe442783          	lw	a5,-28(s0)
+     aac:	00f77733          	and	a4,a4,a5
+     ab0:	fdc42783          	lw	a5,-36(s0)
+     ab4:	00179793          	sll	a5,a5,0x1
+     ab8:	fd842683          	lw	a3,-40(s0)
+     abc:	00f697b3          	sll	a5,a3,a5
+     ac0:	00f767b3          	or	a5,a4,a5
+     ac4:	fef42023          	sw	a5,-32(s0)
+    write_csr(CSR_TMODES, val_new); // Each slot is 4-bit wide.
+     ac8:	fe042783          	lw	a5,-32(s0)
+     acc:	50479073          	csrw	0x504,a5
+    return 0;
+     ad0:	00000793          	li	a5,0
+}
+     ad4:	00078513          	mv	a0,a5
+     ad8:	02c12403          	lw	s0,44(sp)
+     adc:	03010113          	add	sp,sp,48
+     ae0:	00008067          	ret
+
+00000ae4 <tmode_active>:
+ * Should probably renamed to tmode_wakeup.
+ * 
+ * If the thread is HRTT, then change the tmode to TMODE_HA.
+ * If the thread is SRTT, then change the tmode to TMODE_SA.
+ */
+int tmode_active(uint32_t hartid) {
+     ae4:	fd010113          	add	sp,sp,-48
+     ae8:	02112623          	sw	ra,44(sp)
+     aec:	02812423          	sw	s0,40(sp)
+     af0:	03010413          	add	s0,sp,48
+     af4:	fca42e23          	sw	a0,-36(s0)
+    uint32_t tmode = tmode_get(hartid);
+     af8:	fdc42503          	lw	a0,-36(s0)
+     afc:	ee5ff0ef          	jal	9e0 <tmode_get>
+     b00:	fea42623          	sw	a0,-20(s0)
+    if (tmode == TMODE_HZ || tmode == TMODE_HA)
+     b04:	fec42703          	lw	a4,-20(s0)
+     b08:	00100793          	li	a5,1
+     b0c:	00f70663          	beq	a4,a5,b18 <tmode_active+0x34>
+     b10:	fec42783          	lw	a5,-20(s0)
+     b14:	00079a63          	bnez	a5,b28 <tmode_active+0x44>
+        tmode_set(hartid, TMODE_HA);
+     b18:	00000593          	li	a1,0
+     b1c:	fdc42503          	lw	a0,-36(s0)
+     b20:	f35ff0ef          	jal	a54 <tmode_set>
+     b24:	0340006f          	j	b58 <tmode_active+0x74>
+    else if (tmode == TMODE_SZ || tmode == TMODE_SA)
+     b28:	fec42703          	lw	a4,-20(s0)
+     b2c:	00300793          	li	a5,3
+     b30:	00f70863          	beq	a4,a5,b40 <tmode_active+0x5c>
+     b34:	fec42703          	lw	a4,-20(s0)
+     b38:	00200793          	li	a5,2
+     b3c:	00f71a63          	bne	a4,a5,b50 <tmode_active+0x6c>
+        tmode_set(hartid, TMODE_SA);
+     b40:	00200593          	li	a1,2
+     b44:	fdc42503          	lw	a0,-36(s0)
+     b48:	f0dff0ef          	jal	a54 <tmode_set>
+     b4c:	00c0006f          	j	b58 <tmode_active+0x74>
+    else return 1;
+     b50:	00100793          	li	a5,1
+     b54:	0080006f          	j	b5c <tmode_active+0x78>
+    return 0;
+     b58:	00000793          	li	a5,0
+}
+     b5c:	00078513          	mv	a0,a5
+     b60:	02c12083          	lw	ra,44(sp)
+     b64:	02812403          	lw	s0,40(sp)
+     b68:	03010113          	add	sp,sp,48
+     b6c:	00008067          	ret
+
+00000b70 <tmode_sleep>:
+ * is held by the caller.
+ * 
+ * If the thread is HRTT, then change the tmode to TMODE_HZ.
+ * If the thread is SRTT, then change the tmode to TMODE_SZ.
+ */
+int tmode_sleep(uint32_t hartid) {
+     b70:	fd010113          	add	sp,sp,-48
+     b74:	02112623          	sw	ra,44(sp)
+     b78:	02812423          	sw	s0,40(sp)
+     b7c:	03010413          	add	s0,sp,48
+     b80:	fca42e23          	sw	a0,-36(s0)
+    uint32_t tmode = tmode_get(hartid);
+     b84:	fdc42503          	lw	a0,-36(s0)
+     b88:	e59ff0ef          	jal	9e0 <tmode_get>
+     b8c:	fea42623          	sw	a0,-20(s0)
+    if (tmode == TMODE_HA || tmode == TMODE_HZ)
+     b90:	fec42783          	lw	a5,-20(s0)
+     b94:	00078863          	beqz	a5,ba4 <tmode_sleep+0x34>
+     b98:	fec42703          	lw	a4,-20(s0)
+     b9c:	00100793          	li	a5,1
+     ba0:	00f71a63          	bne	a4,a5,bb4 <tmode_sleep+0x44>
+        tmode_set(hartid, TMODE_HZ);
+     ba4:	00100593          	li	a1,1
+     ba8:	fdc42503          	lw	a0,-36(s0)
+     bac:	ea9ff0ef          	jal	a54 <tmode_set>
+     bb0:	0340006f          	j	be4 <tmode_sleep+0x74>
+    else if (tmode == TMODE_SA || tmode == TMODE_SZ)
+     bb4:	fec42703          	lw	a4,-20(s0)
+     bb8:	00200793          	li	a5,2
+     bbc:	00f70863          	beq	a4,a5,bcc <tmode_sleep+0x5c>
+     bc0:	fec42703          	lw	a4,-20(s0)
+     bc4:	00300793          	li	a5,3
+     bc8:	00f71a63          	bne	a4,a5,bdc <tmode_sleep+0x6c>
+        tmode_set(hartid, TMODE_SZ);
+     bcc:	00300593          	li	a1,3
+     bd0:	fdc42503          	lw	a0,-36(s0)
+     bd4:	e81ff0ef          	jal	a54 <tmode_set>
+     bd8:	00c0006f          	j	be4 <tmode_sleep+0x74>
+    else return 1;
+     bdc:	00100793          	li	a5,1
+     be0:	0080006f          	j	be8 <tmode_sleep+0x78>
+    return 0;
+     be4:	00000793          	li	a5,0
+}
+     be8:	00078513          	mv	a0,a5
+     bec:	02c12083          	lw	ra,44(sp)
+     bf0:	02812403          	lw	s0,40(sp)
+     bf4:	03010113          	add	sp,sp,48
+     bf8:	00008067          	ret
+
+00000bfc <thread_create>:
+int thread_create(
+    bool is_hrtt,   // HRTT = true, SRTT = false
+    thread_t *restrict hartid,
+    void *(*start_routine)(void *),
+    void *restrict arg
+) {
+     bfc:	fd010113          	add	sp,sp,-48
+     c00:	02112623          	sw	ra,44(sp)
+     c04:	02812423          	sw	s0,40(sp)
+     c08:	03010413          	add	s0,sp,48
+     c0c:	00050793          	mv	a5,a0
+     c10:	fcb42c23          	sw	a1,-40(s0)
+     c14:	fcc42a23          	sw	a2,-44(s0)
+     c18:	fcd42823          	sw	a3,-48(s0)
+     c1c:	fcf40fa3          	sb	a5,-33(s0)
+    // Allocate an available thread.
+    // Cannot allocate to thread 0.
+    hwlock_acquire();
+     c20:	570000ef          	jal	1190 <hwlock_acquire>
+    for (int i = 1; i < NUM_THREADS; i++) {
+     c24:	00100793          	li	a5,1
+     c28:	fef42623          	sw	a5,-20(s0)
+     c2c:	0940006f          	j	cc0 <thread_create+0xc4>
+        if (!in_use[i]) {
+     c30:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     c34:	fec42783          	lw	a5,-20(s0)
+     c38:	00f707b3          	add	a5,a4,a5
+     c3c:	0007c783          	lbu	a5,0(a5)
+     c40:	0017c793          	xor	a5,a5,1
+     c44:	0ff7f793          	zext.b	a5,a5
+     c48:	06078663          	beqz	a5,cb4 <thread_create+0xb8>
+            *hartid = i;
+     c4c:	fec42703          	lw	a4,-20(s0)
+     c50:	fd842783          	lw	a5,-40(s0)
+     c54:	00e7a023          	sw	a4,0(a5)
+            routines[i] = start_routine;
+     c58:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
+     c5c:	fec42783          	lw	a5,-20(s0)
+     c60:	00279793          	sll	a5,a5,0x2
+     c64:	00f707b3          	add	a5,a4,a5
+     c68:	fd442703          	lw	a4,-44(s0)
+     c6c:	00e7a023          	sw	a4,0(a5)
+            args[i] = arg;
+     c70:	82818713          	add	a4,gp,-2008 # 20000450 <args>
+     c74:	fec42783          	lw	a5,-20(s0)
+     c78:	00279793          	sll	a5,a5,0x2
+     c7c:	00f707b3          	add	a5,a4,a5
+     c80:	fd042703          	lw	a4,-48(s0)
+     c84:	00e7a023          	sw	a4,0(a5)
+            num_threads_busy += 1;
+     c88:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
+     c8c:	00178713          	add	a4,a5,1
+     c90:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
+            // Signal the worker thread to do work.
+            in_use[i] = true;
+     c94:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     c98:	fec42783          	lw	a5,-20(s0)
+     c9c:	00f707b3          	add	a5,a4,a5
+     ca0:	00100713          	li	a4,1
+     ca4:	00e78023          	sb	a4,0(a5)
+            // FIXME: If the thread is asleep,
+            // wake up the thread.
+            hwlock_release();
+     ca8:	520000ef          	jal	11c8 <hwlock_release>
+            return 0;
+     cac:	00000793          	li	a5,0
+     cb0:	0240006f          	j	cd4 <thread_create+0xd8>
+    for (int i = 1; i < NUM_THREADS; i++) {
+     cb4:	fec42783          	lw	a5,-20(s0)
+     cb8:	00178793          	add	a5,a5,1
+     cbc:	fef42623          	sw	a5,-20(s0)
+     cc0:	fec42703          	lw	a4,-20(s0)
+     cc4:	00300793          	li	a5,3
+     cc8:	f6e7d4e3          	bge	a5,a4,c30 <thread_create+0x34>
+        }
+    }
+    hwlock_release();
+     ccc:	4fc000ef          	jal	11c8 <hwlock_release>
+    // All the threads are occupied, return error.
+    return 1;
+     cd0:	00100793          	li	a5,1
+}
+     cd4:	00078513          	mv	a0,a5
+     cd8:	02c12083          	lw	ra,44(sp)
+     cdc:	02812403          	lw	s0,40(sp)
+     ce0:	03010113          	add	sp,sp,48
+     ce4:	00008067          	ret
+
+00000ce8 <thread_map>:
+int thread_map(
+    bool is_hrtt,   // HRTT = true, SRTT = false
+    thread_t *restrict hartid, // hartid requested by the user
+    void *(*start_routine)(void *),
+    void *restrict arg
+) {
+     ce8:	fe010113          	add	sp,sp,-32
+     cec:	00112e23          	sw	ra,28(sp)
+     cf0:	00812c23          	sw	s0,24(sp)
+     cf4:	02010413          	add	s0,sp,32
+     cf8:	00050793          	mv	a5,a0
+     cfc:	feb42423          	sw	a1,-24(s0)
+     d00:	fec42223          	sw	a2,-28(s0)
+     d04:	fed42023          	sw	a3,-32(s0)
+     d08:	fef407a3          	sb	a5,-17(s0)
+    // Allocate an available thread.
+    // Cannot allocate to thread 0.
+    hwlock_acquire();
+     d0c:	484000ef          	jal	1190 <hwlock_acquire>
+    if (!in_use[*hartid]) {
+     d10:	fe842783          	lw	a5,-24(s0)
+     d14:	0007a703          	lw	a4,0(a5)
+     d18:	84818793          	add	a5,gp,-1976 # 20000470 <in_use>
+     d1c:	00f707b3          	add	a5,a4,a5
+     d20:	0007c783          	lbu	a5,0(a5)
+     d24:	0017c793          	xor	a5,a5,1
+     d28:	0ff7f793          	zext.b	a5,a5
+     d2c:	06078663          	beqz	a5,d98 <thread_map+0xb0>
+        routines[*hartid] = start_routine;
+     d30:	fe842783          	lw	a5,-24(s0)
+     d34:	0007a783          	lw	a5,0(a5)
+     d38:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
+     d3c:	00279793          	sll	a5,a5,0x2
+     d40:	00f707b3          	add	a5,a4,a5
+     d44:	fe442703          	lw	a4,-28(s0)
+     d48:	00e7a023          	sw	a4,0(a5)
+        args[*hartid] = arg;
+     d4c:	fe842783          	lw	a5,-24(s0)
+     d50:	0007a783          	lw	a5,0(a5)
+     d54:	82818713          	add	a4,gp,-2008 # 20000450 <args>
+     d58:	00279793          	sll	a5,a5,0x2
+     d5c:	00f707b3          	add	a5,a4,a5
+     d60:	fe042703          	lw	a4,-32(s0)
+     d64:	00e7a023          	sw	a4,0(a5)
+        num_threads_busy += 1;
+     d68:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
+     d6c:	00178713          	add	a4,a5,1
+     d70:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
+        // Signal the worker thread to do work.
+        in_use[*hartid] = true;
+     d74:	fe842783          	lw	a5,-24(s0)
+     d78:	0007a703          	lw	a4,0(a5)
+     d7c:	84818793          	add	a5,gp,-1976 # 20000470 <in_use>
+     d80:	00f707b3          	add	a5,a4,a5
+     d84:	00100713          	li	a4,1
+     d88:	00e78023          	sb	a4,0(a5)
+        // FIXME: If the thread is asleep,
+        // wake up the thread.
+        hwlock_release();
+     d8c:	43c000ef          	jal	11c8 <hwlock_release>
+        return 0;
+     d90:	00000793          	li	a5,0
+     d94:	00c0006f          	j	da0 <thread_map+0xb8>
+    }
+    hwlock_release();
+     d98:	430000ef          	jal	11c8 <hwlock_release>
+    // All the threads are occupied, return error.
+    return 1;
+     d9c:	00100793          	li	a5,1
+}
+     da0:	00078513          	mv	a0,a5
+     da4:	01c12083          	lw	ra,28(sp)
+     da8:	01812403          	lw	s0,24(sp)
+     dac:	02010113          	add	sp,sp,32
+     db0:	00008067          	ret
+
+00000db4 <thread_join>:
+
+int thread_join(thread_t hartid, void **retval) {
+     db4:	fe010113          	add	sp,sp,-32
+     db8:	00112e23          	sw	ra,28(sp)
+     dbc:	00812c23          	sw	s0,24(sp)
+     dc0:	02010413          	add	s0,sp,32
+     dc4:	fea42623          	sw	a0,-20(s0)
+     dc8:	feb42423          	sw	a1,-24(s0)
+    // FIXME: What if it waits for the long-running thread?
+    while(in_use[hartid]); // Wait
+     dcc:	00000013          	nop
+     dd0:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     dd4:	fec42783          	lw	a5,-20(s0)
+     dd8:	00f707b3          	add	a5,a4,a5
+     ddc:	0007c783          	lbu	a5,0(a5)
+     de0:	fe0798e3          	bnez	a5,dd0 <thread_join+0x1c>
+    // Get the exit code from the exiting thread.
+    hwlock_acquire();
+     de4:	3ac000ef          	jal	1190 <hwlock_acquire>
+    *retval = exit_code[hartid];
+     de8:	83818713          	add	a4,gp,-1992 # 20000460 <exit_code>
+     dec:	fec42783          	lw	a5,-20(s0)
+     df0:	00279793          	sll	a5,a5,0x2
+     df4:	00f707b3          	add	a5,a4,a5
+     df8:	0007a703          	lw	a4,0(a5)
+     dfc:	fe842783          	lw	a5,-24(s0)
+     e00:	00e7a023          	sw	a4,0(a5)
+    // FIXME: To avoid losing lots of cycles,
+    // a worker thread should put itself to sleep.
+    // Put the thread to sleep.
+    // FIXME: Should we make an idle thread an SRTT?
+    hwlock_release();
+     e04:	3c4000ef          	jal	11c8 <hwlock_release>
+    return 0;
+     e08:	00000793          	li	a5,0
+}
+     e0c:	00078513          	mv	a0,a5
+     e10:	01c12083          	lw	ra,28(sp)
+     e14:	01812403          	lw	s0,24(sp)
+     e18:	02010113          	add	sp,sp,32
+     e1c:	00008067          	ret
+
+00000e20 <thread_exit>:
+
+/** 
+ * This should be called by a thread
+ * that hopes to exit.
+ */
+void thread_exit(void *retval) {
+     e20:	fd010113          	add	sp,sp,-48
+     e24:	02112623          	sw	ra,44(sp)
+     e28:	02812423          	sw	s0,40(sp)
+     e2c:	03010413          	add	s0,sp,48
+     e30:	fca42e23          	sw	a0,-36(s0)
+    uint32_t hartid = read_hartid();
+     e34:	50b027f3          	csrr	a5,0x50b
+     e38:	fef42623          	sw	a5,-20(s0)
+     e3c:	fec42783          	lw	a5,-20(s0)
+     e40:	fef42423          	sw	a5,-24(s0)
+    hwlock_acquire();
+     e44:	34c000ef          	jal	1190 <hwlock_acquire>
+    exit_code[hartid] = retval;
+     e48:	83818713          	add	a4,gp,-1992 # 20000460 <exit_code>
+     e4c:	fe842783          	lw	a5,-24(s0)
+     e50:	00279793          	sll	a5,a5,0x2
+     e54:	00f707b3          	add	a5,a4,a5
+     e58:	fdc42703          	lw	a4,-36(s0)
+     e5c:	00e7a023          	sw	a4,0(a5)
+    exit_requested[hartid] = true;
+     e60:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+     e64:	fe842783          	lw	a5,-24(s0)
+     e68:	00f707b3          	add	a5,a4,a5
+     e6c:	00100713          	li	a4,1
+     e70:	00e78023          	sb	a4,0(a5)
+    hwlock_release();
+     e74:	354000ef          	jal	11c8 <hwlock_release>
+    // FIXME: Run cleanup handlers
+    // registered using thread_cleanup_push.
+    return;
+     e78:	00000013          	nop
+}
+     e7c:	02c12083          	lw	ra,44(sp)
+     e80:	02812403          	lw	s0,40(sp)
+     e84:	03010113          	add	sp,sp,48
+     e88:	00008067          	ret
+
+00000e8c <thread_cancel>:
+
+int thread_cancel(thread_t hartid) {
+     e8c:	fe010113          	add	sp,sp,-32
+     e90:	00112e23          	sw	ra,28(sp)
+     e94:	00812c23          	sw	s0,24(sp)
+     e98:	02010413          	add	s0,sp,32
+     e9c:	fea42623          	sw	a0,-20(s0)
+    hwlock_acquire(); // FIXME: Unnecessary?
+     ea0:	2f0000ef          	jal	1190 <hwlock_acquire>
+    cancel_requested[hartid] = true;
+     ea4:	d1018713          	add	a4,gp,-752 # 20000938 <cancel_requested>
+     ea8:	fec42783          	lw	a5,-20(s0)
+     eac:	00f707b3          	add	a5,a4,a5
+     eb0:	00100713          	li	a4,1
+     eb4:	00e78023          	sb	a4,0(a5)
+    hwlock_release();
+     eb8:	310000ef          	jal	11c8 <hwlock_release>
+    return 0;
+     ebc:	00000793          	li	a5,0
+}
+     ec0:	00078513          	mv	a0,a5
+     ec4:	01c12083          	lw	ra,28(sp)
+     ec8:	01812403          	lw	s0,24(sp)
+     ecc:	02010113          	add	sp,sp,32
+     ed0:	00008067          	ret
+
+00000ed4 <thread_testcancel>:
+
+void thread_testcancel() {
+     ed4:	fe010113          	add	sp,sp,-32
+     ed8:	00112e23          	sw	ra,28(sp)
+     edc:	00812c23          	sw	s0,24(sp)
+     ee0:	02010413          	add	s0,sp,32
+    uint32_t hartid = read_hartid();
+     ee4:	50b027f3          	csrr	a5,0x50b
+     ee8:	fef42623          	sw	a5,-20(s0)
+     eec:	fec42783          	lw	a5,-20(s0)
+     ef0:	fef42423          	sw	a5,-24(s0)
+    hwlock_acquire();
+     ef4:	29c000ef          	jal	1190 <hwlock_acquire>
+    if (cancel_requested[hartid]) {
+     ef8:	d1018713          	add	a4,gp,-752 # 20000938 <cancel_requested>
+     efc:	fe842783          	lw	a5,-24(s0)
+     f00:	00f707b3          	add	a5,a4,a5
+     f04:	0007c783          	lbu	a5,0(a5)
+     f08:	02078e63          	beqz	a5,f44 <thread_testcancel+0x70>
+        hwlock_release();
+     f0c:	2bc000ef          	jal	11c8 <hwlock_release>
+        longjmp(envs[hartid], 1);
+     f10:	fe842703          	lw	a4,-24(s0)
+     f14:	00070793          	mv	a5,a4
+     f18:	00279793          	sll	a5,a5,0x2
+     f1c:	00e787b3          	add	a5,a5,a4
+     f20:	00279793          	sll	a5,a5,0x2
+     f24:	40e787b3          	sub	a5,a5,a4
+     f28:	00479793          	sll	a5,a5,0x4
+     f2c:	20000737          	lui	a4,0x20000
+     f30:	47870713          	add	a4,a4,1144 # 20000478 <envs>
+     f34:	00e787b3          	add	a5,a5,a4
+     f38:	00100593          	li	a1,1
+     f3c:	00078513          	mv	a0,a5
+     f40:	1e4010ef          	jal	2124 <longjmp>
+    }
+    hwlock_release();
+     f44:	284000ef          	jal	11c8 <hwlock_release>
+}
+     f48:	00000013          	nop
+     f4c:	01c12083          	lw	ra,28(sp)
+     f50:	01812403          	lw	s0,24(sp)
+     f54:	02010113          	add	sp,sp,32
+     f58:	00008067          	ret
+
+00000f5c <worker_main>:
+
+/**
+ * Main function for a worker thread (hardware threads 1-7).
+ */
+void worker_main() {
+     f5c:	fe010113          	add	sp,sp,-32
+     f60:	00112e23          	sw	ra,28(sp)
+     f64:	00812c23          	sw	s0,24(sp)
+     f68:	02010413          	add	s0,sp,32
+    uint32_t hartid = read_hartid();
+     f6c:	50b027f3          	csrr	a5,0x50b
+     f70:	fef42623          	sw	a5,-20(s0)
+     f74:	fec42783          	lw	a5,-20(s0)
+     f78:	fef42423          	sw	a5,-24(s0)
+
+    // Save the environment buffer
+    // for potential thread_cancel calls.
+    // The execution will jump here
+    // if a cancellation request is handled.
+    int val = setjmp(envs[hartid]);
+     f7c:	fe842703          	lw	a4,-24(s0)
+     f80:	00070793          	mv	a5,a4
+     f84:	00279793          	sll	a5,a5,0x2
+     f88:	00e787b3          	add	a5,a5,a4
+     f8c:	00279793          	sll	a5,a5,0x2
+     f90:	40e787b3          	sub	a5,a5,a4
+     f94:	00479793          	sll	a5,a5,0x4
+     f98:	20000737          	lui	a4,0x20000
+     f9c:	47870713          	add	a4,a4,1144 # 20000478 <envs>
+     fa0:	00e787b3          	add	a5,a5,a4
+     fa4:	00078513          	mv	a0,a5
+     fa8:	144010ef          	jal	20ec <setjmp>
+     fac:	00050793          	mv	a5,a0
+     fb0:	fef42223          	sw	a5,-28(s0)
+    // Check if the thread returns from longjmp.
+    // If so, mark the thread as not in use.
+    if (val == 1) {
+     fb4:	fe442703          	lw	a4,-28(s0)
+     fb8:	00100793          	li	a5,1
+     fbc:	02f71c63          	bne	a4,a5,ff4 <worker_main+0x98>
+        hwlock_acquire();
+     fc0:	1d0000ef          	jal	1190 <hwlock_acquire>
+        num_threads_busy -= 1;
+     fc4:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
+     fc8:	fff78713          	add	a4,a5,-1
+     fcc:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
+        in_use[hartid] = false;
+     fd0:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     fd4:	fe842783          	lw	a5,-24(s0)
+     fd8:	00f707b3          	add	a5,a4,a5
+     fdc:	00078023          	sb	zero,0(a5)
+        hwlock_release();
+     fe0:	1e8000ef          	jal	11c8 <hwlock_release>
+
+        // Print a magic number that indicates
+        // the handling of a cancellation request.
+        _fp_print(6662);
+     fe4:	000027b7          	lui	a5,0x2
+     fe8:	a0678513          	add	a0,a5,-1530 # 1a06 <memclear+0x26>
+     fec:	e68ff0ef          	jal	654 <_fp_print>
+     ff0:	0880006f          	j	1078 <DSPM_APP_START+0x78>
+    }
+    else if (val != 0) {
+     ff4:	fe442783          	lw	a5,-28(s0)
+     ff8:	08078063          	beqz	a5,1078 <DSPM_APP_START+0x78>
+        // UNREACHABLE
+        assert(false);
+     ffc:	e8cff0ef          	jal	688 <_fp_abort>
+    1000:	0ff00593          	li	a1,255
+    1004:	00000513          	li	a0,0
+    1008:	ea8ff0ef          	jal	6b0 <gpo_write>
+    100c:	0000006f          	j	100c <DSPM_APP_START+0xc>
+        // the lock will not be freed.
+        // So for now it's the best if
+        // thread 0 does it. Maybe
+        // the hardware should change.
+
+        if (in_use[hartid]) {            
+    1010:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+    1014:	fe842783          	lw	a5,-24(s0)
+    1018:	00f707b3          	add	a5,a4,a5
+    101c:	0007c783          	lbu	a5,0(a5)
+    1020:	04078c63          	beqz	a5,1078 <DSPM_APP_START+0x78>
+            // Execute the routine with the argument passed in.
+            (*routines[hartid])(args[hartid]);
+    1024:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
+    1028:	fe842783          	lw	a5,-24(s0)
+    102c:	00279793          	sll	a5,a5,0x2
+    1030:	00f707b3          	add	a5,a4,a5
+    1034:	0007a783          	lw	a5,0(a5)
+    1038:	82818693          	add	a3,gp,-2008 # 20000450 <args>
+    103c:	fe842703          	lw	a4,-24(s0)
+    1040:	00271713          	sll	a4,a4,0x2
+    1044:	00e68733          	add	a4,a3,a4
+    1048:	00072703          	lw	a4,0(a4)
+    104c:	00070513          	mv	a0,a4
+    1050:	000780e7          	jalr	a5
+
+            // Mark the thread as available again.
+            hwlock_acquire();
+    1054:	13c000ef          	jal	1190 <hwlock_acquire>
+            num_threads_busy -= 1;
+    1058:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
+    105c:	fff78713          	add	a4,a5,-1
+    1060:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
+            in_use[hartid] = false;
+    1064:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+    1068:	fe842783          	lw	a5,-24(s0)
+    106c:	00f707b3          	add	a5,a4,a5
+    1070:	00078023          	sb	zero,0(a5)
+            hwlock_release();
+    1074:	154000ef          	jal	11c8 <hwlock_release>
+    while(!exit_requested[hartid]) {
+    1078:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+    107c:	fe842783          	lw	a5,-24(s0)
+    1080:	00f707b3          	add	a5,a4,a5
+    1084:	0007c783          	lbu	a5,0(a5)
+    1088:	0017c793          	xor	a5,a5,1
+    108c:	0ff7f793          	zext.b	a5,a5
+    1090:	f80790e3          	bnez	a5,1010 <DSPM_APP_START+0x10>
+    }
+
+    // FIXME: Execute clean up handlers here.
+
+    // Increment the counter of exited threads.
+    hwlock_acquire();
+    1094:	0fc000ef          	jal	1190 <hwlock_acquire>
+    num_threads_exited += 1;
+    1098:	d3c1a783          	lw	a5,-708(gp) # 20000964 <num_threads_exited>
+    109c:	00178713          	add	a4,a5,1
+    10a0:	d2e1ae23          	sw	a4,-708(gp) # 20000964 <num_threads_exited>
+    hwlock_release();
+    10a4:	124000ef          	jal	11c8 <hwlock_release>
+
+    return;
+    10a8:	00000013          	nop
+    10ac:	01c12083          	lw	ra,28(sp)
+    10b0:	01812403          	lw	s0,24(sp)
+    10b4:	02010113          	add	sp,sp,32
+    10b8:	00008067          	ret
+
+000010bc <_fp_abort>:
+int do_acquire(lock_t* lock) {
+    hwlock_acquire();
+    if (lock->locked) {
+        hwlock_release();
+        return 1;
+    }
+    10bc:	ff010113          	add	sp,sp,-16
+    10c0:	00812623          	sw	s0,12(sp)
+    10c4:	01010413          	add	s0,sp,16
+    lock->locked = true;
+    10c8:	deadc7b7          	lui	a5,0xdeadc
+    10cc:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+    10d0:	51e79073          	csrw	0x51e,a5
+    lock->owner  = read_hartid();
+    10d4:	00000013          	nop
+    10d8:	00c12403          	lw	s0,12(sp)
+    10dc:	01010113          	add	sp,sp,16
+    10e0:	00008067          	ret
+
+000010e4 <gpo_write>:
+    hwlock_release();
+    return 0;
+}
+
+void lock_acquire(lock_t* lock) {
+    // Spin lock
+    10e4:	fe010113          	add	sp,sp,-32
+    10e8:	00112e23          	sw	ra,28(sp)
+    10ec:	00812c23          	sw	s0,24(sp)
+    10f0:	02010413          	add	s0,sp,32
+    10f4:	fea42623          	sw	a0,-20(s0)
+    10f8:	feb42423          	sw	a1,-24(s0)
+    while(do_acquire(lock));
+    10fc:	fec42703          	lw	a4,-20(s0)
+    1100:	00300793          	li	a5,3
+    1104:	06f70263          	beq	a4,a5,1168 <gpo_write+0x84>
+    1108:	fec42703          	lw	a4,-20(s0)
+    110c:	00300793          	li	a5,3
+    1110:	06e7e263          	bltu	a5,a4,1174 <gpo_write+0x90>
+    1114:	fec42703          	lw	a4,-20(s0)
+    1118:	00200793          	li	a5,2
+    111c:	04f70063          	beq	a4,a5,115c <gpo_write+0x78>
+    1120:	fec42703          	lw	a4,-20(s0)
+    1124:	00200793          	li	a5,2
+    1128:	04e7e663          	bltu	a5,a4,1174 <gpo_write+0x90>
+    112c:	fec42783          	lw	a5,-20(s0)
+    1130:	00078a63          	beqz	a5,1144 <gpo_write+0x60>
+    1134:	fec42703          	lw	a4,-20(s0)
+    1138:	00100793          	li	a5,1
+    113c:	00f70a63          	beq	a4,a5,1150 <gpo_write+0x6c>
+    1140:	0340006f          	j	1174 <gpo_write+0x90>
+}
+    1144:	fe842783          	lw	a5,-24(s0)
+    1148:	cc479073          	csrw	0xcc4,a5
+    114c:	0300006f          	j	117c <gpo_write+0x98>
+
+    1150:	fe842783          	lw	a5,-24(s0)
+    1154:	cc579073          	csrw	0xcc5,a5
+    1158:	0240006f          	j	117c <gpo_write+0x98>
+void lock_release(lock_t* lock) {
+    115c:	fe842783          	lw	a5,-24(s0)
+    1160:	cc679073          	csrw	0xcc6,a5
+    1164:	0180006f          	j	117c <gpo_write+0x98>
+    hwlock_acquire();
+    1168:	fe842783          	lw	a5,-24(s0)
+    116c:	cc779073          	csrw	0xcc7,a5
+    1170:	00c0006f          	j	117c <gpo_write+0x98>
+    assert(read_hartid() == lock->owner);
+    1174:	f49ff0ef          	jal	10bc <_fp_abort>
+    lock->locked = false;
+    lock->owner  = UINT32_MAX;
+    1178:	00000013          	nop
+    117c:	00000013          	nop
+    1180:	01c12083          	lw	ra,28(sp)
+    1184:	01812403          	lw	s0,24(sp)
+    1188:	02010113          	add	sp,sp,32
+    118c:	00008067          	ret
+
+00001190 <hwlock_acquire>:
+void hwlock_acquire() {
+    1190:	fe010113          	add	sp,sp,-32
+    1194:	00812e23          	sw	s0,28(sp)
+    1198:	02010413          	add	s0,sp,32
+    while(swap_csr(CSR_HWLOCK, 1) == 0);
+    119c:	00000013          	nop
+    11a0:	00100793          	li	a5,1
+    11a4:	520797f3          	csrrw	a5,0x520,a5
+    11a8:	fef42623          	sw	a5,-20(s0)
+    11ac:	fec42783          	lw	a5,-20(s0)
+    11b0:	fe0788e3          	beqz	a5,11a0 <hwlock_acquire+0x10>
+}
+    11b4:	00000013          	nop
+    11b8:	00000013          	nop
+    11bc:	01c12403          	lw	s0,28(sp)
+    11c0:	02010113          	add	sp,sp,32
+    11c4:	00008067          	ret
+
+000011c8 <hwlock_release>:
+void hwlock_release() {
+    11c8:	fe010113          	add	sp,sp,-32
+    11cc:	00112e23          	sw	ra,28(sp)
+    11d0:	00812c23          	sw	s0,24(sp)
+    11d4:	02010413          	add	s0,sp,32
+    if (swap_csr(CSR_HWLOCK, 0) != 1) {
+    11d8:	00000793          	li	a5,0
+    11dc:	520797f3          	csrrw	a5,0x520,a5
+    11e0:	fef42623          	sw	a5,-20(s0)
+    11e4:	fec42703          	lw	a4,-20(s0)
+    11e8:	00100793          	li	a5,1
+    11ec:	00f70c63          	beq	a4,a5,1204 <hwlock_release+0x3c>
+        assert(false);
+    11f0:	ecdff0ef          	jal	10bc <_fp_abort>
+    11f4:	0ff00593          	li	a1,255
+    11f8:	00000513          	li	a0,0
+    11fc:	ee9ff0ef          	jal	10e4 <gpo_write>
+    1200:	0000006f          	j	1200 <hwlock_release+0x38>
+}
+    1204:	00000013          	nop
+    1208:	01c12083          	lw	ra,28(sp)
+    120c:	01812403          	lw	s0,24(sp)
+    1210:	02010113          	add	sp,sp,32
+    1214:	00008067          	ret
+
+00001218 <do_acquire>:
+int do_acquire(lock_t* lock) {
+    1218:	fd010113          	add	sp,sp,-48
+    121c:	02112623          	sw	ra,44(sp)
+    1220:	02812423          	sw	s0,40(sp)
+    1224:	03010413          	add	s0,sp,48
+    1228:	fca42e23          	sw	a0,-36(s0)
+    hwlock_acquire();
+    122c:	f65ff0ef          	jal	1190 <hwlock_acquire>
+    if (lock->locked) {
+    1230:	fdc42783          	lw	a5,-36(s0)
+    1234:	0007c783          	lbu	a5,0(a5)
+    1238:	00078863          	beqz	a5,1248 <do_acquire+0x30>
+        hwlock_release();
+    123c:	f8dff0ef          	jal	11c8 <hwlock_release>
+        return 1;
+    1240:	00100793          	li	a5,1
+    1244:	0300006f          	j	1274 <do_acquire+0x5c>
+    lock->locked = true;
+    1248:	fdc42783          	lw	a5,-36(s0)
+    124c:	00100713          	li	a4,1
+    1250:	00e78023          	sb	a4,0(a5)
+    lock->owner  = read_hartid();
+    1254:	50b027f3          	csrr	a5,0x50b
+    1258:	fef42623          	sw	a5,-20(s0)
+    125c:	fec42783          	lw	a5,-20(s0)
+    1260:	00078713          	mv	a4,a5
+    1264:	fdc42783          	lw	a5,-36(s0)
+    1268:	00e7a223          	sw	a4,4(a5)
+    hwlock_release();
+    126c:	f5dff0ef          	jal	11c8 <hwlock_release>
+    return 0;
+    1270:	00000793          	li	a5,0
+}
+    1274:	00078513          	mv	a0,a5
+    1278:	02c12083          	lw	ra,44(sp)
+    127c:	02812403          	lw	s0,40(sp)
+    1280:	03010113          	add	sp,sp,48
+    1284:	00008067          	ret
+
+00001288 <lock_acquire>:
+void lock_acquire(lock_t* lock) {
+    1288:	fe010113          	add	sp,sp,-32
+    128c:	00112e23          	sw	ra,28(sp)
+    1290:	00812c23          	sw	s0,24(sp)
+    1294:	02010413          	add	s0,sp,32
+    1298:	fea42623          	sw	a0,-20(s0)
+    while(do_acquire(lock));
+    129c:	00000013          	nop
+    12a0:	fec42503          	lw	a0,-20(s0)
+    12a4:	f75ff0ef          	jal	1218 <do_acquire>
+    12a8:	00050793          	mv	a5,a0
+    12ac:	fe079ae3          	bnez	a5,12a0 <lock_acquire+0x18>
+}
+    12b0:	00000013          	nop
+    12b4:	00000013          	nop
+    12b8:	01c12083          	lw	ra,28(sp)
+    12bc:	01812403          	lw	s0,24(sp)
+    12c0:	02010113          	add	sp,sp,32
+    12c4:	00008067          	ret
+
+000012c8 <lock_release>:
+void lock_release(lock_t* lock) {
+    12c8:	fd010113          	add	sp,sp,-48
+    12cc:	02112623          	sw	ra,44(sp)
+    12d0:	02812423          	sw	s0,40(sp)
+    12d4:	03010413          	add	s0,sp,48
+    12d8:	fca42e23          	sw	a0,-36(s0)
+    hwlock_acquire();
+    12dc:	eb5ff0ef          	jal	1190 <hwlock_acquire>
+    assert(read_hartid() == lock->owner);
+    12e0:	50b027f3          	csrr	a5,0x50b
+    12e4:	fef42623          	sw	a5,-20(s0)
+    12e8:	fec42783          	lw	a5,-20(s0)
+    12ec:	fdc42703          	lw	a4,-36(s0)
+    12f0:	00472703          	lw	a4,4(a4)
+    12f4:	00e78c63          	beq	a5,a4,130c <lock_release+0x44>
+    12f8:	dc5ff0ef          	jal	10bc <_fp_abort>
+    12fc:	0ff00593          	li	a1,255
+    1300:	00000513          	li	a0,0
+    1304:	de1ff0ef          	jal	10e4 <gpo_write>
+    1308:	0000006f          	j	1308 <lock_release+0x40>
+    lock->locked = false;
+    130c:	fdc42783          	lw	a5,-36(s0)
+    1310:	00078023          	sb	zero,0(a5)
+    lock->owner  = UINT32_MAX;
+    1314:	fdc42783          	lw	a5,-36(s0)
+    1318:	fff00713          	li	a4,-1
+    131c:	00e7a223          	sw	a4,4(a5)
+    hwlock_release();
+    1320:	ea9ff0ef          	jal	11c8 <hwlock_release>
+}
+    1324:	00000013          	nop
+    1328:	02c12083          	lw	ra,44(sp)
+    132c:	02812403          	lw	s0,40(sp)
+    1330:	03010113          	add	sp,sp,48
+    1334:	00008067          	ret
+
+00001338 <insert_block>:
+ * If compaction is enabled, inserts block
+ * into free list, sorted by addr.
+ * If disabled, add block has new head of
+ * the free list.
+ */
+static void insert_block(Block *block) {
+    1338:	fd010113          	add	sp,sp,-48
+    133c:	02812623          	sw	s0,44(sp)
+    1340:	03010413          	add	s0,sp,48
+    1344:	fca42e23          	sw	a0,-36(s0)
+#ifndef TA_DISABLE_COMPACT
+    Block *ptr  = heap->free;
+    1348:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    134c:	0007a783          	lw	a5,0(a5)
+    1350:	fef42623          	sw	a5,-20(s0)
+    Block *prev = NULL;
+    1354:	fe042423          	sw	zero,-24(s0)
+    while (ptr != NULL) {
+    1358:	0300006f          	j	1388 <insert_block+0x50>
+        if ((size_t)block->addr <= (size_t)ptr->addr) {
+    135c:	fdc42783          	lw	a5,-36(s0)
+    1360:	0007a783          	lw	a5,0(a5)
+    1364:	00078713          	mv	a4,a5
+    1368:	fec42783          	lw	a5,-20(s0)
+    136c:	0007a783          	lw	a5,0(a5)
+    1370:	02e7f263          	bgeu	a5,a4,1394 <insert_block+0x5c>
+            print_s("insert");
+            print_i((size_t)ptr);
+            break;
+        }
+        prev = ptr;
+    1374:	fec42783          	lw	a5,-20(s0)
+    1378:	fef42423          	sw	a5,-24(s0)
+        ptr  = ptr->next;
+    137c:	fec42783          	lw	a5,-20(s0)
+    1380:	0047a783          	lw	a5,4(a5)
+    1384:	fef42623          	sw	a5,-20(s0)
+    while (ptr != NULL) {
+    1388:	fec42783          	lw	a5,-20(s0)
+    138c:	fc0798e3          	bnez	a5,135c <insert_block+0x24>
+    1390:	0080006f          	j	1398 <insert_block+0x60>
+            break;
+    1394:	00000013          	nop
+    }
+    if (prev != NULL) {
+    1398:	fe842783          	lw	a5,-24(s0)
+    139c:	00078a63          	beqz	a5,13b0 <insert_block+0x78>
+        if (ptr == NULL) {
+            print_s("new tail");
+        }
+        prev->next = block;
+    13a0:	fe842783          	lw	a5,-24(s0)
+    13a4:	fdc42703          	lw	a4,-36(s0)
+    13a8:	00e7a223          	sw	a4,4(a5)
+    13ac:	0100006f          	j	13bc <insert_block+0x84>
+    } else {
+        print_s("new head");
+        heap->free = block;
+    13b0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    13b4:	fdc42703          	lw	a4,-36(s0)
+    13b8:	00e7a023          	sw	a4,0(a5)
+    }
+    block->next = ptr;
+    13bc:	fdc42783          	lw	a5,-36(s0)
+    13c0:	fec42703          	lw	a4,-20(s0)
+    13c4:	00e7a223          	sw	a4,4(a5)
+#else
+    block->next = heap->free;
+    heap->free  = block;
+#endif
+}
+    13c8:	00000013          	nop
+    13cc:	02c12403          	lw	s0,44(sp)
+    13d0:	03010113          	add	sp,sp,48
+    13d4:	00008067          	ret
+
+000013d8 <release_blocks>:
+
+#ifndef TA_DISABLE_COMPACT
+static void release_blocks(Block *scan, Block *to) {
+    13d8:	fd010113          	add	sp,sp,-48
+    13dc:	02812623          	sw	s0,44(sp)
+    13e0:	03010413          	add	s0,sp,48
+    13e4:	fca42e23          	sw	a0,-36(s0)
+    13e8:	fcb42c23          	sw	a1,-40(s0)
+    Block *scan_next;
+    while (scan != to) {
+    13ec:	0440006f          	j	1430 <release_blocks+0x58>
+        print_s("release");
+        print_i((size_t)scan);
+        scan_next   = scan->next;
+    13f0:	fdc42783          	lw	a5,-36(s0)
+    13f4:	0047a783          	lw	a5,4(a5)
+    13f8:	fef42623          	sw	a5,-20(s0)
+        scan->next  = heap->fresh;
+    13fc:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1400:	0087a703          	lw	a4,8(a5)
+    1404:	fdc42783          	lw	a5,-36(s0)
+    1408:	00e7a223          	sw	a4,4(a5)
+        heap->fresh = scan;
+    140c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1410:	fdc42703          	lw	a4,-36(s0)
+    1414:	00e7a423          	sw	a4,8(a5)
+        scan->addr  = 0;
+    1418:	fdc42783          	lw	a5,-36(s0)
+    141c:	0007a023          	sw	zero,0(a5)
+        scan->size  = 0;
+    1420:	fdc42783          	lw	a5,-36(s0)
+    1424:	0007a423          	sw	zero,8(a5)
+        scan        = scan_next;
+    1428:	fec42783          	lw	a5,-20(s0)
+    142c:	fcf42e23          	sw	a5,-36(s0)
+    while (scan != to) {
+    1430:	fdc42703          	lw	a4,-36(s0)
+    1434:	fd842783          	lw	a5,-40(s0)
+    1438:	faf71ce3          	bne	a4,a5,13f0 <release_blocks+0x18>
+    }
+}
+    143c:	00000013          	nop
+    1440:	00000013          	nop
+    1444:	02c12403          	lw	s0,44(sp)
+    1448:	03010113          	add	sp,sp,48
+    144c:	00008067          	ret
+
+00001450 <compact>:
+
+static void compact() {
+    1450:	fd010113          	add	sp,sp,-48
+    1454:	02112623          	sw	ra,44(sp)
+    1458:	02812423          	sw	s0,40(sp)
+    145c:	03010413          	add	s0,sp,48
+    Block *ptr = heap->free;
+    1460:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1464:	0007a783          	lw	a5,0(a5)
+    1468:	fef42623          	sw	a5,-20(s0)
+    Block *prev;
+    Block *scan;
+    while (ptr != NULL) {
+    146c:	0dc0006f          	j	1548 <compact+0xf8>
+        prev = ptr;
+    1470:	fec42783          	lw	a5,-20(s0)
+    1474:	fef42423          	sw	a5,-24(s0)
+        scan = ptr->next;
+    1478:	fec42783          	lw	a5,-20(s0)
+    147c:	0047a783          	lw	a5,4(a5)
+    1480:	fef42223          	sw	a5,-28(s0)
+        while (scan != NULL &&
+    1484:	0180006f          	j	149c <compact+0x4c>
+               (size_t)prev->addr + prev->size == (size_t)scan->addr) {
+            print_s("merge");
+            print_i((size_t)scan);
+            prev = scan;
+    1488:	fe442783          	lw	a5,-28(s0)
+    148c:	fef42423          	sw	a5,-24(s0)
+            scan = scan->next;
+    1490:	fe442783          	lw	a5,-28(s0)
+    1494:	0047a783          	lw	a5,4(a5)
+    1498:	fef42223          	sw	a5,-28(s0)
+        while (scan != NULL &&
+    149c:	fe442783          	lw	a5,-28(s0)
+    14a0:	02078463          	beqz	a5,14c8 <compact+0x78>
+               (size_t)prev->addr + prev->size == (size_t)scan->addr) {
+    14a4:	fe842783          	lw	a5,-24(s0)
+    14a8:	0007a783          	lw	a5,0(a5)
+    14ac:	00078713          	mv	a4,a5
+    14b0:	fe842783          	lw	a5,-24(s0)
+    14b4:	0087a783          	lw	a5,8(a5)
+    14b8:	00f707b3          	add	a5,a4,a5
+    14bc:	fe442703          	lw	a4,-28(s0)
+    14c0:	00072703          	lw	a4,0(a4)
+        while (scan != NULL &&
+    14c4:	fce782e3          	beq	a5,a4,1488 <compact+0x38>
+        }
+        if (prev != ptr) {
+    14c8:	fe842703          	lw	a4,-24(s0)
+    14cc:	fec42783          	lw	a5,-20(s0)
+    14d0:	06f70663          	beq	a4,a5,153c <compact+0xec>
+            size_t new_size =
+                (size_t)prev->addr - (size_t)ptr->addr + prev->size;
+    14d4:	fe842783          	lw	a5,-24(s0)
+    14d8:	0007a783          	lw	a5,0(a5)
+    14dc:	00078713          	mv	a4,a5
+    14e0:	fec42783          	lw	a5,-20(s0)
+    14e4:	0007a783          	lw	a5,0(a5)
+    14e8:	40f70733          	sub	a4,a4,a5
+    14ec:	fe842783          	lw	a5,-24(s0)
+    14f0:	0087a783          	lw	a5,8(a5)
+            size_t new_size =
+    14f4:	00f707b3          	add	a5,a4,a5
+    14f8:	fef42023          	sw	a5,-32(s0)
+            print_s("new size");
+            print_i(new_size);
+            ptr->size   = new_size;
+    14fc:	fec42783          	lw	a5,-20(s0)
+    1500:	fe042703          	lw	a4,-32(s0)
+    1504:	00e7a423          	sw	a4,8(a5)
+            Block *next = prev->next;
+    1508:	fe842783          	lw	a5,-24(s0)
+    150c:	0047a783          	lw	a5,4(a5)
+    1510:	fcf42e23          	sw	a5,-36(s0)
+            // make merged blocks available
+            release_blocks(ptr->next, prev->next);
+    1514:	fec42783          	lw	a5,-20(s0)
+    1518:	0047a703          	lw	a4,4(a5)
+    151c:	fe842783          	lw	a5,-24(s0)
+    1520:	0047a783          	lw	a5,4(a5)
+    1524:	00078593          	mv	a1,a5
+    1528:	00070513          	mv	a0,a4
+    152c:	eadff0ef          	jal	13d8 <release_blocks>
+            // relink
+            ptr->next = next;
+    1530:	fec42783          	lw	a5,-20(s0)
+    1534:	fdc42703          	lw	a4,-36(s0)
+    1538:	00e7a223          	sw	a4,4(a5)
+        }
+        ptr = ptr->next;
+    153c:	fec42783          	lw	a5,-20(s0)
+    1540:	0047a783          	lw	a5,4(a5)
+    1544:	fef42623          	sw	a5,-20(s0)
+    while (ptr != NULL) {
+    1548:	fec42783          	lw	a5,-20(s0)
+    154c:	f20792e3          	bnez	a5,1470 <compact+0x20>
+    }
+}
+    1550:	00000013          	nop
+    1554:	00000013          	nop
+    1558:	02c12083          	lw	ra,44(sp)
+    155c:	02812403          	lw	s0,40(sp)
+    1560:	03010113          	add	sp,sp,48
+    1564:	00008067          	ret
+
+00001568 <ta_init>:
+#endif
+
+bool ta_init(const void *base, const void *limit, const size_t heap_blocks, const size_t split_thresh, const size_t alignment) {
+    1568:	fc010113          	add	sp,sp,-64
+    156c:	02812e23          	sw	s0,60(sp)
+    1570:	04010413          	add	s0,sp,64
+    1574:	fca42e23          	sw	a0,-36(s0)
+    1578:	fcb42c23          	sw	a1,-40(s0)
+    157c:	fcc42a23          	sw	a2,-44(s0)
+    1580:	fcd42823          	sw	a3,-48(s0)
+    1584:	fce42623          	sw	a4,-52(s0)
+    heap = (Heap *)base;
+    1588:	fdc42703          	lw	a4,-36(s0)
+    158c:	d0e1aa23          	sw	a4,-748(gp) # 2000093c <heap>
+    heap_limit = limit;
+    1590:	fd842703          	lw	a4,-40(s0)
+    1594:	d0e1ac23          	sw	a4,-744(gp) # 20000940 <heap_limit>
+    heap_split_thresh = split_thresh;
+    1598:	fd042703          	lw	a4,-48(s0)
+    159c:	d0e1ae23          	sw	a4,-740(gp) # 20000944 <heap_split_thresh>
+    heap_alignment = alignment;
+    15a0:	fcc42703          	lw	a4,-52(s0)
+    15a4:	d2e1a023          	sw	a4,-736(gp) # 20000948 <heap_alignment>
+    heap_max_blocks = heap_blocks;
+    15a8:	fd442703          	lw	a4,-44(s0)
+    15ac:	d2e1a223          	sw	a4,-732(gp) # 2000094c <heap_max_blocks>
+
+    heap->free   = NULL;
+    15b0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15b4:	0007a023          	sw	zero,0(a5)
+    heap->used   = NULL;
+    15b8:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15bc:	0007a223          	sw	zero,4(a5)
+    heap->fresh  = (Block *)(heap + 1);
+    15c0:	d141a703          	lw	a4,-748(gp) # 2000093c <heap>
+    15c4:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15c8:	01070713          	add	a4,a4,16
+    15cc:	00e7a423          	sw	a4,8(a5)
+    heap->top    = (size_t)(heap->fresh + heap_blocks);
+    15d0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15d4:	0087a683          	lw	a3,8(a5)
+    15d8:	fd442703          	lw	a4,-44(s0)
+    15dc:	00070793          	mv	a5,a4
+    15e0:	00179793          	sll	a5,a5,0x1
+    15e4:	00e787b3          	add	a5,a5,a4
+    15e8:	00279793          	sll	a5,a5,0x2
+    15ec:	00f68733          	add	a4,a3,a5
+    15f0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15f4:	00e7a623          	sw	a4,12(a5)
+
+    Block *block = heap->fresh;
+    15f8:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    15fc:	0087a783          	lw	a5,8(a5)
+    1600:	fef42623          	sw	a5,-20(s0)
+    size_t i     = heap_max_blocks - 1;
+    1604:	d241a783          	lw	a5,-732(gp) # 2000094c <heap_max_blocks>
+    1608:	fff78793          	add	a5,a5,-1
+    160c:	fef42423          	sw	a5,-24(s0)
+    while (i--) {
+    1610:	0200006f          	j	1630 <ta_init+0xc8>
+        block->next = block + 1;
+    1614:	fec42783          	lw	a5,-20(s0)
+    1618:	00c78713          	add	a4,a5,12
+    161c:	fec42783          	lw	a5,-20(s0)
+    1620:	00e7a223          	sw	a4,4(a5)
+        block++;
+    1624:	fec42783          	lw	a5,-20(s0)
+    1628:	00c78793          	add	a5,a5,12
+    162c:	fef42623          	sw	a5,-20(s0)
+    while (i--) {
+    1630:	fe842783          	lw	a5,-24(s0)
+    1634:	fff78713          	add	a4,a5,-1
+    1638:	fee42423          	sw	a4,-24(s0)
+    163c:	fc079ce3          	bnez	a5,1614 <ta_init+0xac>
+    }
+    block->next = NULL;
+    1640:	fec42783          	lw	a5,-20(s0)
+    1644:	0007a223          	sw	zero,4(a5)
+    return true;
+    1648:	00100793          	li	a5,1
+}
+    164c:	00078513          	mv	a0,a5
+    1650:	03c12403          	lw	s0,60(sp)
+    1654:	04010113          	add	sp,sp,64
+    1658:	00008067          	ret
+
+0000165c <ta_free>:
+
+bool ta_free(void *free) {
+    165c:	fd010113          	add	sp,sp,-48
+    1660:	02112623          	sw	ra,44(sp)
+    1664:	02812423          	sw	s0,40(sp)
+    1668:	03010413          	add	s0,sp,48
+    166c:	fca42e23          	sw	a0,-36(s0)
+    Block *block = heap->used;
+    1670:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1674:	0047a783          	lw	a5,4(a5)
+    1678:	fef42623          	sw	a5,-20(s0)
+    Block *prev  = NULL;
+    167c:	fe042423          	sw	zero,-24(s0)
+    while (block != NULL) {
+    1680:	0680006f          	j	16e8 <ta_free+0x8c>
+        if (free == block->addr) {
+    1684:	fec42783          	lw	a5,-20(s0)
+    1688:	0007a783          	lw	a5,0(a5)
+    168c:	fdc42703          	lw	a4,-36(s0)
+    1690:	04f71263          	bne	a4,a5,16d4 <ta_free+0x78>
+            if (prev) {
+    1694:	fe842783          	lw	a5,-24(s0)
+    1698:	00078c63          	beqz	a5,16b0 <ta_free+0x54>
+                prev->next = block->next;
+    169c:	fec42783          	lw	a5,-20(s0)
+    16a0:	0047a703          	lw	a4,4(a5)
+    16a4:	fe842783          	lw	a5,-24(s0)
+    16a8:	00e7a223          	sw	a4,4(a5)
+    16ac:	0140006f          	j	16c0 <ta_free+0x64>
+            } else {
+                heap->used = block->next;
+    16b0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    16b4:	fec42703          	lw	a4,-20(s0)
+    16b8:	00472703          	lw	a4,4(a4)
+    16bc:	00e7a223          	sw	a4,4(a5)
+            }
+            insert_block(block);
+    16c0:	fec42503          	lw	a0,-20(s0)
+    16c4:	c75ff0ef          	jal	1338 <insert_block>
+#ifndef TA_DISABLE_COMPACT
+            compact();
+    16c8:	d89ff0ef          	jal	1450 <compact>
+#endif
+            return true;
+    16cc:	00100793          	li	a5,1
+    16d0:	0240006f          	j	16f4 <ta_free+0x98>
+        }
+        prev  = block;
+    16d4:	fec42783          	lw	a5,-20(s0)
+    16d8:	fef42423          	sw	a5,-24(s0)
+        block = block->next;
+    16dc:	fec42783          	lw	a5,-20(s0)
+    16e0:	0047a783          	lw	a5,4(a5)
+    16e4:	fef42623          	sw	a5,-20(s0)
+    while (block != NULL) {
+    16e8:	fec42783          	lw	a5,-20(s0)
+    16ec:	f8079ce3          	bnez	a5,1684 <ta_free+0x28>
+    }
+    return false;
+    16f0:	00000793          	li	a5,0
+}
+    16f4:	00078513          	mv	a0,a5
+    16f8:	02c12083          	lw	ra,44(sp)
+    16fc:	02812403          	lw	s0,40(sp)
+    1700:	03010113          	add	sp,sp,48
+    1704:	00008067          	ret
+
+00001708 <alloc_block>:
+
+static Block *alloc_block(size_t num) {
+    1708:	fc010113          	add	sp,sp,-64
+    170c:	02112e23          	sw	ra,60(sp)
+    1710:	02812c23          	sw	s0,56(sp)
+    1714:	04010413          	add	s0,sp,64
+    1718:	fca42623          	sw	a0,-52(s0)
+    Block *ptr  = heap->free;
+    171c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1720:	0007a783          	lw	a5,0(a5)
+    1724:	fef42623          	sw	a5,-20(s0)
+    Block *prev = NULL;
+    1728:	fe042423          	sw	zero,-24(s0)
+    size_t top  = heap->top;
+    172c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1730:	00c7a783          	lw	a5,12(a5)
+    1734:	fef42223          	sw	a5,-28(s0)
+    num         = (num + heap_alignment - 1) & -heap_alignment;
+    1738:	d201a703          	lw	a4,-736(gp) # 20000948 <heap_alignment>
+    173c:	fcc42783          	lw	a5,-52(s0)
+    1740:	00f707b3          	add	a5,a4,a5
+    1744:	fff78713          	add	a4,a5,-1
+    1748:	d201a783          	lw	a5,-736(gp) # 20000948 <heap_alignment>
+    174c:	40f007b3          	neg	a5,a5
+    1750:	00f777b3          	and	a5,a4,a5
+    1754:	fcf42623          	sw	a5,-52(s0)
+    while (ptr != NULL) {
+    1758:	18c0006f          	j	18e4 <alloc_block+0x1dc>
+        const int is_top = ((size_t)ptr->addr + ptr->size >= top) && ((size_t)ptr->addr + num <= (size_t)heap_limit);
+    175c:	fec42783          	lw	a5,-20(s0)
+    1760:	0007a783          	lw	a5,0(a5)
+    1764:	00078713          	mv	a4,a5
+    1768:	fec42783          	lw	a5,-20(s0)
+    176c:	0087a783          	lw	a5,8(a5)
+    1770:	00f707b3          	add	a5,a4,a5
+    1774:	fe442703          	lw	a4,-28(s0)
+    1778:	02e7e463          	bltu	a5,a4,17a0 <alloc_block+0x98>
+    177c:	fec42783          	lw	a5,-20(s0)
+    1780:	0007a783          	lw	a5,0(a5)
+    1784:	00078713          	mv	a4,a5
+    1788:	fcc42783          	lw	a5,-52(s0)
+    178c:	00f707b3          	add	a5,a4,a5
+    1790:	d181a703          	lw	a4,-744(gp) # 20000940 <heap_limit>
+    1794:	00f76663          	bltu	a4,a5,17a0 <alloc_block+0x98>
+    1798:	00100793          	li	a5,1
+    179c:	0080006f          	j	17a4 <alloc_block+0x9c>
+    17a0:	00000793          	li	a5,0
+    17a4:	fcf42e23          	sw	a5,-36(s0)
+        if (is_top || ptr->size >= num) {
+    17a8:	fdc42783          	lw	a5,-36(s0)
+    17ac:	00079a63          	bnez	a5,17c0 <alloc_block+0xb8>
+    17b0:	fec42783          	lw	a5,-20(s0)
+    17b4:	0087a783          	lw	a5,8(a5)
+    17b8:	fcc42703          	lw	a4,-52(s0)
+    17bc:	10e7ea63          	bltu	a5,a4,18d0 <alloc_block+0x1c8>
+            if (prev != NULL) {
+    17c0:	fe842783          	lw	a5,-24(s0)
+    17c4:	00078c63          	beqz	a5,17dc <alloc_block+0xd4>
+                prev->next = ptr->next;
+    17c8:	fec42783          	lw	a5,-20(s0)
+    17cc:	0047a703          	lw	a4,4(a5)
+    17d0:	fe842783          	lw	a5,-24(s0)
+    17d4:	00e7a223          	sw	a4,4(a5)
+    17d8:	0140006f          	j	17ec <alloc_block+0xe4>
+            } else {
+                heap->free = ptr->next;
+    17dc:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    17e0:	fec42703          	lw	a4,-20(s0)
+    17e4:	00472703          	lw	a4,4(a4)
+    17e8:	00e7a023          	sw	a4,0(a5)
+            }
+            ptr->next  = heap->used;
+    17ec:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    17f0:	0047a703          	lw	a4,4(a5)
+    17f4:	fec42783          	lw	a5,-20(s0)
+    17f8:	00e7a223          	sw	a4,4(a5)
+            heap->used = ptr;
+    17fc:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1800:	fec42703          	lw	a4,-20(s0)
+    1804:	00e7a223          	sw	a4,4(a5)
+            if (is_top) {
+    1808:	fdc42783          	lw	a5,-36(s0)
+    180c:	02078863          	beqz	a5,183c <alloc_block+0x134>
+                print_s("resize top block");
+                ptr->size = num;
+    1810:	fec42783          	lw	a5,-20(s0)
+    1814:	fcc42703          	lw	a4,-52(s0)
+    1818:	00e7a423          	sw	a4,8(a5)
+                heap->top = (size_t)ptr->addr + num;
+    181c:	fec42783          	lw	a5,-20(s0)
+    1820:	0007a783          	lw	a5,0(a5)
+    1824:	00078693          	mv	a3,a5
+    1828:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    182c:	fcc42703          	lw	a4,-52(s0)
+    1830:	00e68733          	add	a4,a3,a4
+    1834:	00e7a623          	sw	a4,12(a5)
+    1838:	0900006f          	j	18c8 <alloc_block+0x1c0>
+#ifndef TA_DISABLE_SPLIT
+            } else if (heap->fresh != NULL) {
+    183c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1840:	0087a783          	lw	a5,8(a5)
+    1844:	08078263          	beqz	a5,18c8 <alloc_block+0x1c0>
+                size_t excess = ptr->size - num;
+    1848:	fec42783          	lw	a5,-20(s0)
+    184c:	0087a703          	lw	a4,8(a5)
+    1850:	fcc42783          	lw	a5,-52(s0)
+    1854:	40f707b3          	sub	a5,a4,a5
+    1858:	fcf42c23          	sw	a5,-40(s0)
+                if (excess >= heap_split_thresh) {
+    185c:	d1c1a783          	lw	a5,-740(gp) # 20000944 <heap_split_thresh>
+    1860:	fd842703          	lw	a4,-40(s0)
+    1864:	06f76263          	bltu	a4,a5,18c8 <alloc_block+0x1c0>
+                    ptr->size    = num;
+    1868:	fec42783          	lw	a5,-20(s0)
+    186c:	fcc42703          	lw	a4,-52(s0)
+    1870:	00e7a423          	sw	a4,8(a5)
+                    Block *split = heap->fresh;
+    1874:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1878:	0087a783          	lw	a5,8(a5)
+    187c:	fcf42a23          	sw	a5,-44(s0)
+                    heap->fresh  = split->next;
+    1880:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1884:	fd442703          	lw	a4,-44(s0)
+    1888:	00472703          	lw	a4,4(a4)
+    188c:	00e7a423          	sw	a4,8(a5)
+                    split->addr  = (void *)((size_t)ptr->addr + num);
+    1890:	fec42783          	lw	a5,-20(s0)
+    1894:	0007a783          	lw	a5,0(a5)
+    1898:	00078713          	mv	a4,a5
+    189c:	fcc42783          	lw	a5,-52(s0)
+    18a0:	00f707b3          	add	a5,a4,a5
+    18a4:	00078713          	mv	a4,a5
+    18a8:	fd442783          	lw	a5,-44(s0)
+    18ac:	00e7a023          	sw	a4,0(a5)
+                    print_s("split");
+                    print_i((size_t)split->addr);
+                    split->size = excess;
+    18b0:	fd442783          	lw	a5,-44(s0)
+    18b4:	fd842703          	lw	a4,-40(s0)
+    18b8:	00e7a423          	sw	a4,8(a5)
+                    insert_block(split);
+    18bc:	fd442503          	lw	a0,-44(s0)
+    18c0:	a79ff0ef          	jal	1338 <insert_block>
+#ifndef TA_DISABLE_COMPACT
+                    compact();
+    18c4:	b8dff0ef          	jal	1450 <compact>
+#endif
+                }
+#endif
+            }
+            return ptr;
+    18c8:	fec42783          	lw	a5,-20(s0)
+    18cc:	0b40006f          	j	1980 <alloc_block+0x278>
+        }
+        prev = ptr;
+    18d0:	fec42783          	lw	a5,-20(s0)
+    18d4:	fef42423          	sw	a5,-24(s0)
+        ptr  = ptr->next;
+    18d8:	fec42783          	lw	a5,-20(s0)
+    18dc:	0047a783          	lw	a5,4(a5)
+    18e0:	fef42623          	sw	a5,-20(s0)
+    while (ptr != NULL) {
+    18e4:	fec42783          	lw	a5,-20(s0)
+    18e8:	e6079ae3          	bnez	a5,175c <alloc_block+0x54>
+    }
+    // no matching free blocks
+    // see if any other blocks available
+    size_t new_top = top + num;
+    18ec:	fe442703          	lw	a4,-28(s0)
+    18f0:	fcc42783          	lw	a5,-52(s0)
+    18f4:	00f707b3          	add	a5,a4,a5
+    18f8:	fef42023          	sw	a5,-32(s0)
+    if (heap->fresh != NULL && new_top <= (size_t)heap_limit) {
+    18fc:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1900:	0087a783          	lw	a5,8(a5)
+    1904:	06078c63          	beqz	a5,197c <alloc_block+0x274>
+    1908:	d181a783          	lw	a5,-744(gp) # 20000940 <heap_limit>
+    190c:	00078713          	mv	a4,a5
+    1910:	fe042783          	lw	a5,-32(s0)
+    1914:	06f76463          	bltu	a4,a5,197c <alloc_block+0x274>
+        ptr         = heap->fresh;
+    1918:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    191c:	0087a783          	lw	a5,8(a5)
+    1920:	fef42623          	sw	a5,-20(s0)
+        heap->fresh = ptr->next;
+    1924:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1928:	fec42703          	lw	a4,-20(s0)
+    192c:	00472703          	lw	a4,4(a4)
+    1930:	00e7a423          	sw	a4,8(a5)
+        ptr->addr   = (void *)top;
+    1934:	fe442703          	lw	a4,-28(s0)
+    1938:	fec42783          	lw	a5,-20(s0)
+    193c:	00e7a023          	sw	a4,0(a5)
+        ptr->next   = heap->used;
+    1940:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1944:	0047a703          	lw	a4,4(a5)
+    1948:	fec42783          	lw	a5,-20(s0)
+    194c:	00e7a223          	sw	a4,4(a5)
+        ptr->size   = num;
+    1950:	fec42783          	lw	a5,-20(s0)
+    1954:	fcc42703          	lw	a4,-52(s0)
+    1958:	00e7a423          	sw	a4,8(a5)
+        heap->used  = ptr;
+    195c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1960:	fec42703          	lw	a4,-20(s0)
+    1964:	00e7a223          	sw	a4,4(a5)
+        heap->top   = new_top;
+    1968:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    196c:	fe042703          	lw	a4,-32(s0)
+    1970:	00e7a623          	sw	a4,12(a5)
+        return ptr;
+    1974:	fec42783          	lw	a5,-20(s0)
+    1978:	0080006f          	j	1980 <alloc_block+0x278>
+    }
+    return NULL;
+    197c:	00000793          	li	a5,0
+}
+    1980:	00078513          	mv	a0,a5
+    1984:	03c12083          	lw	ra,60(sp)
+    1988:	03812403          	lw	s0,56(sp)
+    198c:	04010113          	add	sp,sp,64
+    1990:	00008067          	ret
+
+00001994 <ta_alloc>:
+
+void *ta_alloc(size_t num) {
+    1994:	fd010113          	add	sp,sp,-48
+    1998:	02112623          	sw	ra,44(sp)
+    199c:	02812423          	sw	s0,40(sp)
+    19a0:	03010413          	add	s0,sp,48
+    19a4:	fca42e23          	sw	a0,-36(s0)
+    Block *block = alloc_block(num);
+    19a8:	fdc42503          	lw	a0,-36(s0)
+    19ac:	d5dff0ef          	jal	1708 <alloc_block>
+    19b0:	fea42623          	sw	a0,-20(s0)
+    if (block != NULL) {
+    19b4:	fec42783          	lw	a5,-20(s0)
+    19b8:	00078863          	beqz	a5,19c8 <ta_alloc+0x34>
+        return block->addr;
+    19bc:	fec42783          	lw	a5,-20(s0)
+    19c0:	0007a783          	lw	a5,0(a5)
+    19c4:	0080006f          	j	19cc <ta_alloc+0x38>
+    }
+    return NULL;
+    19c8:	00000793          	li	a5,0
+}
+    19cc:	00078513          	mv	a0,a5
+    19d0:	02c12083          	lw	ra,44(sp)
+    19d4:	02812403          	lw	s0,40(sp)
+    19d8:	03010113          	add	sp,sp,48
+    19dc:	00008067          	ret
+
+000019e0 <memclear>:
+
+static void memclear(void *ptr, size_t num) {
+    19e0:	fd010113          	add	sp,sp,-48
+    19e4:	02812623          	sw	s0,44(sp)
+    19e8:	03010413          	add	s0,sp,48
+    19ec:	fca42e23          	sw	a0,-36(s0)
+    19f0:	fcb42c23          	sw	a1,-40(s0)
+    size_t *ptrw = (size_t *)ptr;
+    19f4:	fdc42783          	lw	a5,-36(s0)
+    19f8:	fef42623          	sw	a5,-20(s0)
+    size_t numw  = (num & -sizeof(size_t)) / sizeof(size_t);
+    19fc:	fd842783          	lw	a5,-40(s0)
+    1a00:	0027d793          	srl	a5,a5,0x2
+    1a04:	fef42423          	sw	a5,-24(s0)
+    while (numw--) {
+    1a08:	0140006f          	j	1a1c <memclear+0x3c>
+        *ptrw++ = 0;
+    1a0c:	fec42783          	lw	a5,-20(s0)
+    1a10:	00478713          	add	a4,a5,4
+    1a14:	fee42623          	sw	a4,-20(s0)
+    1a18:	0007a023          	sw	zero,0(a5)
+    while (numw--) {
+    1a1c:	fe842783          	lw	a5,-24(s0)
+    1a20:	fff78713          	add	a4,a5,-1
+    1a24:	fee42423          	sw	a4,-24(s0)
+    1a28:	fe0792e3          	bnez	a5,1a0c <memclear+0x2c>
+    }
+    num &= (sizeof(size_t) - 1);
+    1a2c:	fd842783          	lw	a5,-40(s0)
+    1a30:	0037f793          	and	a5,a5,3
+    1a34:	fcf42c23          	sw	a5,-40(s0)
+    uint8_t *ptrb = (uint8_t *)ptrw;
+    1a38:	fec42783          	lw	a5,-20(s0)
+    1a3c:	fef42223          	sw	a5,-28(s0)
+    while (num--) {
+    1a40:	0140006f          	j	1a54 <memclear+0x74>
+        *ptrb++ = 0;
+    1a44:	fe442783          	lw	a5,-28(s0)
+    1a48:	00178713          	add	a4,a5,1
+    1a4c:	fee42223          	sw	a4,-28(s0)
+    1a50:	00078023          	sb	zero,0(a5)
+    while (num--) {
+    1a54:	fd842783          	lw	a5,-40(s0)
+    1a58:	fff78713          	add	a4,a5,-1
+    1a5c:	fce42c23          	sw	a4,-40(s0)
+    1a60:	fe0792e3          	bnez	a5,1a44 <memclear+0x64>
+    }
+}
+    1a64:	00000013          	nop
+    1a68:	00000013          	nop
+    1a6c:	02c12403          	lw	s0,44(sp)
+    1a70:	03010113          	add	sp,sp,48
+    1a74:	00008067          	ret
+
+00001a78 <ta_calloc>:
+
+void *ta_calloc(size_t num, size_t size) {
+    1a78:	fd010113          	add	sp,sp,-48
+    1a7c:	02112623          	sw	ra,44(sp)
+    1a80:	02812423          	sw	s0,40(sp)
+    1a84:	03010413          	add	s0,sp,48
+    1a88:	fca42e23          	sw	a0,-36(s0)
+    1a8c:	fcb42c23          	sw	a1,-40(s0)
+    num *= size;
+    1a90:	fd842583          	lw	a1,-40(s0)
+    1a94:	fdc42503          	lw	a0,-36(s0)
+    1a98:	638000ef          	jal	20d0 <__mulsi3>
+    1a9c:	00050793          	mv	a5,a0
+    1aa0:	fcf42e23          	sw	a5,-36(s0)
+    Block *block = alloc_block(num);
+    1aa4:	fdc42503          	lw	a0,-36(s0)
+    1aa8:	c61ff0ef          	jal	1708 <alloc_block>
+    1aac:	fea42623          	sw	a0,-20(s0)
+    if (block != NULL) {
+    1ab0:	fec42783          	lw	a5,-20(s0)
+    1ab4:	02078263          	beqz	a5,1ad8 <ta_calloc+0x60>
+        memclear(block->addr, num);
+    1ab8:	fec42783          	lw	a5,-20(s0)
+    1abc:	0007a783          	lw	a5,0(a5)
+    1ac0:	fdc42583          	lw	a1,-36(s0)
+    1ac4:	00078513          	mv	a0,a5
+    1ac8:	f19ff0ef          	jal	19e0 <memclear>
+        return block->addr;
+    1acc:	fec42783          	lw	a5,-20(s0)
+    1ad0:	0007a783          	lw	a5,0(a5)
+    1ad4:	0080006f          	j	1adc <ta_calloc+0x64>
+    }
+    return NULL;
+    1ad8:	00000793          	li	a5,0
+}
+    1adc:	00078513          	mv	a0,a5
+    1ae0:	02c12083          	lw	ra,44(sp)
+    1ae4:	02812403          	lw	s0,40(sp)
+    1ae8:	03010113          	add	sp,sp,48
+    1aec:	00008067          	ret
+
+00001af0 <count_blocks>:
+
+static size_t count_blocks(Block *ptr) {
+    1af0:	fd010113          	add	sp,sp,-48
+    1af4:	02812623          	sw	s0,44(sp)
+    1af8:	03010413          	add	s0,sp,48
+    1afc:	fca42e23          	sw	a0,-36(s0)
+    size_t num = 0;
+    1b00:	fe042623          	sw	zero,-20(s0)
+    while (ptr != NULL) {
+    1b04:	01c0006f          	j	1b20 <count_blocks+0x30>
+        num++;
+    1b08:	fec42783          	lw	a5,-20(s0)
+    1b0c:	00178793          	add	a5,a5,1
+    1b10:	fef42623          	sw	a5,-20(s0)
+        ptr = ptr->next;
+    1b14:	fdc42783          	lw	a5,-36(s0)
+    1b18:	0047a783          	lw	a5,4(a5)
+    1b1c:	fcf42e23          	sw	a5,-36(s0)
+    while (ptr != NULL) {
+    1b20:	fdc42783          	lw	a5,-36(s0)
+    1b24:	fe0792e3          	bnez	a5,1b08 <count_blocks+0x18>
+    }
+    return num;
+    1b28:	fec42783          	lw	a5,-20(s0)
+}
+    1b2c:	00078513          	mv	a0,a5
+    1b30:	02c12403          	lw	s0,44(sp)
+    1b34:	03010113          	add	sp,sp,48
+    1b38:	00008067          	ret
+
+00001b3c <ta_num_free>:
+
+size_t ta_num_free() {
+    1b3c:	ff010113          	add	sp,sp,-16
+    1b40:	00112623          	sw	ra,12(sp)
+    1b44:	00812423          	sw	s0,8(sp)
+    1b48:	01010413          	add	s0,sp,16
+    return count_blocks(heap->free);
+    1b4c:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1b50:	0007a783          	lw	a5,0(a5)
+    1b54:	00078513          	mv	a0,a5
+    1b58:	f99ff0ef          	jal	1af0 <count_blocks>
+    1b5c:	00050793          	mv	a5,a0
+}
+    1b60:	00078513          	mv	a0,a5
+    1b64:	00c12083          	lw	ra,12(sp)
+    1b68:	00812403          	lw	s0,8(sp)
+    1b6c:	01010113          	add	sp,sp,16
+    1b70:	00008067          	ret
+
+00001b74 <ta_num_used>:
+
+size_t ta_num_used() {
+    1b74:	ff010113          	add	sp,sp,-16
+    1b78:	00112623          	sw	ra,12(sp)
+    1b7c:	00812423          	sw	s0,8(sp)
+    1b80:	01010413          	add	s0,sp,16
+    return count_blocks(heap->used);
+    1b84:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1b88:	0047a783          	lw	a5,4(a5)
+    1b8c:	00078513          	mv	a0,a5
+    1b90:	f61ff0ef          	jal	1af0 <count_blocks>
+    1b94:	00050793          	mv	a5,a0
+}
+    1b98:	00078513          	mv	a0,a5
+    1b9c:	00c12083          	lw	ra,12(sp)
+    1ba0:	00812403          	lw	s0,8(sp)
+    1ba4:	01010113          	add	sp,sp,16
+    1ba8:	00008067          	ret
+
+00001bac <ta_num_fresh>:
+
+size_t ta_num_fresh() {
+    1bac:	ff010113          	add	sp,sp,-16
+    1bb0:	00112623          	sw	ra,12(sp)
+    1bb4:	00812423          	sw	s0,8(sp)
+    1bb8:	01010413          	add	s0,sp,16
+    return count_blocks(heap->fresh);
+    1bbc:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1bc0:	0087a783          	lw	a5,8(a5)
+    1bc4:	00078513          	mv	a0,a5
+    1bc8:	f29ff0ef          	jal	1af0 <count_blocks>
+    1bcc:	00050793          	mv	a5,a0
+}
+    1bd0:	00078513          	mv	a0,a5
+    1bd4:	00c12083          	lw	ra,12(sp)
+    1bd8:	00812403          	lw	s0,8(sp)
+    1bdc:	01010113          	add	sp,sp,16
+    1be0:	00008067          	ret
+
+00001be4 <ta_check>:
+
+bool ta_check() {
+    1be4:	ff010113          	add	sp,sp,-16
+    1be8:	00112623          	sw	ra,12(sp)
+    1bec:	00812423          	sw	s0,8(sp)
+    1bf0:	00912223          	sw	s1,4(sp)
+    1bf4:	01010413          	add	s0,sp,16
+    return heap_max_blocks == ta_num_free() + ta_num_used() + ta_num_fresh();
+    1bf8:	f45ff0ef          	jal	1b3c <ta_num_free>
+    1bfc:	00050493          	mv	s1,a0
+    1c00:	f75ff0ef          	jal	1b74 <ta_num_used>
+    1c04:	00050793          	mv	a5,a0
+    1c08:	00f484b3          	add	s1,s1,a5
+    1c0c:	fa1ff0ef          	jal	1bac <ta_num_fresh>
+    1c10:	00050793          	mv	a5,a0
+    1c14:	00f48733          	add	a4,s1,a5
+    1c18:	d241a783          	lw	a5,-732(gp) # 2000094c <heap_max_blocks>
+    1c1c:	40f707b3          	sub	a5,a4,a5
+    1c20:	0017b793          	seqz	a5,a5
+    1c24:	0ff7f793          	zext.b	a5,a5
+}
+    1c28:	00078513          	mv	a0,a5
+    1c2c:	00c12083          	lw	ra,12(sp)
+    1c30:	00812403          	lw	s0,8(sp)
+    1c34:	00412483          	lw	s1,4(sp)
+    1c38:	01010113          	add	sp,sp,16
+    1c3c:	00008067          	ret
+
+00001c40 <ta_getsize>:
+
+static size_t ta_getsize(void *ptr)
+{
+    1c40:	fd010113          	add	sp,sp,-48
+    1c44:	02812623          	sw	s0,44(sp)
+    1c48:	03010413          	add	s0,sp,48
+    1c4c:	fca42e23          	sw	a0,-36(s0)
+  Block *block = heap->used;
+    1c50:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
+    1c54:	0047a783          	lw	a5,4(a5)
+    1c58:	fef42623          	sw	a5,-20(s0)
+  while (block != NULL) {
+    1c5c:	02c0006f          	j	1c88 <ta_getsize+0x48>
+      if (ptr == block->addr) {
+    1c60:	fec42783          	lw	a5,-20(s0)
+    1c64:	0007a783          	lw	a5,0(a5)
+    1c68:	fdc42703          	lw	a4,-36(s0)
+    1c6c:	00f71863          	bne	a4,a5,1c7c <ta_getsize+0x3c>
+          return block->size;
+    1c70:	fec42783          	lw	a5,-20(s0)
+    1c74:	0087a783          	lw	a5,8(a5)
+    1c78:	01c0006f          	j	1c94 <ta_getsize+0x54>
+      }
+      block = block->next;
+    1c7c:	fec42783          	lw	a5,-20(s0)
+    1c80:	0047a783          	lw	a5,4(a5)
+    1c84:	fef42623          	sw	a5,-20(s0)
+  while (block != NULL) {
+    1c88:	fec42783          	lw	a5,-20(s0)
+    1c8c:	fc079ae3          	bnez	a5,1c60 <ta_getsize+0x20>
+  }
+  return 0;
+    1c90:	00000793          	li	a5,0
+}
+    1c94:	00078513          	mv	a0,a5
+    1c98:	02c12403          	lw	s0,44(sp)
+    1c9c:	03010113          	add	sp,sp,48
+    1ca0:	00008067          	ret
+
+00001ca4 <ta_realloc>:
+
+void *ta_realloc(void *ptr,size_t num) {
+    1ca4:	fc010113          	add	sp,sp,-64
+    1ca8:	02112e23          	sw	ra,60(sp)
+    1cac:	02812c23          	sw	s0,56(sp)
+    1cb0:	04010413          	add	s0,sp,64
+    1cb4:	fca42623          	sw	a0,-52(s0)
+    1cb8:	fcb42423          	sw	a1,-56(s0)
+    size_t c;
+    size_t ptrsize;
+    uint8_t* ptrn;
+    uint8_t* ptro;
+    ptrsize=ta_getsize(ptr);
+    1cbc:	fcc42503          	lw	a0,-52(s0)
+    1cc0:	f81ff0ef          	jal	1c40 <ta_getsize>
+    1cc4:	fea42423          	sw	a0,-24(s0)
+    if(ptrsize>0){
+    1cc8:	fe842783          	lw	a5,-24(s0)
+    1ccc:	08078a63          	beqz	a5,1d60 <ta_realloc+0xbc>
+     Block *block = alloc_block(num);
+    1cd0:	fc842503          	lw	a0,-56(s0)
+    1cd4:	a35ff0ef          	jal	1708 <alloc_block>
+    1cd8:	fea42223          	sw	a0,-28(s0)
+     if (block != NULL) {
+    1cdc:	fe442783          	lw	a5,-28(s0)
+    1ce0:	08078063          	beqz	a5,1d60 <ta_realloc+0xbc>
+         ptro=(uint8_t*)ptr;
+    1ce4:	fcc42783          	lw	a5,-52(s0)
+    1ce8:	fef42023          	sw	a5,-32(s0)
+         ptrn=(uint8_t*)block->addr;
+    1cec:	fe442783          	lw	a5,-28(s0)
+    1cf0:	0007a783          	lw	a5,0(a5)
+    1cf4:	fcf42e23          	sw	a5,-36(s0)
+         if(ptrsize>num) ptrsize=num;
+    1cf8:	fe842703          	lw	a4,-24(s0)
+    1cfc:	fc842783          	lw	a5,-56(s0)
+    1d00:	00e7f663          	bgeu	a5,a4,1d0c <ta_realloc+0x68>
+    1d04:	fc842783          	lw	a5,-56(s0)
+    1d08:	fef42423          	sw	a5,-24(s0)
+         for(c=0;c<ptrsize;c++)
+    1d0c:	fe042623          	sw	zero,-20(s0)
+    1d10:	0300006f          	j	1d40 <ta_realloc+0x9c>
+          *(ptrn+c)=*(ptro+c);
+    1d14:	fe042703          	lw	a4,-32(s0)
+    1d18:	fec42783          	lw	a5,-20(s0)
+    1d1c:	00f70733          	add	a4,a4,a5
+    1d20:	fdc42683          	lw	a3,-36(s0)
+    1d24:	fec42783          	lw	a5,-20(s0)
+    1d28:	00f687b3          	add	a5,a3,a5
+    1d2c:	00074703          	lbu	a4,0(a4)
+    1d30:	00e78023          	sb	a4,0(a5)
+         for(c=0;c<ptrsize;c++)
+    1d34:	fec42783          	lw	a5,-20(s0)
+    1d38:	00178793          	add	a5,a5,1
+    1d3c:	fef42623          	sw	a5,-20(s0)
+    1d40:	fec42703          	lw	a4,-20(s0)
+    1d44:	fe842783          	lw	a5,-24(s0)
+    1d48:	fcf766e3          	bltu	a4,a5,1d14 <ta_realloc+0x70>
+         ta_free(ptr);
+    1d4c:	fcc42503          	lw	a0,-52(s0)
+    1d50:	90dff0ef          	jal	165c <ta_free>
+         return block->addr;
+    1d54:	fe442783          	lw	a5,-28(s0)
+    1d58:	0007a783          	lw	a5,0(a5)
+    1d5c:	0080006f          	j	1d64 <ta_realloc+0xc0>
+     }
+    }
+    return NULL;
+    1d60:	00000793          	li	a5,0
+    1d64:	00078513          	mv	a0,a5
+    1d68:	03c12083          	lw	ra,60(sp)
+    1d6c:	03812403          	lw	s0,56(sp)
+    1d70:	04010113          	add	sp,sp,64
+    1d74:	00008067          	ret
+
+00001d78 <_fp_print>:
+typedef void (*isr_t)(void);
+
+static isr_t ext_int_handler;
+static isr_t ie_int_handler;
+static isr_t ee_int_handler;
+
+    1d78:	fe010113          	add	sp,sp,-32
+    1d7c:	00812e23          	sw	s0,28(sp)
+    1d80:	02010413          	add	s0,sp,32
+    1d84:	fea42623          	sw	a0,-20(s0)
+
+static void register_exception_handler(void (*isr)(void)) {
+    1d88:	baaac7b7          	lui	a5,0xbaaac
+    1d8c:	aaa78793          	add	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+    1d90:	51e79073          	csrw	0x51e,a5
+  write_csr(CSR_EVEC, (uint32_t) isr);
+    1d94:	fec42783          	lw	a5,-20(s0)
+    1d98:	51e79073          	csrw	0x51e,a5
+}
+
+    1d9c:	00000013          	nop
+    1da0:	01c12403          	lw	s0,28(sp)
+    1da4:	02010113          	add	sp,sp,32
+    1da8:	00008067          	ret
+
+00001dac <_fp_abort>:
+    int cause = read_csr(CSR_CAUSE);
+    
+    if (cause == EXC_CAUSE_EXTERNAL_INT) {  
+        if(ext_int_handler) ext_int_handler();
+    } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
+        if(ie_int_handler) ie_int_handler();
+    1dac:	ff010113          	add	sp,sp,-16
+    1db0:	00812623          	sw	s0,12(sp)
+    1db4:	01010413          	add	s0,sp,16
+    } else if (cause == EXC_CAUSE_EXCEPTION_EXPIRE) {
+    1db8:	deadc7b7          	lui	a5,0xdeadc
+    1dbc:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+    1dc0:	51e79073          	csrw	0x51e,a5
+        if(ee_int_handler) ee_int_handler();
+    1dc4:	00000013          	nop
+    1dc8:	00c12403          	lw	s0,12(sp)
+    1dcc:	01010113          	add	sp,sp,16
+    1dd0:	00008067          	ret
+
+00001dd4 <gpo_write>:
+    } else {
+        _fp_print(66666666);
+        _fp_print(cause);
+        assert(false);
+    }
+}
+    1dd4:	fe010113          	add	sp,sp,-32
+    1dd8:	00112e23          	sw	ra,28(sp)
+    1ddc:	00812c23          	sw	s0,24(sp)
+    1de0:	02010413          	add	s0,sp,32
+    1de4:	fea42623          	sw	a0,-20(s0)
+    1de8:	feb42423          	sw	a1,-24(s0)
+
+    1dec:	fec42703          	lw	a4,-20(s0)
+    1df0:	00300793          	li	a5,3
+    1df4:	06f70263          	beq	a4,a5,1e58 <gpo_write+0x84>
+    1df8:	fec42703          	lw	a4,-20(s0)
+    1dfc:	00300793          	li	a5,3
+    1e00:	06e7e263          	bltu	a5,a4,1e64 <gpo_write+0x90>
+    1e04:	fec42703          	lw	a4,-20(s0)
+    1e08:	00200793          	li	a5,2
+    1e0c:	04f70063          	beq	a4,a5,1e4c <gpo_write+0x78>
+    1e10:	fec42703          	lw	a4,-20(s0)
+    1e14:	00200793          	li	a5,2
+    1e18:	04e7e663          	bltu	a5,a4,1e64 <gpo_write+0x90>
+    1e1c:	fec42783          	lw	a5,-20(s0)
+    1e20:	00078a63          	beqz	a5,1e34 <gpo_write+0x60>
+    1e24:	fec42703          	lw	a4,-20(s0)
+    1e28:	00100793          	li	a5,1
+    1e2c:	00f70a63          	beq	a4,a5,1e40 <gpo_write+0x6c>
+    1e30:	0340006f          	j	1e64 <gpo_write+0x90>
+void setup_exceptions() {
+    1e34:	fe842783          	lw	a5,-24(s0)
+    1e38:	cc479073          	csrw	0xcc4,a5
+    1e3c:	0300006f          	j	1e6c <gpo_write+0x98>
+    // Initialize the interrupt handlers to null pointers
+    1e40:	fe842783          	lw	a5,-24(s0)
+    1e44:	cc579073          	csrw	0xcc5,a5
+    1e48:	0240006f          	j	1e6c <gpo_write+0x98>
+    ie_int_handler = (isr_t) 0;
+    1e4c:	fe842783          	lw	a5,-24(s0)
+    1e50:	cc679073          	csrw	0xcc6,a5
+    1e54:	0180006f          	j	1e6c <gpo_write+0x98>
+    ee_int_handler = (isr_t) 0;
+    1e58:	fe842783          	lw	a5,-24(s0)
+    1e5c:	cc779073          	csrw	0xcc7,a5
+    1e60:	00c0006f          	j	1e6c <gpo_write+0x98>
+    ext_int_handler = (isr_t) 0;
+    1e64:	f49ff0ef          	jal	1dac <_fp_abort>
+    
+    // Register the exception handler
+    1e68:	00000013          	nop
+    1e6c:	00000013          	nop
+    1e70:	01c12083          	lw	ra,28(sp)
+    1e74:	01812403          	lw	s0,24(sp)
+    1e78:	02010113          	add	sp,sp,32
+    1e7c:	00008067          	ret
+
+00001e80 <register_exception_handler>:
+static void register_exception_handler(void (*isr)(void)) {
+    1e80:	fe010113          	add	sp,sp,-32
+    1e84:	00812e23          	sw	s0,28(sp)
+    1e88:	02010413          	add	s0,sp,32
+    1e8c:	fea42623          	sw	a0,-20(s0)
+  write_csr(CSR_EVEC, (uint32_t) isr);
+    1e90:	fec42783          	lw	a5,-20(s0)
+    1e94:	50879073          	csrw	0x508,a5
+}
+    1e98:	00000013          	nop
+    1e9c:	01c12403          	lw	s0,28(sp)
+    1ea0:	02010113          	add	sp,sp,32
+    1ea4:	00008067          	ret
+
+00001ea8 <fp_exception_handler>:
+static void fp_exception_handler(void) {
+    1ea8:	fe010113          	add	sp,sp,-32
+    1eac:	00112e23          	sw	ra,28(sp)
+    1eb0:	00812c23          	sw	s0,24(sp)
+    1eb4:	02010413          	add	s0,sp,32
+    int cause = read_csr(CSR_CAUSE);
+    1eb8:	509027f3          	csrr	a5,0x509
+    1ebc:	fef42623          	sw	a5,-20(s0)
+    1ec0:	fec42783          	lw	a5,-20(s0)
+    1ec4:	fef42423          	sw	a5,-24(s0)
+    if (cause == EXC_CAUSE_EXTERNAL_INT) {  
+    1ec8:	fe842703          	lw	a4,-24(s0)
+    1ecc:	800007b7          	lui	a5,0x80000
+    1ed0:	00e78793          	add	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
+    1ed4:	00f71c63          	bne	a4,a5,1eec <fp_exception_handler+0x44>
+        if(ext_int_handler) ext_int_handler();
+    1ed8:	d281a783          	lw	a5,-728(gp) # 20000950 <ext_int_handler>
+    1edc:	08078063          	beqz	a5,1f5c <fp_exception_handler+0xb4>
+    1ee0:	d281a783          	lw	a5,-728(gp) # 20000950 <ext_int_handler>
+    1ee4:	000780e7          	jalr	a5
+}
+    1ee8:	0740006f          	j	1f5c <fp_exception_handler+0xb4>
+    } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
+    1eec:	fe842703          	lw	a4,-24(s0)
+    1ef0:	800007b7          	lui	a5,0x80000
+    1ef4:	00d78793          	add	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
+    1ef8:	00f71c63          	bne	a4,a5,1f10 <fp_exception_handler+0x68>
+        if(ie_int_handler) ie_int_handler();
+    1efc:	d2c1a783          	lw	a5,-724(gp) # 20000954 <ie_int_handler>
+    1f00:	04078e63          	beqz	a5,1f5c <fp_exception_handler+0xb4>
+    1f04:	d2c1a783          	lw	a5,-724(gp) # 20000954 <ie_int_handler>
+    1f08:	000780e7          	jalr	a5
+}
+    1f0c:	0500006f          	j	1f5c <fp_exception_handler+0xb4>
+    } else if (cause == EXC_CAUSE_EXCEPTION_EXPIRE) {
+    1f10:	fe842703          	lw	a4,-24(s0)
+    1f14:	00d00793          	li	a5,13
+    1f18:	00f71c63          	bne	a4,a5,1f30 <fp_exception_handler+0x88>
+        if(ee_int_handler) ee_int_handler();
+    1f1c:	d301a783          	lw	a5,-720(gp) # 20000958 <ee_int_handler>
+    1f20:	02078e63          	beqz	a5,1f5c <fp_exception_handler+0xb4>
+    1f24:	d301a783          	lw	a5,-720(gp) # 20000958 <ee_int_handler>
+    1f28:	000780e7          	jalr	a5
+}
+    1f2c:	0300006f          	j	1f5c <fp_exception_handler+0xb4>
+        _fp_print(66666666);
+    1f30:	03f947b7          	lui	a5,0x3f94
+    1f34:	0aa78513          	add	a0,a5,170 # 3f940aa <ISPM_END+0x3f8c0aa>
+    1f38:	e41ff0ef          	jal	1d78 <_fp_print>
+        _fp_print(cause);
+    1f3c:	fe842783          	lw	a5,-24(s0)
+    1f40:	00078513          	mv	a0,a5
+    1f44:	e35ff0ef          	jal	1d78 <_fp_print>
+        assert(false);
+    1f48:	e65ff0ef          	jal	1dac <_fp_abort>
+    1f4c:	0ff00593          	li	a1,255
+    1f50:	00000513          	li	a0,0
+    1f54:	e81ff0ef          	jal	1dd4 <gpo_write>
+    1f58:	0000006f          	j	1f58 <fp_exception_handler+0xb0>
+}
+    1f5c:	00000013          	nop
+    1f60:	01c12083          	lw	ra,28(sp)
+    1f64:	01812403          	lw	s0,24(sp)
+    1f68:	02010113          	add	sp,sp,32
+    1f6c:	00008067          	ret
+
+00001f70 <setup_exceptions>:
+void setup_exceptions() {
+    1f70:	ff010113          	add	sp,sp,-16
+    1f74:	00812623          	sw	s0,12(sp)
+    1f78:	01010413          	add	s0,sp,16
+    ie_int_handler = (isr_t) 0;
+    1f7c:	d201a623          	sw	zero,-724(gp) # 20000954 <ie_int_handler>
+    ee_int_handler = (isr_t) 0;
+    1f80:	d201a823          	sw	zero,-720(gp) # 20000958 <ee_int_handler>
+    ext_int_handler = (isr_t) 0;
+    1f84:	d201a423          	sw	zero,-728(gp) # 20000950 <ext_int_handler>
+    write_csr(CSR_EVEC, (uint32_t) fp_exception_handler);
+    1f88:	000027b7          	lui	a5,0x2
+    1f8c:	ea878793          	add	a5,a5,-344 # 1ea8 <fp_exception_handler>
+    1f90:	50879073          	csrw	0x508,a5
+}
+    1f94:	00000013          	nop
+    1f98:	00c12403          	lw	s0,12(sp)
+    1f9c:	01010113          	add	sp,sp,16
+    1fa0:	00008067          	ret
+
+00001fa4 <register_isr>:
+
+void register_isr(int cause, void (*isr)(void)) {
+    1fa4:	fe010113          	add	sp,sp,-32
+    1fa8:	00112e23          	sw	ra,28(sp)
+    1fac:	00812c23          	sw	s0,24(sp)
+    1fb0:	02010413          	add	s0,sp,32
+    1fb4:	fea42623          	sw	a0,-20(s0)
+    1fb8:	feb42423          	sw	a1,-24(s0)
+
+    if (cause == EXC_CAUSE_EXTERNAL_INT) {
+    1fbc:	fec42703          	lw	a4,-20(s0)
+    1fc0:	800007b7          	lui	a5,0x80000
+    1fc4:	00e78793          	add	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
+    1fc8:	00f71863          	bne	a4,a5,1fd8 <register_isr+0x34>
+        ext_int_handler = isr;
+    1fcc:	fe842703          	lw	a4,-24(s0)
+    1fd0:	d2e1a423          	sw	a4,-728(gp) # 20000950 <ext_int_handler>
+    } else if (cause == EXC_CAUSE_EXCEPTION_EXPIRE) {
+        ee_int_handler = isr;
+    } else {
+        assert(false);
+    }
+}
+    1fd4:	04c0006f          	j	2020 <register_isr+0x7c>
+    } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
+    1fd8:	fec42703          	lw	a4,-20(s0)
+    1fdc:	800007b7          	lui	a5,0x80000
+    1fe0:	00d78793          	add	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
+    1fe4:	00f71863          	bne	a4,a5,1ff4 <register_isr+0x50>
+        ie_int_handler = isr;
+    1fe8:	fe842703          	lw	a4,-24(s0)
+    1fec:	d2e1a623          	sw	a4,-724(gp) # 20000954 <ie_int_handler>
+}
+    1ff0:	0300006f          	j	2020 <register_isr+0x7c>
+    } else if (cause == EXC_CAUSE_EXCEPTION_EXPIRE) {
+    1ff4:	fec42703          	lw	a4,-20(s0)
+    1ff8:	00d00793          	li	a5,13
+    1ffc:	00f71863          	bne	a4,a5,200c <register_isr+0x68>
+        ee_int_handler = isr;
+    2000:	fe842703          	lw	a4,-24(s0)
+    2004:	d2e1a823          	sw	a4,-720(gp) # 20000958 <ee_int_handler>
+}
+    2008:	0180006f          	j	2020 <register_isr+0x7c>
+        assert(false);
+    200c:	da1ff0ef          	jal	1dac <_fp_abort>
+    2010:	0ff00593          	li	a1,255
+    2014:	00000513          	li	a0,0
+    2018:	dbdff0ef          	jal	1dd4 <gpo_write>
+    201c:	0000006f          	j	201c <register_isr+0x78>
+}
+    2020:	01c12083          	lw	ra,28(sp)
+    2024:	01812403          	lw	s0,24(sp)
+    2028:	02010113          	add	sp,sp,32
+    202c:	00008067          	ret
+
+00002030 <exception_on_expire>:
+
+void exception_on_expire(unsigned timeout_ns) {
+    2030:	fe010113          	add	sp,sp,-32
+    2034:	00812e23          	sw	s0,28(sp)
+    2038:	02010413          	add	s0,sp,32
+    203c:	fea42623          	sw	a0,-20(s0)
+  write_csr(CSR_COMPARE, timeout_ns);
+    2040:	fec42783          	lw	a5,-20(s0)
+    2044:	50779073          	csrw	0x507,a5
+    2048:	0000705b          	.word	0x0000705b
+  __asm__ volatile(".word 0x705B;");
+}
+    204c:	00000013          	nop
+    2050:	01c12403          	lw	s0,28(sp)
+    2054:	02010113          	add	sp,sp,32
+    2058:	00008067          	ret
+
+0000205c <interrupt_on_expire>:
+
+void interrupt_on_expire(unsigned timeout_ns) {
+    205c:	fe010113          	add	sp,sp,-32
+    2060:	00812e23          	sw	s0,28(sp)
+    2064:	02010413          	add	s0,sp,32
+    2068:	fea42623          	sw	a0,-20(s0)
+  write_csr(CSR_COMPARE, timeout_ns);
+    206c:	fec42783          	lw	a5,-20(s0)
+    2070:	50779073          	csrw	0x507,a5
+    2074:	0200705b          	.word	0x0200705b
+  __asm__ volatile(".word 0x200705B;");
+}
+    2078:	00000013          	nop
+    207c:	01c12403          	lw	s0,28(sp)
+    2080:	02010113          	add	sp,sp,32
+    2084:	00008067          	ret
+
+00002088 <enable_interrupts>:
+
+void enable_interrupts() 
+{
+    2088:	fe010113          	add	sp,sp,-32
+    208c:	00812e23          	sw	s0,28(sp)
+    2090:	02010413          	add	s0,sp,32
+  set_csr(CSR_STATUS,16);
+    2094:	50a867f3          	csrrs	a5,0x50a,16
+    2098:	fef42623          	sw	a5,-20(s0)
+}
+    209c:	00000013          	nop
+    20a0:	01c12403          	lw	s0,28(sp)
+    20a4:	02010113          	add	sp,sp,32
+    20a8:	00008067          	ret
+
+000020ac <disable_interrupts>:
+
+void disable_interrupts() 
+{
+    20ac:	fe010113          	add	sp,sp,-32
+    20b0:	00812e23          	sw	s0,28(sp)
+    20b4:	02010413          	add	s0,sp,32
+  clear_csr(CSR_STATUS,16);
+    20b8:	50a877f3          	csrrc	a5,0x50a,16
+    20bc:	fef42623          	sw	a5,-20(s0)
+}
+    20c0:	00000013          	nop
+    20c4:	01c12403          	lw	s0,28(sp)
+    20c8:	02010113          	add	sp,sp,32
+    20cc:	00008067          	ret
+
+000020d0 <__mulsi3>:
+/* Our RV64 64-bit routine is equivalent to our RV32 32-bit routine.  */
+# define __muldi3 __mulsi3
+#endif
+
+FUNC_BEGIN (__muldi3)
+  mv     a2, a0
+    20d0:	862a                	mv	a2,a0
+  li     a0, 0
+    20d2:	4501                	li	a0,0
+.L1:
+  andi   a3, a1, 1
+    20d4:	0015f693          	and	a3,a1,1
+  beqz   a3, .L2
+    20d8:	c291                	beqz	a3,20dc <__mulsi3+0xc>
+  add    a0, a0, a2
+    20da:	9532                	add	a0,a0,a2
+.L2:
+  srli   a1, a1, 1
+    20dc:	8185                	srl	a1,a1,0x1
+  slli   a2, a2, 1
+    20de:	0606                	sll	a2,a2,0x1
+  bnez   a1, .L1
+    20e0:	f9f5                	bnez	a1,20d4 <__mulsi3+0x4>
+  ret
+    20e2:	8082                	ret
+	...
+
+000020e6 <__errno>:
+    20e6:	8081a503          	lw	a0,-2040(gp) # 20000430 <_impure_ptr>
+    20ea:	8082                	ret
+
+000020ec <setjmp>:
+    20ec:	00152023          	sw	ra,0(a0)
+    20f0:	c140                	sw	s0,4(a0)
+    20f2:	c504                	sw	s1,8(a0)
+    20f4:	01252623          	sw	s2,12(a0)
+    20f8:	01352823          	sw	s3,16(a0)
+    20fc:	01452a23          	sw	s4,20(a0)
+    2100:	01552c23          	sw	s5,24(a0)
+    2104:	01652e23          	sw	s6,28(a0)
+    2108:	03752023          	sw	s7,32(a0)
+    210c:	03852223          	sw	s8,36(a0)
+    2110:	03952423          	sw	s9,40(a0)
+    2114:	03a52623          	sw	s10,44(a0)
+    2118:	03b52823          	sw	s11,48(a0)
+    211c:	02252a23          	sw	sp,52(a0)
+    2120:	4501                	li	a0,0
+    2122:	8082                	ret
+
+00002124 <longjmp>:
+    2124:	00052083          	lw	ra,0(a0)
+    2128:	4140                	lw	s0,4(a0)
+    212a:	4504                	lw	s1,8(a0)
+    212c:	00c52903          	lw	s2,12(a0)
+    2130:	01052983          	lw	s3,16(a0)
+    2134:	01452a03          	lw	s4,20(a0)
+    2138:	01852a83          	lw	s5,24(a0)
+    213c:	01c52b03          	lw	s6,28(a0)
+    2140:	02052b83          	lw	s7,32(a0)
+    2144:	02452c03          	lw	s8,36(a0)
+    2148:	02852c83          	lw	s9,40(a0)
+    214c:	02c52d03          	lw	s10,44(a0)
+    2150:	03052d83          	lw	s11,48(a0)
+    2154:	03452103          	lw	sp,52(a0)
+    2158:	0015b513          	seqz	a0,a1
+    215c:	952e                	add	a0,a0,a1
+    215e:	8082                	ret
+    2160:	0010                	.2byte	0x10
+    2162:	0000                	unimp
+    2164:	0000                	unimp
+    2166:	0000                	unimp
+    2168:	7a01                	lui	s4,0xfffe0
+    216a:	0052                	c.slli	zero,0x14
+    216c:	7c01                	lui	s8,0xfffe0
+    216e:	0101                	add	sp,sp,0
+    2170:	00020c1b          	.4byte	0x20c1b
+    2174:	001c                	.2byte	0x1c
+    2176:	0000                	unimp
+    2178:	0018                	.2byte	0x18
+    217a:	0000                	unimp
+    217c:	e1c8                	fsw	fa0,4(a1)
+    217e:	ffff                	.2byte	0xffff
+    2180:	0024                	add	s1,sp,8
+    2182:	0000                	unimp
+    2184:	4400                	lw	s0,8(s0)
+    2186:	100e                	c.slli	zero,0x23
+    2188:	8148                	.2byte	0x8148
+    218a:	8801                	and	s0,s0,0
+    218c:	4402                	lw	s0,0(sp)
+    218e:	080c                	add	a1,sp,16
+    2190:	0000                	unimp
+    2192:	0000                	unimp
+    2194:	001c                	.2byte	0x1c
+    2196:	0000                	unimp
+    2198:	0038                	add	a4,sp,8
+    219a:	0000                	unimp
+    219c:	e1cc                	fsw	fa1,4(a1)
+    219e:	ffff                	.2byte	0xffff
+    21a0:	0060                	add	s0,sp,12
+    21a2:	0000                	unimp
+    21a4:	4400                	lw	s0,8(s0)
+    21a6:	100e                	c.slli	zero,0x23
+    21a8:	8148                	.2byte	0x8148
+    21aa:	8801                	and	s0,s0,0
+    21ac:	4402                	lw	s0,0(sp)
+    21ae:	080c                	add	a1,sp,16
+    21b0:	0000                	unimp
+	...

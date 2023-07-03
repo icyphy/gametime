@@ -1,10 +1,10 @@
 digraph "CFG for 'main' function" {
 	label="CFG for 'main' function";
 
-	Node0x6705780 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 1) #2, !srcloc !5\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 2) #2, !srcloc !5\l  %1 = icmp ult i32 1, 2\l  br i1 %1, label %2, label %4\l|{<s0>T|<s1>F}}"];
-	Node0x6705780:s0 -> Node0x6708160;
-	Node0x6705780:s1 -> Node0x67081f0;
-	Node0x6708160 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{%2:\l2:                                                \l  %3 = add i32 1, 2\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 %3) #2, !srcloc !5\l  br label %4\l}"];
-	Node0x6708160 -> Node0x67081f0;
-	Node0x67081f0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%4:\l4:                                                \l  ret i32 0\l}"];
+	Node0x76fd780 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 1) #2, !srcloc !5\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 2) #2, !srcloc !5\l  %1 = icmp ult i32 1, 2\l  br i1 %1, label %2, label %4\l|{<s0>T|<s1>F}}"];
+	Node0x76fd780:s0 -> Node0x7700160;
+	Node0x76fd780:s1 -> Node0x77001f0;
+	Node0x7700160 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{%2:\l2:                                                \l  %3 = add i32 1, 2\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 -1163216214) #2, !srcloc !4\l  call void asm sideeffect \"csrw 0x51e, $0\",\l... \"r,~\{dirflag\},~\{fpsr\},~\{flags\}\"(i32 %3) #2, !srcloc !5\l  br label %4\l}"];
+	Node0x7700160 -> Node0x77001f0;
+	Node0x77001f0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%4:\l4:                                                \l  ret i32 0\l}"];
 }

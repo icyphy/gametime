@@ -33,6 +33,7 @@ class TestFlexpret(unittest.TestCase):
         object_file_name = object_file_path[object_file_path.rfind('/') + 1:-2]
 
         fp_simulator = flexpret_simulator.FlexpretSimulator(self.project_config)
-        generated_mem_file_path = fp_simulator.object_file_to_mem(object_file_name)
-        print(generated_mem_file_path)
+        generated_mem_file_name = fp_simulator.object_file_to_mem(object_file_name)
+        value = fp_simulator.measure(generated_mem_file_name)
+        print(value)
 

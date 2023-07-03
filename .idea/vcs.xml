@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/simulator_backend/flexpret" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulator_backend/flexpret/programs/lib/tinyalloc" vcs="Git" />
   </component>
 </project>

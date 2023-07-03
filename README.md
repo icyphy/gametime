@@ -12,7 +12,7 @@ Using VS Code or Pycharm, you should be able to connect to your docker container
 your host computer. 
 
 ## Conda Environment
-To conda environment for cross platform use, use `conda env export --from-history > conda_environment.yml`. 
+To conda environment for cross platform use, use `conda env export --from-history > conda_environment.yml`.
 This would export conda dependencies only explicitly installed with version number only if explicitly specified during installation. 
 
 ## Recommended Setup
