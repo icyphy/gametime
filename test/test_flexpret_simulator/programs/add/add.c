@@ -11,11 +11,9 @@ int main() {
     _fp_print(x);
     uint32_t y = 2;
     _fp_print(y);
-    if (x < y) {
+    if (x < y + 10) {
         uint32_t z = add(x, y);
         _fp_print(z);
     }
-
-//    assert(z == 3);
     return 0;
 }

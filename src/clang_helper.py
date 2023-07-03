@@ -52,8 +52,13 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
 
 def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output_name: str = "riscv-gt") -> str:
     # compile bc file
+    flexpret_lib_path = os.path.join(project_config.gametime_path, project_config.gametime_flexpret_path, "programs",
+                                     "lib", "include")
     output_file: str = project_config.get_temp_filename_with_extension(".o", output_name)
-    commands: List[str] = ["clang", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
+    commands: List[str] = ["clang", "--target=riscv32",f"-I{flexpret_lib_path}",
+                           "-g", "-static", "-O0", "-mabi=ilp32", "-nostartfiles",
+                           "-specs=nosys.specs","-march=rv32gc",
+                           bc_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
     #riscv32-unknown-elf-gcc -c notfib2.c -I../../../lib/include -g -static -O0 -march=rv32i -mabi=ilp32 -nostartfiles -specs=nosys.specs
     ## object dump

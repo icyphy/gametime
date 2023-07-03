@@ -91,12 +91,13 @@ RUN apt-get -qq update && \
 ### install newest verilator not from apt-get
 RUN git clone https://github.com/verilator/verilator
 WORKDIR /verilator
+RUN git checkout v5.008
 RUN apt-get -qq update; \
     apt-get install -y git help2man perl python3 make clang libfl2 libfl-dev zlib1g zlib1g-dev git autoconf flex bison
 RUN unset VERILATOR_ROOT
 RUN autoconf
 RUN ./configure
-RUN make
+RUN make -j `nproc`
 RUN make install
 WORKDIR /
 
@@ -115,15 +116,15 @@ RUN apt-get update; \
 #COPY ./simulator_backend/flexpret /flexpret
 RUN git clone https://github.com/pretis/flexpret.git
 WORKDIR /flexpret
-#RUN git switch gametime-support
-RUN git checkout 0f20ec37e9a9c2edacfb7650b5fddd9a8022704f
+RUN git switch gametime-support
+#RUN git checkout 0f20ec37e9a9c2edacfb7650b5fddd9a8022704f
+#RUN git checkout 92a44968a9e2cf5a27b158438331058c041d53d6
 RUN git submodule update --init --recursive
 RUN make verilog_raw
 RUN make emulator
 #export emulator to path: export PATH="$(pwd)/emulator:$PATH"
 ENV PATH="${PATH}:/flexpret/emulator"
 WORKDIR /
-
 
 
 # RUN /opt/conda/bin/conda install cryptography=38.0.4

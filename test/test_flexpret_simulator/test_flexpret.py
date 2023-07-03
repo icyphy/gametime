@@ -1,6 +1,7 @@
 import unittest
 
 import clang_helper
+import shutil
 
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
@@ -12,6 +13,7 @@ class TestFlexpret(unittest.TestCase):
     def setUp(self):
         self.project_config: ProjectConfiguration = \
             YAMLConfigurationParser.parse("test_flexpret_simulator/programs/add/config.yaml")
+        shutil.rmtree(self.project_config.locationTempDir)
 
     def test_compile_c(self):
         analyzer = Analyzer(self.project_config)

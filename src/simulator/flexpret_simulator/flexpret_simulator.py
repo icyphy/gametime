@@ -79,8 +79,8 @@ class FlexpretSimulator(Simulator):
         # equivalent to: os.system(f"(cd {mem_file_dir_path} && fp-emu --measure +ispm={mem_file_name}.mem)")
         cwd = os.getcwd()
         os.chdir(self.projectConfig.locationTempDir)
-        # os.system(f"fp-emu --measure +ispm={mem_file_name}.mem")
-        os.system(f"fp-emu +ispm={mem_file_name}.mem")
+        os.system(f"fp-emu --measure +ispm={mem_file_name}.mem")
+        # os.system(f"fp-emu +ispm={mem_file_name}.mem")
         os.chdir(cwd)
 
         out_file_path = self.projectConfig.get_temp_filename_with_extension(".out", mem_file_name)
