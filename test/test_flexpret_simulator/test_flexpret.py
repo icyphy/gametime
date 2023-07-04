@@ -8,6 +8,14 @@ from project_configuration_parser import YAMLConfigurationParser
 from simulator.flexpret_simulator import flexpret_simulator
 from src import Analyzer
 
+# make
+# riscv32-unknown-elf-gcc -T
+# ../flexpret//programs/lib/linker/flexpret.ld -L
+# ../flexpret//programs/lib/linker -Xlinker -Map=riscv-gt.map
+# -g -static -O0 -march=rv32i -mabi=ilp32 -nostartfiles --specs=nosys.specs
+# -I../flexpret//programs/lib/include  -o riscv-gt.riscv ../flexpret//programs/lib/start.S
+# ../flexpret//programs/lib/startup.c riscv-gt.o ../flexpret//programs/lib/syscalls.c ../flexpret//programs/lib/flexpret_thread.c
+# ../flexpret//programs/lib/flexpret_lock.c ../flexpret//programs/lib/tinyalloc/tinyalloc.c ../flexpret//programs/lib/flexpret_exceptions.c
 
 class TestFlexpret(unittest.TestCase):
     def setUp(self):
@@ -39,3 +47,5 @@ class TestFlexpret(unittest.TestCase):
         value = fp_simulator.measure(generated_mem_file_name)
         print(value)
 
+if __name__ == '__main__':
+    unittest.main()

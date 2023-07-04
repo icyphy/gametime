@@ -14,21 +14,21 @@ _start:
        0:	50b022f3          	csrr	t0,0x50b
     setStackPointer
        4:	20006137          	lui	sp,0x20006
-       8:	00a29313          	sll	t1,t0,0xa
+       8:	00a29313          	slli	t1,t0,0xa
        c:	40610133          	sub	sp,sp,t1
     setGlobalPointer
       10:	20001197          	auipc	gp,0x20001
-      14:	c1818193          	add	gp,gp,-1000 # 20000c28 <__global_pointer$>
+      14:	c1818193          	addi	gp,gp,-1000 # 20000c28 <__global_pointer$>
     setDMemProtection
       18:	88889337          	lui	t1,0x88889
-      1c:	88830313          	add	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
+      1c:	88830313          	addi	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
       20:	50c31073          	csrw	0x50c,t1
     setGpoProtection
       24:	88889337          	lui	t1,0x88889
-      28:	88830313          	add	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
+      28:	88830313          	addi	t1,t1,-1912 # 88888888 <BUS_END+0x48888488>
       2c:	50d31073          	csrw	0x50d,t1
     call Reset_Handler
-      30:	0e0000ef          	jal	110 <Reset_Handler>
+      30:	0e0000ef          	jal	ra,110 <Reset_Handler>
 
 00000034 <malloc>:
 int main(void);
@@ -37,20 +37,20 @@ int main(void);
  * Allocate a requested memory and return a pointer to it.
  */
 void *malloc(size_t size) {
-      34:	fe010113          	add	sp,sp,-32 # 20005fe0 <__global_pointer$+0x53b8>
+      34:	fe010113          	addi	sp,sp,-32 # 20005fe0 <__global_pointer$+0x53b8>
       38:	00112e23          	sw	ra,28(sp)
       3c:	00812c23          	sw	s0,24(sp)
-      40:	02010413          	add	s0,sp,32
+      40:	02010413          	addi	s0,sp,32
       44:	fea42623          	sw	a0,-20(s0)
     return ta_alloc(size);
       48:	fec42503          	lw	a0,-20(s0)
-      4c:	4cd010ef          	jal	1d18 <ta_alloc>
+      4c:	4cd010ef          	jal	ra,1d18 <ta_alloc>
       50:	00050793          	mv	a5,a0
 }
       54:	00078513          	mv	a0,a5
       58:	01c12083          	lw	ra,28(sp)
       5c:	01812403          	lw	s0,24(sp)
-      60:	02010113          	add	sp,sp,32
+      60:	02010113          	addi	sp,sp,32
       64:	00008067          	ret
 
 00000068 <calloc>:
@@ -60,22 +60,22 @@ void *malloc(size_t size) {
  * and return a pointer to it.
  */
 void *calloc(size_t nitems, size_t size) {
-      68:	fe010113          	add	sp,sp,-32
+      68:	fe010113          	addi	sp,sp,-32
       6c:	00112e23          	sw	ra,28(sp)
       70:	00812c23          	sw	s0,24(sp)
-      74:	02010413          	add	s0,sp,32
+      74:	02010413          	addi	s0,sp,32
       78:	fea42623          	sw	a0,-20(s0)
       7c:	feb42423          	sw	a1,-24(s0)
     return ta_calloc(nitems, size);
       80:	fe842583          	lw	a1,-24(s0)
       84:	fec42503          	lw	a0,-20(s0)
-      88:	575010ef          	jal	1dfc <ta_calloc>
+      88:	575010ef          	jal	ra,1dfc <ta_calloc>
       8c:	00050793          	mv	a5,a0
 }
       90:	00078513          	mv	a0,a5
       94:	01c12083          	lw	ra,28(sp)
       98:	01812403          	lw	s0,24(sp)
-      9c:	02010113          	add	sp,sp,32
+      9c:	02010113          	addi	sp,sp,32
       a0:	00008067          	ret
 
 000000a4 <realloc>:
@@ -85,22 +85,22 @@ void *calloc(size_t nitems, size_t size) {
  * to malloc or calloc.
  */
 void *realloc(void *ptr, size_t size) {
-      a4:	fe010113          	add	sp,sp,-32
+      a4:	fe010113          	addi	sp,sp,-32
       a8:	00112e23          	sw	ra,28(sp)
       ac:	00812c23          	sw	s0,24(sp)
-      b0:	02010413          	add	s0,sp,32
+      b0:	02010413          	addi	s0,sp,32
       b4:	fea42623          	sw	a0,-20(s0)
       b8:	feb42423          	sw	a1,-24(s0)
     return ta_realloc(ptr, size);
       bc:	fe842583          	lw	a1,-24(s0)
       c0:	fec42503          	lw	a0,-20(s0)
-      c4:	765010ef          	jal	2028 <ta_realloc>
+      c4:	765010ef          	jal	ra,2028 <ta_realloc>
       c8:	00050793          	mv	a5,a0
 }
       cc:	00078513          	mv	a0,a5
       d0:	01c12083          	lw	ra,28(sp)
       d4:	01812403          	lw	s0,24(sp)
-      d8:	02010113          	add	sp,sp,32
+      d8:	02010113          	addi	sp,sp,32
       dc:	00008067          	ret
 
 000000e0 <free>:
@@ -109,19 +109,19 @@ void *realloc(void *ptr, size_t size) {
  * Deallocate the memory previously allocated by a call to calloc, malloc, or realloc.
  */
 void free(void *ptr) {
-      e0:	fe010113          	add	sp,sp,-32
+      e0:	fe010113          	addi	sp,sp,-32
       e4:	00112e23          	sw	ra,28(sp)
       e8:	00812c23          	sw	s0,24(sp)
-      ec:	02010413          	add	s0,sp,32
+      ec:	02010413          	addi	s0,sp,32
       f0:	fea42623          	sw	a0,-20(s0)
     ta_free(ptr);
       f4:	fec42503          	lw	a0,-20(s0)
-      f8:	0e9010ef          	jal	19e0 <ta_free>
+      f8:	0e9010ef          	jal	ra,19e0 <ta_free>
 }
       fc:	00000013          	nop
      100:	01c12083          	lw	ra,28(sp)
      104:	01812403          	lw	s0,24(sp)
-     108:	02010113          	add	sp,sp,32
+     108:	02010113          	addi	sp,sp,32
      10c:	00008067          	ret
 
 00000110 <Reset_Handler>:
@@ -131,10 +131,10 @@ void free(void *ptr) {
 
 lock_t _lock = LOCK_INITIALIZER;
 void Reset_Handler() {
-     110:	fa010113          	add	sp,sp,-96
+     110:	fa010113          	addi	sp,sp,-96
      114:	04112e23          	sw	ra,92(sp)
      118:	04812c23          	sw	s0,88(sp)
-     11c:	06010413          	add	s0,sp,96
+     11c:	06010413          	addi	s0,sp,96
     // Get hartid
     uint32_t hartid = read_hartid();
      120:	50b027f3          	csrr	a5,0x50b
@@ -149,11 +149,11 @@ void Reset_Handler() {
      134:	1a079263          	bnez	a5,2d8 <Reset_Handler+0x1c8>
         // Copy .data section into the RAM
         uint32_t size   = &__data_end__ - &__data_start__;
-     138:	81018713          	add	a4,gp,-2032 # 20000438 <__ready__>
+     138:	81018713          	addi	a4,gp,-2032 # 20000438 <__ready__>
      13c:	200007b7          	lui	a5,0x20000
      140:	00078793          	mv	a5,a5
      144:	40f707b3          	sub	a5,a4,a5
-     148:	4027d793          	sra	a5,a5,0x2
+     148:	4027d793          	srai	a5,a5,0x2
      14c:	fcf42223          	sw	a5,-60(s0)
         uint32_t *pDst  = (uint32_t*)&__data_start__;       // RAM
      150:	200007b7          	lui	a5,0x20000
@@ -161,7 +161,7 @@ void Reset_Handler() {
      158:	fef42623          	sw	a5,-20(s0)
         uint32_t *pSrc  = (uint32_t*)&__etext;              // ROM
      15c:	000027b7          	lui	a5,0x2
-     160:	53878793          	add	a5,a5,1336 # 2538 <__etext>
+     160:	55878793          	addi	a5,a5,1368 # 2558 <__etext>
      164:	fef42423          	sw	a5,-24(s0)
 
         for (uint32_t i = 0; i < size; i++) {
@@ -169,16 +169,16 @@ void Reset_Handler() {
      16c:	0300006f          	j	19c <Reset_Handler+0x8c>
             *pDst++ = *pSrc++;
      170:	fe842703          	lw	a4,-24(s0)
-     174:	00470793          	add	a5,a4,4
+     174:	00470793          	addi	a5,a4,4
      178:	fef42423          	sw	a5,-24(s0)
      17c:	fec42783          	lw	a5,-20(s0)
-     180:	00478693          	add	a3,a5,4
+     180:	00478693          	addi	a3,a5,4
      184:	fed42623          	sw	a3,-20(s0)
      188:	00072703          	lw	a4,0(a4)
      18c:	00e7a023          	sw	a4,0(a5)
         for (uint32_t i = 0; i < size; i++) {
      190:	fe442783          	lw	a5,-28(s0)
-     194:	00178793          	add	a5,a5,1
+     194:	00178793          	addi	a5,a5,1
      198:	fef42223          	sw	a5,-28(s0)
      19c:	fe442703          	lw	a4,-28(s0)
      1a0:	fc442783          	lw	a5,-60(s0)
@@ -187,24 +187,24 @@ void Reset_Handler() {
 
                 // Init. the .bss section to zero in RAM
         size = (uint32_t)&__bss_end__ - (uint32_t)&__bss_start__;
-     1a8:	d4018713          	add	a4,gp,-704 # 20000968 <__bss_end__>
-     1ac:	81018793          	add	a5,gp,-2032 # 20000438 <__ready__>
+     1a8:	d4018713          	addi	a4,gp,-704 # 20000968 <__bss_end__>
+     1ac:	81018793          	addi	a5,gp,-2032 # 20000438 <__ready__>
      1b0:	40f707b3          	sub	a5,a4,a5
      1b4:	fcf42223          	sw	a5,-60(s0)
         pDst = (uint32_t*)&__bss_start__;
-     1b8:	81018793          	add	a5,gp,-2032 # 20000438 <__ready__>
+     1b8:	81018793          	addi	a5,gp,-2032 # 20000438 <__ready__>
      1bc:	fef42623          	sw	a5,-20(s0)
         for(uint32_t i = 0; i < size; i++) {
      1c0:	fe042023          	sw	zero,-32(s0)
      1c4:	0200006f          	j	1e4 <Reset_Handler+0xd4>
             *pDst++ = 0;
      1c8:	fec42783          	lw	a5,-20(s0)
-     1cc:	00478713          	add	a4,a5,4
+     1cc:	00478713          	addi	a4,a5,4
      1d0:	fee42623          	sw	a4,-20(s0)
      1d4:	0007a023          	sw	zero,0(a5)
         for(uint32_t i = 0; i < size; i++) {
      1d8:	fe042783          	lw	a5,-32(s0)
-     1dc:	00178793          	add	a5,a5,1
+     1dc:	00178793          	addi	a5,a5,1
      1e0:	fef42023          	sw	a5,-32(s0)
      1e4:	fe042703          	lw	a4,-32(s0)
      1e8:	fc442783          	lw	a5,-60(s0)
@@ -217,8 +217,8 @@ void Reset_Handler() {
      1f4:	01000693          	li	a3,16
      1f8:	3e800613          	li	a2,1000
      1fc:	200065b7          	lui	a1,0x20006
-     200:	d4018513          	add	a0,gp,-704 # 20000968 <__bss_end__>
-     204:	6e8010ef          	jal	18ec <ta_init>
+     200:	d4018513          	addi	a0,gp,-704 # 20000968 <__bss_end__>
+     204:	6e8010ef          	jal	ra,18ec <ta_init>
          */
         // Signal all the other (currently HRTT) threads
         // to wake up and execute up to here,
@@ -230,13 +230,13 @@ void Reset_Handler() {
             slots[i] = i;
      210:	fdc42703          	lw	a4,-36(s0)
      214:	fdc42783          	lw	a5,-36(s0)
-     218:	00279793          	sll	a5,a5,0x2
-     21c:	ff078793          	add	a5,a5,-16
+     218:	00279793          	slli	a5,a5,0x2
+     21c:	ff078793          	addi	a5,a5,-16
      220:	008787b3          	add	a5,a5,s0
      224:	fae7aa23          	sw	a4,-76(a5)
         for (int i = 0; i < NUM_THREADS; i++) {
      228:	fdc42783          	lw	a5,-36(s0)
-     22c:	00178793          	add	a5,a5,1
+     22c:	00178793          	addi	a5,a5,1
      230:	fcf42e23          	sw	a5,-36(s0)
      234:	fdc42703          	lw	a4,-36(s0)
      238:	00300793          	li	a5,3
@@ -249,14 +249,14 @@ void Reset_Handler() {
      248:	0280006f          	j	270 <Reset_Handler+0x160>
             slots[j] = SLOT_D;
      24c:	fd842783          	lw	a5,-40(s0)
-     250:	00279793          	sll	a5,a5,0x2
-     254:	ff078793          	add	a5,a5,-16
+     250:	00279793          	slli	a5,a5,0x2
+     254:	ff078793          	addi	a5,a5,-16
      258:	008787b3          	add	a5,a5,s0
      25c:	00f00713          	li	a4,15
      260:	fae7aa23          	sw	a4,-76(a5)
         for (int j = NUM_THREADS; j < SLOTS_SIZE; j++)
      264:	fd842783          	lw	a5,-40(s0)
-     268:	00178793          	add	a5,a5,1
+     268:	00178793          	addi	a5,a5,1
      26c:	fcf42c23          	sw	a5,-40(s0)
      270:	fd842703          	lw	a4,-40(s0)
      274:	00700793          	li	a5,7
@@ -264,7 +264,7 @@ void Reset_Handler() {
         
         // Acquire lock and allow all threads to start execute as HRTTs
         hwlock_acquire();
-     27c:	745000ef          	jal	11c0 <hwlock_acquire>
+     27c:	745000ef          	jal	ra,11c0 <hwlock_acquire>
         for (int i = 0; i < NUM_THREADS; i++) {
      280:	fc042a23          	sw	zero,-44(s0)
      284:	0200006f          	j	2a4 <Reset_Handler+0x194>
@@ -272,34 +272,34 @@ void Reset_Handler() {
      288:	fd442783          	lw	a5,-44(s0)
      28c:	00000593          	li	a1,0
      290:	00078513          	mv	a0,a5
-     294:	7f0000ef          	jal	a84 <tmode_set>
+     294:	7f0000ef          	jal	ra,a84 <tmode_set>
         for (int i = 0; i < NUM_THREADS; i++) {
      298:	fd442783          	lw	a5,-44(s0)
-     29c:	00178793          	add	a5,a5,1
+     29c:	00178793          	addi	a5,a5,1
      2a0:	fcf42a23          	sw	a5,-44(s0)
      2a4:	fd442703          	lw	a4,-44(s0)
      2a8:	00300793          	li	a5,3
      2ac:	fce7dee3          	bge	a5,a4,288 <Reset_Handler+0x178>
         }
         slot_set(slots, 8);
-     2b0:	fa440793          	add	a5,s0,-92
+     2b0:	fa440793          	addi	a5,s0,-92
      2b4:	00800593          	li	a1,8
      2b8:	00078513          	mv	a0,a5
-     2bc:	4d0000ef          	jal	78c <slot_set>
+     2bc:	4d0000ef          	jal	ra,78c <slot_set>
         hwlock_release();
-     2c0:	739000ef          	jal	11f8 <hwlock_release>
+     2c0:	739000ef          	jal	ra,11f8 <hwlock_release>
 
         // FIXME: Wait for a worker thread to signal
         // ready-to-sleep and put it to sleep.
 
         // Signal everything is ready.
         hwlock_acquire();
-     2c4:	6fd000ef          	jal	11c0 <hwlock_acquire>
+     2c4:	6fd000ef          	jal	ra,11c0 <hwlock_acquire>
         __ready__ = true;
      2c8:	00100713          	li	a4,1
      2cc:	80e18823          	sb	a4,-2032(gp) # 20000438 <__ready__>
         hwlock_release();
-     2d0:	729000ef          	jal	11f8 <hwlock_release>
+     2d0:	729000ef          	jal	ra,11f8 <hwlock_release>
      2d4:	0180006f          	j	2ec <Reset_Handler+0x1dc>
     } else {
         // FIXME: Signal thread 0 to put
@@ -309,25 +309,25 @@ void Reset_Handler() {
         while (!__ready__);
      2d8:	00000013          	nop
      2dc:	8101c783          	lbu	a5,-2032(gp) # 20000438 <__ready__>
-     2e0:	0017c793          	xor	a5,a5,1
+     2e0:	0017c793          	xori	a5,a5,1
      2e4:	0ff7f793          	zext.b	a5,a5
      2e8:	fe079ae3          	bnez	a5,2dc <Reset_Handler+0x1cc>
     }
 
     // Setup exception handling
     setup_exceptions();
-     2ec:	008020ef          	jal	22f4 <setup_exceptions>
+     2ec:	008020ef          	jal	ra,22f4 <setup_exceptions>
 
     // Call main().
     if (hartid == 0) {
      2f0:	fc842783          	lw	a5,-56(s0)
      2f4:	00079663          	bnez	a5,300 <Reset_Handler+0x1f0>
         main();
-     2f8:	0a0000ef          	jal	398 <main>
+     2f8:	0a0000ef          	jal	ra,398 <main>
      2fc:	0080006f          	j	304 <Reset_Handler+0x1f4>
     } else {
         worker_main();
-     300:	48d000ef          	jal	f8c <worker_main>
+     300:	48d000ef          	jal	ra,f8c <worker_main>
     }
 
     // Shutdown the program.
@@ -345,20 +345,20 @@ void Reset_Handler() {
 
         // Signal all threads besides T0 to exit.
         hwlock_acquire();
-     318:	6a9000ef          	jal	11c0 <hwlock_acquire>
+     318:	6a9000ef          	jal	ra,11c0 <hwlock_acquire>
         for (int i = 1; i < NUM_THREADS; i++) {
      31c:	00100793          	li	a5,1
      320:	fcf42823          	sw	a5,-48(s0)
      324:	0240006f          	j	348 <Reset_Handler+0x238>
             exit_requested[i] = true;
-     328:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+     328:	d3418713          	addi	a4,gp,-716 # 2000095c <exit_requested>
      32c:	fd042783          	lw	a5,-48(s0)
      330:	00f707b3          	add	a5,a4,a5
      334:	00100713          	li	a4,1
      338:	00e78023          	sb	a4,0(a5)
         for (int i = 1; i < NUM_THREADS; i++) {
      33c:	fd042783          	lw	a5,-48(s0)
-     340:	00178793          	add	a5,a5,1
+     340:	00178793          	addi	a5,a5,1
      344:	fcf42823          	sw	a5,-48(s0)
      348:	fd042703          	lw	a4,-48(s0)
      34c:	00300793          	li	a5,3
@@ -367,7 +367,7 @@ void Reset_Handler() {
             // wake up the thread.
         }
         hwlock_release();
-     354:	6a5000ef          	jal	11f8 <hwlock_release>
+     354:	6a5000ef          	jal	ra,11f8 <hwlock_release>
 
         // Wait for all hardware worker threads to exit.
         while (num_threads_exited < NUM_THREADS-1);
@@ -382,29 +382,29 @@ void Reset_Handler() {
         // Exit the program.
         _exit(0);
      368:	00000513          	li	a0,0
-     36c:	0f0000ef          	jal	45c <_exit>
+     36c:	0f0000ef          	jal	ra,45c <_exit>
     } else {
         while (1);
      370:	0000006f          	j	370 <Reset_Handler+0x260>
 
 00000374 <add>:
-     374:	ff010113          	add	sp,sp,-16
+     374:	ff010113          	addi	sp,sp,-16
      378:	00112623          	sw	ra,12(sp)
      37c:	00812423          	sw	s0,8(sp)
-     380:	01010413          	add	s0,sp,16
+     380:	01010413          	addi	s0,sp,16
      384:	00b50533          	add	a0,a0,a1
      388:	00c12083          	lw	ra,12(sp)
      38c:	00812403          	lw	s0,8(sp)
-     390:	01010113          	add	sp,sp,16
+     390:	01010113          	addi	sp,sp,16
      394:	00008067          	ret
 
 00000398 <main>:
-     398:	ff010113          	add	sp,sp,-16
+     398:	ff010113          	addi	sp,sp,-16
      39c:	00112623          	sw	ra,12(sp)
      3a0:	00812423          	sw	s0,8(sp)
-     3a4:	01010413          	add	s0,sp,16
+     3a4:	01010413          	addi	s0,sp,16
      3a8:	baaac537          	lui	a0,0xbaaac
-     3ac:	aaa50513          	add	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     3ac:	aaa50513          	addi	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
      3b0:	51e51073          	csrw	0x51e,a0
      3b4:	00100593          	li	a1,1
      3b8:	51e59073          	csrw	0x51e,a1
@@ -413,7 +413,7 @@ void Reset_Handler() {
      3c4:	51e51073          	csrw	0x51e,a0
      3c8:	0040006f          	j	3cc <main+0x34>
      3cc:	baaac537          	lui	a0,0xbaaac
-     3d0:	aaa50513          	add	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     3d0:	aaa50513          	addi	a0,a0,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
      3d4:	51e51073          	csrw	0x51e,a0
      3d8:	00300513          	li	a0,3
      3dc:	51e51073          	csrw	0x51e,a0
@@ -421,36 +421,41 @@ void Reset_Handler() {
      3e4:	00000513          	li	a0,0
      3e8:	00c12083          	lw	ra,12(sp)
      3ec:	00812403          	lw	s0,8(sp)
-     3f0:	01010113          	add	sp,sp,16
+     3f0:	01010113          	addi	sp,sp,16
      3f4:	00008067          	ret
 
 000003f8 <_fp_finish>:
+  write_csr(CSR_TOHOST, val);
+  // swap_csr(CSR_HWLOCK, 0);
+}
 
-// FIXME: Does this also work on the FPGA?
-void _exit(int rc) {
-    _fp_finish();
-    while(1) {}
-    __builtin_unreachable();
-     3f8:	ff010113          	add	sp,sp,-16
+// Finish/stop the simulation
+static inline void _fp_finish() { write_csr(CSR_TOHOST, 0xdeaddead); }
+     3f8:	ff010113          	addi	sp,sp,-16
      3fc:	00812623          	sw	s0,12(sp)
-     400:	01010413          	add	s0,sp,16
+     400:	01010413          	addi	s0,sp,16
      404:	deade7b7          	lui	a5,0xdeade
-     408:	ead78793          	add	a5,a5,-339 # deaddead <BUS_END+0x9eaddaad>
+     408:	ead78793          	addi	a5,a5,-339 # deaddead <BUS_END+0x9eaddaad>
      40c:	51e79073          	csrw	0x51e,a5
      410:	00000013          	nop
      414:	00c12403          	lw	s0,12(sp)
-     418:	01010113          	add	sp,sp,16
+     418:	01010113          	addi	sp,sp,16
      41c:	00008067          	ret
 
 00000420 <_close>:
+#include <sys/stat.h>   // Defines struct stat.
+#include <flexpret_io.h>
+
+int errno;
+
 int _close(int fildes) {
-     420:	fe010113          	add	sp,sp,-32
+     420:	fe010113          	addi	sp,sp,-32
      424:	00112e23          	sw	ra,28(sp)
      428:	00812c23          	sw	s0,24(sp)
-     42c:	02010413          	add	s0,sp,32
+     42c:	02010413          	addi	s0,sp,32
      430:	fea42623          	sw	a0,-20(s0)
     errno = ENOSYS;
-     434:	036020ef          	jal	246a <__errno>
+     434:	044020ef          	jal	ra,2478 <__errno>
      438:	00050713          	mv	a4,a0
      43c:	05800793          	li	a5,88
      440:	00f72023          	sw	a5,0(a4)
@@ -460,33 +465,36 @@ int _close(int fildes) {
      448:	00078513          	mv	a0,a5
      44c:	01c12083          	lw	ra,28(sp)
      450:	01812403          	lw	s0,24(sp)
-     454:	02010113          	add	sp,sp,32
+     454:	02010113          	addi	sp,sp,32
      458:	00008067          	ret
 
 0000045c <_exit>:
+
+// FIXME: Does this also work on the FPGA?
 void _exit(int rc) {
-     45c:	fe010113          	add	sp,sp,-32
+     45c:	fe010113          	addi	sp,sp,-32
      460:	00112e23          	sw	ra,28(sp)
      464:	00812c23          	sw	s0,24(sp)
-     468:	02010413          	add	s0,sp,32
+     468:	02010413          	addi	s0,sp,32
      46c:	fea42623          	sw	a0,-20(s0)
     _fp_finish();
-     470:	f89ff0ef          	jal	3f8 <_fp_finish>
+     470:	f89ff0ef          	jal	ra,3f8 <_fp_finish>
     while(1) {}
      474:	0000006f          	j	474 <_exit+0x18>
 
 00000478 <_fstat>:
+    __builtin_unreachable();
 }
 
 int _fstat(int fildes, struct stat *st) {
-     478:	fe010113          	add	sp,sp,-32
+     478:	fe010113          	addi	sp,sp,-32
      47c:	00112e23          	sw	ra,28(sp)
      480:	00812c23          	sw	s0,24(sp)
-     484:	02010413          	add	s0,sp,32
+     484:	02010413          	addi	s0,sp,32
      488:	fea42623          	sw	a0,-20(s0)
      48c:	feb42423          	sw	a1,-24(s0)
     errno = ENOSYS;
-     490:	7db010ef          	jal	246a <__errno>
+     490:	7e9010ef          	jal	ra,2478 <__errno>
      494:	00050713          	mv	a4,a0
      498:	05800793          	li	a5,88
      49c:	00f72023          	sw	a5,0(a4)
@@ -496,18 +504,18 @@ int _fstat(int fildes, struct stat *st) {
      4a4:	00078513          	mv	a0,a5
      4a8:	01c12083          	lw	ra,28(sp)
      4ac:	01812403          	lw	s0,24(sp)
-     4b0:	02010113          	add	sp,sp,32
+     4b0:	02010113          	addi	sp,sp,32
      4b4:	00008067          	ret
 
 000004b8 <_getpid>:
 
 int _getpid(void){
-     4b8:	ff010113          	add	sp,sp,-16
+     4b8:	ff010113          	addi	sp,sp,-16
      4bc:	00112623          	sw	ra,12(sp)
      4c0:	00812423          	sw	s0,8(sp)
-     4c4:	01010413          	add	s0,sp,16
+     4c4:	01010413          	addi	s0,sp,16
     errno = ENOSYS;
-     4c8:	7a3010ef          	jal	246a <__errno>
+     4c8:	7b1010ef          	jal	ra,2478 <__errno>
      4cc:	00050713          	mv	a4,a0
      4d0:	05800793          	li	a5,88
      4d4:	00f72023          	sw	a5,0(a4)
@@ -517,19 +525,19 @@ int _getpid(void){
      4dc:	00078513          	mv	a0,a5
      4e0:	00c12083          	lw	ra,12(sp)
      4e4:	00812403          	lw	s0,8(sp)
-     4e8:	01010113          	add	sp,sp,16
+     4e8:	01010113          	addi	sp,sp,16
      4ec:	00008067          	ret
 
 000004f0 <_isatty>:
 
 int _isatty(int file) {
-     4f0:	fe010113          	add	sp,sp,-32
+     4f0:	fe010113          	addi	sp,sp,-32
      4f4:	00112e23          	sw	ra,28(sp)
      4f8:	00812c23          	sw	s0,24(sp)
-     4fc:	02010413          	add	s0,sp,32
+     4fc:	02010413          	addi	s0,sp,32
      500:	fea42623          	sw	a0,-20(s0)
     errno = ENOSYS;
-     504:	767010ef          	jal	246a <__errno>
+     504:	775010ef          	jal	ra,2478 <__errno>
      508:	00050713          	mv	a4,a0
      50c:	05800793          	li	a5,88
      510:	00f72023          	sw	a5,0(a4)
@@ -539,20 +547,20 @@ int _isatty(int file) {
      518:	00078513          	mv	a0,a5
      51c:	01c12083          	lw	ra,28(sp)
      520:	01812403          	lw	s0,24(sp)
-     524:	02010113          	add	sp,sp,32
+     524:	02010113          	addi	sp,sp,32
      528:	00008067          	ret
 
 0000052c <_kill>:
 
 int _kill(int pid, int sig) {
-     52c:	fe010113          	add	sp,sp,-32
+     52c:	fe010113          	addi	sp,sp,-32
      530:	00112e23          	sw	ra,28(sp)
      534:	00812c23          	sw	s0,24(sp)
-     538:	02010413          	add	s0,sp,32
+     538:	02010413          	addi	s0,sp,32
      53c:	fea42623          	sw	a0,-20(s0)
      540:	feb42423          	sw	a1,-24(s0)
     errno = ENOSYS;
-     544:	727010ef          	jal	246a <__errno>
+     544:	735010ef          	jal	ra,2478 <__errno>
      548:	00050713          	mv	a4,a0
      54c:	05800793          	li	a5,88
      550:	00f72023          	sw	a5,0(a4)
@@ -562,21 +570,21 @@ int _kill(int pid, int sig) {
      558:	00078513          	mv	a0,a5
      55c:	01c12083          	lw	ra,28(sp)
      560:	01812403          	lw	s0,24(sp)
-     564:	02010113          	add	sp,sp,32
+     564:	02010113          	addi	sp,sp,32
      568:	00008067          	ret
 
 0000056c <_lseek>:
 
 int _lseek(int file, int ptr, int dir) {
-     56c:	fe010113          	add	sp,sp,-32
+     56c:	fe010113          	addi	sp,sp,-32
      570:	00112e23          	sw	ra,28(sp)
      574:	00812c23          	sw	s0,24(sp)
-     578:	02010413          	add	s0,sp,32
+     578:	02010413          	addi	s0,sp,32
      57c:	fea42623          	sw	a0,-20(s0)
      580:	feb42423          	sw	a1,-24(s0)
      584:	fec42223          	sw	a2,-28(s0)
     errno = ENOSYS;
-     588:	6e3010ef          	jal	246a <__errno>
+     588:	6f1010ef          	jal	ra,2478 <__errno>
      58c:	00050713          	mv	a4,a0
      590:	05800793          	li	a5,88
      594:	00f72023          	sw	a5,0(a4)
@@ -586,21 +594,21 @@ int _lseek(int file, int ptr, int dir) {
      59c:	00078513          	mv	a0,a5
      5a0:	01c12083          	lw	ra,28(sp)
      5a4:	01812403          	lw	s0,24(sp)
-     5a8:	02010113          	add	sp,sp,32
+     5a8:	02010113          	addi	sp,sp,32
      5ac:	00008067          	ret
 
 000005b0 <_read>:
 
 int _read (int file, char *ptr, int len) {
-     5b0:	fe010113          	add	sp,sp,-32
+     5b0:	fe010113          	addi	sp,sp,-32
      5b4:	00112e23          	sw	ra,28(sp)
      5b8:	00812c23          	sw	s0,24(sp)
-     5bc:	02010413          	add	s0,sp,32
+     5bc:	02010413          	addi	s0,sp,32
      5c0:	fea42623          	sw	a0,-20(s0)
      5c4:	feb42423          	sw	a1,-24(s0)
      5c8:	fec42223          	sw	a2,-28(s0)
   	errno = ENOSYS;
-     5cc:	69f010ef          	jal	246a <__errno>
+     5cc:	6ad010ef          	jal	ra,2478 <__errno>
      5d0:	00050713          	mv	a4,a0
      5d4:	05800793          	li	a5,88
      5d8:	00f72023          	sw	a5,0(a4)
@@ -610,16 +618,16 @@ int _read (int file, char *ptr, int len) {
      5e0:	00078513          	mv	a0,a5
      5e4:	01c12083          	lw	ra,28(sp)
      5e8:	01812403          	lw	s0,24(sp)
-     5ec:	02010113          	add	sp,sp,32
+     5ec:	02010113          	addi	sp,sp,32
      5f0:	00008067          	ret
 
 000005f4 <_sbrk>:
 
 // FIXME: This should not be actually called because of tinyalloc.
 void *_sbrk(int incr) {
-     5f4:	fd010113          	add	sp,sp,-48
+     5f4:	fd010113          	addi	sp,sp,-48
      5f8:	02812623          	sw	s0,44(sp)
-     5fc:	03010413          	add	s0,sp,48
+     5fc:	03010413          	addi	s0,sp,48
      600:	fca42e23          	sw	a0,-36(s0)
    extern char   end; /* Set by linker.  */
    static char * heap_end;
@@ -629,7 +637,7 @@ void *_sbrk(int incr) {
      604:	8141a783          	lw	a5,-2028(gp) # 2000043c <heap_end.0>
      608:	00079663          	bnez	a5,614 <_sbrk+0x20>
      heap_end = & end;
-     60c:	d4018713          	add	a4,gp,-704 # 20000968 <__bss_end__>
+     60c:	d4018713          	addi	a4,gp,-704 # 20000968 <__bss_end__>
      610:	80e1aa23          	sw	a4,-2028(gp) # 2000043c <heap_end.0>
 
    prev_heap_end = heap_end;
@@ -646,21 +654,21 @@ void *_sbrk(int incr) {
 }
      630:	00078513          	mv	a0,a5
      634:	02c12403          	lw	s0,44(sp)
-     638:	03010113          	add	sp,sp,48
+     638:	03010113          	addi	sp,sp,48
      63c:	00008067          	ret
 
 00000640 <_write>:
 
 int _write (int file, char *ptr, int len) {
-     640:	fe010113          	add	sp,sp,-32
+     640:	fe010113          	addi	sp,sp,-32
      644:	00112e23          	sw	ra,28(sp)
      648:	00812c23          	sw	s0,24(sp)
-     64c:	02010413          	add	s0,sp,32
+     64c:	02010413          	addi	s0,sp,32
      650:	fea42623          	sw	a0,-20(s0)
      654:	feb42423          	sw	a1,-24(s0)
      658:	fec42223          	sw	a2,-28(s0)
   	errno = ENOSYS;
-     65c:	60f010ef          	jal	246a <__errno>
+     65c:	61d010ef          	jal	ra,2478 <__errno>
      660:	00050713          	mv	a4,a0
      664:	05800793          	li	a5,88
      668:	00f72023          	sw	a5,0(a4)
@@ -670,69 +678,60 @@ int _write (int file, char *ptr, int len) {
      670:	00078513          	mv	a0,a5
      674:	01c12083          	lw	ra,28(sp)
      678:	01812403          	lw	s0,24(sp)
-     67c:	02010113          	add	sp,sp,32
+     67c:	02010113          	addi	sp,sp,32
      680:	00008067          	ret
 
 00000684 <_fp_print>:
- * These functions assume that a lock is held
- * by the caller.
- *************************************************/
-
-/**
- * @brief Set a complete schedule.
-     684:	fe010113          	add	sp,sp,-32
+static inline void _fp_print(uint32_t val) {
+     684:	fe010113          	addi	sp,sp,-32
      688:	00812e23          	sw	s0,28(sp)
-     68c:	02010413          	add	s0,sp,32
+     68c:	02010413          	addi	s0,sp,32
      690:	fea42623          	sw	a0,-20(s0)
- * 
- * This function assumes that a mutex lock
+  write_csr(CSR_TOHOST, 0xbaaabaaa);
      694:	baaac7b7          	lui	a5,0xbaaac
-     698:	aaa78793          	add	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+     698:	aaa78793          	addi	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
      69c:	51e79073          	csrw	0x51e,a5
- * is held by the caller.
+  write_csr(CSR_TOHOST, val);
      6a0:	fec42783          	lw	a5,-20(s0)
      6a4:	51e79073          	csrw	0x51e,a5
- * 
- * @param slots An array of slot values
+}
      6a8:	00000013          	nop
      6ac:	01c12403          	lw	s0,28(sp)
-     6b0:	02010113          	add	sp,sp,32
+     6b0:	02010113          	addi	sp,sp,32
      6b4:	00008067          	ret
 
 000006b8 <_fp_abort>:
- * @return int If success, return 0, otherwise an error code.
- */
-int slot_set(slot_t slots[], uint32_t length) {
-    if (length > 8) {
-        assert(false);
-        return 1;
-     6b8:	ff010113          	add	sp,sp,-16
+
+// Abort simulation. Simulation environment will terminate if any core makes this call
+// FIXME: Get line number which triggered abort also out
+static inline void _fp_abort() {
+     6b8:	ff010113          	addi	sp,sp,-16
      6bc:	00812623          	sw	s0,12(sp)
-     6c0:	01010413          	add	s0,sp,16
-    }
+     6c0:	01010413          	addi	s0,sp,16
+  write_csr(CSR_TOHOST, 0xdeadbeef);
      6c4:	deadc7b7          	lui	a5,0xdeadc
-     6c8:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+     6c8:	eef78793          	addi	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
      6cc:	51e79073          	csrw	0x51e,a5
-    uint32_t val = 0;
+}
      6d0:	00000013          	nop
      6d4:	00c12403          	lw	s0,12(sp)
-     6d8:	01010113          	add	sp,sp,16
+     6d8:	01010113          	addi	sp,sp,16
      6dc:	00008067          	ret
 
 000006e0 <gpo_write>:
-    for (int i = 0; i < length; i++) {
-        val |= slots[i] << (i * 4);
-    }
-    write_csr(CSR_SLOTS, val);
-    return 0;
-}
-     6e0:	fe010113          	add	sp,sp,-32
+
+
+// GPO ports, if port width < 32, then upper bits ignored
+// CSR_GPO_*
+// Write all GPO bits
+static inline void gpo_write(uint32_t port, uint32_t val) {
+     6e0:	fe010113          	addi	sp,sp,-32
      6e4:	00112e23          	sw	ra,28(sp)
      6e8:	00812c23          	sw	s0,24(sp)
-     6ec:	02010413          	add	s0,sp,32
+     6ec:	02010413          	addi	s0,sp,32
      6f0:	fea42623          	sw	a0,-20(s0)
      6f4:	feb42423          	sw	a1,-24(s0)
-
+  switch(port) {
      6f8:	fec42703          	lw	a4,-20(s0)
      6fc:	00300793          	li	a5,3
      700:	06f70263          	beq	a4,a5,764 <gpo_write+0x84>
@@ -751,39 +750,44 @@ int slot_set(slot_t slots[], uint32_t length) {
      734:	00100793          	li	a5,1
      738:	00f70a63          	beq	a4,a5,74c <gpo_write+0x6c>
      73c:	0340006f          	j	770 <gpo_write+0x90>
-/**
+    case 0: write_csr(CSR_UARCH4, val); break;
      740:	fe842783          	lw	a5,-24(s0)
      744:	cc479073          	csrw	0xcc4,a5
      748:	0300006f          	j	778 <gpo_write+0x98>
- * @brief Allocate a slot for a hard real-time thread (HRTT).
+    case 1: write_csr(CSR_UARCH5, val); break;
      74c:	fe842783          	lw	a5,-24(s0)
      750:	cc579073          	csrw	0xcc5,a5
      754:	0240006f          	j	778 <gpo_write+0x98>
- * 
+    case 2: write_csr(CSR_UARCH6, val); break;
      758:	fe842783          	lw	a5,-24(s0)
      75c:	cc679073          	csrw	0xcc6,a5
      760:	0180006f          	j	778 <gpo_write+0x98>
- * This function assumes that a mutex lock
+    case 3: write_csr(CSR_UARCH7, val); break;
      764:	fe842783          	lw	a5,-24(s0)
      768:	cc779073          	csrw	0xcc7,a5
      76c:	00c0006f          	j	778 <gpo_write+0x98>
- * is held by the caller.
-     770:	f49ff0ef          	jal	6b8 <_fp_abort>
- * 
- * @param slot The slot to be allocated
+    default: _fp_abort();
+     770:	f49ff0ef          	jal	ra,6b8 <_fp_abort>
+  }
+}
      774:	00000013          	nop
      778:	00000013          	nop
      77c:	01c12083          	lw	ra,28(sp)
      780:	01812403          	lw	s0,24(sp)
-     784:	02010113          	add	sp,sp,32
+     784:	02010113          	addi	sp,sp,32
      788:	00008067          	ret
 
 0000078c <slot_set>:
+ * 
+ * @param slots An array of slot values
+ * @param length The length of the array
+ * @return int If success, return 0, otherwise an error code.
+ */
 int slot_set(slot_t slots[], uint32_t length) {
-     78c:	fd010113          	add	sp,sp,-48
+     78c:	fd010113          	addi	sp,sp,-48
      790:	02112623          	sw	ra,44(sp)
      794:	02812423          	sw	s0,40(sp)
-     798:	03010413          	add	s0,sp,48
+     798:	03010413          	addi	s0,sp,48
      79c:	fca42e23          	sw	a0,-36(s0)
      7a0:	fcb42c23          	sw	a1,-40(s0)
     if (length > 8) {
@@ -791,11 +795,13 @@ int slot_set(slot_t slots[], uint32_t length) {
      7a8:	00800793          	li	a5,8
      7ac:	00e7fc63          	bgeu	a5,a4,7c4 <slot_set+0x38>
         assert(false);
-     7b0:	f09ff0ef          	jal	6b8 <_fp_abort>
+     7b0:	f09ff0ef          	jal	ra,6b8 <_fp_abort>
      7b4:	0ff00593          	li	a1,255
      7b8:	00000513          	li	a0,0
-     7bc:	f25ff0ef          	jal	6e0 <gpo_write>
+     7bc:	f25ff0ef          	jal	ra,6e0 <gpo_write>
      7c0:	0000006f          	j	7c0 <slot_set+0x34>
+        return 1;
+    }
     uint32_t val = 0;
      7c4:	fe042623          	sw	zero,-20(s0)
     for (int i = 0; i < length; i++) {
@@ -803,23 +809,24 @@ int slot_set(slot_t slots[], uint32_t length) {
      7cc:	03c0006f          	j	808 <slot_set+0x7c>
         val |= slots[i] << (i * 4);
      7d0:	fe842783          	lw	a5,-24(s0)
-     7d4:	00279793          	sll	a5,a5,0x2
+     7d4:	00279793          	slli	a5,a5,0x2
      7d8:	fdc42703          	lw	a4,-36(s0)
      7dc:	00f707b3          	add	a5,a4,a5
      7e0:	0007a703          	lw	a4,0(a5)
      7e4:	fe842783          	lw	a5,-24(s0)
-     7e8:	00279793          	sll	a5,a5,0x2
+     7e8:	00279793          	slli	a5,a5,0x2
      7ec:	00f717b3          	sll	a5,a4,a5
      7f0:	fec42703          	lw	a4,-20(s0)
      7f4:	00f767b3          	or	a5,a4,a5
      7f8:	fef42623          	sw	a5,-20(s0)
     for (int i = 0; i < length; i++) {
      7fc:	fe842783          	lw	a5,-24(s0)
-     800:	00178793          	add	a5,a5,1
+     800:	00178793          	addi	a5,a5,1
      804:	fef42423          	sw	a5,-24(s0)
      808:	fe842783          	lw	a5,-24(s0)
      80c:	fd842703          	lw	a4,-40(s0)
      810:	fce7e0e3          	bltu	a5,a4,7d0 <slot_set+0x44>
+    }
     write_csr(CSR_SLOTS, val);
      814:	fec42783          	lw	a5,-20(s0)
      818:	50379073          	csrw	0x503,a5
@@ -829,18 +836,20 @@ int slot_set(slot_t slots[], uint32_t length) {
      820:	00078513          	mv	a0,a5
      824:	02c12083          	lw	ra,44(sp)
      828:	02812403          	lw	s0,40(sp)
-     82c:	03010113          	add	sp,sp,48
+     82c:	03010113          	addi	sp,sp,48
      830:	00008067          	ret
 
 00000834 <slot_set_hrtt>:
+ * 
+ * @param slot The slot to be allocated
  * @param hartid The hartid of the HRTT
  * @return int If success, return 0, otherwise an error code.
  */
 int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
-     834:	fd010113          	add	sp,sp,-48
+     834:	fd010113          	addi	sp,sp,-48
      838:	02112623          	sw	ra,44(sp)
      83c:	02812423          	sw	s0,40(sp)
-     840:	03010413          	add	s0,sp,48
+     840:	03010413          	addi	s0,sp,48
      844:	fca42e23          	sw	a0,-36(s0)
      848:	fcb42c23          	sw	a1,-40(s0)
     if (slot > 7) {
@@ -849,10 +858,10 @@ int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
      854:	00e7fc63          	bgeu	a5,a4,86c <slot_set_hrtt+0x38>
         // FIXME: Panic.
         assert(false);
-     858:	e61ff0ef          	jal	6b8 <_fp_abort>
+     858:	e61ff0ef          	jal	ra,6b8 <_fp_abort>
      85c:	0ff00593          	li	a1,255
      860:	00000513          	li	a0,0
-     864:	e7dff0ef          	jal	6e0 <gpo_write>
+     864:	e7dff0ef          	jal	ra,6e0 <gpo_write>
      868:	0000006f          	j	868 <slot_set_hrtt+0x34>
         return 1;
     }
@@ -862,16 +871,16 @@ int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
      874:	00e7fc63          	bgeu	a5,a4,88c <slot_set_hrtt+0x58>
         // FIXME: Panic.
         assert(false);
-     878:	e41ff0ef          	jal	6b8 <_fp_abort>
+     878:	e41ff0ef          	jal	ra,6b8 <_fp_abort>
      87c:	0ff00593          	li	a1,255
      880:	00000513          	li	a0,0
-     884:	e5dff0ef          	jal	6e0 <gpo_write>
+     884:	e5dff0ef          	jal	ra,6e0 <gpo_write>
      888:	0000006f          	j	888 <slot_set_hrtt+0x54>
         return 2;
     }
     uint32_t mask = 0xf << (slot * 4);
      88c:	fdc42783          	lw	a5,-36(s0)
-     890:	00279793          	sll	a5,a5,0x2
+     890:	00279793          	slli	a5,a5,0x2
      894:	00f00713          	li	a4,15
      898:	00f717b3          	sll	a5,a4,a5
      89c:	fef42623          	sw	a5,-20(s0)
@@ -887,7 +896,7 @@ int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
      8b8:	fe442783          	lw	a5,-28(s0)
      8bc:	00f77733          	and	a4,a4,a5
      8c0:	fdc42783          	lw	a5,-36(s0)
-     8c4:	00279793          	sll	a5,a5,0x2
+     8c4:	00279793          	slli	a5,a5,0x2
      8c8:	fd842683          	lw	a3,-40(s0)
      8cc:	00f697b3          	sll	a5,a3,a5
      8d0:	00f767b3          	or	a5,a4,a5
@@ -901,7 +910,7 @@ int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
      8e4:	00078513          	mv	a0,a5
      8e8:	02c12083          	lw	ra,44(sp)
      8ec:	02812403          	lw	s0,40(sp)
-     8f0:	03010113          	add	sp,sp,48
+     8f0:	03010113          	addi	sp,sp,48
      8f4:	00008067          	ret
 
 000008f8 <slot_set_srtt>:
@@ -911,9 +920,9 @@ int slot_set_hrtt(uint32_t slot, uint32_t hartid) {
  * @return int If success, return 0, otherwise an error code.
  */
 int slot_set_srtt(uint32_t slot) {
-     8f8:	fd010113          	add	sp,sp,-48
+     8f8:	fd010113          	addi	sp,sp,-48
      8fc:	02812623          	sw	s0,44(sp)
-     900:	03010413          	add	s0,sp,48
+     900:	03010413          	addi	s0,sp,48
      904:	fca42e23          	sw	a0,-36(s0)
     if (slot > 7) {
      908:	fdc42703          	lw	a4,-36(s0)
@@ -926,7 +935,7 @@ int slot_set_srtt(uint32_t slot) {
     }
     uint32_t mask = 0xf << (slot * 4);
      91c:	fdc42783          	lw	a5,-36(s0)
-     920:	00279793          	sll	a5,a5,0x2
+     920:	00279793          	slli	a5,a5,0x2
      924:	00f00713          	li	a4,15
      928:	00f717b3          	sll	a5,a4,a5
      92c:	fef42623          	sw	a5,-20(s0)
@@ -942,7 +951,7 @@ int slot_set_srtt(uint32_t slot) {
      948:	fe442783          	lw	a5,-28(s0)
      94c:	00f777b3          	and	a5,a4,a5
      950:	fdc42703          	lw	a4,-36(s0)
-     954:	00271713          	sll	a4,a4,0x2
+     954:	00271713          	slli	a4,a4,0x2
      958:	00e00693          	li	a3,14
      95c:	00e69733          	sll	a4,a3,a4
      960:	00e7e7b3          	or	a5,a5,a4
@@ -955,7 +964,7 @@ int slot_set_srtt(uint32_t slot) {
 }
      974:	00078513          	mv	a0,a5
      978:	02c12403          	lw	s0,44(sp)
-     97c:	03010113          	add	sp,sp,48
+     97c:	03010113          	addi	sp,sp,48
      980:	00008067          	ret
 
 00000984 <slot_disable>:
@@ -965,9 +974,9 @@ int slot_set_srtt(uint32_t slot) {
  * @return int If success, return 0, otherwise an error code.
  */
 int slot_disable(uint32_t slot) {
-     984:	fd010113          	add	sp,sp,-48
+     984:	fd010113          	addi	sp,sp,-48
      988:	02812623          	sw	s0,44(sp)
-     98c:	03010413          	add	s0,sp,48
+     98c:	03010413          	addi	s0,sp,48
      990:	fca42e23          	sw	a0,-36(s0)
     if (slot > 7) {
      994:	fdc42703          	lw	a4,-36(s0)
@@ -980,7 +989,7 @@ int slot_disable(uint32_t slot) {
     }
     uint32_t mask = 0xf << (slot * 4);
      9a8:	fdc42783          	lw	a5,-36(s0)
-     9ac:	00279793          	sll	a5,a5,0x2
+     9ac:	00279793          	slli	a5,a5,0x2
      9b0:	00f00713          	li	a4,15
      9b4:	00f717b3          	sll	a5,a4,a5
      9b8:	fef42623          	sw	a5,-20(s0)
@@ -996,7 +1005,7 @@ int slot_disable(uint32_t slot) {
      9d4:	fe442783          	lw	a5,-28(s0)
      9d8:	00f777b3          	and	a5,a4,a5
      9dc:	fdc42703          	lw	a4,-36(s0)
-     9e0:	00271713          	sll	a4,a4,0x2
+     9e0:	00271713          	slli	a4,a4,0x2
      9e4:	00f00693          	li	a3,15
      9e8:	00e69733          	sll	a4,a3,a4
      9ec:	00e7e7b3          	or	a5,a5,a4
@@ -1009,7 +1018,7 @@ int slot_disable(uint32_t slot) {
 }
      a00:	00078513          	mv	a0,a5
      a04:	02c12403          	lw	s0,44(sp)
-     a08:	03010113          	add	sp,sp,48
+     a08:	03010113          	addi	sp,sp,48
      a0c:	00008067          	ret
 
 00000a10 <tmode_get>:
@@ -1019,9 +1028,9 @@ int slot_disable(uint32_t slot) {
  * @return tmode_t The current thread mode
  */
 tmode_t tmode_get(uint32_t hartid) {
-     a10:	fd010113          	add	sp,sp,-48
+     a10:	fd010113          	addi	sp,sp,-48
      a14:	02812623          	sw	s0,44(sp)
-     a18:	03010413          	add	s0,sp,48
+     a18:	03010413          	addi	s0,sp,48
      a1c:	fca42e23          	sw	a0,-36(s0)
     if (hartid > NUM_THREADS) {
      a20:	fdc42703          	lw	a4,-36(s0)
@@ -1034,7 +1043,7 @@ tmode_t tmode_get(uint32_t hartid) {
     }
     uint32_t mask = 0xf << (hartid * 2);
      a34:	fdc42783          	lw	a5,-36(s0)
-     a38:	00179793          	sll	a5,a5,0x1
+     a38:	00179793          	slli	a5,a5,0x1
      a3c:	00f00713          	li	a4,15
      a40:	00f717b3          	sll	a5,a4,a5
      a44:	fef42623          	sw	a5,-20(s0)
@@ -1049,12 +1058,12 @@ tmode_t tmode_get(uint32_t hartid) {
      a60:	fe442783          	lw	a5,-28(s0)
      a64:	00f77733          	and	a4,a4,a5
      a68:	fdc42783          	lw	a5,-36(s0)
-     a6c:	00179793          	sll	a5,a5,0x1
+     a6c:	00179793          	slli	a5,a5,0x1
      a70:	00f757b3          	srl	a5,a4,a5
 }
      a74:	00078513          	mv	a0,a5
      a78:	02c12403          	lw	s0,44(sp)
-     a7c:	03010113          	add	sp,sp,48
+     a7c:	03010113          	addi	sp,sp,48
      a80:	00008067          	ret
 
 00000a84 <tmode_set>:
@@ -1064,9 +1073,9 @@ tmode_t tmode_get(uint32_t hartid) {
  * @return int If success, return 0, otherwise an error code.
  */
 int tmode_set(uint32_t hartid, tmode_t val) {
-     a84:	fd010113          	add	sp,sp,-48
+     a84:	fd010113          	addi	sp,sp,-48
      a88:	02812623          	sw	s0,44(sp)
-     a8c:	03010413          	add	s0,sp,48
+     a8c:	03010413          	addi	s0,sp,48
      a90:	fca42e23          	sw	a0,-36(s0)
      a94:	fcb42c23          	sw	a1,-40(s0)
     if (hartid > NUM_THREADS) {
@@ -1080,7 +1089,7 @@ int tmode_set(uint32_t hartid, tmode_t val) {
     }
     uint32_t mask = 0xf << (hartid * 2);
      aac:	fdc42783          	lw	a5,-36(s0)
-     ab0:	00179793          	sll	a5,a5,0x1
+     ab0:	00179793          	slli	a5,a5,0x1
      ab4:	00f00713          	li	a4,15
      ab8:	00f717b3          	sll	a5,a4,a5
      abc:	fef42623          	sw	a5,-20(s0)
@@ -1095,7 +1104,7 @@ int tmode_set(uint32_t hartid, tmode_t val) {
      ad8:	fe442783          	lw	a5,-28(s0)
      adc:	00f77733          	and	a4,a4,a5
      ae0:	fdc42783          	lw	a5,-36(s0)
-     ae4:	00179793          	sll	a5,a5,0x1
+     ae4:	00179793          	slli	a5,a5,0x1
      ae8:	fd842683          	lw	a3,-40(s0)
      aec:	00f697b3          	sll	a5,a3,a5
      af0:	00f767b3          	or	a5,a4,a5
@@ -1108,7 +1117,7 @@ int tmode_set(uint32_t hartid, tmode_t val) {
 }
      b04:	00078513          	mv	a0,a5
      b08:	02c12403          	lw	s0,44(sp)
-     b0c:	03010113          	add	sp,sp,48
+     b0c:	03010113          	addi	sp,sp,48
      b10:	00008067          	ret
 
 00000b14 <tmode_active>:
@@ -1118,14 +1127,14 @@ int tmode_set(uint32_t hartid, tmode_t val) {
  * If the thread is SRTT, then change the tmode to TMODE_SA.
  */
 int tmode_active(uint32_t hartid) {
-     b14:	fd010113          	add	sp,sp,-48
+     b14:	fd010113          	addi	sp,sp,-48
      b18:	02112623          	sw	ra,44(sp)
      b1c:	02812423          	sw	s0,40(sp)
-     b20:	03010413          	add	s0,sp,48
+     b20:	03010413          	addi	s0,sp,48
      b24:	fca42e23          	sw	a0,-36(s0)
     uint32_t tmode = tmode_get(hartid);
      b28:	fdc42503          	lw	a0,-36(s0)
-     b2c:	ee5ff0ef          	jal	a10 <tmode_get>
+     b2c:	ee5ff0ef          	jal	ra,a10 <tmode_get>
      b30:	fea42623          	sw	a0,-20(s0)
     if (tmode == TMODE_HZ || tmode == TMODE_HA)
      b34:	fec42703          	lw	a4,-20(s0)
@@ -1136,7 +1145,7 @@ int tmode_active(uint32_t hartid) {
         tmode_set(hartid, TMODE_HA);
      b48:	00000593          	li	a1,0
      b4c:	fdc42503          	lw	a0,-36(s0)
-     b50:	f35ff0ef          	jal	a84 <tmode_set>
+     b50:	f35ff0ef          	jal	ra,a84 <tmode_set>
      b54:	0340006f          	j	b88 <tmode_active+0x74>
     else if (tmode == TMODE_SZ || tmode == TMODE_SA)
      b58:	fec42703          	lw	a4,-20(s0)
@@ -1148,7 +1157,7 @@ int tmode_active(uint32_t hartid) {
         tmode_set(hartid, TMODE_SA);
      b70:	00200593          	li	a1,2
      b74:	fdc42503          	lw	a0,-36(s0)
-     b78:	f0dff0ef          	jal	a84 <tmode_set>
+     b78:	f0dff0ef          	jal	ra,a84 <tmode_set>
      b7c:	00c0006f          	j	b88 <tmode_active+0x74>
     else return 1;
      b80:	00100793          	li	a5,1
@@ -1159,7 +1168,7 @@ int tmode_active(uint32_t hartid) {
      b8c:	00078513          	mv	a0,a5
      b90:	02c12083          	lw	ra,44(sp)
      b94:	02812403          	lw	s0,40(sp)
-     b98:	03010113          	add	sp,sp,48
+     b98:	03010113          	addi	sp,sp,48
      b9c:	00008067          	ret
 
 00000ba0 <tmode_sleep>:
@@ -1169,14 +1178,14 @@ int tmode_active(uint32_t hartid) {
  * If the thread is SRTT, then change the tmode to TMODE_SZ.
  */
 int tmode_sleep(uint32_t hartid) {
-     ba0:	fd010113          	add	sp,sp,-48
+     ba0:	fd010113          	addi	sp,sp,-48
      ba4:	02112623          	sw	ra,44(sp)
      ba8:	02812423          	sw	s0,40(sp)
-     bac:	03010413          	add	s0,sp,48
+     bac:	03010413          	addi	s0,sp,48
      bb0:	fca42e23          	sw	a0,-36(s0)
     uint32_t tmode = tmode_get(hartid);
      bb4:	fdc42503          	lw	a0,-36(s0)
-     bb8:	e59ff0ef          	jal	a10 <tmode_get>
+     bb8:	e59ff0ef          	jal	ra,a10 <tmode_get>
      bbc:	fea42623          	sw	a0,-20(s0)
     if (tmode == TMODE_HA || tmode == TMODE_HZ)
      bc0:	fec42783          	lw	a5,-20(s0)
@@ -1187,7 +1196,7 @@ int tmode_sleep(uint32_t hartid) {
         tmode_set(hartid, TMODE_HZ);
      bd4:	00100593          	li	a1,1
      bd8:	fdc42503          	lw	a0,-36(s0)
-     bdc:	ea9ff0ef          	jal	a84 <tmode_set>
+     bdc:	ea9ff0ef          	jal	ra,a84 <tmode_set>
      be0:	0340006f          	j	c14 <tmode_sleep+0x74>
     else if (tmode == TMODE_SA || tmode == TMODE_SZ)
      be4:	fec42703          	lw	a4,-20(s0)
@@ -1199,7 +1208,7 @@ int tmode_sleep(uint32_t hartid) {
         tmode_set(hartid, TMODE_SZ);
      bfc:	00300593          	li	a1,3
      c00:	fdc42503          	lw	a0,-36(s0)
-     c04:	e81ff0ef          	jal	a84 <tmode_set>
+     c04:	e81ff0ef          	jal	ra,a84 <tmode_set>
      c08:	00c0006f          	j	c14 <tmode_sleep+0x74>
     else return 1;
      c0c:	00100793          	li	a5,1
@@ -1210,7 +1219,7 @@ int tmode_sleep(uint32_t hartid) {
      c18:	00078513          	mv	a0,a5
      c1c:	02c12083          	lw	ra,44(sp)
      c20:	02812403          	lw	s0,40(sp)
-     c24:	03010113          	add	sp,sp,48
+     c24:	03010113          	addi	sp,sp,48
      c28:	00008067          	ret
 
 00000c2c <thread_create>:
@@ -1220,10 +1229,10 @@ int thread_create(
     void *(*start_routine)(void *),
     void *restrict arg
 ) {
-     c2c:	fd010113          	add	sp,sp,-48
+     c2c:	fd010113          	addi	sp,sp,-48
      c30:	02112623          	sw	ra,44(sp)
      c34:	02812423          	sw	s0,40(sp)
-     c38:	03010413          	add	s0,sp,48
+     c38:	03010413          	addi	s0,sp,48
      c3c:	00050793          	mv	a5,a0
      c40:	fcb42c23          	sw	a1,-40(s0)
      c44:	fcc42a23          	sw	a2,-44(s0)
@@ -1232,17 +1241,17 @@ int thread_create(
     // Allocate an available thread.
     // Cannot allocate to thread 0.
     hwlock_acquire();
-     c50:	570000ef          	jal	11c0 <hwlock_acquire>
+     c50:	570000ef          	jal	ra,11c0 <hwlock_acquire>
     for (int i = 1; i < NUM_THREADS; i++) {
      c54:	00100793          	li	a5,1
      c58:	fef42623          	sw	a5,-20(s0)
      c5c:	0940006f          	j	cf0 <thread_create+0xc4>
         if (!in_use[i]) {
-     c60:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     c60:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
      c64:	fec42783          	lw	a5,-20(s0)
      c68:	00f707b3          	add	a5,a4,a5
      c6c:	0007c783          	lbu	a5,0(a5)
-     c70:	0017c793          	xor	a5,a5,1
+     c70:	0017c793          	xori	a5,a5,1
      c74:	0ff7f793          	zext.b	a5,a5
      c78:	06078663          	beqz	a5,ce4 <thread_create+0xb8>
             *hartid = i;
@@ -1250,26 +1259,26 @@ int thread_create(
      c80:	fd842783          	lw	a5,-40(s0)
      c84:	00e7a023          	sw	a4,0(a5)
             routines[i] = start_routine;
-     c88:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
+     c88:	81818713          	addi	a4,gp,-2024 # 20000440 <routines>
      c8c:	fec42783          	lw	a5,-20(s0)
-     c90:	00279793          	sll	a5,a5,0x2
+     c90:	00279793          	slli	a5,a5,0x2
      c94:	00f707b3          	add	a5,a4,a5
      c98:	fd442703          	lw	a4,-44(s0)
      c9c:	00e7a023          	sw	a4,0(a5)
             args[i] = arg;
-     ca0:	82818713          	add	a4,gp,-2008 # 20000450 <args>
+     ca0:	82818713          	addi	a4,gp,-2008 # 20000450 <args>
      ca4:	fec42783          	lw	a5,-20(s0)
-     ca8:	00279793          	sll	a5,a5,0x2
+     ca8:	00279793          	slli	a5,a5,0x2
      cac:	00f707b3          	add	a5,a4,a5
      cb0:	fd042703          	lw	a4,-48(s0)
      cb4:	00e7a023          	sw	a4,0(a5)
             num_threads_busy += 1;
      cb8:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
-     cbc:	00178713          	add	a4,a5,1
+     cbc:	00178713          	addi	a4,a5,1
      cc0:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
             // Signal the worker thread to do work.
             in_use[i] = true;
-     cc4:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     cc4:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
      cc8:	fec42783          	lw	a5,-20(s0)
      ccc:	00f707b3          	add	a5,a4,a5
      cd0:	00100713          	li	a4,1
@@ -1277,13 +1286,13 @@ int thread_create(
             // FIXME: If the thread is asleep,
             // wake up the thread.
             hwlock_release();
-     cd8:	520000ef          	jal	11f8 <hwlock_release>
+     cd8:	520000ef          	jal	ra,11f8 <hwlock_release>
             return 0;
      cdc:	00000793          	li	a5,0
      ce0:	0240006f          	j	d04 <thread_create+0xd8>
     for (int i = 1; i < NUM_THREADS; i++) {
      ce4:	fec42783          	lw	a5,-20(s0)
-     ce8:	00178793          	add	a5,a5,1
+     ce8:	00178793          	addi	a5,a5,1
      cec:	fef42623          	sw	a5,-20(s0)
      cf0:	fec42703          	lw	a4,-20(s0)
      cf4:	00300793          	li	a5,3
@@ -1291,7 +1300,7 @@ int thread_create(
         }
     }
     hwlock_release();
-     cfc:	4fc000ef          	jal	11f8 <hwlock_release>
+     cfc:	4fc000ef          	jal	ra,11f8 <hwlock_release>
     // All the threads are occupied, return error.
     return 1;
      d00:	00100793          	li	a5,1
@@ -1299,7 +1308,7 @@ int thread_create(
      d04:	00078513          	mv	a0,a5
      d08:	02c12083          	lw	ra,44(sp)
      d0c:	02812403          	lw	s0,40(sp)
-     d10:	03010113          	add	sp,sp,48
+     d10:	03010113          	addi	sp,sp,48
      d14:	00008067          	ret
 
 00000d18 <thread_map>:
@@ -1309,10 +1318,10 @@ int thread_map(
     void *(*start_routine)(void *),
     void *restrict arg
 ) {
-     d18:	fe010113          	add	sp,sp,-32
+     d18:	fe010113          	addi	sp,sp,-32
      d1c:	00112e23          	sw	ra,28(sp)
      d20:	00812c23          	sw	s0,24(sp)
-     d24:	02010413          	add	s0,sp,32
+     d24:	02010413          	addi	s0,sp,32
      d28:	00050793          	mv	a5,a0
      d2c:	feb42423          	sw	a1,-24(s0)
      d30:	fec42223          	sw	a2,-28(s0)
@@ -1321,54 +1330,54 @@ int thread_map(
     // Allocate an available thread.
     // Cannot allocate to thread 0.
     hwlock_acquire();
-     d3c:	484000ef          	jal	11c0 <hwlock_acquire>
+     d3c:	484000ef          	jal	ra,11c0 <hwlock_acquire>
     if (!in_use[*hartid]) {
      d40:	fe842783          	lw	a5,-24(s0)
      d44:	0007a703          	lw	a4,0(a5)
-     d48:	84818793          	add	a5,gp,-1976 # 20000470 <in_use>
+     d48:	84818793          	addi	a5,gp,-1976 # 20000470 <in_use>
      d4c:	00f707b3          	add	a5,a4,a5
      d50:	0007c783          	lbu	a5,0(a5)
-     d54:	0017c793          	xor	a5,a5,1
+     d54:	0017c793          	xori	a5,a5,1
      d58:	0ff7f793          	zext.b	a5,a5
      d5c:	06078663          	beqz	a5,dc8 <thread_map+0xb0>
         routines[*hartid] = start_routine;
      d60:	fe842783          	lw	a5,-24(s0)
      d64:	0007a783          	lw	a5,0(a5)
-     d68:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
-     d6c:	00279793          	sll	a5,a5,0x2
+     d68:	81818713          	addi	a4,gp,-2024 # 20000440 <routines>
+     d6c:	00279793          	slli	a5,a5,0x2
      d70:	00f707b3          	add	a5,a4,a5
      d74:	fe442703          	lw	a4,-28(s0)
      d78:	00e7a023          	sw	a4,0(a5)
         args[*hartid] = arg;
      d7c:	fe842783          	lw	a5,-24(s0)
      d80:	0007a783          	lw	a5,0(a5)
-     d84:	82818713          	add	a4,gp,-2008 # 20000450 <args>
-     d88:	00279793          	sll	a5,a5,0x2
+     d84:	82818713          	addi	a4,gp,-2008 # 20000450 <args>
+     d88:	00279793          	slli	a5,a5,0x2
      d8c:	00f707b3          	add	a5,a4,a5
      d90:	fe042703          	lw	a4,-32(s0)
      d94:	00e7a023          	sw	a4,0(a5)
         num_threads_busy += 1;
      d98:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
-     d9c:	00178713          	add	a4,a5,1
+     d9c:	00178713          	addi	a4,a5,1
      da0:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
         // Signal the worker thread to do work.
         in_use[*hartid] = true;
      da4:	fe842783          	lw	a5,-24(s0)
      da8:	0007a703          	lw	a4,0(a5)
-     dac:	84818793          	add	a5,gp,-1976 # 20000470 <in_use>
+     dac:	84818793          	addi	a5,gp,-1976 # 20000470 <in_use>
      db0:	00f707b3          	add	a5,a4,a5
      db4:	00100713          	li	a4,1
      db8:	00e78023          	sb	a4,0(a5)
         // FIXME: If the thread is asleep,
         // wake up the thread.
         hwlock_release();
-     dbc:	43c000ef          	jal	11f8 <hwlock_release>
+     dbc:	43c000ef          	jal	ra,11f8 <hwlock_release>
         return 0;
      dc0:	00000793          	li	a5,0
      dc4:	00c0006f          	j	dd0 <thread_map+0xb8>
     }
     hwlock_release();
-     dc8:	430000ef          	jal	11f8 <hwlock_release>
+     dc8:	430000ef          	jal	ra,11f8 <hwlock_release>
     // All the threads are occupied, return error.
     return 1;
      dcc:	00100793          	li	a5,1
@@ -1376,33 +1385,33 @@ int thread_map(
      dd0:	00078513          	mv	a0,a5
      dd4:	01c12083          	lw	ra,28(sp)
      dd8:	01812403          	lw	s0,24(sp)
-     ddc:	02010113          	add	sp,sp,32
+     ddc:	02010113          	addi	sp,sp,32
      de0:	00008067          	ret
 
 00000de4 <thread_join>:
 
 int thread_join(thread_t hartid, void **retval) {
-     de4:	fe010113          	add	sp,sp,-32
+     de4:	fe010113          	addi	sp,sp,-32
      de8:	00112e23          	sw	ra,28(sp)
      dec:	00812c23          	sw	s0,24(sp)
-     df0:	02010413          	add	s0,sp,32
+     df0:	02010413          	addi	s0,sp,32
      df4:	fea42623          	sw	a0,-20(s0)
      df8:	feb42423          	sw	a1,-24(s0)
     // FIXME: What if it waits for the long-running thread?
     while(in_use[hartid]); // Wait
      dfc:	00000013          	nop
-     e00:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+     e00:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
      e04:	fec42783          	lw	a5,-20(s0)
      e08:	00f707b3          	add	a5,a4,a5
      e0c:	0007c783          	lbu	a5,0(a5)
      e10:	fe0798e3          	bnez	a5,e00 <thread_join+0x1c>
     // Get the exit code from the exiting thread.
     hwlock_acquire();
-     e14:	3ac000ef          	jal	11c0 <hwlock_acquire>
+     e14:	3ac000ef          	jal	ra,11c0 <hwlock_acquire>
     *retval = exit_code[hartid];
-     e18:	83818713          	add	a4,gp,-1992 # 20000460 <exit_code>
+     e18:	83818713          	addi	a4,gp,-1992 # 20000460 <exit_code>
      e1c:	fec42783          	lw	a5,-20(s0)
-     e20:	00279793          	sll	a5,a5,0x2
+     e20:	00279793          	slli	a5,a5,0x2
      e24:	00f707b3          	add	a5,a4,a5
      e28:	0007a703          	lw	a4,0(a5)
      e2c:	fe842783          	lw	a5,-24(s0)
@@ -1412,14 +1421,14 @@ int thread_join(thread_t hartid, void **retval) {
     // Put the thread to sleep.
     // FIXME: Should we make an idle thread an SRTT?
     hwlock_release();
-     e34:	3c4000ef          	jal	11f8 <hwlock_release>
+     e34:	3c4000ef          	jal	ra,11f8 <hwlock_release>
     return 0;
      e38:	00000793          	li	a5,0
 }
      e3c:	00078513          	mv	a0,a5
      e40:	01c12083          	lw	ra,28(sp)
      e44:	01812403          	lw	s0,24(sp)
-     e48:	02010113          	add	sp,sp,32
+     e48:	02010113          	addi	sp,sp,32
      e4c:	00008067          	ret
 
 00000e50 <thread_exit>:
@@ -1429,10 +1438,10 @@ int thread_join(thread_t hartid, void **retval) {
  * that hopes to exit.
  */
 void thread_exit(void *retval) {
-     e50:	fd010113          	add	sp,sp,-48
+     e50:	fd010113          	addi	sp,sp,-48
      e54:	02112623          	sw	ra,44(sp)
      e58:	02812423          	sw	s0,40(sp)
-     e5c:	03010413          	add	s0,sp,48
+     e5c:	03010413          	addi	s0,sp,48
      e60:	fca42e23          	sw	a0,-36(s0)
     uint32_t hartid = read_hartid();
      e64:	50b027f3          	csrr	a5,0x50b
@@ -1440,22 +1449,22 @@ void thread_exit(void *retval) {
      e6c:	fec42783          	lw	a5,-20(s0)
      e70:	fef42423          	sw	a5,-24(s0)
     hwlock_acquire();
-     e74:	34c000ef          	jal	11c0 <hwlock_acquire>
+     e74:	34c000ef          	jal	ra,11c0 <hwlock_acquire>
     exit_code[hartid] = retval;
-     e78:	83818713          	add	a4,gp,-1992 # 20000460 <exit_code>
+     e78:	83818713          	addi	a4,gp,-1992 # 20000460 <exit_code>
      e7c:	fe842783          	lw	a5,-24(s0)
-     e80:	00279793          	sll	a5,a5,0x2
+     e80:	00279793          	slli	a5,a5,0x2
      e84:	00f707b3          	add	a5,a4,a5
      e88:	fdc42703          	lw	a4,-36(s0)
      e8c:	00e7a023          	sw	a4,0(a5)
     exit_requested[hartid] = true;
-     e90:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+     e90:	d3418713          	addi	a4,gp,-716 # 2000095c <exit_requested>
      e94:	fe842783          	lw	a5,-24(s0)
      e98:	00f707b3          	add	a5,a4,a5
      e9c:	00100713          	li	a4,1
      ea0:	00e78023          	sb	a4,0(a5)
     hwlock_release();
-     ea4:	354000ef          	jal	11f8 <hwlock_release>
+     ea4:	354000ef          	jal	ra,11f8 <hwlock_release>
     // FIXME: Run cleanup handlers
     // registered using thread_cleanup_push.
     return;
@@ -1463,80 +1472,80 @@ void thread_exit(void *retval) {
 }
      eac:	02c12083          	lw	ra,44(sp)
      eb0:	02812403          	lw	s0,40(sp)
-     eb4:	03010113          	add	sp,sp,48
+     eb4:	03010113          	addi	sp,sp,48
      eb8:	00008067          	ret
 
 00000ebc <thread_cancel>:
 
 int thread_cancel(thread_t hartid) {
-     ebc:	fe010113          	add	sp,sp,-32
+     ebc:	fe010113          	addi	sp,sp,-32
      ec0:	00112e23          	sw	ra,28(sp)
      ec4:	00812c23          	sw	s0,24(sp)
-     ec8:	02010413          	add	s0,sp,32
+     ec8:	02010413          	addi	s0,sp,32
      ecc:	fea42623          	sw	a0,-20(s0)
     hwlock_acquire(); // FIXME: Unnecessary?
-     ed0:	2f0000ef          	jal	11c0 <hwlock_acquire>
+     ed0:	2f0000ef          	jal	ra,11c0 <hwlock_acquire>
     cancel_requested[hartid] = true;
-     ed4:	d1018713          	add	a4,gp,-752 # 20000938 <cancel_requested>
+     ed4:	d1018713          	addi	a4,gp,-752 # 20000938 <cancel_requested>
      ed8:	fec42783          	lw	a5,-20(s0)
      edc:	00f707b3          	add	a5,a4,a5
      ee0:	00100713          	li	a4,1
      ee4:	00e78023          	sb	a4,0(a5)
     hwlock_release();
-     ee8:	310000ef          	jal	11f8 <hwlock_release>
+     ee8:	310000ef          	jal	ra,11f8 <hwlock_release>
     return 0;
      eec:	00000793          	li	a5,0
 }
      ef0:	00078513          	mv	a0,a5
      ef4:	01c12083          	lw	ra,28(sp)
      ef8:	01812403          	lw	s0,24(sp)
-     efc:	02010113          	add	sp,sp,32
+     efc:	02010113          	addi	sp,sp,32
      f00:	00008067          	ret
 
 00000f04 <thread_testcancel>:
 
 void thread_testcancel() {
-     f04:	fe010113          	add	sp,sp,-32
+     f04:	fe010113          	addi	sp,sp,-32
      f08:	00112e23          	sw	ra,28(sp)
      f0c:	00812c23          	sw	s0,24(sp)
-     f10:	02010413          	add	s0,sp,32
+     f10:	02010413          	addi	s0,sp,32
     uint32_t hartid = read_hartid();
      f14:	50b027f3          	csrr	a5,0x50b
      f18:	fef42623          	sw	a5,-20(s0)
      f1c:	fec42783          	lw	a5,-20(s0)
      f20:	fef42423          	sw	a5,-24(s0)
     hwlock_acquire();
-     f24:	29c000ef          	jal	11c0 <hwlock_acquire>
+     f24:	29c000ef          	jal	ra,11c0 <hwlock_acquire>
     if (cancel_requested[hartid]) {
-     f28:	d1018713          	add	a4,gp,-752 # 20000938 <cancel_requested>
+     f28:	d1018713          	addi	a4,gp,-752 # 20000938 <cancel_requested>
      f2c:	fe842783          	lw	a5,-24(s0)
      f30:	00f707b3          	add	a5,a4,a5
      f34:	0007c783          	lbu	a5,0(a5)
      f38:	02078e63          	beqz	a5,f74 <thread_testcancel+0x70>
         hwlock_release();
-     f3c:	2bc000ef          	jal	11f8 <hwlock_release>
+     f3c:	2bc000ef          	jal	ra,11f8 <hwlock_release>
         longjmp(envs[hartid], 1);
      f40:	fe842703          	lw	a4,-24(s0)
      f44:	00070793          	mv	a5,a4
-     f48:	00279793          	sll	a5,a5,0x2
+     f48:	00279793          	slli	a5,a5,0x2
      f4c:	00e787b3          	add	a5,a5,a4
-     f50:	00279793          	sll	a5,a5,0x2
+     f50:	00279793          	slli	a5,a5,0x2
      f54:	40e787b3          	sub	a5,a5,a4
-     f58:	00479793          	sll	a5,a5,0x4
+     f58:	00479793          	slli	a5,a5,0x4
      f5c:	20000737          	lui	a4,0x20000
-     f60:	47870713          	add	a4,a4,1144 # 20000478 <envs>
+     f60:	47870713          	addi	a4,a4,1144 # 20000478 <envs>
      f64:	00e787b3          	add	a5,a5,a4
      f68:	00100593          	li	a1,1
      f6c:	00078513          	mv	a0,a5
-     f70:	538010ef          	jal	24a8 <longjmp>
+     f70:	550010ef          	jal	ra,24c0 <longjmp>
     }
     hwlock_release();
-     f74:	284000ef          	jal	11f8 <hwlock_release>
+     f74:	284000ef          	jal	ra,11f8 <hwlock_release>
 }
      f78:	00000013          	nop
      f7c:	01c12083          	lw	ra,28(sp)
      f80:	01812403          	lw	s0,24(sp)
-     f84:	02010113          	add	sp,sp,32
+     f84:	02010113          	addi	sp,sp,32
      f88:	00008067          	ret
 
 00000f8c <worker_main>:
@@ -1545,10 +1554,10 @@ void thread_testcancel() {
  * Main function for a worker thread (hardware threads 1-7).
  */
 void worker_main() {
-     f8c:	fe010113          	add	sp,sp,-32
+     f8c:	fe010113          	addi	sp,sp,-32
      f90:	00112e23          	sw	ra,28(sp)
      f94:	00812c23          	sw	s0,24(sp)
-     f98:	02010413          	add	s0,sp,32
+     f98:	02010413          	addi	s0,sp,32
     uint32_t hartid = read_hartid();
      f9c:	50b027f3          	csrr	a5,0x50b
      fa0:	fef42623          	sw	a5,-20(s0)
@@ -1562,16 +1571,16 @@ void worker_main() {
     int val = setjmp(envs[hartid]);
      fac:	fe842703          	lw	a4,-24(s0)
      fb0:	00070793          	mv	a5,a4
-     fb4:	00279793          	sll	a5,a5,0x2
+     fb4:	00279793          	slli	a5,a5,0x2
      fb8:	00e787b3          	add	a5,a5,a4
-     fbc:	00279793          	sll	a5,a5,0x2
+     fbc:	00279793          	slli	a5,a5,0x2
      fc0:	40e787b3          	sub	a5,a5,a4
-     fc4:	00479793          	sll	a5,a5,0x4
+     fc4:	00479793          	slli	a5,a5,0x4
      fc8:	20000737          	lui	a4,0x20000
-     fcc:	47870713          	add	a4,a4,1144 # 20000478 <envs>
+     fcc:	47870713          	addi	a4,a4,1144 # 20000478 <envs>
      fd0:	00e787b3          	add	a5,a5,a4
      fd4:	00078513          	mv	a0,a5
-     fd8:	498010ef          	jal	2470 <setjmp>
+     fd8:	4a8010ef          	jal	ra,2480 <setjmp>
      fdc:	00050793          	mv	a5,a0
      fe0:	fef42223          	sw	a5,-28(s0)
     // Check if the thread returns from longjmp.
@@ -1581,25 +1590,25 @@ void worker_main() {
      fe8:	00100793          	li	a5,1
      fec:	02f71c63          	bne	a4,a5,1024 <DSPM_APP_START+0x24>
         hwlock_acquire();
-     ff0:	1d0000ef          	jal	11c0 <hwlock_acquire>
+     ff0:	1d0000ef          	jal	ra,11c0 <hwlock_acquire>
         num_threads_busy -= 1;
      ff4:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
-     ff8:	fff78713          	add	a4,a5,-1
+     ff8:	fff78713          	addi	a4,a5,-1
      ffc:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
         in_use[hartid] = false;
-    1000:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+    1000:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
     1004:	fe842783          	lw	a5,-24(s0)
     1008:	00f707b3          	add	a5,a4,a5
     100c:	00078023          	sb	zero,0(a5)
         hwlock_release();
-    1010:	1e8000ef          	jal	11f8 <hwlock_release>
+    1010:	1e8000ef          	jal	ra,11f8 <hwlock_release>
 
         // Print a magic number that indicates
         // the handling of a cancellation request.
         _fp_print(6662);
     1014:	000027b7          	lui	a5,0x2
-    1018:	a0678513          	add	a0,a5,-1530 # 1a06 <ta_free+0x26>
-    101c:	e68ff0ef          	jal	684 <_fp_print>
+    1018:	a0678513          	addi	a0,a5,-1530 # 1a06 <ta_free+0x26>
+    101c:	e68ff0ef          	jal	ra,684 <_fp_print>
     1020:	0880006f          	j	10a8 <DSPM_APP_START+0xa8>
     }
     else if (val != 0) {
@@ -1607,10 +1616,10 @@ void worker_main() {
     1028:	08078063          	beqz	a5,10a8 <DSPM_APP_START+0xa8>
         // UNREACHABLE
         assert(false);
-    102c:	e8cff0ef          	jal	6b8 <_fp_abort>
+    102c:	e8cff0ef          	jal	ra,6b8 <_fp_abort>
     1030:	0ff00593          	li	a1,255
     1034:	00000513          	li	a0,0
-    1038:	ea8ff0ef          	jal	6e0 <gpo_write>
+    1038:	ea8ff0ef          	jal	ra,6e0 <gpo_write>
     103c:	0000006f          	j	103c <DSPM_APP_START+0x3c>
         // the lock will not be freed.
         // So for now it's the best if
@@ -1618,21 +1627,21 @@ void worker_main() {
         // the hardware should change.
 
         if (in_use[hartid]) {            
-    1040:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+    1040:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
     1044:	fe842783          	lw	a5,-24(s0)
     1048:	00f707b3          	add	a5,a4,a5
     104c:	0007c783          	lbu	a5,0(a5)
     1050:	04078c63          	beqz	a5,10a8 <DSPM_APP_START+0xa8>
             // Execute the routine with the argument passed in.
             (*routines[hartid])(args[hartid]);
-    1054:	81818713          	add	a4,gp,-2024 # 20000440 <routines>
+    1054:	81818713          	addi	a4,gp,-2024 # 20000440 <routines>
     1058:	fe842783          	lw	a5,-24(s0)
-    105c:	00279793          	sll	a5,a5,0x2
+    105c:	00279793          	slli	a5,a5,0x2
     1060:	00f707b3          	add	a5,a4,a5
     1064:	0007a783          	lw	a5,0(a5)
-    1068:	82818693          	add	a3,gp,-2008 # 20000450 <args>
+    1068:	82818693          	addi	a3,gp,-2008 # 20000450 <args>
     106c:	fe842703          	lw	a4,-24(s0)
-    1070:	00271713          	sll	a4,a4,0x2
+    1070:	00271713          	slli	a4,a4,0x2
     1074:	00e68733          	add	a4,a3,a4
     1078:	00072703          	lw	a4,0(a4)
     107c:	00070513          	mv	a0,a4
@@ -1640,24 +1649,24 @@ void worker_main() {
 
             // Mark the thread as available again.
             hwlock_acquire();
-    1084:	13c000ef          	jal	11c0 <hwlock_acquire>
+    1084:	13c000ef          	jal	ra,11c0 <hwlock_acquire>
             num_threads_busy -= 1;
     1088:	d381a783          	lw	a5,-712(gp) # 20000960 <num_threads_busy>
-    108c:	fff78713          	add	a4,a5,-1
+    108c:	fff78713          	addi	a4,a5,-1
     1090:	d2e1ac23          	sw	a4,-712(gp) # 20000960 <num_threads_busy>
             in_use[hartid] = false;
-    1094:	84818713          	add	a4,gp,-1976 # 20000470 <in_use>
+    1094:	84818713          	addi	a4,gp,-1976 # 20000470 <in_use>
     1098:	fe842783          	lw	a5,-24(s0)
     109c:	00f707b3          	add	a5,a4,a5
     10a0:	00078023          	sb	zero,0(a5)
             hwlock_release();
-    10a4:	154000ef          	jal	11f8 <hwlock_release>
+    10a4:	154000ef          	jal	ra,11f8 <hwlock_release>
     while(!exit_requested[hartid]) {
-    10a8:	d3418713          	add	a4,gp,-716 # 2000095c <exit_requested>
+    10a8:	d3418713          	addi	a4,gp,-716 # 2000095c <exit_requested>
     10ac:	fe842783          	lw	a5,-24(s0)
     10b0:	00f707b3          	add	a5,a4,a5
     10b4:	0007c783          	lbu	a5,0(a5)
-    10b8:	0017c793          	xor	a5,a5,1
+    10b8:	0017c793          	xori	a5,a5,1
     10bc:	0ff7f793          	zext.b	a5,a5
     10c0:	f80790e3          	bnez	a5,1040 <DSPM_APP_START+0x40>
     }
@@ -1666,55 +1675,45 @@ void worker_main() {
 
     // Increment the counter of exited threads.
     hwlock_acquire();
-    10c4:	0fc000ef          	jal	11c0 <hwlock_acquire>
+    10c4:	0fc000ef          	jal	ra,11c0 <hwlock_acquire>
     num_threads_exited += 1;
     10c8:	d3c1a783          	lw	a5,-708(gp) # 20000964 <num_threads_exited>
-    10cc:	00178713          	add	a4,a5,1
+    10cc:	00178713          	addi	a4,a5,1
     10d0:	d2e1ae23          	sw	a4,-708(gp) # 20000964 <num_threads_exited>
     hwlock_release();
-    10d4:	124000ef          	jal	11f8 <hwlock_release>
+    10d4:	124000ef          	jal	ra,11f8 <hwlock_release>
 
     return;
     10d8:	00000013          	nop
     10dc:	01c12083          	lw	ra,28(sp)
     10e0:	01812403          	lw	s0,24(sp)
-    10e4:	02010113          	add	sp,sp,32
+    10e4:	02010113          	addi	sp,sp,32
     10e8:	00008067          	ret
 
 000010ec <_fp_abort>:
-int do_acquire(lock_t* lock) {
-    hwlock_acquire();
-    if (lock->locked) {
-        hwlock_release();
-        return 1;
-    }
-    10ec:	ff010113          	add	sp,sp,-16
+static inline void _fp_abort() {
+    10ec:	ff010113          	addi	sp,sp,-16
     10f0:	00812623          	sw	s0,12(sp)
-    10f4:	01010413          	add	s0,sp,16
-    lock->locked = true;
+    10f4:	01010413          	addi	s0,sp,16
+  write_csr(CSR_TOHOST, 0xdeadbeef);
     10f8:	deadc7b7          	lui	a5,0xdeadc
-    10fc:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+    10fc:	eef78793          	addi	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
     1100:	51e79073          	csrw	0x51e,a5
-    lock->owner  = read_hartid();
+}
     1104:	00000013          	nop
     1108:	00c12403          	lw	s0,12(sp)
-    110c:	01010113          	add	sp,sp,16
+    110c:	01010113          	addi	sp,sp,16
     1110:	00008067          	ret
 
 00001114 <gpo_write>:
-    hwlock_release();
-    return 0;
-}
-
-void lock_acquire(lock_t* lock) {
-    // Spin lock
-    1114:	fe010113          	add	sp,sp,-32
+static inline void gpo_write(uint32_t port, uint32_t val) {
+    1114:	fe010113          	addi	sp,sp,-32
     1118:	00112e23          	sw	ra,28(sp)
     111c:	00812c23          	sw	s0,24(sp)
-    1120:	02010413          	add	s0,sp,32
+    1120:	02010413          	addi	s0,sp,32
     1124:	fea42623          	sw	a0,-20(s0)
     1128:	feb42423          	sw	a1,-24(s0)
-    while(do_acquire(lock));
+  switch(port) {
     112c:	fec42703          	lw	a4,-20(s0)
     1130:	00300793          	li	a5,3
     1134:	06f70263          	beq	a4,a5,1198 <gpo_write+0x84>
@@ -1733,38 +1732,42 @@ void lock_acquire(lock_t* lock) {
     1168:	00100793          	li	a5,1
     116c:	00f70a63          	beq	a4,a5,1180 <gpo_write+0x6c>
     1170:	0340006f          	j	11a4 <gpo_write+0x90>
-}
+    case 0: write_csr(CSR_UARCH4, val); break;
     1174:	fe842783          	lw	a5,-24(s0)
     1178:	cc479073          	csrw	0xcc4,a5
     117c:	0300006f          	j	11ac <gpo_write+0x98>
-
+    case 1: write_csr(CSR_UARCH5, val); break;
     1180:	fe842783          	lw	a5,-24(s0)
     1184:	cc579073          	csrw	0xcc5,a5
     1188:	0240006f          	j	11ac <gpo_write+0x98>
-void lock_release(lock_t* lock) {
+    case 2: write_csr(CSR_UARCH6, val); break;
     118c:	fe842783          	lw	a5,-24(s0)
     1190:	cc679073          	csrw	0xcc6,a5
     1194:	0180006f          	j	11ac <gpo_write+0x98>
-    hwlock_acquire();
+    case 3: write_csr(CSR_UARCH7, val); break;
     1198:	fe842783          	lw	a5,-24(s0)
     119c:	cc779073          	csrw	0xcc7,a5
     11a0:	00c0006f          	j	11ac <gpo_write+0x98>
-    assert(read_hartid() == lock->owner);
-    11a4:	f49ff0ef          	jal	10ec <_fp_abort>
-    lock->locked = false;
-    lock->owner  = UINT32_MAX;
+    default: _fp_abort();
+    11a4:	f49ff0ef          	jal	ra,10ec <_fp_abort>
+}
     11a8:	00000013          	nop
     11ac:	00000013          	nop
     11b0:	01c12083          	lw	ra,28(sp)
     11b4:	01812403          	lw	s0,24(sp)
-    11b8:	02010113          	add	sp,sp,32
+    11b8:	02010113          	addi	sp,sp,32
     11bc:	00008067          	ret
 
 000011c0 <hwlock_acquire>:
+#include "flexpret.h"
+
+/**
+ * Acquire a hardware lock.
+ */
 void hwlock_acquire() {
-    11c0:	fe010113          	add	sp,sp,-32
+    11c0:	fe010113          	addi	sp,sp,-32
     11c4:	00812e23          	sw	s0,28(sp)
-    11c8:	02010413          	add	s0,sp,32
+    11c8:	02010413          	addi	s0,sp,32
     while(swap_csr(CSR_HWLOCK, 1) == 0);
     11cc:	00000013          	nop
     11d0:	00100793          	li	a5,1
@@ -1776,15 +1779,19 @@ void hwlock_acquire() {
     11e4:	00000013          	nop
     11e8:	00000013          	nop
     11ec:	01c12403          	lw	s0,28(sp)
-    11f0:	02010113          	add	sp,sp,32
+    11f0:	02010113          	addi	sp,sp,32
     11f4:	00008067          	ret
 
 000011f8 <hwlock_release>:
+
+/**
+ * Release a hardware lock.
+ */
 void hwlock_release() {
-    11f8:	fe010113          	add	sp,sp,-32
+    11f8:	fe010113          	addi	sp,sp,-32
     11fc:	00112e23          	sw	ra,28(sp)
     1200:	00812c23          	sw	s0,24(sp)
-    1204:	02010413          	add	s0,sp,32
+    1204:	02010413          	addi	s0,sp,32
     if (swap_csr(CSR_HWLOCK, 0) != 1) {
     1208:	00000793          	li	a5,0
     120c:	520797f3          	csrrw	a5,0x520,a5
@@ -1793,36 +1800,39 @@ void hwlock_release() {
     1218:	00100793          	li	a5,1
     121c:	00f70c63          	beq	a4,a5,1234 <hwlock_release+0x3c>
         assert(false);
-    1220:	ecdff0ef          	jal	10ec <_fp_abort>
+    1220:	ecdff0ef          	jal	ra,10ec <_fp_abort>
     1224:	0ff00593          	li	a1,255
     1228:	00000513          	li	a0,0
-    122c:	ee9ff0ef          	jal	1114 <gpo_write>
+    122c:	ee9ff0ef          	jal	ra,1114 <gpo_write>
     1230:	0000006f          	j	1230 <hwlock_release+0x38>
+    };
 }
     1234:	00000013          	nop
     1238:	01c12083          	lw	ra,28(sp)
     123c:	01812403          	lw	s0,24(sp)
-    1240:	02010113          	add	sp,sp,32
+    1240:	02010113          	addi	sp,sp,32
     1244:	00008067          	ret
 
 00001248 <do_acquire>:
+
 int do_acquire(lock_t* lock) {
-    1248:	fd010113          	add	sp,sp,-48
+    1248:	fd010113          	addi	sp,sp,-48
     124c:	02112623          	sw	ra,44(sp)
     1250:	02812423          	sw	s0,40(sp)
-    1254:	03010413          	add	s0,sp,48
+    1254:	03010413          	addi	s0,sp,48
     1258:	fca42e23          	sw	a0,-36(s0)
     hwlock_acquire();
-    125c:	f65ff0ef          	jal	11c0 <hwlock_acquire>
+    125c:	f65ff0ef          	jal	ra,11c0 <hwlock_acquire>
     if (lock->locked) {
     1260:	fdc42783          	lw	a5,-36(s0)
     1264:	0007c783          	lbu	a5,0(a5)
     1268:	00078863          	beqz	a5,1278 <do_acquire+0x30>
         hwlock_release();
-    126c:	f8dff0ef          	jal	11f8 <hwlock_release>
+    126c:	f8dff0ef          	jal	ra,11f8 <hwlock_release>
         return 1;
     1270:	00100793          	li	a5,1
     1274:	0300006f          	j	12a4 <do_acquire+0x5c>
+    }
     lock->locked = true;
     1278:	fdc42783          	lw	a5,-36(s0)
     127c:	00100713          	li	a4,1
@@ -1835,27 +1845,29 @@ int do_acquire(lock_t* lock) {
     1294:	fdc42783          	lw	a5,-36(s0)
     1298:	00e7a223          	sw	a4,4(a5)
     hwlock_release();
-    129c:	f5dff0ef          	jal	11f8 <hwlock_release>
+    129c:	f5dff0ef          	jal	ra,11f8 <hwlock_release>
     return 0;
     12a0:	00000793          	li	a5,0
 }
     12a4:	00078513          	mv	a0,a5
     12a8:	02c12083          	lw	ra,44(sp)
     12ac:	02812403          	lw	s0,40(sp)
-    12b0:	03010113          	add	sp,sp,48
+    12b0:	03010113          	addi	sp,sp,48
     12b4:	00008067          	ret
 
 000012b8 <lock_acquire>:
+
 void lock_acquire(lock_t* lock) {
-    12b8:	fe010113          	add	sp,sp,-32
+    12b8:	fe010113          	addi	sp,sp,-32
     12bc:	00112e23          	sw	ra,28(sp)
     12c0:	00812c23          	sw	s0,24(sp)
-    12c4:	02010413          	add	s0,sp,32
+    12c4:	02010413          	addi	s0,sp,32
     12c8:	fea42623          	sw	a0,-20(s0)
+    // Spin lock
     while(do_acquire(lock));
     12cc:	00000013          	nop
     12d0:	fec42503          	lw	a0,-20(s0)
-    12d4:	f75ff0ef          	jal	1248 <do_acquire>
+    12d4:	f75ff0ef          	jal	ra,1248 <do_acquire>
     12d8:	00050793          	mv	a5,a0
     12dc:	fe079ae3          	bnez	a5,12d0 <lock_acquire+0x18>
 }
@@ -1863,18 +1875,19 @@ void lock_acquire(lock_t* lock) {
     12e4:	00000013          	nop
     12e8:	01c12083          	lw	ra,28(sp)
     12ec:	01812403          	lw	s0,24(sp)
-    12f0:	02010113          	add	sp,sp,32
+    12f0:	02010113          	addi	sp,sp,32
     12f4:	00008067          	ret
 
 000012f8 <lock_release>:
+
 void lock_release(lock_t* lock) {
-    12f8:	fd010113          	add	sp,sp,-48
+    12f8:	fd010113          	addi	sp,sp,-48
     12fc:	02112623          	sw	ra,44(sp)
     1300:	02812423          	sw	s0,40(sp)
-    1304:	03010413          	add	s0,sp,48
+    1304:	03010413          	addi	s0,sp,48
     1308:	fca42e23          	sw	a0,-36(s0)
     hwlock_acquire();
-    130c:	eb5ff0ef          	jal	11c0 <hwlock_acquire>
+    130c:	eb5ff0ef          	jal	ra,11c0 <hwlock_acquire>
     assert(read_hartid() == lock->owner);
     1310:	50b027f3          	csrr	a5,0x50b
     1314:	fef42623          	sw	a5,-20(s0)
@@ -1882,10 +1895,10 @@ void lock_release(lock_t* lock) {
     131c:	fdc42703          	lw	a4,-36(s0)
     1320:	00472703          	lw	a4,4(a4)
     1324:	00e78c63          	beq	a5,a4,133c <lock_release+0x44>
-    1328:	dc5ff0ef          	jal	10ec <_fp_abort>
+    1328:	dc5ff0ef          	jal	ra,10ec <_fp_abort>
     132c:	0ff00593          	li	a1,255
     1330:	00000513          	li	a0,0
-    1334:	de1ff0ef          	jal	1114 <gpo_write>
+    1334:	de1ff0ef          	jal	ra,1114 <gpo_write>
     1338:	0000006f          	j	1338 <lock_release+0x40>
     lock->locked = false;
     133c:	fdc42783          	lw	a5,-36(s0)
@@ -1895,56 +1908,56 @@ void lock_release(lock_t* lock) {
     1348:	fff00713          	li	a4,-1
     134c:	00e7a223          	sw	a4,4(a5)
     hwlock_release();
-    1350:	ea9ff0ef          	jal	11f8 <hwlock_release>
+    1350:	ea9ff0ef          	jal	ra,11f8 <hwlock_release>
 }
     1354:	00000013          	nop
     1358:	02c12083          	lw	ra,44(sp)
     135c:	02812403          	lw	s0,40(sp)
-    1360:	03010113          	add	sp,sp,48
+    1360:	03010113          	addi	sp,sp,48
     1364:	00008067          	ret
 
 00001368 <rdtime64>:
-            cond->waiting[i] = false;
-            break;
-        }
-    }
-    lock_release(cond->lock);
-    return FP_SUCCESS;
-    1368:	fd010113          	add	sp,sp,-48
+ * and the higher bits AFTER the wrap.
+ * 
+ * @return uint64_t 
+ */
+static inline uint64_t rdtime64()
+{
+    1368:	fd010113          	addi	sp,sp,-48
     136c:	02112623          	sw	ra,44(sp)
     1370:	02812423          	sw	s0,40(sp)
-    1374:	03010413          	add	s0,sp,48
-}
-
+    1374:	03010413          	addi	s0,sp,48
+  // Read out lower and higher 32 bits of time
+  uint32_t hi_pre = read_csr(CSR_TIMEH);
     1378:	c8102373          	rdtimeh	t1
     137c:	fe642623          	sw	t1,-20(s0)
     1380:	fec42303          	lw	t1,-20(s0)
     1384:	fe642423          	sw	t1,-24(s0)
-fp_ret_t cond_broadcast(cond_t * cond) {
+  uint32_t lo = rdtime();
     1388:	c0102373          	rdtime	t1
     138c:	fe642223          	sw	t1,-28(s0)
     1390:	fe442303          	lw	t1,-28(s0)
     1394:	fe642023          	sw	t1,-32(s0)
-    lock_acquire(cond->lock);
+  uint32_t hi_post = read_csr(CSR_TIMEH);
     1398:	c8102373          	rdtimeh	t1
     139c:	fc642e23          	sw	t1,-36(s0)
     13a0:	fdc42303          	lw	t1,-36(s0)
     13a4:	fc642c23          	sw	t1,-40(s0)
-    for (int i = 0; i<NUM_THREADS; i++) {
-        cond->waiting[i] = false;
+  
+  uint32_t diff = hi_post - hi_pre;
     13a8:	fd842e03          	lw	t3,-40(s0)
     13ac:	fe842303          	lw	t1,-24(s0)
     13b0:	406e0333          	sub	t1,t3,t1
     13b4:	fc642a23          	sw	t1,-44(s0)
-    }
-    lock_release(cond->lock);
+
+  if(diff == 0) {
     13b8:	fd442303          	lw	t1,-44(s0)
     13bc:	02031863          	bnez	t1,13ec <rdtime64+0x84>
-    return FP_SUCCESS;
+    return (uint64_t) ((uint64_t) hi_pre << 32) | ((uint64_t )lo);
     13c0:	fe842303          	lw	t1,-24(s0)
     13c4:	00030813          	mv	a6,t1
     13c8:	00000893          	li	a7,0
-    13cc:	00081793          	sll	a5,a6,0x0
+    13cc:	00081793          	slli	a5,a6,0x0
     13d0:	00000713          	li	a4,0
     13d4:	fe042803          	lw	a6,-32(s0)
     13d8:	00080513          	mv	a0,a6
@@ -1952,25 +1965,33 @@ fp_ret_t cond_broadcast(cond_t * cond) {
     13e0:	00a76633          	or	a2,a4,a0
     13e4:	00b7e6b3          	or	a3,a5,a1
     13e8:	0100006f          	j	13f8 <rdtime64+0x90>
-}
-    13ec:	f7dff0ef          	jal	1368 <rdtime64>
+  } else {
+    // Either lo was read before wrap, or after wrap. Simple solution: Read again
+    // FIXME: Proper fix to this problem is in HW. Provide atomic reading of the TIMEH and TIMEL registers
+    return rdtime64();
+    13ec:	f7dff0ef          	jal	ra,1368 <rdtime64>
     13f0:	00050613          	mv	a2,a0
     13f4:	00058693          	mv	a3,a1
+  }
+}
     13f8:	00060713          	mv	a4,a2
     13fc:	00068793          	mv	a5,a3
     1400:	00070513          	mv	a0,a4
     1404:	00078593          	mv	a1,a5
     1408:	02c12083          	lw	ra,44(sp)
     140c:	02812403          	lw	s0,40(sp)
-    1410:	03010113          	add	sp,sp,48
+    1410:	03010113          	addi	sp,sp,48
     1414:	00008067          	ret
 
 00001418 <cond_wait>:
+#include <flexpret.h>
+#include "flexpret_cond.h"
+
 fp_ret_t cond_wait(cond_t * cond) {
-    1418:	fd010113          	add	sp,sp,-48
+    1418:	fd010113          	addi	sp,sp,-48
     141c:	02112623          	sw	ra,44(sp)
     1420:	02812423          	sw	s0,40(sp)
-    1424:	03010413          	add	s0,sp,48
+    1424:	03010413          	addi	s0,sp,48
     1428:	fca42e23          	sw	a0,-36(s0)
     int hartid = read_hartid();
     142c:	50b027f3          	csrr	a5,0x50b
@@ -1987,7 +2008,7 @@ fp_ret_t cond_wait(cond_t * cond) {
     1450:	fdc42783          	lw	a5,-36(s0)
     1454:	0047a783          	lw	a5,4(a5)
     1458:	00078513          	mv	a0,a5
-    145c:	e9dff0ef          	jal	12f8 <lock_release>
+    145c:	e9dff0ef          	jal	ra,12f8 <lock_release>
     while(cond->waiting[hartid]) {}
     1460:	00000013          	nop
     1464:	fdc42703          	lw	a4,-36(s0)
@@ -2000,22 +2021,23 @@ fp_ret_t cond_wait(cond_t * cond) {
     147c:	fdc42783          	lw	a5,-36(s0)
     1480:	0047a783          	lw	a5,4(a5)
     1484:	00078513          	mv	a0,a5
-    1488:	e31ff0ef          	jal	12b8 <lock_acquire>
+    1488:	e31ff0ef          	jal	ra,12b8 <lock_acquire>
     return FP_SUCCESS;
     148c:	00000793          	li	a5,0
 }
     1490:	00078513          	mv	a0,a5
     1494:	02c12083          	lw	ra,44(sp)
     1498:	02812403          	lw	s0,40(sp)
-    149c:	03010113          	add	sp,sp,48
+    149c:	03010113          	addi	sp,sp,48
     14a0:	00008067          	ret
 
 000014a4 <cond_timed_wait>:
+
 fp_ret_t cond_timed_wait(cond_t * cond, uint64_t timeout) {
-    14a4:	fc010113          	add	sp,sp,-64
+    14a4:	fc010113          	addi	sp,sp,-64
     14a8:	02112e23          	sw	ra,60(sp)
     14ac:	02812c23          	sw	s0,56(sp)
-    14b0:	04010413          	add	s0,sp,64
+    14b0:	04010413          	addi	s0,sp,64
     14b4:	fca42623          	sw	a0,-52(s0)
     14b8:	fcb42023          	sw	a1,-64(s0)
     14bc:	fcc42223          	sw	a2,-60(s0)
@@ -2041,11 +2063,11 @@ fp_ret_t cond_timed_wait(cond_t * cond, uint64_t timeout) {
     14f8:	fcc42783          	lw	a5,-52(s0)
     14fc:	0047a783          	lw	a5,4(a5)
     1500:	00078513          	mv	a0,a5
-    1504:	df5ff0ef          	jal	12f8 <lock_release>
+    1504:	df5ff0ef          	jal	ra,12f8 <lock_release>
     while(cond->waiting[hartid] && !has_timed_out) {
     1508:	0400006f          	j	1548 <cond_timed_wait+0xa4>
         has_timed_out = (rdtime64() >= timeout);
-    150c:	e5dff0ef          	jal	1368 <rdtime64>
+    150c:	e5dff0ef          	jal	ra,1368 <rdtime64>
     1510:	00050713          	mv	a4,a0
     1514:	00058793          	mv	a5,a1
     1518:	00100693          	li	a3,1
@@ -2068,41 +2090,46 @@ fp_ret_t cond_timed_wait(cond_t * cond, uint64_t timeout) {
     1558:	0ff7f793          	zext.b	a5,a5
     155c:	00078a63          	beqz	a5,1570 <cond_timed_wait+0xcc>
     1560:	fef44783          	lbu	a5,-17(s0)
-    1564:	0017c793          	xor	a5,a5,1
+    1564:	0017c793          	xori	a5,a5,1
     1568:	0ff7f793          	zext.b	a5,a5
     156c:	fa0790e3          	bnez	a5,150c <cond_timed_wait+0x68>
+    }
     lock_acquire(cond->lock);
     1570:	fcc42783          	lw	a5,-52(s0)
     1574:	0047a783          	lw	a5,4(a5)
     1578:	00078513          	mv	a0,a5
-    157c:	d3dff0ef          	jal	12b8 <lock_acquire>
+    157c:	d3dff0ef          	jal	ra,12b8 <lock_acquire>
+
     if (has_timed_out) {
     1580:	fef44783          	lbu	a5,-17(s0)
     1584:	00078663          	beqz	a5,1590 <cond_timed_wait+0xec>
         return FP_TIMEOUT;
     1588:	00200793          	li	a5,2
     158c:	0080006f          	j	1594 <cond_timed_wait+0xf0>
+    } else {
         return FP_SUCCESS;
     1590:	00000793          	li	a5,0
+    }
 }
     1594:	00078513          	mv	a0,a5
     1598:	03c12083          	lw	ra,60(sp)
     159c:	03812403          	lw	s0,56(sp)
-    15a0:	04010113          	add	sp,sp,64
+    15a0:	04010113          	addi	sp,sp,64
     15a4:	00008067          	ret
 
 000015a8 <cond_signal>:
+
 fp_ret_t cond_signal(cond_t * cond) {
-    15a8:	fd010113          	add	sp,sp,-48
+    15a8:	fd010113          	addi	sp,sp,-48
     15ac:	02112623          	sw	ra,44(sp)
     15b0:	02812423          	sw	s0,40(sp)
-    15b4:	03010413          	add	s0,sp,48
+    15b4:	03010413          	addi	s0,sp,48
     15b8:	fca42e23          	sw	a0,-36(s0)
     lock_acquire(cond->lock);
     15bc:	fdc42783          	lw	a5,-36(s0)
     15c0:	0047a783          	lw	a5,4(a5)
     15c4:	00078513          	mv	a0,a5
-    15c8:	cf1ff0ef          	jal	12b8 <lock_acquire>
+    15c8:	cf1ff0ef          	jal	ra,12b8 <lock_acquire>
     for (int i = 0; i<NUM_THREADS; i++) {
     15cc:	fe042623          	sw	zero,-20(s0)
     15d0:	03c0006f          	j	160c <cond_signal+0x64>
@@ -2122,37 +2149,40 @@ fp_ret_t cond_signal(cond_t * cond) {
     15fc:	01c0006f          	j	1618 <cond_signal+0x70>
     for (int i = 0; i<NUM_THREADS; i++) {
     1600:	fec42783          	lw	a5,-20(s0)
-    1604:	00178793          	add	a5,a5,1
+    1604:	00178793          	addi	a5,a5,1
     1608:	fef42623          	sw	a5,-20(s0)
     160c:	fec42703          	lw	a4,-20(s0)
     1610:	00300793          	li	a5,3
     1614:	fce7d0e3          	bge	a5,a4,15d4 <cond_signal+0x2c>
+        }
+    }
     lock_release(cond->lock);
     1618:	fdc42783          	lw	a5,-36(s0)
     161c:	0047a783          	lw	a5,4(a5)
     1620:	00078513          	mv	a0,a5
-    1624:	cd5ff0ef          	jal	12f8 <lock_release>
+    1624:	cd5ff0ef          	jal	ra,12f8 <lock_release>
     return FP_SUCCESS;
     1628:	00000793          	li	a5,0
 }
     162c:	00078513          	mv	a0,a5
     1630:	02c12083          	lw	ra,44(sp)
     1634:	02812403          	lw	s0,40(sp)
-    1638:	03010113          	add	sp,sp,48
+    1638:	03010113          	addi	sp,sp,48
     163c:	00008067          	ret
 
 00001640 <cond_broadcast>:
+
 fp_ret_t cond_broadcast(cond_t * cond) {
-    1640:	fd010113          	add	sp,sp,-48
+    1640:	fd010113          	addi	sp,sp,-48
     1644:	02112623          	sw	ra,44(sp)
     1648:	02812423          	sw	s0,40(sp)
-    164c:	03010413          	add	s0,sp,48
+    164c:	03010413          	addi	s0,sp,48
     1650:	fca42e23          	sw	a0,-36(s0)
     lock_acquire(cond->lock);
     1654:	fdc42783          	lw	a5,-36(s0)
     1658:	0047a783          	lw	a5,4(a5)
     165c:	00078513          	mv	a0,a5
-    1660:	c59ff0ef          	jal	12b8 <lock_acquire>
+    1660:	c59ff0ef          	jal	ra,12b8 <lock_acquire>
     for (int i = 0; i<NUM_THREADS; i++) {
     1664:	fe042623          	sw	zero,-20(s0)
     1668:	0200006f          	j	1688 <cond_broadcast+0x48>
@@ -2163,23 +2193,24 @@ fp_ret_t cond_broadcast(cond_t * cond) {
     1678:	00078023          	sb	zero,0(a5)
     for (int i = 0; i<NUM_THREADS; i++) {
     167c:	fec42783          	lw	a5,-20(s0)
-    1680:	00178793          	add	a5,a5,1
+    1680:	00178793          	addi	a5,a5,1
     1684:	fef42623          	sw	a5,-20(s0)
     1688:	fec42703          	lw	a4,-20(s0)
     168c:	00300793          	li	a5,3
     1690:	fce7dee3          	bge	a5,a4,166c <cond_broadcast+0x2c>
+    }
     lock_release(cond->lock);
     1694:	fdc42783          	lw	a5,-36(s0)
     1698:	0047a783          	lw	a5,4(a5)
     169c:	00078513          	mv	a0,a5
-    16a0:	c59ff0ef          	jal	12f8 <lock_release>
+    16a0:	c59ff0ef          	jal	ra,12f8 <lock_release>
     return FP_SUCCESS;
     16a4:	00000793          	li	a5,0
 }
     16a8:	00078513          	mv	a0,a5
     16ac:	02c12083          	lw	ra,44(sp)
     16b0:	02812403          	lw	s0,40(sp)
-    16b4:	03010113          	add	sp,sp,48
+    16b4:	03010113          	addi	sp,sp,48
     16b8:	00008067          	ret
 
 000016bc <insert_block>:
@@ -2189,9 +2220,9 @@ fp_ret_t cond_broadcast(cond_t * cond) {
  * the free list.
  */
 static void insert_block(Block *block) {
-    16bc:	fd010113          	add	sp,sp,-48
+    16bc:	fd010113          	addi	sp,sp,-48
     16c0:	02812623          	sw	s0,44(sp)
-    16c4:	03010413          	add	s0,sp,48
+    16c4:	03010413          	addi	s0,sp,48
     16c8:	fca42e23          	sw	a0,-36(s0)
 #ifndef TA_DISABLE_COMPACT
     Block *ptr  = heap->free;
@@ -2256,16 +2287,16 @@ static void insert_block(Block *block) {
 }
     174c:	00000013          	nop
     1750:	02c12403          	lw	s0,44(sp)
-    1754:	03010113          	add	sp,sp,48
+    1754:	03010113          	addi	sp,sp,48
     1758:	00008067          	ret
 
 0000175c <release_blocks>:
 
 #ifndef TA_DISABLE_COMPACT
 static void release_blocks(Block *scan, Block *to) {
-    175c:	fd010113          	add	sp,sp,-48
+    175c:	fd010113          	addi	sp,sp,-48
     1760:	02812623          	sw	s0,44(sp)
-    1764:	03010413          	add	s0,sp,48
+    1764:	03010413          	addi	s0,sp,48
     1768:	fca42e23          	sw	a0,-36(s0)
     176c:	fcb42c23          	sw	a1,-40(s0)
     Block *scan_next;
@@ -2304,16 +2335,16 @@ static void release_blocks(Block *scan, Block *to) {
     17c0:	00000013          	nop
     17c4:	00000013          	nop
     17c8:	02c12403          	lw	s0,44(sp)
-    17cc:	03010113          	add	sp,sp,48
+    17cc:	03010113          	addi	sp,sp,48
     17d0:	00008067          	ret
 
 000017d4 <compact>:
 
 static void compact() {
-    17d4:	fd010113          	add	sp,sp,-48
+    17d4:	fd010113          	addi	sp,sp,-48
     17d8:	02112623          	sw	ra,44(sp)
     17dc:	02812423          	sw	s0,40(sp)
-    17e0:	03010413          	add	s0,sp,48
+    17e0:	03010413          	addi	s0,sp,48
     Block *ptr = heap->free;
     17e4:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     17e8:	0007a783          	lw	a5,0(a5)
@@ -2391,7 +2422,7 @@ static void compact() {
     18a4:	0047a783          	lw	a5,4(a5)
     18a8:	00078593          	mv	a1,a5
     18ac:	00070513          	mv	a0,a4
-    18b0:	eadff0ef          	jal	175c <release_blocks>
+    18b0:	eadff0ef          	jal	ra,175c <release_blocks>
             // relink
             ptr->next = next;
     18b4:	fec42783          	lw	a5,-20(s0)
@@ -2411,16 +2442,16 @@ static void compact() {
     18d8:	00000013          	nop
     18dc:	02c12083          	lw	ra,44(sp)
     18e0:	02812403          	lw	s0,40(sp)
-    18e4:	03010113          	add	sp,sp,48
+    18e4:	03010113          	addi	sp,sp,48
     18e8:	00008067          	ret
 
 000018ec <ta_init>:
 #endif
 
 bool ta_init(const void *base, const void *limit, const size_t heap_blocks, const size_t split_thresh, const size_t alignment) {
-    18ec:	fc010113          	add	sp,sp,-64
+    18ec:	fc010113          	addi	sp,sp,-64
     18f0:	02812e23          	sw	s0,60(sp)
-    18f4:	04010413          	add	s0,sp,64
+    18f4:	04010413          	addi	s0,sp,64
     18f8:	fca42e23          	sw	a0,-36(s0)
     18fc:	fcb42c23          	sw	a1,-40(s0)
     1900:	fcc42a23          	sw	a2,-44(s0)
@@ -2451,16 +2482,16 @@ bool ta_init(const void *base, const void *limit, const size_t heap_blocks, cons
     heap->fresh  = (Block *)(heap + 1);
     1944:	d141a703          	lw	a4,-748(gp) # 2000093c <heap>
     1948:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
-    194c:	01070713          	add	a4,a4,16
+    194c:	01070713          	addi	a4,a4,16
     1950:	00e7a423          	sw	a4,8(a5)
     heap->top    = (size_t)(heap->fresh + heap_blocks);
     1954:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     1958:	0087a683          	lw	a3,8(a5)
     195c:	fd442703          	lw	a4,-44(s0)
     1960:	00070793          	mv	a5,a4
-    1964:	00179793          	sll	a5,a5,0x1
+    1964:	00179793          	slli	a5,a5,0x1
     1968:	00e787b3          	add	a5,a5,a4
-    196c:	00279793          	sll	a5,a5,0x2
+    196c:	00279793          	slli	a5,a5,0x2
     1970:	00f68733          	add	a4,a3,a5
     1974:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     1978:	00e7a623          	sw	a4,12(a5)
@@ -2471,22 +2502,22 @@ bool ta_init(const void *base, const void *limit, const size_t heap_blocks, cons
     1984:	fef42623          	sw	a5,-20(s0)
     size_t i     = heap_max_blocks - 1;
     1988:	d241a783          	lw	a5,-732(gp) # 2000094c <heap_max_blocks>
-    198c:	fff78793          	add	a5,a5,-1
+    198c:	fff78793          	addi	a5,a5,-1
     1990:	fef42423          	sw	a5,-24(s0)
     while (i--) {
     1994:	0200006f          	j	19b4 <ta_init+0xc8>
         block->next = block + 1;
     1998:	fec42783          	lw	a5,-20(s0)
-    199c:	00c78713          	add	a4,a5,12
+    199c:	00c78713          	addi	a4,a5,12
     19a0:	fec42783          	lw	a5,-20(s0)
     19a4:	00e7a223          	sw	a4,4(a5)
         block++;
     19a8:	fec42783          	lw	a5,-20(s0)
-    19ac:	00c78793          	add	a5,a5,12
+    19ac:	00c78793          	addi	a5,a5,12
     19b0:	fef42623          	sw	a5,-20(s0)
     while (i--) {
     19b4:	fe842783          	lw	a5,-24(s0)
-    19b8:	fff78713          	add	a4,a5,-1
+    19b8:	fff78713          	addi	a4,a5,-1
     19bc:	fee42423          	sw	a4,-24(s0)
     19c0:	fc079ce3          	bnez	a5,1998 <ta_init+0xac>
     }
@@ -2498,16 +2529,16 @@ bool ta_init(const void *base, const void *limit, const size_t heap_blocks, cons
 }
     19d0:	00078513          	mv	a0,a5
     19d4:	03c12403          	lw	s0,60(sp)
-    19d8:	04010113          	add	sp,sp,64
+    19d8:	04010113          	addi	sp,sp,64
     19dc:	00008067          	ret
 
 000019e0 <ta_free>:
 
 bool ta_free(void *free) {
-    19e0:	fd010113          	add	sp,sp,-48
+    19e0:	fd010113          	addi	sp,sp,-48
     19e4:	02112623          	sw	ra,44(sp)
     19e8:	02812423          	sw	s0,40(sp)
-    19ec:	03010413          	add	s0,sp,48
+    19ec:	03010413          	addi	s0,sp,48
     19f0:	fca42e23          	sw	a0,-36(s0)
     Block *block = heap->used;
     19f4:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
@@ -2540,10 +2571,10 @@ bool ta_free(void *free) {
             }
             insert_block(block);
     1a44:	fec42503          	lw	a0,-20(s0)
-    1a48:	c75ff0ef          	jal	16bc <insert_block>
+    1a48:	c75ff0ef          	jal	ra,16bc <insert_block>
 #ifndef TA_DISABLE_COMPACT
             compact();
-    1a4c:	d89ff0ef          	jal	17d4 <compact>
+    1a4c:	d89ff0ef          	jal	ra,17d4 <compact>
 #endif
             return true;
     1a50:	00100793          	li	a5,1
@@ -2566,16 +2597,16 @@ bool ta_free(void *free) {
     1a78:	00078513          	mv	a0,a5
     1a7c:	02c12083          	lw	ra,44(sp)
     1a80:	02812403          	lw	s0,40(sp)
-    1a84:	03010113          	add	sp,sp,48
+    1a84:	03010113          	addi	sp,sp,48
     1a88:	00008067          	ret
 
 00001a8c <alloc_block>:
 
 static Block *alloc_block(size_t num) {
-    1a8c:	fc010113          	add	sp,sp,-64
+    1a8c:	fc010113          	addi	sp,sp,-64
     1a90:	02112e23          	sw	ra,60(sp)
     1a94:	02812c23          	sw	s0,56(sp)
-    1a98:	04010413          	add	s0,sp,64
+    1a98:	04010413          	addi	s0,sp,64
     1a9c:	fca42623          	sw	a0,-52(s0)
     Block *ptr  = heap->free;
     1aa0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
@@ -2591,7 +2622,7 @@ static Block *alloc_block(size_t num) {
     1abc:	d201a703          	lw	a4,-736(gp) # 20000948 <heap_alignment>
     1ac0:	fcc42783          	lw	a5,-52(s0)
     1ac4:	00f707b3          	add	a5,a4,a5
-    1ac8:	fff78713          	add	a4,a5,-1
+    1ac8:	fff78713          	addi	a4,a5,-1
     1acc:	d201a783          	lw	a5,-736(gp) # 20000948 <heap_alignment>
     1ad0:	40f007b3          	neg	a5,a5
     1ad4:	00f777b3          	and	a5,a4,a5
@@ -2712,10 +2743,10 @@ static Block *alloc_block(size_t num) {
     1c3c:	00e7a423          	sw	a4,8(a5)
                     insert_block(split);
     1c40:	fd442503          	lw	a0,-44(s0)
-    1c44:	a79ff0ef          	jal	16bc <insert_block>
+    1c44:	a79ff0ef          	jal	ra,16bc <insert_block>
 #ifndef TA_DISABLE_COMPACT
                     compact();
-    1c48:	b8dff0ef          	jal	17d4 <compact>
+    1c48:	b8dff0ef          	jal	ra,17d4 <compact>
 #endif
                 }
 #endif
@@ -2790,20 +2821,20 @@ static Block *alloc_block(size_t num) {
     1d04:	00078513          	mv	a0,a5
     1d08:	03c12083          	lw	ra,60(sp)
     1d0c:	03812403          	lw	s0,56(sp)
-    1d10:	04010113          	add	sp,sp,64
+    1d10:	04010113          	addi	sp,sp,64
     1d14:	00008067          	ret
 
 00001d18 <ta_alloc>:
 
 void *ta_alloc(size_t num) {
-    1d18:	fd010113          	add	sp,sp,-48
+    1d18:	fd010113          	addi	sp,sp,-48
     1d1c:	02112623          	sw	ra,44(sp)
     1d20:	02812423          	sw	s0,40(sp)
-    1d24:	03010413          	add	s0,sp,48
+    1d24:	03010413          	addi	s0,sp,48
     1d28:	fca42e23          	sw	a0,-36(s0)
     Block *block = alloc_block(num);
     1d2c:	fdc42503          	lw	a0,-36(s0)
-    1d30:	d5dff0ef          	jal	1a8c <alloc_block>
+    1d30:	d5dff0ef          	jal	ra,1a8c <alloc_block>
     1d34:	fea42623          	sw	a0,-20(s0)
     if (block != NULL) {
     1d38:	fec42783          	lw	a5,-20(s0)
@@ -2819,15 +2850,15 @@ void *ta_alloc(size_t num) {
     1d50:	00078513          	mv	a0,a5
     1d54:	02c12083          	lw	ra,44(sp)
     1d58:	02812403          	lw	s0,40(sp)
-    1d5c:	03010113          	add	sp,sp,48
+    1d5c:	03010113          	addi	sp,sp,48
     1d60:	00008067          	ret
 
 00001d64 <memclear>:
 
 static void memclear(void *ptr, size_t num) {
-    1d64:	fd010113          	add	sp,sp,-48
+    1d64:	fd010113          	addi	sp,sp,-48
     1d68:	02812623          	sw	s0,44(sp)
-    1d6c:	03010413          	add	s0,sp,48
+    1d6c:	03010413          	addi	s0,sp,48
     1d70:	fca42e23          	sw	a0,-36(s0)
     1d74:	fcb42c23          	sw	a1,-40(s0)
     size_t *ptrw = (size_t *)ptr;
@@ -2835,24 +2866,24 @@ static void memclear(void *ptr, size_t num) {
     1d7c:	fef42623          	sw	a5,-20(s0)
     size_t numw  = (num & -sizeof(size_t)) / sizeof(size_t);
     1d80:	fd842783          	lw	a5,-40(s0)
-    1d84:	0027d793          	srl	a5,a5,0x2
+    1d84:	0027d793          	srli	a5,a5,0x2
     1d88:	fef42423          	sw	a5,-24(s0)
     while (numw--) {
     1d8c:	0140006f          	j	1da0 <memclear+0x3c>
         *ptrw++ = 0;
     1d90:	fec42783          	lw	a5,-20(s0)
-    1d94:	00478713          	add	a4,a5,4
+    1d94:	00478713          	addi	a4,a5,4
     1d98:	fee42623          	sw	a4,-20(s0)
     1d9c:	0007a023          	sw	zero,0(a5)
     while (numw--) {
     1da0:	fe842783          	lw	a5,-24(s0)
-    1da4:	fff78713          	add	a4,a5,-1
+    1da4:	fff78713          	addi	a4,a5,-1
     1da8:	fee42423          	sw	a4,-24(s0)
     1dac:	fe0792e3          	bnez	a5,1d90 <memclear+0x2c>
     }
     num &= (sizeof(size_t) - 1);
     1db0:	fd842783          	lw	a5,-40(s0)
-    1db4:	0037f793          	and	a5,a5,3
+    1db4:	0037f793          	andi	a5,a5,3
     1db8:	fcf42c23          	sw	a5,-40(s0)
     uint8_t *ptrb = (uint8_t *)ptrw;
     1dbc:	fec42783          	lw	a5,-20(s0)
@@ -2861,12 +2892,12 @@ static void memclear(void *ptr, size_t num) {
     1dc4:	0140006f          	j	1dd8 <memclear+0x74>
         *ptrb++ = 0;
     1dc8:	fe442783          	lw	a5,-28(s0)
-    1dcc:	00178713          	add	a4,a5,1
+    1dcc:	00178713          	addi	a4,a5,1
     1dd0:	fee42223          	sw	a4,-28(s0)
     1dd4:	00078023          	sb	zero,0(a5)
     while (num--) {
     1dd8:	fd842783          	lw	a5,-40(s0)
-    1ddc:	fff78713          	add	a4,a5,-1
+    1ddc:	fff78713          	addi	a4,a5,-1
     1de0:	fce42c23          	sw	a4,-40(s0)
     1de4:	fe0792e3          	bnez	a5,1dc8 <memclear+0x64>
     }
@@ -2874,27 +2905,27 @@ static void memclear(void *ptr, size_t num) {
     1de8:	00000013          	nop
     1dec:	00000013          	nop
     1df0:	02c12403          	lw	s0,44(sp)
-    1df4:	03010113          	add	sp,sp,48
+    1df4:	03010113          	addi	sp,sp,48
     1df8:	00008067          	ret
 
 00001dfc <ta_calloc>:
 
 void *ta_calloc(size_t num, size_t size) {
-    1dfc:	fd010113          	add	sp,sp,-48
+    1dfc:	fd010113          	addi	sp,sp,-48
     1e00:	02112623          	sw	ra,44(sp)
     1e04:	02812423          	sw	s0,40(sp)
-    1e08:	03010413          	add	s0,sp,48
+    1e08:	03010413          	addi	s0,sp,48
     1e0c:	fca42e23          	sw	a0,-36(s0)
     1e10:	fcb42c23          	sw	a1,-40(s0)
     num *= size;
     1e14:	fd842583          	lw	a1,-40(s0)
     1e18:	fdc42503          	lw	a0,-36(s0)
-    1e1c:	638000ef          	jal	2454 <__mulsi3>
+    1e1c:	638000ef          	jal	ra,2454 <__mulsi3>
     1e20:	00050793          	mv	a5,a0
     1e24:	fcf42e23          	sw	a5,-36(s0)
     Block *block = alloc_block(num);
     1e28:	fdc42503          	lw	a0,-36(s0)
-    1e2c:	c61ff0ef          	jal	1a8c <alloc_block>
+    1e2c:	c61ff0ef          	jal	ra,1a8c <alloc_block>
     1e30:	fea42623          	sw	a0,-20(s0)
     if (block != NULL) {
     1e34:	fec42783          	lw	a5,-20(s0)
@@ -2904,7 +2935,7 @@ void *ta_calloc(size_t num, size_t size) {
     1e40:	0007a783          	lw	a5,0(a5)
     1e44:	fdc42583          	lw	a1,-36(s0)
     1e48:	00078513          	mv	a0,a5
-    1e4c:	f19ff0ef          	jal	1d64 <memclear>
+    1e4c:	f19ff0ef          	jal	ra,1d64 <memclear>
         return block->addr;
     1e50:	fec42783          	lw	a5,-20(s0)
     1e54:	0007a783          	lw	a5,0(a5)
@@ -2916,15 +2947,15 @@ void *ta_calloc(size_t num, size_t size) {
     1e60:	00078513          	mv	a0,a5
     1e64:	02c12083          	lw	ra,44(sp)
     1e68:	02812403          	lw	s0,40(sp)
-    1e6c:	03010113          	add	sp,sp,48
+    1e6c:	03010113          	addi	sp,sp,48
     1e70:	00008067          	ret
 
 00001e74 <count_blocks>:
 
 static size_t count_blocks(Block *ptr) {
-    1e74:	fd010113          	add	sp,sp,-48
+    1e74:	fd010113          	addi	sp,sp,-48
     1e78:	02812623          	sw	s0,44(sp)
-    1e7c:	03010413          	add	s0,sp,48
+    1e7c:	03010413          	addi	s0,sp,48
     1e80:	fca42e23          	sw	a0,-36(s0)
     size_t num = 0;
     1e84:	fe042623          	sw	zero,-20(s0)
@@ -2932,7 +2963,7 @@ static size_t count_blocks(Block *ptr) {
     1e88:	01c0006f          	j	1ea4 <count_blocks+0x30>
         num++;
     1e8c:	fec42783          	lw	a5,-20(s0)
-    1e90:	00178793          	add	a5,a5,1
+    1e90:	00178793          	addi	a5,a5,1
     1e94:	fef42623          	sw	a5,-20(s0)
         ptr = ptr->next;
     1e98:	fdc42783          	lw	a5,-36(s0)
@@ -2947,84 +2978,84 @@ static size_t count_blocks(Block *ptr) {
 }
     1eb0:	00078513          	mv	a0,a5
     1eb4:	02c12403          	lw	s0,44(sp)
-    1eb8:	03010113          	add	sp,sp,48
+    1eb8:	03010113          	addi	sp,sp,48
     1ebc:	00008067          	ret
 
 00001ec0 <ta_num_free>:
 
 size_t ta_num_free() {
-    1ec0:	ff010113          	add	sp,sp,-16
+    1ec0:	ff010113          	addi	sp,sp,-16
     1ec4:	00112623          	sw	ra,12(sp)
     1ec8:	00812423          	sw	s0,8(sp)
-    1ecc:	01010413          	add	s0,sp,16
+    1ecc:	01010413          	addi	s0,sp,16
     return count_blocks(heap->free);
     1ed0:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     1ed4:	0007a783          	lw	a5,0(a5)
     1ed8:	00078513          	mv	a0,a5
-    1edc:	f99ff0ef          	jal	1e74 <count_blocks>
+    1edc:	f99ff0ef          	jal	ra,1e74 <count_blocks>
     1ee0:	00050793          	mv	a5,a0
 }
     1ee4:	00078513          	mv	a0,a5
     1ee8:	00c12083          	lw	ra,12(sp)
     1eec:	00812403          	lw	s0,8(sp)
-    1ef0:	01010113          	add	sp,sp,16
+    1ef0:	01010113          	addi	sp,sp,16
     1ef4:	00008067          	ret
 
 00001ef8 <ta_num_used>:
 
 size_t ta_num_used() {
-    1ef8:	ff010113          	add	sp,sp,-16
+    1ef8:	ff010113          	addi	sp,sp,-16
     1efc:	00112623          	sw	ra,12(sp)
     1f00:	00812423          	sw	s0,8(sp)
-    1f04:	01010413          	add	s0,sp,16
+    1f04:	01010413          	addi	s0,sp,16
     return count_blocks(heap->used);
     1f08:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     1f0c:	0047a783          	lw	a5,4(a5)
     1f10:	00078513          	mv	a0,a5
-    1f14:	f61ff0ef          	jal	1e74 <count_blocks>
+    1f14:	f61ff0ef          	jal	ra,1e74 <count_blocks>
     1f18:	00050793          	mv	a5,a0
 }
     1f1c:	00078513          	mv	a0,a5
     1f20:	00c12083          	lw	ra,12(sp)
     1f24:	00812403          	lw	s0,8(sp)
-    1f28:	01010113          	add	sp,sp,16
+    1f28:	01010113          	addi	sp,sp,16
     1f2c:	00008067          	ret
 
 00001f30 <ta_num_fresh>:
 
 size_t ta_num_fresh() {
-    1f30:	ff010113          	add	sp,sp,-16
+    1f30:	ff010113          	addi	sp,sp,-16
     1f34:	00112623          	sw	ra,12(sp)
     1f38:	00812423          	sw	s0,8(sp)
-    1f3c:	01010413          	add	s0,sp,16
+    1f3c:	01010413          	addi	s0,sp,16
     return count_blocks(heap->fresh);
     1f40:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
     1f44:	0087a783          	lw	a5,8(a5)
     1f48:	00078513          	mv	a0,a5
-    1f4c:	f29ff0ef          	jal	1e74 <count_blocks>
+    1f4c:	f29ff0ef          	jal	ra,1e74 <count_blocks>
     1f50:	00050793          	mv	a5,a0
 }
     1f54:	00078513          	mv	a0,a5
     1f58:	00c12083          	lw	ra,12(sp)
     1f5c:	00812403          	lw	s0,8(sp)
-    1f60:	01010113          	add	sp,sp,16
+    1f60:	01010113          	addi	sp,sp,16
     1f64:	00008067          	ret
 
 00001f68 <ta_check>:
 
 bool ta_check() {
-    1f68:	ff010113          	add	sp,sp,-16
+    1f68:	ff010113          	addi	sp,sp,-16
     1f6c:	00112623          	sw	ra,12(sp)
     1f70:	00812423          	sw	s0,8(sp)
     1f74:	00912223          	sw	s1,4(sp)
-    1f78:	01010413          	add	s0,sp,16
+    1f78:	01010413          	addi	s0,sp,16
     return heap_max_blocks == ta_num_free() + ta_num_used() + ta_num_fresh();
-    1f7c:	f45ff0ef          	jal	1ec0 <ta_num_free>
+    1f7c:	f45ff0ef          	jal	ra,1ec0 <ta_num_free>
     1f80:	00050493          	mv	s1,a0
-    1f84:	f75ff0ef          	jal	1ef8 <ta_num_used>
+    1f84:	f75ff0ef          	jal	ra,1ef8 <ta_num_used>
     1f88:	00050793          	mv	a5,a0
     1f8c:	00f484b3          	add	s1,s1,a5
-    1f90:	fa1ff0ef          	jal	1f30 <ta_num_fresh>
+    1f90:	fa1ff0ef          	jal	ra,1f30 <ta_num_fresh>
     1f94:	00050793          	mv	a5,a0
     1f98:	00f48733          	add	a4,s1,a5
     1f9c:	d241a783          	lw	a5,-732(gp) # 2000094c <heap_max_blocks>
@@ -3036,16 +3067,16 @@ bool ta_check() {
     1fb0:	00c12083          	lw	ra,12(sp)
     1fb4:	00812403          	lw	s0,8(sp)
     1fb8:	00412483          	lw	s1,4(sp)
-    1fbc:	01010113          	add	sp,sp,16
+    1fbc:	01010113          	addi	sp,sp,16
     1fc0:	00008067          	ret
 
 00001fc4 <ta_getsize>:
 
 static size_t ta_getsize(void *ptr)
 {
-    1fc4:	fd010113          	add	sp,sp,-48
+    1fc4:	fd010113          	addi	sp,sp,-48
     1fc8:	02812623          	sw	s0,44(sp)
-    1fcc:	03010413          	add	s0,sp,48
+    1fcc:	03010413          	addi	s0,sp,48
     1fd0:	fca42e23          	sw	a0,-36(s0)
   Block *block = heap->used;
     1fd4:	d141a783          	lw	a5,-748(gp) # 2000093c <heap>
@@ -3076,16 +3107,16 @@ static size_t ta_getsize(void *ptr)
 }
     2018:	00078513          	mv	a0,a5
     201c:	02c12403          	lw	s0,44(sp)
-    2020:	03010113          	add	sp,sp,48
+    2020:	03010113          	addi	sp,sp,48
     2024:	00008067          	ret
 
 00002028 <ta_realloc>:
 
 void *ta_realloc(void *ptr,size_t num) {
-    2028:	fc010113          	add	sp,sp,-64
+    2028:	fc010113          	addi	sp,sp,-64
     202c:	02112e23          	sw	ra,60(sp)
     2030:	02812c23          	sw	s0,56(sp)
-    2034:	04010413          	add	s0,sp,64
+    2034:	04010413          	addi	s0,sp,64
     2038:	fca42623          	sw	a0,-52(s0)
     203c:	fcb42423          	sw	a1,-56(s0)
     size_t c;
@@ -3094,14 +3125,14 @@ void *ta_realloc(void *ptr,size_t num) {
     uint8_t* ptro;
     ptrsize=ta_getsize(ptr);
     2040:	fcc42503          	lw	a0,-52(s0)
-    2044:	f81ff0ef          	jal	1fc4 <ta_getsize>
+    2044:	f81ff0ef          	jal	ra,1fc4 <ta_getsize>
     2048:	fea42423          	sw	a0,-24(s0)
     if(ptrsize>0){
     204c:	fe842783          	lw	a5,-24(s0)
     2050:	08078a63          	beqz	a5,20e4 <ta_realloc+0xbc>
      Block *block = alloc_block(num);
     2054:	fc842503          	lw	a0,-56(s0)
-    2058:	a35ff0ef          	jal	1a8c <alloc_block>
+    2058:	a35ff0ef          	jal	ra,1a8c <alloc_block>
     205c:	fea42223          	sw	a0,-28(s0)
      if (block != NULL) {
     2060:	fe442783          	lw	a5,-28(s0)
@@ -3133,14 +3164,14 @@ void *ta_realloc(void *ptr,size_t num) {
     20b4:	00e78023          	sb	a4,0(a5)
          for(c=0;c<ptrsize;c++)
     20b8:	fec42783          	lw	a5,-20(s0)
-    20bc:	00178793          	add	a5,a5,1
+    20bc:	00178793          	addi	a5,a5,1
     20c0:	fef42623          	sw	a5,-20(s0)
     20c4:	fec42703          	lw	a4,-20(s0)
     20c8:	fe842783          	lw	a5,-24(s0)
     20cc:	fcf766e3          	bltu	a4,a5,2098 <ta_realloc+0x70>
          ta_free(ptr);
     20d0:	fcc42503          	lw	a0,-52(s0)
-    20d4:	90dff0ef          	jal	19e0 <ta_free>
+    20d4:	90dff0ef          	jal	ra,19e0 <ta_free>
          return block->addr;
     20d8:	fe442783          	lw	a5,-28(s0)
     20dc:	0007a783          	lw	a5,0(a5)
@@ -3152,69 +3183,52 @@ void *ta_realloc(void *ptr,size_t num) {
     20e8:	00078513          	mv	a0,a5
     20ec:	03c12083          	lw	ra,60(sp)
     20f0:	03812403          	lw	s0,56(sp)
-    20f4:	04010113          	add	sp,sp,64
+    20f4:	04010113          	addi	sp,sp,64
     20f8:	00008067          	ret
 
 000020fc <_fp_print>:
-typedef void (*isr_t)(void);
-
-static isr_t ext_int_handler;
-static isr_t ie_int_handler;
-static isr_t ee_int_handler;
-
-    20fc:	fe010113          	add	sp,sp,-32
+static inline void _fp_print(uint32_t val) {
+    20fc:	fe010113          	addi	sp,sp,-32
     2100:	00812e23          	sw	s0,28(sp)
-    2104:	02010413          	add	s0,sp,32
+    2104:	02010413          	addi	s0,sp,32
     2108:	fea42623          	sw	a0,-20(s0)
-
-static void register_exception_handler(void (*isr)(void)) {
+  write_csr(CSR_TOHOST, 0xbaaabaaa);
     210c:	baaac7b7          	lui	a5,0xbaaac
-    2110:	aaa78793          	add	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
+    2110:	aaa78793          	addi	a5,a5,-1366 # baaabaaa <BUS_END+0x7aaab6aa>
     2114:	51e79073          	csrw	0x51e,a5
-  write_csr(CSR_EVEC, (uint32_t) isr);
+  write_csr(CSR_TOHOST, val);
     2118:	fec42783          	lw	a5,-20(s0)
     211c:	51e79073          	csrw	0x51e,a5
 }
-
     2120:	00000013          	nop
     2124:	01c12403          	lw	s0,28(sp)
-    2128:	02010113          	add	sp,sp,32
+    2128:	02010113          	addi	sp,sp,32
     212c:	00008067          	ret
 
 00002130 <_fp_abort>:
-    int cause = read_csr(CSR_CAUSE);
-    
-    if (cause == EXC_CAUSE_EXTERNAL_INT) {  
-        if(ext_int_handler) ext_int_handler();
-    } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
-        if(ie_int_handler) ie_int_handler();
-    2130:	ff010113          	add	sp,sp,-16
+static inline void _fp_abort() {
+    2130:	ff010113          	addi	sp,sp,-16
     2134:	00812623          	sw	s0,12(sp)
-    2138:	01010413          	add	s0,sp,16
-    } else if (cause == EXC_CAUSE_EXCEPTION_EXPIRE) {
+    2138:	01010413          	addi	s0,sp,16
+  write_csr(CSR_TOHOST, 0xdeadbeef);
     213c:	deadc7b7          	lui	a5,0xdeadc
-    2140:	eef78793          	add	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
+    2140:	eef78793          	addi	a5,a5,-273 # deadbeef <BUS_END+0x9eadbaef>
     2144:	51e79073          	csrw	0x51e,a5
-        if(ee_int_handler) ee_int_handler();
+}
     2148:	00000013          	nop
     214c:	00c12403          	lw	s0,12(sp)
-    2150:	01010113          	add	sp,sp,16
+    2150:	01010113          	addi	sp,sp,16
     2154:	00008067          	ret
 
 00002158 <gpo_write>:
-    } else {
-        _fp_print(66666666);
-        _fp_print(cause);
-        assert(false);
-    }
-}
-    2158:	fe010113          	add	sp,sp,-32
+static inline void gpo_write(uint32_t port, uint32_t val) {
+    2158:	fe010113          	addi	sp,sp,-32
     215c:	00112e23          	sw	ra,28(sp)
     2160:	00812c23          	sw	s0,24(sp)
-    2164:	02010413          	add	s0,sp,32
+    2164:	02010413          	addi	s0,sp,32
     2168:	fea42623          	sw	a0,-20(s0)
     216c:	feb42423          	sw	a1,-24(s0)
-
+  switch(port) {
     2170:	fec42703          	lw	a4,-20(s0)
     2174:	00300793          	li	a5,3
     2178:	06f70263          	beq	a4,a5,21dc <gpo_write+0x84>
@@ -3233,38 +3247,42 @@ static void register_exception_handler(void (*isr)(void)) {
     21ac:	00100793          	li	a5,1
     21b0:	00f70a63          	beq	a4,a5,21c4 <gpo_write+0x6c>
     21b4:	0340006f          	j	21e8 <gpo_write+0x90>
-void setup_exceptions() {
+    case 0: write_csr(CSR_UARCH4, val); break;
     21b8:	fe842783          	lw	a5,-24(s0)
     21bc:	cc479073          	csrw	0xcc4,a5
     21c0:	0300006f          	j	21f0 <gpo_write+0x98>
-    // Initialize the interrupt handlers to null pointers
+    case 1: write_csr(CSR_UARCH5, val); break;
     21c4:	fe842783          	lw	a5,-24(s0)
     21c8:	cc579073          	csrw	0xcc5,a5
     21cc:	0240006f          	j	21f0 <gpo_write+0x98>
-    ie_int_handler = (isr_t) 0;
+    case 2: write_csr(CSR_UARCH6, val); break;
     21d0:	fe842783          	lw	a5,-24(s0)
     21d4:	cc679073          	csrw	0xcc6,a5
     21d8:	0180006f          	j	21f0 <gpo_write+0x98>
-    ee_int_handler = (isr_t) 0;
+    case 3: write_csr(CSR_UARCH7, val); break;
     21dc:	fe842783          	lw	a5,-24(s0)
     21e0:	cc779073          	csrw	0xcc7,a5
     21e4:	00c0006f          	j	21f0 <gpo_write+0x98>
-    ext_int_handler = (isr_t) 0;
-    21e8:	f49ff0ef          	jal	2130 <_fp_abort>
-    
-    // Register the exception handler
+    default: _fp_abort();
+    21e8:	f49ff0ef          	jal	ra,2130 <_fp_abort>
+}
     21ec:	00000013          	nop
     21f0:	00000013          	nop
     21f4:	01c12083          	lw	ra,28(sp)
     21f8:	01812403          	lw	s0,24(sp)
-    21fc:	02010113          	add	sp,sp,32
+    21fc:	02010113          	addi	sp,sp,32
     2200:	00008067          	ret
 
 00002204 <register_exception_handler>:
+static isr_t ext_int_handler;
+static isr_t ie_int_handler;
+static isr_t ee_int_handler;
+
+
 static void register_exception_handler(void (*isr)(void)) {
-    2204:	fe010113          	add	sp,sp,-32
+    2204:	fe010113          	addi	sp,sp,-32
     2208:	00812e23          	sw	s0,28(sp)
-    220c:	02010413          	add	s0,sp,32
+    220c:	02010413          	addi	s0,sp,32
     2210:	fea42623          	sw	a0,-20(s0)
   write_csr(CSR_EVEC, (uint32_t) isr);
     2214:	fec42783          	lw	a5,-20(s0)
@@ -3272,36 +3290,43 @@ static void register_exception_handler(void (*isr)(void)) {
 }
     221c:	00000013          	nop
     2220:	01c12403          	lw	s0,28(sp)
-    2224:	02010113          	add	sp,sp,32
+    2224:	02010113          	addi	sp,sp,32
     2228:	00008067          	ret
 
 0000222c <fp_exception_handler>:
+
 static void fp_exception_handler(void) {
-    222c:	fe010113          	add	sp,sp,-32
+    222c:	fe010113          	addi	sp,sp,-32
     2230:	00112e23          	sw	ra,28(sp)
     2234:	00812c23          	sw	s0,24(sp)
-    2238:	02010413          	add	s0,sp,32
+    2238:	02010413          	addi	s0,sp,32
     int cause = read_csr(CSR_CAUSE);
     223c:	509027f3          	csrr	a5,0x509
     2240:	fef42623          	sw	a5,-20(s0)
     2244:	fec42783          	lw	a5,-20(s0)
     2248:	fef42423          	sw	a5,-24(s0)
+    
     if (cause == EXC_CAUSE_EXTERNAL_INT) {  
     224c:	fe842703          	lw	a4,-24(s0)
     2250:	800007b7          	lui	a5,0x80000
-    2254:	00e78793          	add	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
+    2254:	00e78793          	addi	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
     2258:	00f71c63          	bne	a4,a5,2270 <fp_exception_handler+0x44>
         if(ext_int_handler) ext_int_handler();
     225c:	d281a783          	lw	a5,-728(gp) # 20000950 <ext_int_handler>
     2260:	08078063          	beqz	a5,22e0 <fp_exception_handler+0xb4>
     2264:	d281a783          	lw	a5,-728(gp) # 20000950 <ext_int_handler>
     2268:	000780e7          	jalr	a5
+    } else {
+        _fp_print(66666666);
+        _fp_print(cause);
+        assert(false);
+    }
 }
     226c:	0740006f          	j	22e0 <fp_exception_handler+0xb4>
     } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
     2270:	fe842703          	lw	a4,-24(s0)
     2274:	800007b7          	lui	a5,0x80000
-    2278:	00d78793          	add	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
+    2278:	00d78793          	addi	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
     227c:	00f71c63          	bne	a4,a5,2294 <fp_exception_handler+0x68>
         if(ie_int_handler) ie_int_handler();
     2280:	d2c1a783          	lw	a5,-724(gp) # 20000954 <ie_int_handler>
@@ -3323,60 +3348,64 @@ static void fp_exception_handler(void) {
     22b0:	0300006f          	j	22e0 <fp_exception_handler+0xb4>
         _fp_print(66666666);
     22b4:	03f947b7          	lui	a5,0x3f94
-    22b8:	0aa78513          	add	a0,a5,170 # 3f940aa <ISPM_END+0x3f8c0aa>
-    22bc:	e41ff0ef          	jal	20fc <_fp_print>
+    22b8:	0aa78513          	addi	a0,a5,170 # 3f940aa <ISPM_END+0x3f8c0aa>
+    22bc:	e41ff0ef          	jal	ra,20fc <_fp_print>
         _fp_print(cause);
     22c0:	fe842783          	lw	a5,-24(s0)
     22c4:	00078513          	mv	a0,a5
-    22c8:	e35ff0ef          	jal	20fc <_fp_print>
+    22c8:	e35ff0ef          	jal	ra,20fc <_fp_print>
         assert(false);
-    22cc:	e65ff0ef          	jal	2130 <_fp_abort>
+    22cc:	e65ff0ef          	jal	ra,2130 <_fp_abort>
     22d0:	0ff00593          	li	a1,255
     22d4:	00000513          	li	a0,0
-    22d8:	e81ff0ef          	jal	2158 <gpo_write>
+    22d8:	e81ff0ef          	jal	ra,2158 <gpo_write>
     22dc:	0000006f          	j	22dc <fp_exception_handler+0xb0>
 }
     22e0:	00000013          	nop
     22e4:	01c12083          	lw	ra,28(sp)
     22e8:	01812403          	lw	s0,24(sp)
-    22ec:	02010113          	add	sp,sp,32
+    22ec:	02010113          	addi	sp,sp,32
     22f0:	00008067          	ret
 
 000022f4 <setup_exceptions>:
+
 void setup_exceptions() {
-    22f4:	ff010113          	add	sp,sp,-16
+    22f4:	ff010113          	addi	sp,sp,-16
     22f8:	00812623          	sw	s0,12(sp)
-    22fc:	01010413          	add	s0,sp,16
+    22fc:	01010413          	addi	s0,sp,16
+    // Initialize the interrupt handlers to null pointers
     ie_int_handler = (isr_t) 0;
     2300:	d201a623          	sw	zero,-724(gp) # 20000954 <ie_int_handler>
     ee_int_handler = (isr_t) 0;
     2304:	d201a823          	sw	zero,-720(gp) # 20000958 <ee_int_handler>
     ext_int_handler = (isr_t) 0;
     2308:	d201a423          	sw	zero,-728(gp) # 20000950 <ext_int_handler>
+    
+    // Register the exception handler
     write_csr(CSR_EVEC, (uint32_t) fp_exception_handler);
     230c:	000027b7          	lui	a5,0x2
-    2310:	22c78793          	add	a5,a5,556 # 222c <fp_exception_handler>
+    2310:	22c78793          	addi	a5,a5,556 # 222c <fp_exception_handler>
     2314:	50879073          	csrw	0x508,a5
 }
     2318:	00000013          	nop
     231c:	00c12403          	lw	s0,12(sp)
-    2320:	01010113          	add	sp,sp,16
+    2320:	01010113          	addi	sp,sp,16
     2324:	00008067          	ret
 
 00002328 <register_isr>:
 
 void register_isr(int cause, void (*isr)(void)) {
-    2328:	fe010113          	add	sp,sp,-32
+    2328:	fe010113          	addi	sp,sp,-32
     232c:	00112e23          	sw	ra,28(sp)
     2330:	00812c23          	sw	s0,24(sp)
-    2334:	02010413          	add	s0,sp,32
+    2334:	02010413          	addi	s0,sp,32
     2338:	fea42623          	sw	a0,-20(s0)
     233c:	feb42423          	sw	a1,-24(s0)
 
     if (cause == EXC_CAUSE_EXTERNAL_INT) {
     2340:	fec42703          	lw	a4,-20(s0)
     2344:	800007b7          	lui	a5,0x80000
-    2348:	00e78793          	add	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
+    2348:	00e78793          	addi	a5,a5,14 # 8000000e <BUS_END+0x3ffffc0e>
     234c:	00f71863          	bne	a4,a5,235c <register_isr+0x34>
         ext_int_handler = isr;
     2350:	fe842703          	lw	a4,-24(s0)
@@ -3391,7 +3420,7 @@ void register_isr(int cause, void (*isr)(void)) {
     } else if (cause == EXC_CAUSE_INTERRUPT_EXPIRE) {
     235c:	fec42703          	lw	a4,-20(s0)
     2360:	800007b7          	lui	a5,0x80000
-    2364:	00d78793          	add	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
+    2364:	00d78793          	addi	a5,a5,13 # 8000000d <BUS_END+0x3ffffc0d>
     2368:	00f71863          	bne	a4,a5,2378 <register_isr+0x50>
         ie_int_handler = isr;
     236c:	fe842703          	lw	a4,-24(s0)
@@ -3408,23 +3437,23 @@ void register_isr(int cause, void (*isr)(void)) {
 }
     238c:	0180006f          	j	23a4 <register_isr+0x7c>
         assert(false);
-    2390:	da1ff0ef          	jal	2130 <_fp_abort>
+    2390:	da1ff0ef          	jal	ra,2130 <_fp_abort>
     2394:	0ff00593          	li	a1,255
     2398:	00000513          	li	a0,0
-    239c:	dbdff0ef          	jal	2158 <gpo_write>
+    239c:	dbdff0ef          	jal	ra,2158 <gpo_write>
     23a0:	0000006f          	j	23a0 <register_isr+0x78>
 }
     23a4:	01c12083          	lw	ra,28(sp)
     23a8:	01812403          	lw	s0,24(sp)
-    23ac:	02010113          	add	sp,sp,32
+    23ac:	02010113          	addi	sp,sp,32
     23b0:	00008067          	ret
 
 000023b4 <exception_on_expire>:
 
 void exception_on_expire(unsigned timeout_ns) {
-    23b4:	fe010113          	add	sp,sp,-32
+    23b4:	fe010113          	addi	sp,sp,-32
     23b8:	00812e23          	sw	s0,28(sp)
-    23bc:	02010413          	add	s0,sp,32
+    23bc:	02010413          	addi	s0,sp,32
     23c0:	fea42623          	sw	a0,-20(s0)
   write_csr(CSR_COMPARE, timeout_ns);
     23c4:	fec42783          	lw	a5,-20(s0)
@@ -3434,15 +3463,15 @@ void exception_on_expire(unsigned timeout_ns) {
 }
     23d0:	00000013          	nop
     23d4:	01c12403          	lw	s0,28(sp)
-    23d8:	02010113          	add	sp,sp,32
+    23d8:	02010113          	addi	sp,sp,32
     23dc:	00008067          	ret
 
 000023e0 <interrupt_on_expire>:
 
 void interrupt_on_expire(unsigned timeout_ns) {
-    23e0:	fe010113          	add	sp,sp,-32
+    23e0:	fe010113          	addi	sp,sp,-32
     23e4:	00812e23          	sw	s0,28(sp)
-    23e8:	02010413          	add	s0,sp,32
+    23e8:	02010413          	addi	s0,sp,32
     23ec:	fea42623          	sw	a0,-20(s0)
   write_csr(CSR_COMPARE, timeout_ns);
     23f0:	fec42783          	lw	a5,-20(s0)
@@ -3452,39 +3481,39 @@ void interrupt_on_expire(unsigned timeout_ns) {
 }
     23fc:	00000013          	nop
     2400:	01c12403          	lw	s0,28(sp)
-    2404:	02010113          	add	sp,sp,32
+    2404:	02010113          	addi	sp,sp,32
     2408:	00008067          	ret
 
 0000240c <enable_interrupts>:
 
 void enable_interrupts() 
 {
-    240c:	fe010113          	add	sp,sp,-32
+    240c:	fe010113          	addi	sp,sp,-32
     2410:	00812e23          	sw	s0,28(sp)
-    2414:	02010413          	add	s0,sp,32
+    2414:	02010413          	addi	s0,sp,32
   set_csr(CSR_STATUS,16);
-    2418:	50a867f3          	csrrs	a5,0x50a,16
+    2418:	50a867f3          	csrrsi	a5,0x50a,16
     241c:	fef42623          	sw	a5,-20(s0)
 }
     2420:	00000013          	nop
     2424:	01c12403          	lw	s0,28(sp)
-    2428:	02010113          	add	sp,sp,32
+    2428:	02010113          	addi	sp,sp,32
     242c:	00008067          	ret
 
 00002430 <disable_interrupts>:
 
 void disable_interrupts() 
 {
-    2430:	fe010113          	add	sp,sp,-32
+    2430:	fe010113          	addi	sp,sp,-32
     2434:	00812e23          	sw	s0,28(sp)
-    2438:	02010413          	add	s0,sp,32
+    2438:	02010413          	addi	s0,sp,32
   clear_csr(CSR_STATUS,16);
-    243c:	50a877f3          	csrrc	a5,0x50a,16
+    243c:	50a877f3          	csrrci	a5,0x50a,16
     2440:	fef42623          	sw	a5,-20(s0)
 }
     2444:	00000013          	nop
     2448:	01c12403          	lw	s0,28(sp)
-    244c:	02010113          	add	sp,sp,32
+    244c:	02010113          	addi	sp,sp,32
     2450:	00008067          	ret
 
 00002454 <__mulsi3>:
@@ -3494,105 +3523,104 @@ void disable_interrupts()
 
 FUNC_BEGIN (__muldi3)
   mv     a2, a0
-    2454:	862a                	mv	a2,a0
+    2454:	00050613          	mv	a2,a0
   li     a0, 0
-    2456:	4501                	li	a0,0
+    2458:	00000513          	li	a0,0
 .L1:
   andi   a3, a1, 1
-    2458:	0015f693          	and	a3,a1,1
+    245c:	0015f693          	andi	a3,a1,1
   beqz   a3, .L2
-    245c:	c291                	beqz	a3,2460 <__mulsi3+0xc>
+    2460:	00068463          	beqz	a3,2468 <__mulsi3+0x14>
   add    a0, a0, a2
-    245e:	9532                	add	a0,a0,a2
+    2464:	00c50533          	add	a0,a0,a2
 .L2:
   srli   a1, a1, 1
-    2460:	8185                	srl	a1,a1,0x1
+    2468:	0015d593          	srli	a1,a1,0x1
   slli   a2, a2, 1
-    2462:	0606                	sll	a2,a2,0x1
+    246c:	00161613          	slli	a2,a2,0x1
   bnez   a1, .L1
-    2464:	f9f5                	bnez	a1,2458 <__mulsi3+0x4>
+    2470:	fe0596e3          	bnez	a1,245c <__mulsi3+0x8>
   ret
-    2466:	8082                	ret
-	...
+    2474:	00008067          	ret
 
-0000246a <__errno>:
-    246a:	8081a503          	lw	a0,-2040(gp) # 20000430 <_impure_ptr>
-    246e:	8082                	ret
+00002478 <__errno>:
+    2478:	8081a503          	lw	a0,-2040(gp) # 20000430 <_impure_ptr>
+    247c:	00008067          	ret
 
-00002470 <setjmp>:
-    2470:	00152023          	sw	ra,0(a0)
-    2474:	c140                	sw	s0,4(a0)
-    2476:	c504                	sw	s1,8(a0)
-    2478:	01252623          	sw	s2,12(a0)
-    247c:	01352823          	sw	s3,16(a0)
-    2480:	01452a23          	sw	s4,20(a0)
-    2484:	01552c23          	sw	s5,24(a0)
-    2488:	01652e23          	sw	s6,28(a0)
-    248c:	03752023          	sw	s7,32(a0)
-    2490:	03852223          	sw	s8,36(a0)
-    2494:	03952423          	sw	s9,40(a0)
-    2498:	03a52623          	sw	s10,44(a0)
-    249c:	03b52823          	sw	s11,48(a0)
-    24a0:	02252a23          	sw	sp,52(a0)
-    24a4:	4501                	li	a0,0
-    24a6:	8082                	ret
+00002480 <setjmp>:
+    2480:	00152023          	sw	ra,0(a0)
+    2484:	00852223          	sw	s0,4(a0)
+    2488:	00952423          	sw	s1,8(a0)
+    248c:	01252623          	sw	s2,12(a0)
+    2490:	01352823          	sw	s3,16(a0)
+    2494:	01452a23          	sw	s4,20(a0)
+    2498:	01552c23          	sw	s5,24(a0)
+    249c:	01652e23          	sw	s6,28(a0)
+    24a0:	03752023          	sw	s7,32(a0)
+    24a4:	03852223          	sw	s8,36(a0)
+    24a8:	03952423          	sw	s9,40(a0)
+    24ac:	03a52623          	sw	s10,44(a0)
+    24b0:	03b52823          	sw	s11,48(a0)
+    24b4:	02252a23          	sw	sp,52(a0)
+    24b8:	00000513          	li	a0,0
+    24bc:	00008067          	ret
 
-000024a8 <longjmp>:
-    24a8:	00052083          	lw	ra,0(a0)
-    24ac:	4140                	lw	s0,4(a0)
-    24ae:	4504                	lw	s1,8(a0)
-    24b0:	00c52903          	lw	s2,12(a0)
-    24b4:	01052983          	lw	s3,16(a0)
-    24b8:	01452a03          	lw	s4,20(a0)
-    24bc:	01852a83          	lw	s5,24(a0)
-    24c0:	01c52b03          	lw	s6,28(a0)
-    24c4:	02052b83          	lw	s7,32(a0)
-    24c8:	02452c03          	lw	s8,36(a0)
-    24cc:	02852c83          	lw	s9,40(a0)
-    24d0:	02c52d03          	lw	s10,44(a0)
-    24d4:	03052d83          	lw	s11,48(a0)
-    24d8:	03452103          	lw	sp,52(a0)
-    24dc:	0015b513          	seqz	a0,a1
-    24e0:	952e                	add	a0,a0,a1
-    24e2:	8082                	ret
-    24e4:	0010                	.2byte	0x10
-    24e6:	0000                	unimp
-    24e8:	0000                	unimp
-    24ea:	0000                	unimp
-    24ec:	7a01                	lui	s4,0xfffe0
-    24ee:	0052                	c.slli	zero,0x14
-    24f0:	7c01                	lui	s8,0xfffe0
-    24f2:	0101                	add	sp,sp,0
-    24f4:	00020c1b          	.4byte	0x20c1b
-    24f8:	001c                	.2byte	0x1c
-    24fa:	0000                	unimp
-    24fc:	0018                	.2byte	0x18
-    24fe:	0000                	unimp
-    2500:	de74                	sw	a3,124(a2)
-    2502:	ffff                	.2byte	0xffff
-    2504:	0024                	add	s1,sp,8
+000024c0 <longjmp>:
+    24c0:	00052083          	lw	ra,0(a0)
+    24c4:	00452403          	lw	s0,4(a0)
+    24c8:	00852483          	lw	s1,8(a0)
+    24cc:	00c52903          	lw	s2,12(a0)
+    24d0:	01052983          	lw	s3,16(a0)
+    24d4:	01452a03          	lw	s4,20(a0)
+    24d8:	01852a83          	lw	s5,24(a0)
+    24dc:	01c52b03          	lw	s6,28(a0)
+    24e0:	02052b83          	lw	s7,32(a0)
+    24e4:	02452c03          	lw	s8,36(a0)
+    24e8:	02852c83          	lw	s9,40(a0)
+    24ec:	02c52d03          	lw	s10,44(a0)
+    24f0:	03052d83          	lw	s11,48(a0)
+    24f4:	03452103          	lw	sp,52(a0)
+    24f8:	0015b513          	seqz	a0,a1
+    24fc:	00b50533          	add	a0,a0,a1
+    2500:	00008067          	ret
+    2504:	0010                	.2byte	0x10
     2506:	0000                	unimp
-    2508:	4400                	lw	s0,8(s0)
-    250a:	100e                	c.slli	zero,0x23
-    250c:	8148                	.2byte	0x8148
-    250e:	8801                	and	s0,s0,0
-    2510:	4402                	lw	s0,0(sp)
-    2512:	080c                	add	a1,sp,16
-    2514:	0000                	unimp
-    2516:	0000                	unimp
+    2508:	0000                	unimp
+    250a:	0000                	unimp
+    250c:	7a01                	lui	s4,0xfffe0
+    250e:	0052                	c.slli	zero,0x14
+    2510:	7c01                	lui	s8,0xfffe0
+    2512:	0101                	addi	sp,sp,0
+    2514:	00020c1b          	.4byte	0x20c1b
     2518:	001c                	.2byte	0x1c
     251a:	0000                	unimp
-    251c:	0038                	add	a4,sp,8
+    251c:	0018                	.2byte	0x18
     251e:	0000                	unimp
-    2520:	de78                	sw	a4,124(a2)
+    2520:	de54                	sw	a3,60(a2)
     2522:	ffff                	.2byte	0xffff
-    2524:	0060                	add	s0,sp,12
+    2524:	0024                	addi	s1,sp,8
     2526:	0000                	unimp
     2528:	4400                	lw	s0,8(s0)
     252a:	100e                	c.slli	zero,0x23
     252c:	8148                	.2byte	0x8148
-    252e:	8801                	and	s0,s0,0
+    252e:	8801                	andi	s0,s0,0
     2530:	4402                	lw	s0,0(sp)
-    2532:	080c                	add	a1,sp,16
+    2532:	080c                	addi	a1,sp,16
     2534:	0000                	unimp
+    2536:	0000                	unimp
+    2538:	001c                	.2byte	0x1c
+    253a:	0000                	unimp
+    253c:	0038                	addi	a4,sp,8
+    253e:	0000                	unimp
+    2540:	de58                	sw	a4,60(a2)
+    2542:	ffff                	.2byte	0xffff
+    2544:	0060                	addi	s0,sp,12
+    2546:	0000                	unimp
+    2548:	4400                	lw	s0,8(s0)
+    254a:	100e                	c.slli	zero,0x23
+    254c:	8148                	.2byte	0x8148
+    254e:	8801                	andi	s0,s0,0
+    2550:	4402                	lw	s0,0(sp)
+    2552:	080c                	addi	a1,sp,16
+    2554:	0000                	unimp
 	...

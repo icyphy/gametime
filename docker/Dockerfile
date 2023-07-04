@@ -62,24 +62,6 @@ ENV LLVM_VERSION 14.0.0
 COPY docker/install.Unix.sh .
 RUN bash ./install.Unix.sh
 
-## Install RISCV Toolchains
-#RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
-## RUN ls
-#RUN mkdir /opt/riscv && \
-#    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
-#    export PATH=$PATH:/opt/riscv/bin && \
-#    riscv32-unknown-elf-gcc -v
-
-### install new gnu toolchain
-RUN git clone https://github.com/riscv/riscv-gnu-toolchain
-WORKDIR /riscv-gnu-toolchain
-RUN apt-get -qq update; \
-    apt-get install -y autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
-RUN ./configure --prefix=/opt/riscv --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32 --with-isa-spec=2.2
-RUN make
-ENV PATH="${PATH}:/opt/riscv/bin"
-WORKDIR /
-
 ## Install ILP Solvers
 RUN apt-get -qq update && \
 #    apt-add-repository universe && \
@@ -91,14 +73,37 @@ RUN apt-get -qq update && \
 ### install newest verilator not from apt-get
 RUN git clone https://github.com/verilator/verilator
 WORKDIR /verilator
+RUN git pull
+RUN git tag
 RUN git checkout v5.008
 RUN apt-get -qq update; \
-    apt-get install -y git help2man perl python3 make clang libfl2 libfl-dev zlib1g zlib1g-dev git autoconf flex bison
-RUN unset VERILATOR_ROOT
+    apt-get install -qqy git help2man perl python3 make clang libfl2 libfl-dev zlib1g zlib1g-dev git autoconf flex bison
 RUN autoconf
+RUN unset VERILATOR_ROOT
 RUN ./configure
 RUN make -j `nproc`
 RUN make install
+WORKDIR /
+
+
+## Install RISCV Toolchains
+#RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
+## RUN ls
+#RUN mkdir /opt/riscv && \
+#    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
+#    export PATH=$PATH:/opt/riscv/bin && \
+#    riscv32-unknown-elf-gcc -v
+
+### install new gnu toolchain
+RUN git clone https://github.com/riscv/riscv-gnu-toolchain
+WORKDIR /riscv-gnu-toolchain
+RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
+RUN apt-get -qq update && \
+    apt-get install -qqy autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
+#RUN ./configure --prefix=/opt/riscv --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32 --with-isa-spec=2.2
+RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
+RUN make
+ENV PATH="${PATH}:/opt/riscv/bin"
 WORKDIR /
 
 RUN apt-get update; \

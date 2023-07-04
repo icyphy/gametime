@@ -1,8 +1,6 @@
 
 
 
-# gametime
-
 ## Docker
 To build the docker file, run from home folder `docker build -t gametime -f docker/Dockerfile .`
 
