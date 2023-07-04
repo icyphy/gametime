@@ -85,7 +85,6 @@ RUN make -j `nproc`
 RUN make install
 WORKDIR /
 
-
 ## Install RISCV Toolchains
 #RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
 ## RUN ls
@@ -100,7 +99,6 @@ WORKDIR /riscv-gnu-toolchain
 RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
 RUN apt-get -qq update && \
     apt-get install -qqy autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
-#RUN ./configure --prefix=/opt/riscv --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32 --with-isa-spec=2.2
 RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
 RUN make
 ENV PATH="${PATH}:/opt/riscv/bin"
@@ -118,19 +116,15 @@ RUN apt-get update; \
     apt-get install -y sbt
 
 ### flexpret
-#COPY ./simulator_backend/flexpret /flexpret
 RUN git clone https://github.com/pretis/flexpret.git
 WORKDIR /flexpret
 RUN git switch gametime-support
-#RUN git checkout 0f20ec37e9a9c2edacfb7650b5fddd9a8022704f
-#RUN git checkout 92a44968a9e2cf5a27b158438331058c041d53d6
 RUN git submodule update --init --recursive
 RUN make verilog_raw
 RUN make emulator
 #export emulator to path: export PATH="$(pwd)/emulator:$PATH"
 ENV PATH="${PATH}:/flexpret/emulator"
 WORKDIR /
-
 
 # RUN /opt/conda/bin/conda install cryptography=38.0.4
 
