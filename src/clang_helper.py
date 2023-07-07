@@ -37,9 +37,6 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     commands: List[str] = ["clang", "-Xclang",
                            "-O1", "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
                            f"-I{flexpret_lib_path}",
-                           # "--target=riscv32", "-march=rv32i",
-                           # "-disable-O0-optnone", "-emit-llvm", "-O0",
-                           # "-g",
                            "-o", output_file, "-c", file_to_compile]
     subprocess.run(commands, check=True)
 
@@ -60,7 +57,6 @@ def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output
                            "-specs=nosys.specs","-march=rv32gc",
                            bc_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
-    #riscv32-unknown-elf-gcc -c notfib2.c -I../../../lib/include -g -static -O0 -march=rv32i -mabi=ilp32 -nostartfiles -specs=nosys.specs
     ## object dump
     dump_file: str = project_config.get_temp_filename_with_extension(".dump", output_name)
     commands = ["llvm-objdump", "-S", "-d", output_file]

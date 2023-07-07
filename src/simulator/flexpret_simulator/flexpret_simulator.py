@@ -14,22 +14,6 @@ class FlexpretSimulator(Simulator):
 
     def object_file_to_mem (self, object_file_name):
 
-        # cwd = os.getcwd()
-        # os.chdir(f'{self.projectConfig.gametime_path}/src/simulator/flexpret_simulator')
-        # flexpret_path_from_flexpret_simulator = f'../../../{self.projectConfig.flexpret_path}'
-        # context_path_from_flexpret_simulator = f'{self.projectConfig.locationOrigDir}'
-        # context_folder = os.listdir(context_path_from_flexpret_simulator)
-        # context_files = []
-        # for entry in context_folder:
-        #     if ((not entry == self.projectConfig.nameOrigFile) and entry.endswith('.c')) or entry.endswith('.o'):
-        #         context_files.append(f'{context_path_from_flexpret_simulator}/{entry}')
-        # context_files.append(f'{self.projectConfig.get_temp_filename_with_extension(".o", object_file_name)}')
-        # app_sources = " ".join(context_files)
-        #
-        # os.system(f'make')
-        # # os.system(f'make FLEXPRET_ROOT_DIR={flexpret_path_from_flexpret_simulator} NAME={object_file_name} APP_SOURCES={app_sources}')
-        # os.chdir(cwd)
-
         makefile_template_path = os.path.join(self.projectConfig.gametime_path, "src", "simulator", "flexpret_simulator", "Makefile")
         path_makefile_path = self.projectConfig.get_temp_filename_with_extension("", "Makefile")
         shutil.copy(makefile_template_path, path_makefile_path)
@@ -48,8 +32,6 @@ class FlexpretSimulator(Simulator):
         os.chdir(self.projectConfig.locationTempDir)
         os.system(f'make FLEXPRET_ROOT_DIR={os.path.join("..", self.projectConfig.gametime_file_path, self.projectConfig.gametime_flexpret_path)} '
                   f'NAME={object_file_name} APP_SOURCES={app_sources}')
-        #
-        # os.system("make -d")
 
         print("cwd", os.getcwd())
         print("flexpret root", os.path.join("..", self.projectConfig.gametime_file_path, self.projectConfig.gametime_flexpret_path))
@@ -69,7 +51,6 @@ class FlexpretSimulator(Simulator):
         cwd = os.getcwd()
         os.chdir(self.projectConfig.locationTempDir)
         os.system(f"fp-emu --measure +ispm={mem_file_name}.mem")
-        # os.system(f"fp-emu +ispm={mem_file_name}.mem")
         os.chdir(cwd)
 
         out_file_path = self.projectConfig.get_temp_filename_with_extension(".out", "measure")
@@ -87,7 +68,6 @@ class FlexpretSimulator(Simulator):
         os.remove(self.projectConfig.locationTempDir)
 
     def measure(self, mem_file_name):
-
         cycleCount = -1
         try:
             cycleCount = self._runSimulatorAndParseOutput(mem_file_name)
