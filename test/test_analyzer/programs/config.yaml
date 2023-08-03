@@ -51,5 +51,6 @@ gametime-project:
     max-infeasible-paths: 100
     ilp-solver: glpk
     smt-solver: z3
-    flexpret_path: ../../flexpret # default path when running on docker
-    gametime_path: .. # default path when running on docker
+    gametime-flexpret-path: ../../flexpret/ # default path when running on docker
+    gametime-path: .. # default path when tests from the test folder
+    gametime-file-path: ../../../.. # default path when tests from the test folder

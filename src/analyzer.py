@@ -20,9 +20,13 @@ from gametime_error import GameTimeError
 from nx_helper import Dag
 from path import Path
 from project_configuration import ProjectConfiguration
+from path_generator import PathGenerator
 
 from numpy import dot, exp, eye, genfromtxt, savetxt
 from numpy.linalg import det, inv, slogdet
+
+from simulator.flexpret_simulator import flexpret_simulator
+from simulator.simulator import Simulator
 
 """Defines a class that maintains information about the code being analyzed,
 such as the name of the file that contains the code being analyzed and
@@ -98,6 +102,8 @@ class Analyzer(object):
         self.errorScaleFactor: int = 0
 
         self.dag_path: str = ""
+
+        self.simulator: Simulator = flexpret_simulator.FlexpretSimulator(self.projectConfig)
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -1009,7 +1015,7 @@ class Analyzer(object):
 
         Precondition: The basis paths have been generated and have values.
         """
-        self.dag.resetEdgeWeights()
+        self.dag.reset_edge_weights()
 
         basis_values = [basisPath.measuredValue for basisPath
                         in self.basisPaths]
@@ -1031,8 +1037,25 @@ class Analyzer(object):
                 reduced_edge_weights[reducedEdgeIndex]
         logger.info("List generated.")
 
+    def generate_paths(self, *args, **kwargs):
+        return PathGenerator.generate_paths(self, *args, **kwargs)
+
     ### NEW Functions ####
-    def change_bt_based_on_path(self, path: Path) -> str:
+    def measure_path(self, path: Path, output_name: str) -> int:
+        # run the entire simulation on the given path, all output files will be using name output + "-gt"
+        output_name = f'{output_name}-gt'
+        path_compiled_filepath: str = self.change_bt_based_on_path(path, output_name)
+        path_object_filepath: str = clang_helper.compile_to_object(path_compiled_filepath, self.projectConfig, output_name)
+        measured_value: int = self.simulator.measure(output_name)
+        return measured_value
+
+    def measure_basis_paths(self):
+        for i in range(len(self.basisPaths)):
+            output_name: str = f'basis-path{i}'
+            p: Path = self.basisPaths[i]
+            p.set_measured_value(self.measure_path(p, output_name))
+
+    def change_bt_based_on_path(self, path: Path, output_name: str) -> str:
         """Change LLVM code to drive program down a path specified by the
         path parameter. Writes the LLVM file back to the maingt folder.
 
@@ -1043,7 +1066,6 @@ class Analyzer(object):
             program_str = preprocessed_file.read()
 
         # assemble path
-        bc_file_name = "path"
 
         prev_condition: str = ""
         prev_block_number: int = 0
@@ -1072,12 +1094,9 @@ class Analyzer(object):
             else:
                 prev_condition = ""
             prev_block_number = int(block_number[1:])
-            bc_file_name += "-{}".format(prev_block_number)
-
-        bc_file_name += "-gt"
 
         # write to file
-        output_path = self.projectConfig.get_temp_filename_with_extension(".bc", bc_file_name)
+        output_path = self.projectConfig.get_temp_filename_with_extension(".bc", output_name)
         with open(output_path, "w") as output_file:
             output_file.write(program_str)
 

@@ -62,6 +62,26 @@ ENV LLVM_VERSION 14.0.0
 COPY docker/install.Unix.sh .
 RUN bash ./install.Unix.sh
 
+## Install RISCV Toolchains
+#RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
+## RUN ls
+#RUN mkdir /opt/riscv && \
+#    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
+#    export PATH=$PATH:/opt/riscv/bin && \
+#    riscv32-unknown-elf-gcc -v
+
+### install new gnu toolchain
+RUN git clone https://github.com/riscv/riscv-gnu-toolchain
+WORKDIR /riscv-gnu-toolchain
+#RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
+RUN git checkout 96d9f40c9d5649089031c476cf37728013212288
+RUN apt-get -qq update && \
+    apt-get install -qqy autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
+RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
+RUN make
+ENV PATH="${PATH}:/opt/riscv/bin"
+WORKDIR /
+
 ## Install ILP Solvers
 RUN apt-get -qq update && \
 #    apt-add-repository universe && \
@@ -83,25 +103,6 @@ RUN unset VERILATOR_ROOT
 RUN ./configure
 RUN make -j `nproc`
 RUN make install
-WORKDIR /
-
-## Install RISCV Toolchains
-#RUN wget https://github.com/stnolting/riscv-gcc-prebuilt/releases/download/rv32i-4.0.0/riscv32-unknown-elf.gcc-12.1.0.tar.gz
-## RUN ls
-#RUN mkdir /opt/riscv && \
-#    tar -xzf riscv32-unknown-elf.gcc-12.1.0.tar.gz -C /opt/riscv/ && \
-#    export PATH=$PATH:/opt/riscv/bin && \
-#    riscv32-unknown-elf-gcc -v
-
-### install new gnu toolchain
-RUN git clone https://github.com/riscv/riscv-gnu-toolchain
-WORKDIR /riscv-gnu-toolchain
-RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
-RUN apt-get -qq update && \
-    apt-get install -qqy autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
-RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
-RUN make
-ENV PATH="${PATH}:/opt/riscv/bin"
 WORKDIR /
 
 RUN apt-get update; \

@@ -41,3 +41,7 @@ class Simulator(object):
         self._measurementDir = os.path.join(projectConfig.locationTempDir,
                                             "%s-%s" % (config.TEMP_MEASUREMENT,
                                                        self.name.lower()))
+
+    def measure(self, file_name):
+        # measure the value on OBJECT file with object_file_name, store all outputs with the same name but different suffix
+        return 0

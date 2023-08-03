@@ -25,7 +25,7 @@ class TestAnalyzer(unittest.TestCase):
         analyzer.create_dag()
         paths = analyzer.generate_basis_paths()
         self.assertIsNotNone(paths[0], "no paths were found")
-        output_file = analyzer.change_bt_based_on_path(paths[0])
+        output_file = analyzer.change_bt_based_on_path(paths[0], "path0-gt")
         self.assertIsNotNone(output_file)
         self.assertTrue(len(output_file) != 0)
         self.assertTrue(os.path.isfile(output_file))
@@ -35,7 +35,7 @@ class TestAnalyzer(unittest.TestCase):
         analyzer.create_dag()
         paths = analyzer.generate_basis_paths()
         self.assertIsNotNone(paths[0], "no paths were found")
-        output_file = analyzer.change_bt_based_on_path(paths[0])
+        output_file = analyzer.change_bt_based_on_path(paths[0],  "path0-gt")
         clang_helper.compile_to_object(output_file, self.project_config)
 
 if __name__ == '__main__':

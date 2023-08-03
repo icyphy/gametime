@@ -47,7 +47,7 @@ def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = Non
     return output_file
 
 
-def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output_name: str = "riscv-gt") -> str:
+def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output_name: str) -> str:
     # compile bc file
     flexpret_lib_path = os.path.join(project_config.gametime_path, project_config.gametime_flexpret_path, "programs",
                                      "lib", "include")
@@ -69,7 +69,7 @@ def dump_object(object_file: str, project_config: ProjectConfiguration) -> str:
     output_file: str = project_config.get_temp_filename_with_extension(".dmp", "dumped")
     cur_cwd: str = os.getcwd()
     os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
-    commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", bc_file, "-c", "-o", output_file]
+    commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", object_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
     os.chdir(cur_cwd)
     return output_file
