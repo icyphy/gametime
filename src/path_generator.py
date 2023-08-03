@@ -305,39 +305,6 @@ class PathGenerator(object):
                 analyzer.add_path_exclusive_constraint(candidatePathEdges)
                 logger.info("Constraint added.")
                 numPathsUnsat += 1
-            # candidatePathEdges = Dag.getEdges(candidatePathNodes)
-            # candidatePathValue = ilpProblem.objVal
-            #
-            # logger.info("Checking if candidate path is feasible...")
-            # logger.info("")
-            # resultPath = analyzer.checkFeasibility(candidatePathNodes,
-            #                                        ilpProblem)
-            # querySatisfiability = resultPath.smtQuery.satisfiability
-            # if querySatisfiability == Satisfiability.SAT:
-            #     logger.info("Candidate path is feasible.")
-            #     resultPath.setPredictedValue(candidatePathValue)
-            #     resultPaths.append(resultPath)
-            #     logger.info("Path %d generated." % (currentPathNum+1))
-            #
-            #     # Exclude the path generated from future iterations.
-            #     analyzer.addPathExclusiveConstraint(candidatePathEdges)
-            #     currentPathNum += 1
-            #     numPathsUnsat = 0
-            # elif querySatisfiability == Satisfiability.UNSAT:
-            #     logger.info("Candidate path is infeasible.")
-            #
-            #     logger.info("Finding the edges to exclude...")
-            #     unsatCore = resultPath.smtQuery.unsatCore
-            #     excludeEdges = resultPath.getEdgesForConditions(unsatCore)
-            #     logger.info("Edges to be excluded found.")
-            #     logger.info("Adding constraint to exclude these edges...")
-            #     if len(excludeEdges) > 0:
-            #         analyzer.addPathExclusiveConstraint(excludeEdges)
-            #     else:
-            #         analyzer.addPathExclusiveConstraint(candidatePathEdges)
-            #     logger.info("Constraint added.")
-            #
-            #     numPathsUnsat += 1
 
             numCandidatePaths += 1
             if extremum is None:

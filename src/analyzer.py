@@ -359,6 +359,7 @@ class Analyzer(object):
 
         if nx_helper.has_cycles(self.dag):
             logger.warning("The control-flow graph has cycles.")
+            #TODO: figure out why still need this with has_cycles
             self._run_loop_detector()
         else:
             logger.info("The control-flow graph has %d nodes and %d edges, "
@@ -645,46 +646,32 @@ class Analyzer(object):
                 num_paths_unsat = 0
             else:  # Row is good, check feasibility
                 logger.info("Possible replacement for row found.")
-                # logger.info("Checking if replacement is feasible...")
+                logger.info("Checking if replacement is feasible...")
                 logger.info("")
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-                basis_paths.append(result_path)
-                current_row += 1
-                num_paths_unsat = 0
-                # result_path = self.check_feasibility(candidate_path_nodes,
-                #                                      ilp_problem)
-                # query_satisfiability = result_path.smtQuery.satisfiability
-                # if query_satisfiability == Satisfiability.SAT:  # Replace and move on
-                #     # Sanity check:
-                #     # A row should not be replaced if it replaces a good
-                #     # row and decreases the determinant. However,
-                #     # replacing a bad row and decreasing the determinant
-                #     # is okay. (TODO: Are we actually doing this?)
-                #     logger.info("Replacement is feasible.")
-                #     logger.info("Row %d replaced." % (current_row + 1))
-                #
-                #     basis_paths.append(result_path)
-                #     current_row += 1
-                #     num_paths_unsat = 0
-                # elif query_satisfiability == Satisfiability.UNSAT:
-                #     # loops back and tries again with current row
-                #     logger.info("Replacement is infeasible.")
-                #     logger.info("Finding the edges to exclude...")
-                #     unsat_core = result_path.smtQuery.unsatCore
-                #     exclude_edges = result_path.get_edges_for_conditions(unsat_core)
-                #     logger.info("Edges to be excluded found.")
-                #     logger.info("Adding a constraint to exclude "
-                #                 "these edges...")
-                #     if len(exclude_edges) > 0:
-                #         self.add_path_exclusive_constraint(exclude_edges)
-                #         infeasible.append(exclude_edges)
-                #     else:
-                #         self.add_path_exclusive_constraint(candidate_path_edges)
-                #         infeasible.append(candidate_path_edges)
-                #     logger.info("Constraint added.")
-                #
-                #     self.basisMatrix[current_row] = prev_matrix_row
-                #     num_paths_unsat += 1
+
+                value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
+                # TODO: replace with actual value of infeasible path
+                if value < float('inf'):
+                    # Sanity check:
+                    # A row should not be replaced if it replaces a good
+                    # row and decreases the determinant. However,
+                    # replacing a bad row and decreasing the determinant
+                    # is okay. (TODO: Are we actually doing this?)
+                    logger.info("Replacement is feasible.")
+                    logger.info("Row %d replaced." % (current_row + 1))
+                    basis_paths.append(result_path)
+                    current_row += 1
+                    num_paths_unsat = 0
+                else:
+                    logger.info("Replacement is infeasible.")
+                    logger.info("Adding a constraint to exclude "
+                                "these edges...")
+                    self.add_path_exclusive_constraint(candidate_path_edges)
+                    infeasible.append(candidate_path_edges)
+                    logger.info("Constraint added.")
+                    self.basisMatrix[current_row] = prev_matrix_row
+                    num_paths_unsat += 1
 
             logger.info("")
             logger.info("")
@@ -761,37 +748,25 @@ class Analyzer(object):
                     basis_paths[current_row] = result_path
                     current_row += 1
                     num_paths_unsat = 0
-                    # result_path = self.check_feasibility(candidate_path_nodes,
-                    #                                      ilp_problem)
-                    # query_satisfiability = result_path.smtQuery.satisfiability
-                    # if query_satisfiability == Satisfiability.SAT:
-                    #     logger.info("Replacement is feasible.")
-                    #     is_two_barycentric = False
-                    #     basis_paths[current_row] = result_path
-                    #     logger.info("Row %d replaced." % (current_row + 1))
-                    #
-                    #     current_row += 1
-                    #     num_paths_unsat = 0
-                    # elif query_satisfiability == Satisfiability.UNSAT:
-                    #     logger.info("Replacement is infeasible.")
-                    #
-                    #     logger.info("Finding the edges to exclude...")
-                    #     unsat_core = result_path.smtQuery.unsatCore
-                    #     exclude_edges = \
-                    #         result_path.get_edges_for_conditions(unsat_core)
-                    #     logger.info("Edges to be excluded found.")
-                    #     logger.info("Adding a constraint to exclude "
-                    #                 "these edges...")
-                    #     if len(exclude_edges) > 0:
-                    #         self.add_path_exclusive_constraint(exclude_edges)
-                    #         infeasible.append(exclude_edges)
-                    #     else:
-                    #         self.add_path_exclusive_constraint(candidate_path_edges)
-                    #         infeasible.append(candidate_path_edges)
-                    #     logger.info("Constraint added.")
-                    #
-                    #     self.basisMatrix[current_row] = prev_matrix_row
-                    #     num_paths_unsat += 1
+
+                    value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
+                    # TODO: replace with actual value of infeasible path
+                    if value < float('inf'):
+                        logger.info("Replacement is feasible.")
+                        is_two_barycentric = False
+                        basis_paths[current_row] = result_path
+                        logger.info("Row %d replaced." % (current_row + 1))
+                        current_row += 1
+                        num_paths_unsat = 0
+                    else:
+                        logger.info("Replacement is infeasible.")
+                        self.add_path_exclusive_constraint(candidate_path_edges)
+                        logger.info("Adding a constraint to exclude "
+                                    "these edges...")
+                        infeasible.append(candidate_path_edges)
+                        logger.info("Constraint added.")
+                        self.basisMatrix[current_row] = prev_matrix_row
+                        num_paths_unsat += 1
                 else:
                     logger.info("No replacement for row %d found." %
                                 (current_row + 1))
@@ -848,160 +823,6 @@ class Analyzer(object):
 
         return edge_weight_list
 
-    # TODO: replace with code that works with LLVM
-    # def check_feasibility(self, path_nodes, ilp_problem):
-    #     """Determines the feasibility of the provided path in the DAG;
-    #     the feasibility is checked with an SMT solver. This method
-    #     returns a Path object that contains, at least, a Query object
-    #     that represents the SMT query that contains the conditions along
-    #     the path provided; the feasibility of the path is the same as the
-    #     satisfiability of this Query object. If the path is feasible,
-    #     then the Path object also contains satisfying assignments.
-    #
-    #     @param path_nodes Path whose feasibility should be checked, given
-    #     as a list of nodes along the path.
-    #     @param ilp_problem Integer linear programming problem that, when solved,
-    #     produced this path, represented as an IlpProblem object.
-    #     @retval Path object as described above.
-    #     """
-    #     # First, check if the candidate path is already a basis path.
-    #     # This allows us to prevent unnecessary work.
-    #     # It is also a hack around a problem in Z3, where the same query
-    #     # can result in different models when checked more than once in
-    #     # the same execution.
-    #     # (See http://stackoverflow.com/q/15731179/1834042 for more details.)
-    #     logger.info("Checking if the candidate path is already "
-    #                 "a basis path...")
-    #     try:
-    #         basis_path_index = self.basisPathsNodes.index(path_nodes)
-    #         logger.info("Candidate path is a basis path.")
-    #
-    #         # Create a copy of the Path object that represents the basis path:
-    #         # we do not want to modify the IlpProblem object associated with
-    #         # the basis Path object.
-    #         path_copy = deepcopy(self.basisPaths[basis_path_index])
-    #         path_copy.ilpProblem = ilp_problem
-    #         return path_copy
-    #     except ValueError as e:
-    #         logger.info("Candidate path is not a basis path.")
-    #
-    #     # Write the candidate path to a file for further analysis
-    #     # by the Phoenix backend.
-    #     logger.info("Writing nodes along candidate path to file...")
-    #     nodes_file = os.path.join(self.projectConfig.locationTempDir,
-    #                              config.TEMP_PATH_NODES)
-    #     try:
-    #         nodes_file_handler = open(nodes_file, "w")
-    #     except EnvironmentError as e:
-    #         errMsg = "Error writing nodes along candidate path: %s" % e
-    #         raise GameTimeError(errMsg)
-    #     else:
-    #         with nodes_file_handler:
-    #             nodes_file_handler.write(" ".join(path_nodes))
-    #     logger.info("Writing complete.")
-    #
-    #     logger.info("Running the Phoenix program analyzer...")
-    #     logger.info("")
-    #     if phoenixHelper.findConditions(self.projectConfig):
-    #         errMsg = "Error running the Phoenix program analyzer."
-    #         raise GameTimeError(errMsg)
-    #     logger.info("Phoenix program analysis complete.")
-    #     logger.info("")
-    #
-    #     logger.info("Reading the line numbers of statements "
-    #                 "along the path...")
-    #     lineNumbersFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                    config.TEMP_PATH_LINE_NUMBERS)
-    #     lineNumbers = Path.readLineNumbersFromFile(lineNumbersFile)
-    #     logger.info("Line numbers of the statements along "
-    #                 "the path read and processed.")
-    #
-    #     logger.info("Reading the conditions along the path...")
-    #     conditionsFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                   config.TEMP_PATH_CONDITIONS)
-    #     conditions = Path.readConditionsFromFile(conditionsFile)
-    #     logger.info("Path conditions read and processed.")
-    #
-    #     logger.info("Reading the edges that are associated with "
-    #                 "the conditions along the path...")
-    #     conditionEdgesFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                       config.TEMP_PATH_CONDITION_EDGES)
-    #     conditionEdges = Path.readConditionEdgesFromFile(conditionEdgesFile)
-    #     logger.info("Edges read and processed.")
-    #
-    #     logger.info("Reading the line numbers and truth values "
-    #                 "of conditional points...")
-    #     conditionTruthsFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                        config.TEMP_PATH_CONDITION_TRUTHS)
-    #     conditionTruths = Path.readConditionTruthsFromFile(conditionTruthsFile)
-    #     logger.info("Path condition truths read and processed.")
-    #
-    #     logger.info("Reading information about array accesses...")
-    #     arrayAccessesFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                      config.TEMP_PATH_ARRAY_ACCESSES)
-    #     arrayAccesses = Path.readArrayAccessesFromFile(arrayAccessesFile)
-    #     logger.info("Array accesses information read and processed.")
-    #
-    #     logger.info("Reading information about the expressions "
-    #                 "for aggregate accesses...")
-    #     aggIndexExprsFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                      config.TEMP_PATH_AGG_INDEX_EXPRS)
-    #     aggIndexExprs = Path.readAggIndexExprsFromFile(aggIndexExprsFile)
-    #     logger.info("Aggregate accesses information read and processed.")
-    #
-    #     logger.info("Reading the SMT query generated by the "
-    #                 "Phoenix program analyzer...")
-    #     smtQueryFile = os.path.join(self.projectConfig.locationTempDir,
-    #                                 "%s.smt" % config.TEMP_PATH_QUERY)
-    #     smtQuery = readQueryFromFile(smtQueryFile)
-    #     logger.info("SMT query read.")
-    #
-    #     assignments = {}
-    #
-    #     logger.info("Checking the satisfiability of the SMT query...")
-    #     smtSolver = self.projectConfig.smtSolver
-    #     smtSolver.checkSat(smtQuery)
-    #     logger.info("Satisfiability checked.")
-    #
-    #     if smtQuery.satisfiability == Satisfiability.SAT:
-    #         logger.info("Candidate path is FEASIBLE.")
-    #
-    #         logger.info("Generating assignments...")
-    #         smtModelParser = self.projectConfig.smtModelParser
-    #         assignments = smtModelParser.parseModel(smtQuery.model,
-    #                                                 arrayAccesses,
-    #                                                 aggIndexExprs,
-    #                                                 self.projectConfig)
-    #         logger.info("Assignments generated.")
-    #     elif smtQuery.satisfiability == Satisfiability.UNSAT:
-    #         logger.info("Candidate path is INFEASIBLE.")
-    #     elif smtQuery.satisfiability == Satisfiability.UNKNOWN:
-    #         errMsg = "Candidate path has UNKNOWN satisfiability."
-    #         raise GameTimeError(errMsg)
-    #
-    #     if self.projectConfig.debugConfig.DUMP_ALL_QUERIES:
-    #         try:
-    #             allQueriesFile = \
-    #                 os.path.join(self.projectConfig.locationTempDir,
-    #                              config.TEMP_PATH_QUERY_ALL)
-    #             allQueriesFileHandler = open(allQueriesFile, "a")
-    #         except EnvironmentError as e:
-    #             errMsg = "Error writing the candidate SMT query: %s" % e
-    #             raise GameTimeError(errMsg)
-    #         else:
-    #             with allQueriesFileHandler:
-    #                 allQueriesFileHandler.write("*** CANDIDATE QUERY ***\n")
-    #                 allQueriesFileHandler.write("%s\n\n" % smtQuery)
-    #
-    #     logger.info("Removing temporary path information files...")
-    #     self._removeTempPathFiles()
-    #     logger.info("Temporary path information files removed.")
-    #     logger.info("")
-    #
-    #     return Path(ilp_problem, path_nodes, lineNumbers,
-    #                 conditions, conditionEdges, conditionTruths,
-    #                 arrayAccesses, aggIndexExprs,
-    #                 smtQuery,)
 
     def estimate_edge_weights(self):
         """Estimates the weights on the edges of the DAG, using the values
@@ -1040,6 +861,12 @@ class Analyzer(object):
         for i in range(len(self.basis_paths)):
             output_name: str = f'basis-path{i}'
             p: Path = self.basis_paths[i]
-            path_analyzer: PathAnalyzer = PathAnalyzer(self, p, output_name)
-            p.set_measured_value(path_analyzer.measure_path(self.simulator))
+            value: int = self.measure_path(p, output_name)
+            # TODO: replace with actual value of infeasible path
+            if value < float('inf'):
+                p.set_measured_value(value)
+
+    def measure_path(self, path: Path, output_name: str) -> int:
+        path_analyzer: PathAnalyzer = PathAnalyzer(self, path, output_name)
+        return path_analyzer.measure_path(self.simulator)
 
