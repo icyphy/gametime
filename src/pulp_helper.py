@@ -7,6 +7,8 @@ from __future__ import annotations  # remove in 3.11
 
 from typing import List, Optional, Dict, Tuple, TYPE_CHECKING
 
+from path import Path
+
 if TYPE_CHECKING:
     from src import Analyzer, ProjectConfiguration
 
@@ -43,7 +45,7 @@ _LP_NAME = "gt-FindExtremePath"
 
 #: Dictionary that maps the name of an integer linear programming solver to
 #: a list of the PuLP solver classes that can interface with the solver.
-_nameIlpSolverMap = {
+_name_ilp_solver_map = {
     # Default integer linear programming solver of the PuLP package.
     "": ([pulp.LpSolverDefault.__class__] if pulp.LpSolverDefault is not None
          else []),
@@ -69,7 +71,7 @@ _nameIlpSolverMap = {
 
 #: Dictionary that maps the name of an integer linear programming solver,
 #: as used by GameTime, to its proper name for display purposes.
-_properNameMap = {
+_proper_name_map = {
     "cbc": "CBC",
     "cbc-pulp": "CBC (provided with the PuLP package)",
     "cplex": "CPLEX",
@@ -89,7 +91,7 @@ def is_ilp_solver_name(name):
         `True` if, and only if, the name provided is the name of a supported
         integer linear programming solver.
     """
-    return name in _nameIlpSolverMap
+    return name in _name_ilp_solver_map
 
 
 def get_ilp_solver_names() -> List[str]:
@@ -97,7 +99,7 @@ def get_ilp_solver_names() -> List[str]:
     Returns:
         List of the names of the supported integer linear programming solvers.
     """
-    return [name for name in _nameIlpSolverMap.keys() if name != ""]
+    return [name for name in _name_ilp_solver_map.keys() if name != ""]
 
 
 def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -> Optional[pulp.LpSolver]:
@@ -106,7 +108,7 @@ def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -
         ilp_solver_name:
             Name of the integer linear programming solver.
         project_config:
-            :class:`~gametime.projectConfiguration.ProjectConfiguration`
+            :class:`~gametime.projectConfiguration.uration`
             object that represents the configuration of a GameTime project.
 
     Returns:
@@ -117,9 +119,9 @@ def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -
     if not is_ilp_solver_name(ilp_solver_name):
         return None
 
-    keep_ilp_solver_output = project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT
-    for ilpSolverClass in _nameIlpSolverMap[ilp_solver_name]:
-        ilp_solver = ilpSolverClass(keepFiles=keep_ilp_solver_output,
+    keep_ilp_solver_output = project_config.debug_config.KEEP_ILP_SOLVER_OUTPUT
+    for ilp_solver_class in _name_ilp_solver_map[ilp_solver_name]:
+        ilp_solver = ilp_solver_class(keepFiles=keep_ilp_solver_output,
                                     msg=keep_ilp_solver_output)
         if ilp_solver.available():
             return ilp_solver
@@ -138,10 +140,10 @@ def get_ilp_solver_name(ilp_solver: pulp.LpSolver) -> Optional[str]:
         or `None`, if no such name can be found.
     """
     ilp_solver_class = ilp_solver.__class__
-    for ilpSolverName in _nameIlpSolverMap:
-        for candidateClass in _nameIlpSolverMap[ilpSolverName]:
-            if candidateClass == ilp_solver_class:
-                return ilpSolverName
+    for ilp_solver_name in _name_ilp_solver_map:
+        for candidate_class in _name_ilp_solver_map[ilp_solver_name]:
+            if candidate_class == ilp_solver_class:
+                return ilp_solver_name
     return None
 
 
@@ -156,7 +158,7 @@ def get_proper_name(ilp_solver_name: str) -> str:
         Proper name of an integer linear programming solver,
         for display purposes.
     """
-    return _properNameMap[ilp_solver_name]
+    return _proper_name_map[ilp_solver_name]
 
 
 def get_ilp_solver_proper_names() -> List[str]:
@@ -201,7 +203,7 @@ def _get_edge_flow_var(analyzer: Analyzer,
     Returns:
         PuLP variable that corresponds to the input edge.
     """
-    return edge_flow_vars[analyzer.dag.edgesIndices[edge]]
+    return edge_flow_vars[analyzer.dag.edges_indices[edge]]
 
 
 def _get_edge_flow_vars(analyzer: Analyzer,
@@ -249,13 +251,13 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
     dag = analyzer.dag
     source = dag.source
     sink = dag.sink
-    num_edges = dag.numEdges
+    num_edges = dag.num_edges
     edges = dag.edges()
     num_paths = len(paths)
 
-    project_config = analyzer.projectConfig
+    project_config = analyzer.project_config
 
-    nodes_except_source_sink = dag.nodesExceptSourceSink
+    nodes_except_source_sink = dag.nodes_except_source_sink
 
     # Set up the linear programming problem.
     logger.info("Number of paths: %d " % num_paths)
@@ -270,10 +272,10 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
     delta = pulp.LpVariable("delta", 0)
     for path in paths:
         path_weights = \
-            _get_edge_flow_vars(analyzer, edge_weights, dag.getEdges(path.nodes))
-        problem += pulp.lpSum(path_weights) <= delta + path.measuredValue
-        problem += pulp.lpSum(path_weights) >= -delta + path.measuredValue
-        print("LENGTH:", path.measuredValue)
+            _get_edge_flow_vars(analyzer, edge_weights, dag.get_edges(path.nodes))
+        problem += pulp.lpSum(path_weights) <= delta + path.measured_value
+        problem += pulp.lpSum(path_weights) >= -delta + path.measured_value
+        print("LENGTH:", path.measured_value)
 
     # Optimize for the least delta
     problem += delta
@@ -288,8 +290,8 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
 
     logger.info("Minimum compatible delta found: %g" % obj_val_min)
 
-    if project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT:
-        _move_ilp_files(os.getcwd(), project_config.locationTempDir)
+    if project_config.debug_config.KEEP_ILP_SOLVER_OUTPUT:
+        _move_ilp_files(os.getcwd(), project_config.location_temp_dir)
     else:
         _remove_temp_ilp_files()
     return obj_val_min
@@ -428,7 +430,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     # compact is now a mapping that for each edge of dag gives an index of an
     # edge in the compact graph.
     compact = make_compact(dag)
-    project_config = analyzer.projectConfig
+    project_config = analyzer.project_config
 
     nodes_except_source_sink = dag.nodesExceptSourceSink
     path_exclusive_constraints = analyzer.pathExclusiveConstraints
@@ -441,10 +443,10 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     # Take M to be the maximum edge length. Add 1.0 to make sure there are
     # no problems due to rounding errors.
-    M = max([path_function_upper(path) for path in paths] + [0]) + 1.0
-    if not weights_positive: M *= num_edges
+    m = max([path_function_upper(path) for path in paths] + [0]) + 1.0
+    if not weights_positive: m *= num_edges
 
-    logger.info("Using value %.2f for M --- the maximum edge weight" % M)
+    logger.info("Using value %.2f for M --- the maximum edge weight" % m)
     logger.info("Creating variables")
 
     values = set()
@@ -457,7 +459,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     edgeFlows = pulp.LpVariable.dicts("EdgeFlow", range(0, new_edges),
                                       0, 1, pulp.LpBinary)
     edge_weights = pulp.LpVariable.dicts(
-        "we", range(0, new_edges), 0 if weights_positive else -M, M)
+        "we", range(0, new_edges), 0 if weights_positive else -m, m)
 
     # for a given 'path' in the original DAG returns the edgeFlow variables
     # corresponding to the edges along the same path in the compact DAG.
@@ -514,13 +516,13 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     # Each product_vars[index] in the longest path should correspond to
     # edge_flows[index] * edge_weights[index]
-    product_vars = pulp.LpVariable.dicts("pe", range(0, new_edges), -M, M)
+    product_vars = pulp.LpVariable.dicts("pe", range(0, new_edges), -m, m)
     for index in range(0, new_edges):
         if extremum == Extremum.LONGEST:
             problem += product_vars[index] <= edge_weights[index]
-            problem += product_vars[index] <= M * edgeFlows[index]
+            problem += product_vars[index] <= m * edgeFlows[index]
         else:
-            problem += product_vars[index] >= edge_weights[index] - M * (1.0 - edgeFlows[index])
+            problem += product_vars[index] >= edge_weights[index] - m * (1.0 - edgeFlows[index])
             problem += product_vars[index] >= 0
 
     objective = pulp.lpSum(product_vars)
@@ -584,8 +586,8 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
         result_path.append(curr_node)
     logger.info("Nodes along the chosen extreme path arranged.")
 
-    if project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT:
-        _move_ilp_files(os.getcwd(), project_config.locationTempDir)
+    if project_config.debug_config.KEEP_ILP_SOLVER_OUTPUT:
+        _move_ilp_files(os.getcwd(), project_config.location_temp_dir)
     else:
         _remove_temp_ilp_files()
     # We're done!
@@ -639,11 +641,11 @@ def find_goodness_of_fit(analyzer, paths, basis):
     dag = analyzer.dag
     source = dag.source
     sink = dag.sink
-    num_edges = dag.numEdges
+    num_edges = dag.num_edges
     edges = dag.edges()
     num_paths = len(paths)
     num_basis = len(basis)
-    project_config = analyzer.projectConfig
+    project_config = analyzer.project_config
 
     # Set up the linear programming problem.
     logger.info("Number of paths: %d " % num_paths)
@@ -711,11 +713,11 @@ def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
         Returns:
                List of paths satisfying the condition stated above
     """
-    project_config = analyzer.projectConfig
+    project_config = analyzer.project_config
     dag = analyzer.dag
-    source = dag.soure
+    source = dag.source
     sink = dag.sink
-    num_edges = dag.numEdges
+    num_edges = dag.num_edges
     edges = dag.edges()
     num_paths = len(paths)
 
@@ -800,12 +802,12 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     """
     # Make temporary variables for the frequently accessed
     # variables from the ``Analyzer`` object provided.
-    project_config = analyzer.projectConfig
+    project_config = analyzer.project_config
 
     dag = analyzer.dag
     source = dag.source
     sink = dag.sink
-    num_edges = dag.numEdges
+    num_edges = dag.num_edges
 
     nodes_except_source_sink = dag.nodesExceptSourceSink
     edges = list(dag.allEdges)
@@ -970,8 +972,8 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
         result_path.append(curr_node)
     logger.info("Nodes along the chosen extreme path arranged.")
 
-    if project_config.debugConfig.KEEP_ILP_SOLVER_OUTPUT:
-        _move_ilp_files(os.getcwd(), project_config.locationTempDir)
+    if project_config.debug_config.KEEP_ILP_SOLVER_OUTPUT:
+        _move_ilp_files(os.getcwd(), project_config.location_temp_dir)
     else:
         _remove_temp_ilp_files()
 

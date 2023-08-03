@@ -670,7 +670,7 @@ class Analyzer(object):
                     self.add_path_exclusive_constraint(candidate_path_edges)
                     infeasible.append(candidate_path_edges)
                     logger.info("Constraint added.")
-                    self.basisMatrix[current_row] = prev_matrix_row
+                    self.basis_matrix[current_row] = prev_matrix_row
                     num_paths_unsat += 1
 
             logger.info("")
@@ -765,7 +765,7 @@ class Analyzer(object):
                                     "these edges...")
                         infeasible.append(candidate_path_edges)
                         logger.info("Constraint added.")
-                        self.basisMatrix[current_row] = prev_matrix_row
+                        self.basis_matrix[current_row] = prev_matrix_row
                         num_paths_unsat += 1
                 else:
                     logger.info("No replacement for row %d found." %
