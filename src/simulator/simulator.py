@@ -4,7 +4,7 @@
 to interact with, a simulator, which will be used to measure values
 that correspond to different paths in the code that is being analyzed.
 """
-from src import ProjectConfiguration
+from project_configuration import ProjectConfiguration
 
 """See the LICENSE file, located in the root directory of
 the source distribution and

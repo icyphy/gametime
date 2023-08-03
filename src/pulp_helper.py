@@ -7,10 +7,10 @@ from __future__ import annotations  # remove in 3.11
 
 from typing import List, Optional, Dict, Tuple, TYPE_CHECKING
 
-from path import Path
 
 if TYPE_CHECKING:
-    from src import Analyzer, ProjectConfiguration
+    from project_configuration import ProjectConfiguration
+    from analyzer import Analyzer
 
 import os
 
@@ -181,7 +181,7 @@ class IlpProblem(pulp.LpProblem):
         super(IlpProblem, self).__init__(*args, **kwargs)
 
         #: Value of the objective function, stored for efficiency purposes.
-        self.objVal = None
+        self.obj_val = None
 
 
 def _get_edge_flow_var(analyzer: Analyzer,
@@ -229,7 +229,7 @@ def _get_edge_flow_vars(analyzer: Analyzer,
     return [_get_edge_flow_var(analyzer, edge_flow_vars, edge) for edge in edges]
 
 
-def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
+def find_least_compatible_mu_max(analyzer: Analyzer, paths):
     """This function returns the least dealta in the underlying graph, as
        specified by 'analyzer', that is feasible with the given set of
        measurements as specified by 'paths'. The method does not take into
@@ -282,7 +282,7 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths: List[Path]):
     logger.info("Finding the minimum value of the objective function...")
 
     problem.sense = pulp.LpMinimize
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=project_config.ilp_solver)
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Maximum value not found.")
         return []
@@ -327,8 +327,8 @@ def find_longest_path_with_delta(analyzer, paths, delta,
     # ILP due to floating-point issues
     delta *= 1.01
     val, result_path, problem = generate_and_solve_core_problem(
-        analyzer, paths, (lambda path: path.measuredValue + delta),
-        (lambda path: path.measuredValue - delta),
+        analyzer, paths, (lambda path: path.measured_value + delta),
+        (lambda path: path.measured_value - delta),
         True, extremum=extremum)
     return result_path, problem
 
@@ -419,10 +419,10 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
            path and the ILP problem generated.
     """
     dag = analyzer.dag
-    dag.initializeDictionaries()
+    dag.initialize_dictionaries()
     source = dag.source
     sink = dag.sink
-    num_edges = dag.numEdges
+    num_edges = dag.num_edges
     edges = dag.edges()
     num_paths = len(paths)
 
@@ -432,9 +432,9 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     compact = make_compact(dag)
     project_config = analyzer.project_config
 
-    nodes_except_source_sink = dag.nodesExceptSourceSink
-    path_exclusive_constraints = analyzer.pathExclusiveConstraints
-    path_bundled_constraints = analyzer.pathBundledConstraints
+    nodes_except_source_sink = dag.nodes_except_source_sink
+    path_exclusive_constraints = analyzer.path_exclusive_constraints
+    path_bundled_constraints = analyzer.path_bundled_constraints
 
     # Set up the linear programming problem.
     logger.info("Number of paths: %d " % num_paths)
@@ -456,7 +456,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     # Set up the variables that correspond to the flow through each edge.
     # Set each of the variables to be an integer binary variable.
-    edgeFlows = pulp.LpVariable.dicts("EdgeFlow", range(0, new_edges),
+    edge_flows = pulp.LpVariable.dicts("EdgeFlow", range(0, new_edges),
                                       0, 1, pulp.LpBinary)
     edge_weights = pulp.LpVariable.dicts(
         "we", range(0, new_edges), 0 if weights_positive else -m, m)
@@ -470,14 +470,14 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     for path in paths:
         path_weights = \
-            get_new_indices(compact, edge_weights, dag.getEdges(path.nodes))
+            get_new_indices(compact, edge_weights, dag.get_edges(path.nodes))
         problem += pulp.lpSum(path_weights) <= path_function_upper(path)
         problem += pulp.lpSum(path_weights) >= path_function_lower(path)
 
     # Add a constraint for the flow from the source. The flow through all_temp_files of
     # the edges out of the source should sum up to exactly 1.
     edge_flows_from_source = \
-        get_new_indices(compact, edgeFlows, dag.out_edges(source))
+        get_new_indices(compact, edge_flows, dag.out_edges(source))
     problem += pulp.lpSum(edge_flows_from_source) == 1, "Flows from source"
 
     # Add constraints for the rest of the nodes (except sink). The flow
@@ -488,9 +488,9 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     for node in nodes_except_source_sink:
         if (dag.neighbors(node) == 1) and (dag.predecessors(node) == 1):
             continue
-        edge_flows_to_node = get_new_indices(compact, edgeFlows,
+        edge_flows_to_node = get_new_indices(compact, edge_flows,
                                              dag.in_edges(node))
-        edge_flows_from_node = get_new_indices(compact, edgeFlows,
+        edge_flows_from_node = get_new_indices(compact, edge_flows,
                                                dag.out_edges(node))
         problem += \
             (pulp.lpSum(edge_flows_to_node) == pulp.lpSum(edge_flows_from_node),
@@ -498,7 +498,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
     # Add a constraint for the flow to the sink. The flow through all_temp_files of
     # the edges into the sink should sum up to exactly 1.
-    edge_flows_to_sink = get_new_indices(compact, edgeFlows,
+    edge_flows_to_sink = get_new_indices(compact, edge_flows,
                                          dag.in_edges(sink))
     problem += pulp.lpSum(edge_flows_to_sink) == 1, "Flows to sink"
 
@@ -508,11 +508,11 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     # the number of edges in the constraint. Hence, if a constraint
     # contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.
     # This way, all_temp_files three of these edges can never be taken together.
-    for constraintNum, path in enumerate(path_exclusive_constraints):
-        edge_flows_in_constraint = get_new_indices(compact, edgeFlows, path)
+    for constraint_num, path in enumerate(path_exclusive_constraints):
+        edge_flows_in_constraint = get_new_indices(compact, edge_flows, path)
         problem += (pulp.lpSum(edge_flows_in_constraint) <=
                     (len(edge_flows_in_constraint) - 1),
-                    "Path exclusive constraint %d" % (constraintNum + 1))
+                    "Path exclusive constraint %d" % (constraint_num + 1))
 
     # Each product_vars[index] in the longest path should correspond to
     # edge_flows[index] * edge_weights[index]
@@ -520,9 +520,9 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     for index in range(0, new_edges):
         if extremum == Extremum.LONGEST:
             problem += product_vars[index] <= edge_weights[index]
-            problem += product_vars[index] <= m * edgeFlows[index]
+            problem += product_vars[index] <= m * edge_flows[index]
         else:
-            problem += product_vars[index] >= edge_weights[index] - m * (1.0 - edgeFlows[index])
+            problem += product_vars[index] >= edge_weights[index] - m * (1.0 - edge_flows[index])
             problem += product_vars[index] >= 0
 
     objective = pulp.lpSum(product_vars)
@@ -535,7 +535,7 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
     else:
         logger.info("Finding the minimum value of the objective function...")
         problem.sense = pulp.LpMinimize
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=project_config.ilp_solver)
 
     if print_problem: logger.info(problem)
 
@@ -544,22 +544,22 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
         return -1, [], problem
 
     obj_val_max = pulp.value(objective)
-    problem.objVal = obj_val_max
+    problem.obj_val = obj_val_max
     logger.info("Maximum value found: %g" % obj_val_max)
 
     logger.info("Finding the path that corresponds to the maximum value...")
     # Determine the edges along the extreme path using the solution.
-    max_path = [edges[edgeNum] for edgeNum in edgeFlows
-                if edgeFlows[edgeNum].value() > 0.1]
+    max_path = [edges[edge_num] for edge_num in edge_flows
+                if edge_flows[edge_num].value() > 0.1]
     logger.info("Path found.")
 
-    total_length = sum([product_vars[edgeNum].value() for edgeNum in edgeFlows
-                        if edgeFlows[edgeNum].value() == 1])
+    total_length = sum([product_vars[edge_num].value() for edge_num in edge_flows
+                        if edge_flows[edge_num].value() == 1])
     logger.info("Total length of the path %.2f" % total_length)
     obj_val_max = total_length
 
-    max_path = [edgeNum for edgeNum in range(0, new_edges)
-                if edgeFlows[edgeNum].value() > 0.1]
+    max_path = [edge_num for edge_num in range(0, new_edges)
+                if edge_flows[edge_num].value() > 0.1]
     extreme_path = []
     # reverse extreme_path according to the compact edgeMap
     for edge in max_path:
@@ -678,7 +678,7 @@ def find_goodness_of_fit(analyzer, paths, basis):
     problem += bound
     problem.sense = pulp.LpMinimize
 
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=project_config.ilp_solver)
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Minimum value not found.")
         return [], problem
@@ -758,7 +758,7 @@ def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
     problem += objective
     problem.sense = pulp.LpMinimize
 
-    problem_status = problem.solve(solver=project_config.ilpSolver)
+    problem_status = problem.solve(solver=project_config.ilp_solver)
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Minimum value not found.")
         return [], problem
@@ -797,7 +797,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
         If no such path is feasible, given the constraints stored in
         the ``Analyzer`` object and the ``Interval`` object provided,
         the first element of the tuple is an empty list, and the second
-        element of the tuple is an ``IlpProblem`` object whose ``objVal``
+        element of the tuple is an ``IlpProblem`` object whose ``obj_al``
         instance variable is None.
     """
     # Make temporary variables for the frequently accessed
@@ -809,12 +809,12 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     sink = dag.sink
     num_edges = dag.num_edges
 
-    nodes_except_source_sink = dag.nodesExceptSourceSink
-    edges = list(dag.allEdges)
-    edge_weights = dag.edgeWeights
+    nodes_except_source_sink = dag.nodes_except_source_sink
+    edges = list(dag.all_edges)
+    edge_weights = dag.edge_weights
 
-    path_exclusive_constraints = analyzer.pathExclusiveConstraints
-    path_bundled_constraints = analyzer.pathBundledConstraints
+    path_exclusive_constraints = analyzer.path_exclusive_constraints
+    path_bundled_constraints = analyzer.path_bundled_constraints
 
     # Set up the linear programming problem.
     logger.info("Setting up the integer linear programming problem...")
@@ -887,12 +887,12 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
         edge_weight = edge_weights[edge_index]
         weighted_edge_flow_vars.append(edge_weight * edge_flow_var)
     interval = interval or Interval()
-    if interval.hasFiniteLowerBound():
+    if interval.has_finite_lower_bound():
         problem += \
-            (pulp.lpSum(weighted_edge_flow_vars) >= interval.lowerBound)
-    if interval.hasFiniteUpperBound():
+            (pulp.lpSum(weighted_edge_flow_vars) >= interval.lower_bound)
+    if interval.has_finite_upper_bound():
         problem += \
-            (pulp.lpSum(weighted_edge_flow_vars) <= interval.upperBound)
+            (pulp.lpSum(weighted_edge_flow_vars) <= interval.upper_bound)
 
     logger.info("Variables created and constraints added.")
 
@@ -907,7 +907,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     logger.info("Finding the maximum value of the objective function...")
 
     problem.sense = pulp.LpMaximize
-    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilpSolver, project_config))
+    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilp_solver, project_config))
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Maximum value not found.")
         return [], problem
@@ -924,7 +924,7 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     logger.info("Finding the minimum value of the objective function...")
 
     problem.sense = pulp.LpMinimize
-    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilpSolver, project_config))
+    problem_status = problem.solve(solver=get_ilp_solver(project_config.ilp_solver, project_config))
     if problem_status != pulp.LpStatusOptimal:
         logger.info("Minimum value not found.")
         return [], problem
@@ -934,8 +934,8 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
 
     logger.info("Finding the path that corresponds to the minimum value...")
     # Determine the edges along the extreme path using the solution.
-    min_path = [edges[edgeNum] for edgeNum in edge_flows
-                if edge_flows[edgeNum].value() == 1]
+    min_path = [edges[edge_num] for edge_num in edge_flows
+                if edge_flows[edge_num].value() == 1]
     logger.info("Path found.")
 
     # Choose the correct extreme path based on the optimal solutions
@@ -945,12 +945,12 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
         extreme_path = max_path if abs_max >= abs_min else min_path
         problem.sense = (pulp.LpMaximize if abs_max >= abs_min
                          else pulp.LpMinimize)
-        problem.objVal = max(abs_max, abs_min)
+        problem.obj_val = max(abs_max, abs_min)
     elif extremum is Extremum.SHORTEST:
         extreme_path = min_path if abs_max >= abs_min else max_path
         problem.sense = (pulp.LpMinimize if abs_max >= abs_min
                          else pulp.LpMaximize)
-        problem.objVal = min(abs_max, abs_min)
+        problem.obj_val = min(abs_max, abs_min)
 
     # Arrange the nodes along the extreme path in order of traversal
     # from source to sink.

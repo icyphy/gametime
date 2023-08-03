@@ -22,7 +22,7 @@ from path_generator import PathGenerator
 from numpy import dot, exp, eye
 from numpy.linalg import det, inv, slogdet
 
-from simulator.flexpret_simulator import flexpret_simulator
+from simulator.flexpret_simulator.flexpret_simulator import FlexpretSimulator
 from simulator.simulator import Simulator
 
 """Defines a class that maintains information about the code being analyzed,
@@ -85,7 +85,7 @@ class Analyzer(object):
         # List of lists, each of which is a list of IDs of the nodes in
         # the DAG along each basis path. Each ID is a string. The lists are
         # arranged in the same order as the Path objects associated with
-        # the basis paths are arranged in the `basisPaths' list.
+        # the basis paths are arranged in the `basis_paths' list.
         # This list is maintained for efficiency purposes.
         self.basis_paths_nodes = []
 
@@ -100,7 +100,7 @@ class Analyzer(object):
         self.dag_path: str = ""
 
         #TODO: make this user input
-        self.simulator: Simulator = flexpret_simulator.FlexpretSimulator(self.project_config)
+        self.simulator: Simulator = FlexpretSimulator(self.project_config)
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -149,8 +149,8 @@ class Analyzer(object):
             flexpret_lib_path: str = os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
                                                   "programs", "lib", "include")
             processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                           self.project_config.name_orig_file, flexpret_lib_path)
-
+                                                          f"{self.project_config.name_orig_no_extension}gt", flexpret_lib_path)
+        print(self.project_config.location_temp_file)
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list
             processing = self._run_inliner(input_file=processing)
@@ -159,8 +159,7 @@ class Analyzer(object):
         if self.project_config.UNROLL_LOOPS:
             processing = self._run_loop_unroller(compiled_file=processing)
 
-        self.dag_path = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir,
-                                                       self.project_config.location_temp_dir, self.project_config.name_orig_file)
+        self.dag_path = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir)
         self.preprocessed_path: str = processing
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
@@ -195,7 +194,7 @@ class Analyzer(object):
     #         logger.info("")
     #         logger.info("Other source files merged.")
 
-    def _run_loop_unroller(self, compiled_file: str = None):
+    def _run_loop_unroller(self, compiled_file: str):
         """As part of preprocessing, runs CIL on the source file under
         analysis to unroll loops. A copy of the file that results from
         the CIL preprocessing is made and renamed for use by other
@@ -204,10 +203,9 @@ class Analyzer(object):
         """
         preprocessed_file: str = self.project_config.location_temp_file
 
-        if not compiled_file:
-            compiled_file = self.project_config.get_temp_filename_with_extension(".bc", "compile-gt")
         # Infer the name of the file that results from the CIL preprocessing.
-        unrolled_file: str = clang_helper.unroll_loops(compiled_file, self.project_config.location_temp_dir)
+        unrolled_file: str = clang_helper.unroll_loops(compiled_file, self.project_config.location_temp_dir,
+                                                       f"{self.project_config.name_orig_no_extension}gt-unrolled")
 
         logger.info("Preprocessing the file: unrolling loops in the code...")
 
@@ -216,18 +214,19 @@ class Analyzer(object):
             raise GameTimeError(err_msg)
         else:
             shutil.copyfile(unrolled_file, preprocessed_file)
-            shutil.move(unrolled_file,
-                        "%s%s.bt" % (self.project_config.location_temp_no_extension,
-                                     config.TEMP_SUFFIX_UNROLLED))
-            if not self.project_config.debug_config.KEEP_CIL_TEMPS:
-                clang_helper.remove_temp_cil_files(self.project_config)
+            # shutil.move(unrolled_file,
+            #             "%s%s.bt" % (self.project_config.location_temp_no_extension,
+            #                          config.TEMP_SUFFIX_UNROLLED))
+            # if not self.project_config.debug_config.KEEP_CIL_TEMPS:
+            #     clang_helper.remove_temp_cil_files(self.project_config)
 
             logger.info("")
             logger.info("Loops in the code have been unrolled.")
-            return "%s%s.bt" % (self.project_config.location_temp_no_extension,
-                                config.TEMP_SUFFIX_UNROLLED)
+            # return "%s%s.bt" % (self.project_config.location_temp_no_extension,
+            #                     config.TEMP_SUFFIX_UNROLLED)
+            return unrolled_file
 
-    def _run_inliner(self, input_file: str = None):
+    def _run_inliner(self, input_file: str):
         """As part of preprocessing, runs CIL on the source file under
         analysis to inline functions. A copy of the file that results from
         the CIL preprocessing is made and renamed for use by other
@@ -237,27 +236,26 @@ class Analyzer(object):
         preprocessed_file = self.project_config.location_temp_file
         # Infer the name of the file that results from the CIL preprocessing.
 
-        if not input_file:
-            input_file = self.project_config.get_temp_filename_with_extension(".bc", "inlined-gt")
-
         logger.info("Preprocessing the file: inlining...")
 
-        inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir)
+        inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
+                                                     f"{self.project_config.name_orig_no_extension}gt-inlined")
         if not inlined_file:
             err_msg = "Error running the inliner."
             raise GameTimeError(err_msg)
         else:
             shutil.copyfile(inlined_file, preprocessed_file)
-            shutil.move(inlined_file,
-                        "%s%s.bt" % (self.project_config.location_temp_no_extension,
-                                     config.TEMP_SUFFIX_INLINED))
-            if not self.project_config.debug_config.KEEP_CIL_TEMPS:
-                clang_helper.remove_temp_cil_files(self.project_config)
+            # shutil.move(inlined_file,
+            #             "%s%s.bt" % (self.project_config.location_temp_no_extension,
+            #                          config.TEMP_SUFFIX_INLINED))
+            # if not self.project_config.debug_config.KEEP_CIL_TEMPS:
+            #     clang_helper.remove_temp_cil_files(self.project_config)
 
             logger.info("")
             logger.info("Inlining complete.")
-            return "%s%s.bt" % (self.project_config.location_temp_no_extension,
-                                config.TEMP_SUFFIX_INLINED)
+            # return "%s%s.bt" % (self.project_config.location_temp_no_extension,
+            #                     config.TEMP_SUFFIX_INLINED)
+            return inlined_file
 
     # TODO: Figure out what this is supposed to do (see self._preprocess)
     # def _runCil(self):
@@ -479,7 +477,7 @@ class Analyzer(object):
             # query_satisfiability = result_path.smtQuery.satisfiability
             # if query_satisfiability == Satisfiability.SAT:
             #     logger.info("Path is feasible.")
-            #     self.basisPaths.append(result_path)
+            #     self.basis_paths.append(result_path)
             #     edge_node_paths.append(candidate_path_edges)
             # elif query_satisfiability == Satisfiability.UNSAT:
             #     logger.info("Path is infeasible.")
@@ -502,7 +500,7 @@ class Analyzer(object):
         self.basis_paths_nodes = [path.nodes for path in self.basis_paths]
         return self.basis_paths
 
-    def generate_basis_paths(self):
+    def  generate_basis_paths(self):
         """Generates a list of "Path" objects, each of which represents
         a basis path of the code being analyzed. The basis "Path" objects
         are regenerated each time this method is called.
@@ -601,7 +599,7 @@ class Analyzer(object):
             candidate_path_nodes, ilp_problem = pulp_helper.find_extreme_path(self)
             logger.info("")
 
-            if ilp_problem.objVal is None:
+            if ilp_problem.obj_val is None:
                 logger.info("Unable to find a candidate path to "
                             "replace row %d." % (current_row + 1))
                 logger.info("Moving the bad row to the bottom "
@@ -649,7 +647,10 @@ class Analyzer(object):
                 logger.info("Checking if replacement is feasible...")
                 logger.info("")
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-
+                # #TODO: replace the next three lines with the commented section
+                # basis_paths.append(result_path)
+                # current_row += 1
+                # num_paths_unsat = 0
                 value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
                 # TODO: replace with actual value of infeasible path
                 if value < float('inf'):
@@ -748,7 +749,7 @@ class Analyzer(object):
                     basis_paths[current_row] = result_path
                     current_row += 1
                     num_paths_unsat = 0
-
+                    #   TODO: fix commented section
                     value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
                     # TODO: replace with actual value of infeasible path
                     if value < float('inf'):
@@ -767,6 +768,9 @@ class Analyzer(object):
                         logger.info("Constraint added.")
                         self.basis_matrix[current_row] = prev_matrix_row
                         num_paths_unsat += 1
+
+
+
                 else:
                     logger.info("No replacement for row %d found." %
                                 (current_row + 1))
@@ -867,6 +871,6 @@ class Analyzer(object):
                 p.set_measured_value(value)
 
     def measure_path(self, path: Path, output_name: str) -> int:
-        path_analyzer: PathAnalyzer = PathAnalyzer(self, path, output_name)
+        path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
         return path_analyzer.measure_path(self.simulator)
 

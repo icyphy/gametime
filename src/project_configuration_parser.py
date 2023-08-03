@@ -60,7 +60,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         maximum_error_scale_factor = 10
         determinant_threshold, max_infeasible_paths = 0.001, 100
         model_as_nested_arrays, prevent_basis_refinement = False, False
-        ilp_solver_name, smt_solver_name = "", ""
+        ilp_solver_name = ""
         gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
 
         # Process information about the file to be analyzed.
@@ -113,8 +113,6 @@ class YAMLConfigurationParser(ConfigurationParser):
                     prevent_basis_refinement = bool(analysis_config[key])
                 case "ilp-solver":
                     ilp_solver_name = analysis_config[key]
-                case "smt-solver":
-                    smt_solver_name = analysis_config[key]
                 case "gametime-flexpret-path":
                     gametime_flexpret_path = analysis_config[key]
                 case "gametime-path":
@@ -128,7 +126,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         # DebugConfiguration object.
         keep_cil_temps, dump_ir, keep_ilp_solver_output = False, False, False
         dump_instruction_trace, dump_path, dump_all_paths = False, False, False
-        dump_smt_trace, dump_all_queries = False, False
+        dump_all_queries = False
         keep_parser_output, keep_simulator_output = False, False
 
         debug_config: dict[str, Any] = raw_config.get("debug", {})
@@ -147,8 +145,6 @@ class YAMLConfigurationParser(ConfigurationParser):
                     dump_path = value
                 case "dump-all_temp_files-paths":
                     dump_all_paths = value
-                case "dump-smt-trace":
-                    dump_smt_trace = value
                 case "dump-all_temp_files-queries":
                     dump_all_queries = value
                 case "keep-parser-output":
@@ -160,11 +156,11 @@ class YAMLConfigurationParser(ConfigurationParser):
 
         debug_configuration: DebugConfiguration = DebugConfiguration(keep_cil_temps, dump_ir,
                                                                      keep_ilp_solver_output, dump_instruction_trace,
-                                                                     dump_path, dump_all_paths, dump_smt_trace,
+                                                                     dump_path, dump_all_paths,
                                                                      dump_all_queries, keep_parser_output,
                                                                      keep_simulator_output)
 
-        project_config: ProjectConfiguration = ProjectConfiguration(location_file, func, smt_solver_name,
+        project_config: ProjectConfiguration = ProjectConfiguration(location_file, func,
                                                                     start_label, end_label, included,
                                                                     merged, inlined, unroll_loops,
                                                                     randomize_initial_basis,

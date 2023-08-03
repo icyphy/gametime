@@ -328,7 +328,7 @@ class ProjectConfiguration(object):
         :param ilp_solver_name:
         """
         # TODO: Make it real
-        self.ilpSolver = ilp_solver_name.lower()
+        self.ilp_solver = ilp_solver_name.lower()
 
     def get_temp_filename_with_extension(self, extension: str, name: str = None) -> str:
         """ Return path of temporary file with name and extension. Extension should

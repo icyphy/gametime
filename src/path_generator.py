@@ -144,7 +144,7 @@ class PathGenerator(object):
             logger.info("Generating all feasible paths in decreasing order "
                         "of value...")
             paths = \
-            PathGenerator._generate_paths(analyzer, analyzer.dag.numPaths,
+            PathGenerator._generate_paths(analyzer, analyzer.dag.num_paths,
                                          pulp_helper.Extremum.LONGEST,
                                          interval, use_ob_extraction)
         elif path_type == PathType.ALL_INCREASING:
@@ -212,7 +212,7 @@ class PathGenerator(object):
             logger.info("Using the new algorithm to extract the longest path")
             logger.info("Finding Least Compatible Delta")
             mu_max = pulp_helper.find_least_compatible_mu_max(
-                analyzer, analyzer.basisPaths)
+                analyzer, analyzer.basis_paths)
             logger.info("Found the least mu_max compatible with measurements: "
                         "%.2f in %.2f seconds" %
                         (mu_max, time.perf_counter()- before_time))
@@ -222,11 +222,11 @@ class PathGenerator(object):
             logger.info("Calculating error bounds in the estimate")
             analyzer.error_scale_factor, path, ilp_problem = \
                 pulp_helper.find_worst_expressible_path(
-                    analyzer, analyzer.basisPaths, 0)
+                    analyzer, analyzer.basis_paths, 0)
             logger.info(
                 "Total maximal error in estimates is 2 x %.2f x %.2f = %.2f" %
-                (analyzer.errorScaleFactor, mu_max,
-                2 * analyzer.errorScaleFactor * mu_max))
+                (analyzer.error_scale_factor, mu_max,
+                2 * analyzer.error_scale_factor * mu_max))
             logger.info("Calculated in %.2f ms" % (time.perf_counter()- before_time))
         else:
             analyzer.estimate_edge_weights()
@@ -240,7 +240,7 @@ class PathGenerator(object):
             logger.info("So far, %d candidate paths were found to be "
                         "unsatisfiable." % num_paths_unsat)
 
-            if analyzer.pathDimension == 1:
+            if analyzer.path_dimension == 1:
                 warn_msg = ("Basis matrix has dimensions 1x1. "
                            "There is only one path through the function "
                            "under analysis.")
@@ -260,7 +260,7 @@ class PathGenerator(object):
             if use_ob_extraction:
                 candidate_path_nodes, ilp_problem = \
                     pulp_helper.find_longest_path_with_delta(
-                        analyzer, analyzer.basisPaths, mu_max, extremum)
+                        analyzer, analyzer.basis_paths, mu_max, extremum)
             else:
                 candidate_path_nodes, ilp_problem = \
                     pulp_helper.find_extreme_path(analyzer,

@@ -7,7 +7,7 @@ import stat
 
 import clang_helper
 from simulator.simulator import Simulator
-from src import ProjectConfiguration
+from project_configuration import ProjectConfiguration
 from defaults import logger
 
 
@@ -47,14 +47,10 @@ class FlexpretSimulator(Simulator):
         # run make to generate .mem file
         cwd = os.getcwd()
         os.chdir(stored_folder)
-        os.system(f'make FLEXPRET_ROOT_DIR={os.path.join("..", self.project_config.gametime_file_path, self.project_config.gametime_flexpret_path)} '
+        # the three ".." is to get from the stored folder file to the simulated file,
+        # stored_folder = {simulated_file_path}/{app name}gt/{path name}/{Flexpret}
+        os.system(f'make FLEXPRET_ROOT_DIR={os.path.join("..", "..", "..", self.project_config.gametime_file_path, self.project_config.gametime_flexpret_path)} '
                   f'NAME={file_name} APP_SOURCES={app_sources}')
-
-        #TODO: delete after debug
-        print("old cwd: ", cwd)
-        print("new cwd: ", os.getcwd())
-        print("src: ", app_sources)
-        print("path: ",os.path.join("..", self.project_config.gametime_file_path, self.project_config.gametime_flexpret_path))
 
         os.chdir(cwd)
 
@@ -99,7 +95,7 @@ class FlexpretSimulator(Simulator):
         :param file_name: the file name of the measured file, and all generated files will use when applicable
         :return the measured value of path
         """
-        stored_folder: str = os.path.join(measure_folder, self.name)
+        stored_folder: str = measure_folder
         path_object_filepath: str = clang_helper.compile_to_object_flexpret(path_bc_filepath, self.project_config.gametime_path,
                                                                             self.project_config.gametime_flexpret_path, stored_folder, file_name)
         cycle_count: int = -1

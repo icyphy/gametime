@@ -105,27 +105,26 @@ class Dag(nx.DiGraph):
         self.all_edges = self.edges()
 
         # We assume there is only one source and one sink.
-        self.source = [node for node in nodes if self.in_degree(node) == 0][0]
-        self.sink = [node for node in nodes if self.out_degree(node) == 0][0]
+        self.source = [node for node in nodes if (self.in_degree(node) == 0)][0]
+        self.sink = [node for node in nodes if (self.out_degree(node) == 0)][0]
         self.nodes_except_sink = [node for node in self.all_nodes
                                 if node != self.sink]
         self.nodes_except_source_sink = [node for node in self.all_nodes
-                                      if node != self.source and
-                                      node != self.sink]
+                                      if (node != self.source and node != self.sink)]
 
         self.num_paths = (0 if has_cycles(self) else
                          num_paths(self, self.source, self.sink))
 
         # Initialize dictionaries that map nodes and edges to their indices
         # in the node list and edge list, respectively.
-        for nodeIndex, node in enumerate(self.all_nodes):
-            self.nodes_indices[node] = nodeIndex
-        for nodeIndex, node in enumerate(self.nodes_except_sink):
-            self.nodes_except_sink_indices[node] = nodeIndex
-        for nodeIndex, node in enumerate(self.nodes_except_source_sink):
-            self.nodes_except_source_sink_indices[node] = nodeIndex
-        for edgeIndex, edge in enumerate(self.all_nodes):
-            self.nodes_indices[edge] = edgeIndex
+        for node_index, node in enumerate(self.all_nodes):
+            self.nodes_indices[node] = node_index
+        for node_index, node in enumerate(self.nodes_except_sink):
+            self.nodes_except_sink_indices[node] = node_index
+        for node_index, node in enumerate(self.nodes_except_source_sink):
+            self.nodes_except_source_sink_indices[node] = node_index
+        for edge_index, edge in enumerate(self.all_edges):
+            self.edges_indices[edge] = edge_index
 
     def load_variables(self):
         """Loads the instance variables of this object with appropriate

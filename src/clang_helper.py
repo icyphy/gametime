@@ -9,7 +9,7 @@ from typing import List
 
 from defaults import logger
 from file_helper import remove_files
-from src import ProjectConfiguration
+from project_configuration import ProjectConfiguration
 
 
 def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_lib: str="") -> str:
@@ -89,16 +89,14 @@ def dump_object(object_file: str, output_file_folder: str, o_file_dir: str) -> s
     os.chdir(cur_cwd)
     return output_file
 
-def generate_dot_file(bc_file: str, output_file_folder: str, bc_file_folder: str,output_name: str) -> str:
+def generate_dot_file(bc_file: str, bc_file_folder: str) -> str:
     """ Create dag from .bc file using opt through executing shell commands
 
     :param bc_file: location of the compiled llvm .bc file
-    :param output_file_folder: the folder path where .dot files will be stored
-    :param bc_file_folder: the folder path where .bc files is stored
-    :param output_name: string for the name of .dot output WITHOUT extension
+    :param bc_file_folder: the folder path where .bc files is stored and where .main.dot file will be stored
     :return: path of the output .dot file
     """
-    output_file: str = os.path.join(output_file_folder, f"{output_name}.dot")
+    output_file: str = ".main.dot"
     cur_cwd: str = os.getcwd()
     os.chdir(bc_file_folder)  # opt generates .dot in cwd
     commands: List[str] = ["opt", "-enable-new-pm=0", "-dot-cfg", "-S", bc_file, "-disable-output"]
@@ -107,7 +105,7 @@ def generate_dot_file(bc_file: str, output_file_folder: str, bc_file_folder: str
     return output_file
 
 
-def inline_functions(input_file: str, output_file_folder: str, output_name: str="inlined-gt") -> str:
+def inline_functions(input_file: str, output_file_folder: str, output_name: str) -> str:
     """ Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm` function. If that is the case, the
@@ -119,7 +117,7 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str=
         human-readable form already.
     :param output_name: file to write unrolled .bc file. Outputs in a
         human-readable form already.
-    :return: output_file that is passed in or the default output_file
+    :return: output_file that is passed in
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
@@ -133,7 +131,7 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str=
     return output_file
 
 
-def unroll_loops(input_file: str, output_file_folder: str, output_name: str="unrolled-gt") -> str:
+def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> str:
     """ Unrolls the probided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm` function. If that is the case, the
