@@ -73,8 +73,8 @@ RUN bash ./install.Unix.sh
 ### install new gnu toolchain
 RUN git clone https://github.com/riscv/riscv-gnu-toolchain
 WORKDIR /riscv-gnu-toolchain
-#RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
-RUN git checkout 96d9f40c9d5649089031c476cf37728013212288
+RUN git checkout 29d02b75fb6c0b664af56011d8292d1e71c96913
+#RUN git checkout 96d9f40c9d5649089031c476cf37728013212288
 RUN apt-get -qq update && \
     apt-get install -qqy autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev
 RUN ./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32

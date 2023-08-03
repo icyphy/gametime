@@ -50,7 +50,6 @@ gametime-project:
     determinant-threshold: 0.001
     max-infeasible-paths: 100
     ilp-solver: glpk
-    smt-solver: z3
     gametime-flexpret-path: ../../flexpret/ # default path when running on docker
     gametime-path: .. # default path when tests from the test folder
     gametime-file-path: ../../../.. # default path when tests from the test folder
