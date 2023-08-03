@@ -40,92 +40,92 @@ class Dag(nx.DiGraph):
         self.sink: str = ""
 
         #: Number of nodes in the DAG.
-        self.numNodes: int = 0
+        self.num_nodes: int = 0
 
         #: Number of edges in the DAG.
-        self.numEdges: int = 0
+        self.num_edges: int = 0
 
         #: Number of paths in the DAG.
-        self.numPaths: int = 0
+        self.num_paths: int = 0
 
         #: List of nodes in the DAG.
-        self.allNodes: List[str] = []
-        self.allNodesWithDescription: List[Tuple[str, Dict[str, str]]] = []
+        self.all_nodes: List[str] = []
+        self.all_nodes_with_description: List[Tuple[str, Dict[str, str]]] = []
 
         #: Dictionary that maps nodes to their indices in the list of all_temp_files nodes.
         #: This is maintained for efficiency purposes.
-        self.nodesIndices: Dict[str, int] = {}
+        self.nodes_indices: Dict[str, int] = {}
 
         #: List of nodes in the DAG that are not the sink.
         #: We assume that there is only one sink.
         #: This is maintained for efficiency purposes.
-        self.nodesExceptSink: List[str] = []
+        self.nodes_except_sink: List[str] = []
 
         #: Dictionary that maps nodes (except the sink) to their indices in
         #: the list of all_temp_files nodes (except the sink). This is maintained for
         #: efficiency purposes.
-        self.nodesExceptSinkIndices: Dict[str, int] = {}
+        self.nodes_except_sink_indices: Dict[str, int] = {}
 
         #: List of nodes in the DAG that are neither the source nor the sink.
         #: We assume that there is only one source and one sink. This is
         #: maintained for efficiency purposes.
-        self.nodesExceptSourceSink: List[str] = []
+        self.nodes_except_source_sink: List[str] = []
 
         #: Dictionary that maps nodes (except the source and the sink) to their
         #: indices in the list of all_temp_files nodes (except the source and the sink).
         #: This is maintained for efficiency purposes.
-        self.nodesExceptSourceSinkIndices: Dict[str, int] = {}
+        self.nodes_except_source_sink_indices: Dict[str, int] = {}
 
         #: List of edges in the DAG.
-        self.allEdges: List[Tuple[str, str]] = []
+        self.all_edges: List[Tuple[str, str]] = []
 
         #: Dictionary that maps edges to their indices in the list of all_temp_files edges.
         #: This is maintained for efficiency purposes.
-        self.edgesIndices: Dict[Tuple[str, str]: int] = {}
+        self.edges_indices: Dict[Tuple[str, str]: int] = {}
 
         #: List of non-special edges in the DAG.
-        self.edgesReduced: List[Tuple[str, str]] = []
+        self.edges_reduced: List[Tuple[str, str]] = []
 
         #: Dictionary that maps non-special edges to their indices in the
         #: list of all_temp_files edges. This is maintained for efficiency purposes.
-        self.edgesReducedIndices: Dict[Tuple[str, str], int] = {}
+        self.edges_reduced_indices: Dict[Tuple[str, str], int] = {}
 
         #: Dictionary that maps nodes to the special ('default') edges.
-        self.specialEdges: Dict[str, Tuple[str, str]] = {}
+        self.special_edges: Dict[str, Tuple[str, str]] = {}
 
         #: List of the weights assigned to the edges in the DAG, arranged
         #: in the same order as the edges are in the list of all_temp_files edges.
-        self.edgeWeights: List[int] = []
+        self.edge_weights: List[int] = []
 
     def initialize_dictionaries(self):
-        self.numNodes = self.number_of_nodes()
-        self.numEdges = self.number_of_edges()
-        self.allNodes = nodes = sorted(self.nodes())
-        self.allNodesWithDescription = sorted(self.nodes.data(), key=lambda x: x[0])
-        self.allEdges = self.edges()
+        self.num_nodes = self.number_of_nodes()
+        self.num_edges = self.number_of_edges()
+        self.all_nodes = nodes = sorted(self.nodes())
+        self.all_nodes_with_description = sorted(self.nodes.data(), key=lambda x: x[0])
+        self.all_edges = self.edges()
 
         # We assume there is only one source and one sink.
         self.source = [node for node in nodes if self.in_degree(node) == 0][0]
         self.sink = [node for node in nodes if self.out_degree(node) == 0][0]
-        self.nodesExceptSink = [node for node in self.allNodes
+        self.nodes_except_sink = [node for node in self.all_nodes
                                 if node != self.sink]
-        self.nodesExceptSourceSink = [node for node in self.allNodes
+        self.nodes_except_source_sink = [node for node in self.all_nodes
                                       if node != self.source and
                                       node != self.sink]
 
-        self.numPaths = (0 if has_cycles(self) else
+        self.num_paths = (0 if has_cycles(self) else
                          num_paths(self, self.source, self.sink))
 
         # Initialize dictionaries that map nodes and edges to their indices
         # in the node list and edge list, respectively.
-        for nodeIndex, node in enumerate(self.allNodes):
-            self.nodesIndices[node] = nodeIndex
-        for nodeIndex, node in enumerate(self.nodesExceptSink):
-            self.nodesExceptSinkIndices[node] = nodeIndex
-        for nodeIndex, node in enumerate(self.nodesExceptSourceSink):
-            self.nodesExceptSourceSinkIndices[node] = nodeIndex
-        for edgeIndex, edge in enumerate(self.allEdges):
-            self.edgesIndices[edge] = edgeIndex
+        for nodeIndex, node in enumerate(self.all_nodes):
+            self.nodes_indices[node] = nodeIndex
+        for nodeIndex, node in enumerate(self.nodes_except_sink):
+            self.nodes_except_sink_indices[node] = nodeIndex
+        for nodeIndex, node in enumerate(self.nodes_except_source_sink):
+            self.nodes_except_source_sink_indices[node] = nodeIndex
+        for edgeIndex, edge in enumerate(self.all_nodes):
+            self.nodes_indices[edge] = edgeIndex
 
     def load_variables(self):
         """Loads the instance variables of this object with appropriate
@@ -140,7 +140,7 @@ class Dag(nx.DiGraph):
 
     def reset_edge_weights(self):
         """Resets the weights assigned to the edges of the DAG."""
-        self.edgeWeights = [0] * self.numEdges
+        self.edge_weights = [0] * self.num_edges
 
     def _init_special_edges(self):
         """To reduce the dimensionality to b = n-m+2, each node, except for
@@ -151,18 +151,18 @@ class Dag(nx.DiGraph):
         This method initializes all_temp_files of the data structures necessary
         to keep track of these special edges.
         """
-        self.edgesReduced = list(self.allEdges)
+        self.edges_reduced = list(self.all_edges)
 
-        for node in self.nodesExceptSourceSink:
+        for node in self.nodes_except_source_sink:
             out_edges = self.out_edges(node)
             out_edges = list(out_edges)
             if len(out_edges) > 0:
                 # By default, we pick the first edge as 'special'.
-                self.specialEdges[node] = out_edges[0]
-                self.edgesReduced.remove(out_edges[0])
+                self.special_edges[node] = out_edges[0]
+                self.edges_reduced.remove(out_edges[0])
 
-        for edge in self.edgesReduced:
-            self.edgesReducedIndices[edge] = list(self.allEdges).index(edge)
+        for edge in self.edges_reduced:
+            self.edges_reduced_indices[edge] = list(self.all_edges).index(edge)
 
     @staticmethod
     def get_edges(nodes: List[str]) -> List[Tuple[str, str]]:
@@ -183,7 +183,7 @@ class Dag(nx.DiGraph):
         :return: label corresponding to the node. (code corresponding to
         the node in LLVM IR)
         """
-        return self.allNodesWithDescription[node][1]["label"]
+        return self.all_nodes_with_description[node][1]["label"]
 
 
 def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
@@ -222,7 +222,7 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
     dag_name = " %s" % dag_name.strip()
     contents = ["digraph%s {" % dag_name]
 
-    for node in dag.allNodesWithDescription:
+    for node in dag.all_nodes_with_description:
         line: str = "  %s" % node[0]
         attributes: List[str] = []
         for key in node[1]:

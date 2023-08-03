@@ -25,8 +25,8 @@ class IndexExpression(object):
     """
 
     def __init__(self, name: str, indices: Tuple[int]):
-        self.name = name
-        self.indices = indices
+        self.name: str = name
+        self.indices: Tuple[int] = indices
 
     def get_name(self) -> str:
         """
@@ -50,7 +50,7 @@ class IndexExpression(object):
         return False
 
     def __str__(self):
-        result = self.name
+        result: str = self.name
         for index in self.indices:
             result = "%s %s" % (result, index)
         return result.strip()

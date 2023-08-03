@@ -7,107 +7,123 @@ import os
 import subprocess
 from typing import List
 
-from file_helper import remove_files
-from project_configuration import ProjectConfiguration
 from defaults import logger
+from file_helper import remove_files
+from src import ProjectConfiguration
 
 
-def compile_to_llvm(project_config: ProjectConfiguration, output_name: str = None) -> str:
+def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_lib: str="") -> str:
     """ Compile .c file to .bc and .ll file using clang through executing
     shell commands. Should work for programs residing in a single file,
     but can be unreliable with larger programs. Recommended to use this as a
     reference rather and the user should generate their own .bc and .ll before
     passing into gametime for analysis on more complex behavior.
 
+    :param c_file_path: path of the .c file to compile
+    :param output_file_folder: the folder path where .bc and .ll files will be stored
     :param output_name: string for the name of compiled output WITHOUT extension
-        EXAMPLE: if you want to compile to ./maingt/foo.bc, set output_file to "foo"
-    :param project_config: configuration object of the current gametime
-        analysis
+    :param extra_lib: path to all the extra libraries required to compile the file. plugged into the -I flag of clang
     :return: path of the output .bc file
     """
-    if output_name is None:
-        output_name = "compile-gt"
 
     # compile bc file
-    file_to_compile: str = project_config.locationOrigFile
-    output_file: str = project_config.get_temp_filename_with_extension(".bc", output_name)
-
-    flexpret_lib_path = os.path.join(project_config.gametime_path, project_config.gametime_flexpret_path, "programs", "lib", "include")
+    file_to_compile: str = c_file_path
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
     commands: List[str] = ["clang", "-Xclang",
                            "-O1", "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
-                           f"-I{flexpret_lib_path}",
+                           f"-I{extra_lib}",
                            "-o", output_file, "-c", file_to_compile]
     subprocess.run(commands, check=True)
 
     # translate for .ll automatically. (optional)
-    ll_output_file: str = project_config.get_temp_filename_with_extension(".ll", output_name)
+    ll_output_file: str = os.path.join(output_file_folder, f"{output_name}.ll")
     commands = ["llvm-dis", output_file, "-o", ll_output_file]
     subprocess.run(commands, check=True)
     return output_file
 
 
-def compile_to_object(bc_file: str, project_config: ProjectConfiguration, output_name: str) -> str:
+def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gametime_flexpret_path: str, output_file_folder: str, output_name: str) -> str:
+    """ Compile .bc file to .o file using clang through executing shell commands that is interpretable by FLEXPRET simulator
+
+    :param path_bc_filepath: file path to the .bc file used for compilation
+    :param gametime_path: Relative path to the GameTime repo from the simulation running folder.
+    :param gametime_flexpret_path: Relative path to the GameTime repo from the simulated file.
+    :param output_file_folder:  file path to the output folder where to .o file is saved to
+    :param output_name: string for the name of compiled output WITHOUT extension
+    :return: path of the output .o file
+    """
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
+
     # compile bc file
-    flexpret_lib_path = os.path.join(project_config.gametime_path, project_config.gametime_flexpret_path, "programs",
+    flexpret_lib_path = os.path.join(gametime_path, gametime_flexpret_path, "programs",
                                      "lib", "include")
-    output_file: str = project_config.get_temp_filename_with_extension(".o", output_name)
     commands: List[str] = ["clang", "--target=riscv32",f"-I{flexpret_lib_path}",
                            "-g", "-static", "-O0", "-mabi=ilp32", "-nostartfiles",
                            "-specs=nosys.specs","-march=rv32gc",
-                           bc_file, "-c", "-o", output_file]
+                           path_bc_filepath, "-c", "-o", output_file]
     subprocess.check_call(commands)
+
     ## object dump
-    dump_file: str = project_config.get_temp_filename_with_extension(".dump", output_name)
+    dump_file: str = os.path.join(output_file_folder, f"{output_name}.dump")
     commands = ["llvm-objdump", "-S", "-d", output_file]
     dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
     subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
     dumping.wait()
     return output_file
 
-def dump_object(object_file: str, project_config: ProjectConfiguration) -> str:
-    output_file: str = project_config.get_temp_filename_with_extension(".dmp", "dumped")
+def dump_object(object_file: str, output_file_folder: str, o_file_dir: str) -> str:
+    """ Dump the .o file to dumped.dmp
+
+    :param object_file: the name of the .o file to dump
+    :param output_file_folder: the folder path where .dmp files will be stored
+    :param o_file_dir: directory containing the .o file
+    :return: path of the output dumped.dmp file
+    """
+
+    output_file: str = os.path.join(output_file_folder, "dumped.dmp")
     cur_cwd: str = os.getcwd()
-    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
+    os.chdir(o_file_dir)  # opt generates .dmp in cwd
     commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", object_file, "-c", "-o", output_file]
     subprocess.check_call(commands)
     os.chdir(cur_cwd)
     return output_file
 
-def generate_dot_file(bc_file: str, project_config: ProjectConfiguration) -> str:
+def generate_dot_file(bc_file: str, output_file_folder: str, bc_file_folder: str,output_name: str) -> str:
     """ Create dag from .bc file using opt through executing shell commands
 
     :param bc_file: location of the compiled llvm .bc file
-    :param project_config: configuration object of the current gametime
-        analysis
-    :return: path of the output .dot file (/maingt/.main.dot)
+    :param output_file_folder: the folder path where .dot files will be stored
+    :param bc_file_folder: the folder path where .bc files is stored
+    :param output_name: string for the name of .dot output WITHOUT extension
+    :return: path of the output .dot file
     """
-    output_file: str = project_config.get_temp_filename_with_extension(".dot", ".main")
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.dot")
     cur_cwd: str = os.getcwd()
-    os.chdir(project_config.locationTempDir)  # opt generates .dot in cwd
+    os.chdir(bc_file_folder)  # opt generates .dot in cwd
     commands: List[str] = ["opt", "-enable-new-pm=0", "-dot-cfg", "-S", bc_file, "-disable-output"]
     subprocess.check_call(commands)
     os.chdir(cur_cwd)
     return output_file
 
 
-def inline_functions(input_file: str, project_config: ProjectConfiguration, output_file: str = None) -> str:
-    """ Unrolls the probided input file and output the unrolled version in
+def inline_functions(input_file: str, output_file_folder: str, output_name: str="inlined-gt") -> str:
+    """ Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
     relying on this built-in function.
 
     :param input_file: Input .bc/.ll function to loop unroll
-    :param project_config: ProjectConfiguration for this project
-    :param output_file: file to write unrolled .bc file. Outputs in a
+    :param output_file_folder: folder to write unrolled .bc file. Outputs in a
+        human-readable form already.
+    :param output_name: file to write unrolled .bc file. Outputs in a
         human-readable form already.
     :return: output_file that is passed in or the default output_file
     """
-    if output_file is None:
-        output_file = project_config.get_temp_filename_with_extension(".bc", "inlined-gt")
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands = ["opt",
+    commands: List[str] = ["opt",
                 "-always-inline",
                 "-inline", "-inline-threshold=10000000",
                 "-S", input_file,
@@ -117,7 +133,7 @@ def inline_functions(input_file: str, project_config: ProjectConfiguration, outp
     return output_file
 
 
-def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_file: str = None) -> str:
+def unroll_loops(input_file: str, output_file_folder: str, output_name: str="unrolled-gt") -> str:
     """ Unrolls the probided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm` function. If that is the case, the
@@ -125,15 +141,15 @@ def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_f
     relying on this built-in function.
 
     :param input_file: Input .bc/.ll function to loop unroll
-    :param project_config: ProjectConfiguration for this project
-    :param output_file: file to write unrolled .bc file. Outputs in a
+    :param output_file_folder: folder to write unrolled .bc file. Outputs in a
+        human-readable form already.
+    :param output_name: file to write unrolled .bc file. Outputs in a
         human-readable form already.
     :return: output_file that is passed in or the default output_file
     """
-    if output_file is None:
-        output_file = project_config.get_temp_filename_with_extension(".bc", "unrolled-gt")
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands = ["opt",
+    commands: List[str] = ["opt",
                 # "-indvars",
                 "-mem2reg",
                 "-simplifycfg",
@@ -147,7 +163,7 @@ def unroll_loops(input_file: str, project_config: ProjectConfiguration, output_f
     logger.info(subprocess.run(commands, check=True))
     return output_file
 
-
+#TODO: remove it or move it to somewhere more suitable
 def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:
     """Removes the temporary files created by CIL during its analysis.
 
@@ -161,21 +177,21 @@ def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=F
     """
     # Remove the files with extension ".cil.*".
     if all_temp_files:
-        remove_files([r".*"], project_config.locationTempDir)
+        remove_files([r".*"], project_config.location_temp_dir)
         return
 
     other_temp_files = r".*\.dot"
-    remove_files([other_temp_files], project_config.locationTempDir)
+    remove_files([other_temp_files], project_config.location_temp_dir)
 
     other_temp_files = r".*\.bc"
-    remove_files([other_temp_files], project_config.locationTempDir)
+    remove_files([other_temp_files], project_config.location_temp_dir)
 
     other_temp_files = r".*\.ll"
-    remove_files([other_temp_files], project_config.locationTempDir)
+    remove_files([other_temp_files], project_config.location_temp_dir)
 
     # By this point, we have files that are named the same as the
     # temporary file for GameTime, but that have different extensions.
     # Remove these files.
     other_temp_files = r".*-gt\.[^c]+"
-    remove_files([other_temp_files], project_config.locationTempDir)
+    remove_files([other_temp_files], project_config.location_temp_dir)
 

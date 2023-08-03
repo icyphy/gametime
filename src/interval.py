@@ -26,11 +26,11 @@ class Interval(object):
             the interval has no finite upper bound.
     """
 
-    def __init__(self, lower=None, upper=None):
+    def __init__(self, lower: int=None, upper: int=None):
         if lower is not None and upper is not None:
             lower, upper = sorted((lower, upper))
-        self.lower = lower
-        self.upper = upper
+        self.lower: int = lower
+        self.upper: int = upper
 
     def __str__(self):
         return ("%s%s, %s%s" %
@@ -40,20 +40,20 @@ class Interval(object):
                  ")" if self.upper is None else "]"))
 
     @property
-    def lowerBound(self):
+    def lower_bound(self) -> int:
         """Lower bound of the interval represented by this object,
         or `None` if the interval has no finite lower bound.
         """
         return self.lower
 
     @property
-    def upperBound(self):
+    def upper_bound(self) -> int:
         """Upper bound of the interval represented by this object,
         or `None` if the interval has no finite upper bound.
         """
         return self.upper
 
-    def hasFiniteLowerBound(self):
+    def has_finite_lower_bound(self) -> bool:
         """
         Returns:
             `True` if, and only if, the represented interval has
@@ -61,7 +61,7 @@ class Interval(object):
         """
         return self.lower is not None
 
-    def hasFiniteUpperBound(self):
+    def has_finite_upper_bound(self) -> bool:
         """
         Returns:
             `True` if, and only if, the represented interval has

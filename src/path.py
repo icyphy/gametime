@@ -27,44 +27,41 @@ class Path(object):
     a single path in the code that is being analyzed.
 
     Attributes:
-        ilpProblem:
+        ilp_problem:
             :class:`~gametime.ilp_problem.IlpProblem` object that represents
             the integer linear programming problem that, when solved,
             produced this path.
         nodes:
             IDs of the nodes in a directed acyclic graph along this path,
             represented as a list of strings.
-        lineNumbers:
+        line_numbers:
             Line numbers of the source-level statements along this path,
             represented as a list of positive integers.
         conditions:
             Conditions along this path, represented as a list of strings.
-        conditionEdges:
+        condition_edges:
             Dictionary that associates the number of a condition with
             the edge in the directed acyclic graph that is associated
             with the condition, represented as a tuple.
-        conditionTruths:
+        condition_truths:
             Dictionary that associates the line numbers of the conditional
             points in the code being analyzed with their truth values.
-        arrayAccesses:
+        array_accesses:
             Information about array accesses made in conditions along
             this path, represented as a dictionary that maps the name of
             an array to a list of tuples, each of which contains
             the numbers of the temporary index variables in an array access.
-        aggIndexExprs:
+        agg_index_exprs:
             Information about the expressions associated with the temporary
             index variables of aggregate accesses along this path, represented
             as a dictionary that maps the number of a temporary index variable
             to an :class:`~gametime.indexExpression.IndexExpression` object.
-        smtQuery:
-            ``Query`` object that represents the SMT query used to determine
-            the feasibility of this path.
         assignments:
             Dictionary of assignments to variables that would drive
             an execution of the code along this path.
-        predictedValue:
+        predicted_value:
             Predicted value (runtime, energy consumption, etc.) of this path.
-        measuredValue:
+        measured_value:
             Measured value (runtime, energy consumption, etc.) of this path.
     """
 
@@ -73,12 +70,11 @@ class Path(object):
                  conditions: List[str] = None, condition_edges: Dict[int, Tuple[str]] = None,
                  condition_truths: Dict[str, bool] = None,
                  array_accesses: Dict[str, List[Tuple[int]]] = None,
-                 agg_index_exprs: IndexExpression = None,
-                 smt_query=None, assignments: Dict[str, str] = None,
+                 agg_index_exprs: IndexExpression = None, assignments: Dict[str, str] = None,
                  predicted_value: float = 0, measured_value: float = 0):
         #: Integer linear programming problem that, when solved, produced
         #: this path, represented as an ``IlpProblem`` object.
-        self.ilpProblem = ilp_problem
+        self.ilp_problem = ilp_problem
 
         #: IDs of the nodes in a directed acyclic graph along this path,
         #: represented as a list of strings.
@@ -86,7 +82,7 @@ class Path(object):
 
         #: Line numbers of the source-level statements along this path,
         #: represented as a list of positive integers.
-        self.lineNumbers = line_numbers or []
+        self.line_numbers = line_numbers or []
 
         #: Conditions along this path, represented as a list of strings.
         self.conditions = conditions or []
@@ -94,27 +90,23 @@ class Path(object):
         #: Dictionary that associates the number of a condition with
         #: the edge in the directed acyclic graph that is associated with
         #: the condition. The edge is represented as a tuple.
-        self.conditionEdges = condition_edges or {}
+        self.condition_edges = condition_edges or {}
 
         #: Dictionary that associates the line numbers of the conditional points
         #: in the code being analyzed with their truth values.
-        self.conditionTruths = condition_truths or {}
+        self.condition_truths = condition_truths or {}
 
         #: Information about array accesses made in conditions along this path,
         #: represented as a dictionary that maps the name of an array to a
         #: list of tuples, each of which contains the numbers of the temporary
         #: index variables in an array access.
-        self.arrayAccesses = array_accesses or {}
+        self.array_accesses = array_accesses or {}
 
         #: Information about the expressions associated with the temporary
         #: index variables of aggregate accesses along this path, represented
         #: as a dictionary that maps the number of a temporary index variable
         #: to an ``IndexExpression`` object.
-        self.aggIndexExprs = agg_index_exprs or {}
-
-        #: SMT query that was used to determine the feasibility of this path,
-        #: represented as a ``Query`` object.
-        self.smtQuery = smt_query
+        self.agg_index_exprs = agg_index_exprs or {}
 
         #: Dictionary of assignments to variables that would drive an execution
         #: of the code along this path.
@@ -123,12 +115,12 @@ class Path(object):
         #: Predicted value (runtime, energy consumption, etc.)
         #: of this path, represented as a number (either
         #: an integer or a floating-point number).
-        self.predictedValue = predicted_value
+        self.predicted_value = predicted_value
 
         #: Measured value (runtime, energy consumption, etc.)
         #: of this path, represented as a number (either
         #: an integer or a floating-point number).
-        self.measuredValue = measured_value
+        self.measured_value = measured_value
 
     def write_ilp_problem_to_lp_file(self, location) -> None:
         """
@@ -139,12 +131,12 @@ class Path(object):
             location:
                 Location of the file.
         """
-        if self.ilpProblem is not None:
+        if self.ilp_problem is not None:
             _, extension = os.path.splitext(location)
             if extension.lower() != ".lp":
                 location += ".lp"
             try:
-                self.ilpProblem.writeLP(location)
+                self.ilp_problem.writeLP(location)
             except (PulpError, EnvironmentError) as e:
                 err_msg = ("Error writing the integer linear programming "
                            "problem to an LP file: %s") % e
@@ -212,7 +204,7 @@ class Path(object):
             String representation of the line numbers of
             the source-level statements that lie along this path.
         """
-        return " ".join([str(lineNumber) for lineNumber in self.lineNumbers])
+        return " ".join([str(lineNumber) for lineNumber in self.line_numbers])
 
     def write_line_numbers_to_file(self, location) -> None:
         """
@@ -315,10 +307,10 @@ class Path(object):
             this path, and the edges that are associated with the conditions.
         """
         result = []
-        sorted_keys = sorted(self.conditionEdges.keys())
+        sorted_keys = sorted(self.condition_edges.keys())
         for key in sorted_keys:
             result.append("%s: " % key)
-            result.append(" ".join(self.conditionEdges[key]))
+            result.append(" ".join(self.condition_edges[key]))
             result.append("\n")
         return "".join(result)
 
@@ -385,7 +377,7 @@ class Path(object):
             (along this path) whose numbers are provided. Each edge is
             represented as a tuple, and appears only once in the list.
         """
-        return list(set([self.conditionEdges[conditionNum]
+        return list(set([self.condition_edges[conditionNum]
                          for conditionNum in condition_nums]))
 
     def get_condition_truths(self) -> str:
@@ -395,10 +387,10 @@ class Path(object):
             in the code being analyzed, along with their truth values.
         """
         result = []
-        sorted_keys = sorted([int(key) for key in self.conditionTruths.keys()])
+        sorted_keys = sorted([int(key) for key in self.condition_truths.keys()])
         for key in sorted_keys:
             result.append("%s: " % key)
-            result.append(str(self.conditionTruths[str(key)]))
+            result.append(str(self.condition_truths[str(key)]))
             result.append("\n")
         return "".join(result)
 
@@ -462,9 +454,9 @@ class Path(object):
             conditions along this path.
         """
         result = []
-        for array_name in self.arrayAccesses:
+        for array_name in self.array_accesses:
             result.append("%s: " % array_name)
-            result.append(str(self.arrayAccesses[array_name]))
+            result.append(str(self.array_accesses[array_name]))
             result.append("\n")
         return "".join(result)
 
@@ -532,9 +524,9 @@ class Path(object):
             along a path.
         """
         result = []
-        for index_number in self.aggIndexExprs:
+        for index_number in self.agg_index_exprs:
             result.append("%d: " % index_number)
-            result.append(str(self.aggIndexExprs[index_number]))
+            result.append(str(self.agg_index_exprs[index_number]))
             result.append("\n")
         return "".join(result)
 
@@ -672,7 +664,7 @@ class Path(object):
             value:
                 Value to set as the predicted value of this path.
         """
-        self.predictedValue = value
+        self.predicted_value = value
 
     def get_predicted_value(self) -> str:
         """
@@ -680,7 +672,7 @@ class Path(object):
             String representation of the predicted value
             (runtime, energy consumption, etc.) of this path.
         """
-        return "%g" % self.predictedValue
+        return "%g" % self.predicted_value
 
     def write_predicted_value_to_file(self, location: str) -> None:
         """Writes the predicted value of this path to a file.
@@ -741,7 +733,7 @@ class Path(object):
             value:
                 Value to set as the measured value of this path.
         """
-        self.measuredValue = value
+        self.measured_value = value
 
     def get_measured_value(self) -> str:
         """
@@ -749,7 +741,7 @@ class Path(object):
             String representation of the measured value
             (runtime, energy consumption, etc.) of this path.
         """
-        return "%g" % self.measuredValue
+        return "%g" % self.measured_value
 
     def write_measured_value_to_file(self, location: str) -> None:
         """Writes the measured value of this path to a file.
@@ -816,8 +808,6 @@ class Path(object):
         result.append(self.get_array_accesses())
         result.append("*** Aggregate access index expressions ***")
         result.append(self.get_agg_index_exprs())
-        result.append("*** SMT query ***")
-        result.append("%s" % self.smtQuery)
         result.append("*** Assignments ***")
         result.append(self.get_assignments())
         result.append("*** Predicted value: %s ***" % self.get_predicted_value())

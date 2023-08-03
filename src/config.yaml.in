@@ -49,7 +49,6 @@ TEMP_PATH_PREDICTED_VALUE: path-value-predicted
 TEMP_PATH_MEASURED_VALUE: path-value-measured
 TEMP_PATH_ALL: path-all
 TEMP_PATH_QUERY: path-query
-TEMP_SMT_MODEL: smt-model
 TEMP_PATH_QUERY_ALL: path-query-all
 TEMP_CASE: case
 TEMP_BASIS_MATRIX: basis-matrix
@@ -57,15 +56,3 @@ TEMP_MEASUREMENT: measurement
 TEMP_BASIS_VALUES: basis-values
 TEMP_DAG_WEIGHTS: dag-weights
 TEMP_DISTRIBUTION: distribution
-
-## tools
-TOOL_CIL: cil
-TOOL_PHOENIX: bin/GameTime.dll
-
-## smt-solvers
-SOLVER_BOOLECTOR: "@BOOLECTOR_EXE@"
-SOLVER_Z3: "@Z3_PYC@"
-
-## simulators
-SIMULATOR_TOOL_GNU_ARM: "@GNU_ARM@"
-SIMULATOR_PTARM: "@PTARM@"

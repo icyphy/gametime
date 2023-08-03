@@ -61,6 +61,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         determinant_threshold, max_infeasible_paths = 0.001, 100
         model_as_nested_arrays, prevent_basis_refinement = False, False
         ilp_solver_name, smt_solver_name = "", ""
+        gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
 
         # Process information about the file to be analyzed.
         file_configs: dict[str, Any] = raw_config.get("file", {})
@@ -170,8 +171,9 @@ class YAMLConfigurationParser(ConfigurationParser):
                                                                     maximum_error_scale_factor,
                                                                     determinant_threshold, max_infeasible_paths,
                                                                     model_as_nested_arrays, prevent_basis_refinement,
-                                                                    ilp_solver_name, debug_configuration, gametime_flexpret_path,
-                                                                    gametime_path, gametime_file_path)
+                                                                    ilp_solver_name, debug_configuration,
+                                                                    gametime_flexpret_path, gametime_path,
+                                                                    gametime_file_path)
         logger.info("Successfully loaded project.")
         logger.info("")
         return project_config
