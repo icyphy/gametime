@@ -63,11 +63,16 @@ class PathAnalyzer(object):
 
         # assemble path
         prev_condition: str = ""
-        prev_block_number: int = 0
+        prev_block_number: str = 0
 
         for node in self.path.nodes:
             node_label: str = self.dag.get_node_label(self.dag.nodes_indices[node])
-            block_number: str = node_label[node_label.find("%"):node_label.find(":")]  # find %4 for {%4:...
+            block_number: str = node_label[node_label.find("{")+1:node_label.find(":")]  # find %4 for {%4:...
+
+            # if block_number doesn't begin with %, need to manually add one before it
+            if not block_number.startswith("%"):
+                block_number = f"%{block_number}"
+
             if prev_condition:  # update prev condition to point to this node
                 prev_block_begin_index: int = program_str.find("{}:".format(prev_block_number))
                 prev_block: str = program_str[prev_block_begin_index:]
@@ -87,7 +92,7 @@ class PathAnalyzer(object):
                 prev_condition = condition
             else:
                 prev_condition = ""
-            prev_block_number = int(block_number[1:])
+            prev_block_number = block_number[1:]
 
         # write to file
         output_path: str = os.path.join(self.output_folder, f"{self.output_name}.bc")

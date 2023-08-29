@@ -358,7 +358,7 @@ class Analyzer(object):
         if nx_helper.has_cycles(self.dag):
             logger.warning("The control-flow graph has cycles.")
             #TODO: figure out why still need this with has_cycles
-            self._run_loop_detector()
+            # self._run_loop_detector()
         else:
             logger.info("The control-flow graph has %d nodes and %d edges, "
                         "with at most %d possible paths." %
@@ -647,10 +647,7 @@ class Analyzer(object):
                 logger.info("Checking if replacement is feasible...")
                 logger.info("")
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-                # #TODO: replace the next three lines with the commented section
-                # basis_paths.append(result_path)
-                # current_row += 1
-                # num_paths_unsat = 0
+                # feasibility test
                 value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
                 # TODO: replace with actual value of infeasible path
                 if value < float('inf'):
@@ -749,7 +746,7 @@ class Analyzer(object):
                     basis_paths[current_row] = result_path
                     current_row += 1
                     num_paths_unsat = 0
-                    #   TODO: fix commented section
+                    #feasibility test
                     value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
                     # TODO: replace with actual value of infeasible path
                     if value < float('inf'):

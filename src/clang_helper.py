@@ -30,9 +30,11 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
+    libs = f"-I{extra_lib}" if extra_lib != "" else ""
     commands: List[str] = ["clang", "-Xclang",
-                           "-O1", "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
-                           f"-I{extra_lib}",
+                           "-O2",
+                           "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
+                           f"{libs}",
                            "-o", output_file, "-c", file_to_compile]
     subprocess.run(commands, check=True)
 
@@ -132,7 +134,7 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str)
 
 
 def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> str:
-    """ Unrolls the probided input file and output the unrolled version in
+    """ Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
@@ -147,14 +149,22 @@ def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> 
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
+    # commands: List[str] = ["opt",
+    #             "-O2",
+    #             "-S", input_file,
+    #             "-o", output_file]
+
     commands: List[str] = ["opt",
-                # "-indvars",
                 "-mem2reg",
                 "-simplifycfg",
                 "-loops",
-                "-lcssa", "-loop-simplify",
+                "-loop-simplify",
                 "-loop-rotate",
-                "-loop-unroll",  # "-unroll-threshold=10000000", "-unroll-count=1000",
+                "-lcssa",
+                "-indvars",
+                "-loop-unroll",
+                # "-unroll-threshold=10000000",
+                # "-unroll-count=1000",
                 "-S", input_file,
                 "-o", output_file]
 

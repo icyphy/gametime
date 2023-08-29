@@ -1,8 +1,6 @@
 //
 // Created by AZ on 10/9/2022.
 //
-
-#include "main.h"
 #include <stdio.h>
 
 //int foo(int j) {
@@ -15,7 +13,7 @@
 //  return j;
 //}
 
-int main(int argc, char *argv[]) {
+int main() {
   int j = 0;
 
   // j = foo(j);

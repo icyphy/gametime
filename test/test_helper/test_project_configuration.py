@@ -16,8 +16,8 @@ class TestParsing(unittest.TestCase):
 
 
     def test_YAML_parser(self):
-        config: ProjectConfiguration = YAMLConfigurationParser.parse("test_analyzer/programs/config.yaml")
-        print(config.nameOrigFile, config.nameXmlFile, config.locationTempDir)
+        config: ProjectConfiguration = YAMLConfigurationParser.parse("test_helper/programs/test1/config.yaml")
+        print(config.name_orig_file, config.name_xml_file, config.location_temp_dir)
         self.assertEqual(True, True)  # add assertion here
 
 

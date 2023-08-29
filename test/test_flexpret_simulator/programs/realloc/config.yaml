@@ -7,7 +7,7 @@ gametime-project:
     #This location can be either absolute or relative:
     #if relative, the location is resolved with respect to
     #the directory that contains this YAML file.
-    location: main.c
+    location: realloc.c
     #Function to analyze.
     analysis-function: main
     #Label in the function to start analysis from.

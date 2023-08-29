@@ -1,0 +1,7 @@
+digraph "CFG for 'main' function" {
+	label="CFG for 'main' function";
+
+	Node0x629a030 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  br label %1\l}"];
+	Node0x629a030 -> Node0x629a080;
+	Node0x629a080 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%1:\l1:                                                \l  ret i32 poison\l}"];
+}
