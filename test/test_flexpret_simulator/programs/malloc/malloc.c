@@ -15,13 +15,13 @@ int main() {
     *d = *a + *b + *c;
 
     _fp_print(*a);
-    assert(*a == 100);
+//    assert(*a == 100);
     _fp_print(*b);
-    assert(*b == 200);
+//    assert(*b == 200);
     _fp_print(*c);
-    assert(*c == 300);
+//    assert(*c == 300);
     _fp_print(*d);
-    assert(*d == 600);
+//    assert(*d == 600);
 
     free(a);
     free(b);

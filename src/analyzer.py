@@ -150,7 +150,7 @@ class Analyzer(object):
                                                   "programs", "lib", "include")
             processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", flexpret_lib_path)
-        print(self.project_config.location_temp_file)
+
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list
             processing = self._run_inliner(input_file=processing)
@@ -345,6 +345,11 @@ class Analyzer(object):
         location = os.path.join(self.project_config.location_temp_dir,
                                 config.TEMP_DAG)
         self.load_dag_from_dot_file(location)
+
+        # special case for single node dag
+        if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
+            self.path_dimension = 1
+            return
 
         num_edges_reduced = len(self.dag.edges_reduced)
         self.path_dimension = self.dag.num_edges - self.dag.num_nodes + 2
@@ -565,6 +570,11 @@ class Analyzer(object):
                 return result
             else:
                 return self.basis_paths
+        if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
+            warn_msg = "Single node CFD with no edge. Only one possible path."
+            logger.warning(warn_msg)
+            basis_paths = [Path(nodes=[self.dag.source])]
+            return on_exit(start_time, [])
 
         if self.path_dimension == 1:
             warn_msg = ("Basis matrix has dimensions 1x1. "
@@ -766,8 +776,6 @@ class Analyzer(object):
                         self.basis_matrix[current_row] = prev_matrix_row
                         num_paths_unsat += 1
 
-
-
                 else:
                     logger.info("No replacement for row %d found." %
                                 (current_row + 1))
@@ -862,12 +870,21 @@ class Analyzer(object):
         for i in range(len(self.basis_paths)):
             output_name: str = f'basis-path{i}'
             p: Path = self.basis_paths[i]
-            value: int = self.measure_path(p, output_name)
-            # TODO: replace with actual value of infeasible path
-            if value < float('inf'):
-                p.set_measured_value(value)
+            self.measure_path(p, output_name)
+
 
     def measure_path(self, path: Path, output_name: str) -> int:
         path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
-        return path_analyzer.measure_path(self.simulator)
+        value: int =  path_analyzer.measure_path(self.simulator)
+        # TODO: replace with actual value of infeasible path
+        if value < float('inf'):
+            path.set_measured_value(value)
+        return value
+
+    def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
+        result = []
+        for i in range(len(paths)):
+            output_name: str = f'{output_name_prefix}{i}'
+            result.append(self.measure_path(paths[i], output_name))
+        return result
 

@@ -31,8 +31,8 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
     libs = f"-I{extra_lib}" if extra_lib != "" else ""
-    commands: List[str] = ["clang", "-Xclang",
-                           "-O2",
+    commands: List[str] = ["clang",
+                           "-Xclang", "-O2",
                            "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
                            f"{libs}",
                            "-o", output_file, "-c", file_to_compile]
@@ -158,13 +158,14 @@ def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> 
                 "-mem2reg",
                 "-simplifycfg",
                 "-loops",
+                "-lcssa",
                 "-loop-simplify",
                 "-loop-rotate",
-                "-lcssa",
                 "-indvars",
                 "-loop-unroll",
                 # "-unroll-threshold=10000000",
                 # "-unroll-count=1000",
+                "-unroll-allow-partial",
                 "-S", input_file,
                 "-o", output_file]
 

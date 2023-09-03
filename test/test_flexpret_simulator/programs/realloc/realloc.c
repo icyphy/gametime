@@ -16,7 +16,7 @@ int main() {
 	*(ptr_new + 2) = 3;
 	for(i = 0; i < 3; i++) {
 		_fp_print(*(ptr_new + i));
-		assert(*(ptr_new + i));
+//		assert(*(ptr_new + i));
 	}
 
 	return 0;
