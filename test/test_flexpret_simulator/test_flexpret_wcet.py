@@ -113,6 +113,24 @@ class TestCalloc(FlexpretTest):
     def test_run_generated_path_compute_histogram(self):
         self.run_wcet_analyzer()
 
+class TestFactorial(FlexpretTest):
+    def setUp(self):
+        print("setup test factorial")
+        self.project_config: ProjectConfiguration = \
+            YAMLConfigurationParser.parse("test_flexpret_simulator/programs/factorial/config.yaml")
+
+    def test_run_wcet_path_analyzer(self):
+        self.run_wcet_path_analyzer()
+
+    def test_run_wcet_analyzer(self):
+        self.run_wcet_analyzer()
+
+    def test_run_basis_path_compute_histogram(self):
+        self.run_basis_path_compute_histogram()
+
+    def test_run_generated_path_compute_histogram(self):
+        self.run_wcet_analyzer()
+
 class TestFib(FlexpretTest):
     def setUp(self):
         print("setup test fib")
