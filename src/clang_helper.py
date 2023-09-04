@@ -150,7 +150,6 @@ def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> 
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
     # commands: List[str] = ["opt",
-    #             "-O2",
     #             "-S", input_file,
     #             "-o", output_file]
 

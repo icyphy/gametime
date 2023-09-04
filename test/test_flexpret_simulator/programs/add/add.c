@@ -11,9 +11,13 @@ int main() {
     _fp_print(x);
     uint32_t y = 2;
     _fp_print(y);
-    if (x < y + 10) {
-        uint32_t z = add(x, y);
-        _fp_print(z);
+    for (int i = 0; i < 5; i++){
+        if (x < y + 10) {
+            uint32_t z = add(x, y);
+            _fp_print(z);
+            x = z;
+        }
     }
+
     return 0;
 }
