@@ -18,8 +18,10 @@ class TestFlexpret(unittest.TestCase):
     def test_measure_path(self):
         analyzer = Analyzer(self.project_config)
         analyzer.create_dag()
-        # paths = analyzer.generate_basis_paths()
-        # self.assertIsNotNone(paths[0], "no paths were found")
+        paths = analyzer.generate_basis_paths()
+        self.assertIsNotNone(paths[0], "no paths were found")
+        # analyzer.measure_basis_paths()
+        print(paths[0])
         # file_name = "path0"
         # path_analyzer = PathAnalyzer(analyzer.preprocessed_path, analyzer.project_config, analyzer.dag, paths[0],
         #                              file_name)

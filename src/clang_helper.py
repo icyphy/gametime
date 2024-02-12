@@ -32,6 +32,7 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
 
     libs = f"-I{extra_lib}" if extra_lib != "" else ""
     commands: List[str] = ["clang",
+                           "-target", "riscv32", "-march=rv32gc", "-mabi=ilp32",
                            "-Xclang", "-O0",
                            "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
                            f"{libs}",
@@ -56,7 +57,6 @@ def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gameti
     :return: path of the output .o file
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
-
     # compile bc file
     flexpret_lib_path = os.path.join(gametime_path, gametime_flexpret_path, "programs",
                                      "lib", "include")

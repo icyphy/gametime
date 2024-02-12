@@ -57,46 +57,47 @@ class PathAnalyzer(object):
 
         :return the file path to generated .bc file
         """
-        # read from file
-        with open(self.preprocessed_path, "r") as preprocessed_file:
-            program_str: str = preprocessed_file.read()
+        return self.preprocessed_path
+        # # read from file
+        # with open(self.preprocessed_path, "rb") as preprocessed_file:
+        #     program_str: str = preprocessed_file.read()
+        
+        # # assemble path
+        # prev_condition: str = ""
+        # prev_block_number: str = 0
 
-        # assemble path
-        prev_condition: str = ""
-        prev_block_number: str = 0
+        # for node in self.path.nodes:
+        #     node_label: str = self.dag.get_node_label(self.dag.nodes_indices[node])
+        #     block_number: str = node_label[node_label.find("{")+1:node_label.find(":")]  # find %4 for {%4:...
 
-        for node in self.path.nodes:
-            node_label: str = self.dag.get_node_label(self.dag.nodes_indices[node])
-            block_number: str = node_label[node_label.find("{")+1:node_label.find(":")]  # find %4 for {%4:...
+        #     # if block_number doesn't begin with %, need to manually add one before it
+        #     if not block_number.startswith("%"):
+        #         block_number = f"%{block_number}"
 
-            # if block_number doesn't begin with %, need to manually add one before it
-            if not block_number.startswith("%"):
-                block_number = f"%{block_number}"
+        #     if prev_condition:  # update prev condition to point to this node
+        #         prev_block_begin_index: int = program_str.find("{}:".format(prev_block_number))
+        #         prev_block: str = program_str[prev_block_begin_index:]
+        #         condition_begin_index: int = prev_block.find(prev_condition)
+        #         prev_condition_index: int = prev_block_begin_index + condition_begin_index
+        #         program_str: str = program_str[:prev_condition_index] \
+        #                       + "br label {}".format(block_number) \
+        #                       + program_str[prev_condition_index + len(prev_condition):]
 
-            if prev_condition:  # update prev condition to point to this node
-                prev_block_begin_index: int = program_str.find("{}:".format(prev_block_number))
-                prev_block: str = program_str[prev_block_begin_index:]
-                condition_begin_index: int = prev_block.find(prev_condition)
-                prev_condition_index: int = prev_block_begin_index + condition_begin_index
-                program_str: str = program_str[:prev_condition_index] \
-                              + "br label {}".format(block_number) \
-                              + program_str[prev_condition_index + len(prev_condition):]
+        #     index: int = node_label.rfind("br")  # find the last branch (assume last branch contains conditions)
+        #     if index == -1:  # in case it is sink (no more branches)
+        #         continue
+        #     condition: str = node_label[index:]
+        #     index: int = condition.find('\\')
+        #     condition = condition[:index]
+        #     if condition.count("label") > 1:  # branch rather than jump
+        #         prev_condition = condition
+        #     else:
+        #         prev_condition = ""
+        #     prev_block_number = block_number[1:]
 
-            index: int = node_label.rfind("br")  # find the last branch (assume last branch contains conditions)
-            if index == -1:  # in case it is sink (no more branches)
-                continue
-            condition: str = node_label[index:]
-            index: int = condition.find('\\')
-            condition = condition[:index]
-            if condition.count("label") > 1:  # branch rather than jump
-                prev_condition = condition
-            else:
-                prev_condition = ""
-            prev_block_number = block_number[1:]
+        # # write to file
+        # output_path: str = os.path.join(self.output_folder, f"{self.output_name}.bc")
+        # with open(output_path, "w") as output_file:
+        #     output_file.write(program_str)
 
-        # write to file
-        output_path: str = os.path.join(self.output_folder, f"{self.output_name}.bc")
-        with open(output_path, "w") as output_file:
-            output_file.write(program_str)
-
-        return output_path
+        # return output_path

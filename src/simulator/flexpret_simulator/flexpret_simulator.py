@@ -29,8 +29,12 @@ class FlexpretSimulator(Simulator):
         makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "simulator", "flexpret_simulator", "Makefile")
 
         makefile_path = os.path.join(stored_folder, "Makefile")
+
         shutil.copy(makefile_template_path, makefile_path)
-        os.chmod(makefile_path, stat.S_IRWXO)
+        # os.chmod(makefile_path, stat.S_IXUSR)
+        os.chmod(stored_folder, 0o755)  # Read, write, and execute for the user; read and execute for others
+        os.chmod(makefile_path, 0o755)  # Same as above
+
 
         # gather all the files needed to run Make, particularly all the possible .c/.o files
         context_path_from_flexpret_simulator = f'{self.project_config.location_orig_dir}'
