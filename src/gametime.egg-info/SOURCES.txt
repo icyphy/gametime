@@ -1,0 +1,6 @@
+README.md
+setup.py
+src/gametime.egg-info/PKG-INFO
+src/gametime.egg-info/SOURCES.txt
+src/gametime.egg-info/dependency_links.txt
+src/gametime.egg-info/top_level.txt

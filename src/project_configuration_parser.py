@@ -16,7 +16,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from src.project_configuration import ProjectConfiguration, DebugConfiguration
+from project_configuration import ProjectConfiguration, DebugConfiguration
 
 
 class ConfigurationParser(object):

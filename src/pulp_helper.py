@@ -22,8 +22,6 @@ from interval import Interval
 
 from nx_helper import Dag
 
-# from src import Analyzer
-
 """See the LICENSE file, located in the root directory of
 the source distribution and
 at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,

@@ -4,7 +4,8 @@ import unittest
 import clang_helper
 from path_analyzer import PathAnalyzer
 from project_configuration_parser import YAMLConfigurationParser
-from src import ProjectConfiguration, Analyzer
+from project_configuration import ProjectConfiguration
+from analyzer import Analyzer
 
 
 class TestPathAnalyzer(unittest.TestCase):

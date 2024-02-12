@@ -32,7 +32,7 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
 
     libs = f"-I{extra_lib}" if extra_lib != "" else ""
     commands: List[str] = ["clang",
-                           "-Xclang", "-O2",
+                           "-Xclang", "-O0",
                            "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
                            f"{libs}",
                            "-o", output_file, "-c", file_to_compile]
@@ -121,16 +121,17 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str)
         human-readable form already.
     :return: output_file that is passed in
     """
-    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
+    # output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands: List[str] = ["opt",
-                "-always-inline",
-                "-inline", "-inline-threshold=10000000",
-                "-S", input_file,
-                "-o", output_file]
+    # commands: List[str] = ["opt",
+    #             "-always-inline",
+    #             "-inline", "-inline-threshold=10000000",
+    #             "-S", input_file,
+    #             "-o", output_file]
 
-    logger.info(subprocess.run(commands, check=True))
-    return output_file
+    # logger.info(subprocess.run(commands, check=True))
+    # return output_file
+    return input_file
 
 
 def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> str:
@@ -153,23 +154,24 @@ def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> 
     #             "-S", input_file,
     #             "-o", output_file]
 
-    commands: List[str] = ["opt",
-                "-mem2reg",
-                "-simplifycfg",
-                "-loops",
-                "-lcssa",
-                "-loop-simplify",
-                "-loop-rotate",
-                "-indvars",
-                "-loop-unroll",
-                # "-unroll-threshold=10000000",
-                # "-unroll-count=1000",
-                "-unroll-allow-partial",
-                "-S", input_file,
-                "-o", output_file]
+    # commands: List[str] = ["opt",
+    #             "-mem2reg",
+    #             "-simplifycfg",
+    #             "-loops",
+    #             "-lcssa",
+    #             "-loop-simplify",
+    #             "-loop-rotate",
+    #             "-indvars",
+    #             "-loop-unroll",
+    #             # "-unroll-threshold=10000000",
+    #             # "-unroll-count=1000",
+    #             "-unroll-allow-partial",
+    #             "-S", input_file,
+    #             "-o", output_file]
 
-    logger.info(subprocess.run(commands, check=True))
-    return output_file
+    # logger.info(subprocess.run(commands, check=True))
+    # return output_file
+    return input_file
 
 #TODO: remove it or move it to somewhere more suitable
 def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:

@@ -1,8 +1,8 @@
 import unittest
 
 from project_configuration_parser import YAMLConfigurationParser
-from src import ProjectConfiguration, Analyzer
-
+from project_configuration import ProjectConfiguration
+from analyzer import Analyzer
 
 class AnalyzerTest(unittest.TestCase):
 

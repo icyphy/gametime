@@ -6,7 +6,7 @@ from path_analyzer import PathAnalyzer
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
 from simulator.flexpret_simulator import flexpret_simulator
-from src import Analyzer
+from analyzer import Analyzer
 from histogram import write_histogram_to_file
 
 class FlexpretTest(unittest.TestCase):
