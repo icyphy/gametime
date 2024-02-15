@@ -146,8 +146,11 @@ class Analyzer(object):
         #     self._run_merger()
 
         if True:  # TODO: Make this depend on project configuration
-            flexpret_lib_path: str = os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
-                                                  "programs", "lib", "include")
+            flexpret_lib_path = []
+            flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
+                                                  "programs", "lib", "include"))
+            flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
+                                                  "programs", "lib", "printf", 'src'))
             processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", flexpret_lib_path)
 

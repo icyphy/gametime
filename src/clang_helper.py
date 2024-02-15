@@ -12,7 +12,7 @@ from file_helper import remove_files
 from project_configuration import ProjectConfiguration
 
 
-def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_lib: str="") -> str:
+def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[]) -> str:
     """ Compile .c file to .bc and .ll file using clang through executing
     shell commands. Should work for programs residing in a single file,
     but can be unreliable with larger programs. Recommended to use this as a
@@ -30,13 +30,14 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    libs = f"-I{extra_lib}" if extra_lib != "" else ""
     commands: List[str] = ["clang",
-                           "-target", "riscv32", "-march=rv32gc", "-mabi=ilp32",
+                           "--sysroot=/opt/riscv/riscv32-unknown-elf",
+                           "-target", "riscv32-unknown-elf", "-march=rv32gc", "-mabi=ilp32",
                            "-Xclang", "-O0",
-                           "-mllvm", "-disable-llvm-optzns", "-emit-llvm",
-                           f"{libs}",
+                           "-mllvm", "-disable-llvm-optzns", "-emit-llvm", "-v",
                            "-o", output_file, "-c", file_to_compile]
+    for lib in extra_libs:
+        commands.append(f"-I{lib}")
     subprocess.run(commands, check=True)
 
     # translate for .ll automatically. (optional)
