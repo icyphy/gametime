@@ -140,11 +140,6 @@ class Analyzer(object):
         preprocessed_file = self.project_config.location_temp_file
         shutil.copyfile(orig_file, preprocessed_file)
 
-        # TODO: Make merger work
-        # # Preprocessing pass: merge other source files.
-        # if len(self.projectConfig.merged) > 0:
-        #     self._run_merger()
-
         if True:  # TODO: Make this depend on project configuration
             flexpret_lib_path = []
             flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
@@ -167,35 +162,6 @@ class Analyzer(object):
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
         logger.info("")
-
-    ### PREPROCESSING HELPER FUNCTIONS ###
-    # TODO: Make this work (see self._preprocess)
-    # def _run_merger(self):
-    #     """As part of preprocessing, runs CIL on the source file under
-    #     analysis to merge other source files. A copy of the file that
-    #     results from the CIL preprocessing is made and renamed for use by
-    #     other preprocessing phases, and the file itself is renamed and
-    #     stored for later perusal.
-    #     """
-    #     preprocessed_file: str = self.projectConfig.locationTempFile
-    #     # Infer the name of the file that results from the CIL preprocessing.
-    #     cil_file = "%s.cil.c" % self.projectConfig.locationTempNoExtension
-    #
-    #     logger.info("Preprocessing the file: merging other source files...")
-    #
-    #     if merger.runMerger(self.projectConfig):
-    #         errMsg = "Error running the merger."
-    #         raise GameTimeError(errMsg)
-    #     else:
-    #         shutil.copyfile(cil_file, preprocessed_file)
-    #         shutil.move(cil_file,
-    #                     "%s%s.c" % (self.projectConfig.locationTempNoExtension,
-    #                                 config.TEMP_SUFFIX_MERGED))
-    #         if not self.projectConfig.debugConfig.KEEP_CIL_TEMPS:
-    #             cilHelper.removeTempCilFiles(self.projectConfig)
-    #
-    #         logger.info("")
-    #         logger.info("Other source files merged.")
 
     def _run_loop_unroller(self, compiled_file: str):
         """As part of preprocessing, runs CIL on the source file under
@@ -259,44 +225,6 @@ class Analyzer(object):
             # return "%s%s.bt" % (self.project_config.location_temp_no_extension,
             #                     config.TEMP_SUFFIX_INLINED)
             return inlined_file
-
-    # TODO: Figure out what this is supposed to do (see self._preprocess)
-    # def _runCil(self):
-    #     """As part of preprocessing, runs CIL on the source file under
-    #     analysis to to reduce the C file to the subset of constructs
-    #     used by CIL for ease of analysis. The file that results from
-    #     the CIL preprocessing is renamed for use by the rest of
-    #     the GameTime toolflow. Another copy, with preprocessor directives
-    #     that maintain the line numbers from the original source file
-    #     (and other merged source files), is also made.
-    #     """
-    #     preprocessedFile = self.projectConfig.locationTempFile
-    #     # Infer the name of the file that results from the CIL preprocessing.
-    #     cilFile = "%s.cil.c" % self.projectConfig.locationTempNoExtension
-    #
-    #     logger.info("Preprocessing the file: running CIL to produce code "
-    #                 "simplified for analysis...")
-    #
-    #     if cilHelper.runCil(self.projectConfig, keepLineNumbers=True):
-    #         errMsg = "Error running CIL in the final preprocessing phase."
-    #         raise GameTimeError(errMsg)
-    #     else:
-    #         shutil.move(cilFile,
-    #                     "%s%s.c" % (self.projectConfig.locationTempNoExtension,
-    #                                 config.TEMP_SUFFIX_LINE_NUMS))
-    #         if not self.projectConfig.debugConfig.KEEP_CIL_TEMPS:
-    #             cilHelper.removeTempCilFiles(self.projectConfig)
-    #
-    #     if cilHelper.runCil(self.projectConfig):
-    #         errMsg = "Error running CIL in the final preprocessing phase."
-    #         raise GameTimeError(errMsg)
-    #     else:
-    #         shutil.move(cilFile, preprocessedFile)
-    #         if not self.projectConfig.debugConfig.KEEP_CIL_TEMPS:
-    #             cilHelper.removeTempCilFiles(self.projectConfig)
-    #
-    #     logger.info("")
-    #     logger.info("Final preprocessing phase complete.")
 
     ### BASIS MATRIX FUNCTIONS ###
     def _init_basis_matrix(self):
@@ -365,8 +293,6 @@ class Analyzer(object):
 
         if nx_helper.has_cycles(self.dag):
             logger.warning("The control-flow graph has cycles.")
-            #TODO: figure out why still need this with has_cycles
-            # self._run_loop_detector()
         else:
             logger.info("The control-flow graph has %d nodes and %d edges, "
                         "with at most %d possible paths." %
@@ -520,7 +446,7 @@ class Analyzer(object):
 
         if nx_helper.has_cycles(self.dag):
             logger.warning("Loops in the code have been detected.")
-            logger.warning("No basis paths have been generated.")
+            # logger.warning("No basis paths have been generated.")
             return []
 
         logger.info("Generating the basis paths...")
