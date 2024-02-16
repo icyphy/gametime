@@ -11,8 +11,9 @@ int main() {
     // printf("x is %i\n", x);
     uint32_t y = 2;
     // printf("y is %i\n", y);
-
-    uint32_t z = add(x, y);
+    if (y > x) {
+        uint32_t z = add(x, y);
+    }
     // printf("z is %i\n", z);
     // assert(z == 3, "1 + 2 =/= 3");
     return 0;
