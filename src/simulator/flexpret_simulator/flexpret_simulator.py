@@ -25,13 +25,12 @@ class FlexpretSimulator(Simulator):
         :return file path of generated .mem file
         """
         # copy the MAKEFILE in FLEXPRET repository to the same folder as .o file
-        #TODO: change the template path to the one user could provide
         makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "simulator", "flexpret_simulator", "Makefile")
 
         makefile_path = os.path.join(stored_folder, "Makefile")
 
         shutil.copy(makefile_template_path, makefile_path)
-        # os.chmod(makefile_path, stat.S_IXUSR)
+
         os.chmod(stored_folder, 0o755)  # Read, write, and execute for the user; read and execute for others
         os.chmod(makefile_path, 0o755)  # Same as above
 

@@ -30,11 +30,26 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
+    extra_libs.append('/opt/riscv/riscv32-unknown-elf/include')
+
     commands: List[str] = ["clang",
                            "--sysroot=/opt/riscv/riscv32-unknown-elf",
-                           "-target", "riscv32-unknown-elf", "-march=rv32gc", "-mabi=ilp32",
-                           "-Xclang", "-O0",
-                           "-mllvm", "-disable-llvm-optzns", "-emit-llvm", "-v",
+                           "-target", "riscv32-unknown-elf", 
+                           "-march=rv32i", "-mabi=ilp32",
+                           "-Xclang", 
+                           "-O0", 
+                           '-g',
+                           '-D_REENT_SMALL',
+                           '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
+                           '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
+                           '-DPRINTF_SUPPORT_EXPONENTIAL_SPECIFIERS=0',
+                           '-DSUPPORT_MSVC_STYLE_INTEGER_SPECIFIERS=0',
+                           '-DPRINTF_SUPPORT_WRITEBACK_SPECIFIER=0',
+                           '-DPRINTF_SUPPORT_LONG_LONG=0',
+                           '-D__EMULATOR__',
+                           '-DDEBUG',
+                           '-D__DYNAMIC_REENT__',
+                           "-emit-llvm",
                            "-o", output_file, "-c", file_to_compile]
     for lib in extra_libs:
         commands.append(f"-I{lib}")
@@ -59,12 +74,13 @@ def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gameti
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
     # compile bc file
-    flexpret_lib_path = os.path.join(gametime_path, gametime_flexpret_path, "programs",
-                                     "lib", "include")
-    commands: List[str] = ["clang", "--target=riscv32",f"-I{flexpret_lib_path}",
-                           "-g", "-static", "-O0", "-mabi=ilp32", "-nostartfiles",
-                           "-specs=nosys.specs","-march=rv32gc",
-                           path_bc_filepath, "-c", "-o", output_file]
+
+    commands = ["clang",  
+                "-target", "riscv32-unknown-elf",
+                "-mabi=ilp32", "-nostartfiles",
+                "-march=rv32i",
+                "-o", output_file, "-c", path_bc_filepath]
+
     subprocess.check_call(commands)
 
     ## object dump

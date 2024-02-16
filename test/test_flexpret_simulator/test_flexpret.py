@@ -15,20 +15,12 @@ class TestFlexpret(unittest.TestCase):
             YAMLConfigurationParser.parse("./programs/add/config.yaml")
         shutil.rmtree(self.project_config.location_temp_dir)
 
-    def test_measure_path(self):
+    def test_measure_basis_path(self):
         analyzer = Analyzer(self.project_config)
         analyzer.create_dag()
         paths = analyzer.generate_basis_paths()
         self.assertIsNotNone(paths[0], "no paths were found")
         analyzer.measure_basis_paths()
-        print(paths[0])
-        # file_name = "path0"
-        # path_analyzer = PathAnalyzer(analyzer.preprocessed_path, analyzer.project_config, analyzer.dag, paths[0],
-        #                              file_name)
-
-        # fp_simulator = flexpret_simulator.FlexpretSimulator(self.project_config)
-        # value = path_analyzer.measure_path(fp_simulator)
-        # print(value)
 
 if __name__ == '__main__':
     unittest.main()
