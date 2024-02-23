@@ -138,17 +138,17 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str)
         human-readable form already.
     :return: output_file that is passed in
     """
-    # output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    # commands: List[str] = ["opt",
-    #             "-always-inline",
-    #             "-inline", "-inline-threshold=10000000",
-    #             "-S", input_file,
-    #             "-o", output_file]
+    commands: List[str] = ["opt",
+                "-always-inline",
+                "-inline", "-inline-threshold=10000000",
+                "-S", input_file,
+                "-o", output_file]
 
-    # logger.info(subprocess.run(commands, check=True))
-    # return output_file
-    return input_file
+    logger.info(subprocess.run(commands, check=True))
+    return output_file
+    # return input_file
 
 
 def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> str:
