@@ -1,0 +1,137 @@
+#include <iostream>
+#include <string>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Verifier.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Instructions.h>
+#include <llvm/IRReader/IRReader.h>
+#include <llvm/Support/SourceMgr.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/TargetSelect.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
+#include <llvm/Bitcode/BitcodeReader.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/Transforms/Utils/Cloning.h>
+#include <llvm/Transforms/IPO/PassManagerBuilder.h>
+
+using namespace llvm;
+using namespace std;
+
+void insertGlobalVariables(Module *module) {
+    LLVMContext &context = module->getContext();
+    int counter = 0;
+    for (Function &F : *module) {
+        if (F.getName() != "main") {
+            for (BasicBlock &BB : F) {
+                for (Instruction &I : BB) {
+                    if (auto *BranchInstPtr = dyn_cast<BranchInst>(&I)) {
+                        auto &BranchInst = *BranchInstPtr;
+                        if (BranchInst.isConditional()) {
+                            BasicBlock *SuccBlock = BranchInst.getSuccessor(0); // True branch
+                            IRBuilder<> builder(SuccBlock->getFirstNonPHI());
+                            GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
+                            if (!GV) {
+                                GV = new GlobalVariable(*module,
+                                                        IntegerType::get(context, 8),
+                                                        false,
+                                                        GlobalValue::ExternalLinkage,
+                                                        ConstantInt::get(IntegerType::get(context, 8), 0),
+                                                        "conditional_var_" + to_string(counter));
+                            }
+                            builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
+                            counter++;
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}
+
+void writeLLFile(Module *module, const string &filename) {
+    std::error_code EC;
+    raw_fd_ostream outputFile(filename, EC, sys::fs::OF_None);
+    if (EC) {
+        cerr << "Error opening file: " << EC.message() << endl;
+        return;
+    }
+
+    module->print(outputFile, nullptr);
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <input.c>" << endl;
+        return 1;
+    }
+    string inputFilename(argv[1]);
+    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 2) + "_mod";
+    string outputFilename = inputFilename.substr(0, inputFilename.size() - 2);
+    LLVMContext context;
+    SMDiagnostic error;
+
+    // Compile the input C file to LLVM bitcode
+    string compileCommand = "clang -emit-llvm -c " + string(argv[1]) + " -o " + outputFilename + ".bc";
+    int compileResult = system(compileCommand.c_str());
+    if (compileResult != 0) {
+        cerr << "Failed to compile the input C file to LLVM bitcode." << endl;
+        return 1;
+    }
+
+    // Parse the LLVM bitcode file
+    unique_ptr<Module> module = parseIRFile(outputFilename + ".bc", error, context);
+    if (!module) {
+        error.print(argv[0], errs());
+        cerr << "Error: Failed to parse input LLVM bitcode file." << endl;
+        return 1;
+    }
+
+    // Verify the module
+    if (verifyModule(*module, &errs())) {
+        cerr << "Error: Invalid module" << endl;
+        return 1;
+    }
+
+    // Create a copy of the original module
+    unique_ptr<Module> originalModule = CloneModule(*module);
+
+    // Insert global variables into basic blocks with conditional branches
+    insertGlobalVariables(module.get());
+
+    // Write normal bitcode to a file
+    // std::error_code EC_normal;
+    // raw_fd_ostream normalOutputFile((outputFilename + "_normal.bc").c_str(), EC_normal, sys::fs::OF_None);
+    // if (EC_normal) {
+    //     cerr << "Error opening normal bitcode file: " << EC_normal.message() << endl;
+    //     return 1;
+    // }
+    // WriteBitcodeToFile(*originalModule, normalOutputFile);
+    // if (EC_normal) {
+    //     cerr << "Error writing normal bitcode: " << EC_normal.message() << endl;
+    //     return 1;
+    // }
+
+    // Write modified bitcode to a file
+    std::error_code EC_modified;
+    raw_fd_ostream modifiedOutputFile((outputFilenameMod + ".bc").c_str(), EC_modified, sys::fs::OF_None);
+    if (EC_modified) {
+        cerr << "Error opening modified bitcode file: " << EC_modified.message() << endl;
+        return 1;
+    }
+    WriteBitcodeToFile(*module, modifiedOutputFile);
+    if (EC_modified) {
+        cerr << "Error writing modified bitcode: " << EC_modified.message() << endl;
+        return 1;
+    }
+
+    // Write normal LLVM assembly to a file
+    writeLLFile(originalModule.get(), (outputFilename + ".ll").c_str());
+
+    // Write modified LLVM assembly to a file
+    writeLLFile(module.get(), (outputFilenameMod + ".ll").c_str());
+
+    return 0;
+}
