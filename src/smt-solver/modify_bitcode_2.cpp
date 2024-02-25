@@ -45,6 +45,18 @@ void insertGlobalVariables(Module *module, const vector<int> &labels) {
     }
 }
 
+
+void writeLLFile(Module *module, const string &filename) {
+    std::error_code EC;
+    raw_fd_ostream outputFile(filename, EC, sys::fs::OF_None);
+    if (EC) {
+        cerr << "Error opening file: " << EC.message() << endl;
+        return;
+    }
+
+    module->print(outputFile, nullptr);
+}
+
 vector<int> parseLabelsFromFile(const string &filename) {
     vector<int> labels;
     ifstream file(filename);
@@ -61,19 +73,27 @@ vector<int> parseLabelsFromFile(const string &filename) {
 }
 
 int main(int argc, char **argv) {
-    if (argc < 3) {
-        cerr << "Usage: " << argv[0] << " <input.bc> <labels.txt>" << endl;
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <input.c> <labels.txt>" << endl;
         return 1;
     }
     string inputFilename(argv[1]);
     string labelsFilename(argv[2]);
-    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 3) + "_mod.bc";
-
+    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 2) + "_mod";
+    string outputFilename = inputFilename.substr(0, inputFilename.size() - 2);
     LLVMContext context;
     SMDiagnostic error;
 
+    // Compile the input C file to LLVM bitcode
+    string compileCommand = "clang -emit-llvm -c " + string(argv[1]) + " -o " + outputFilename + ".bc";
+    int compileResult = system(compileCommand.c_str());
+    if (compileResult != 0) {
+        cerr << "Failed to compile the input C file to LLVM bitcode." << endl;
+        return 1;
+    }
+
     // Parse the LLVM bitcode file
-    unique_ptr<Module> module = parseIRFile(inputFilename, error, context);
+    unique_ptr<Module> module = parseIRFile(outputFilename + ".bc", error, context);
     if (!module) {
         error.print(argv[0], errs());
         cerr << "Error: Failed to parse input LLVM bitcode file." << endl;
@@ -86,15 +106,31 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Create a copy of the original module
+    unique_ptr<Module> originalModule = CloneModule(*module);
+
     // Parse labels from file
     vector<int> labels = parseLabelsFromFile(labelsFilename);
 
-    // Insert global variables into basic blocks with matching labels
+    // Insert global variables into basic blocks with conditional branches
     insertGlobalVariables(module.get(), labels);
+
+    // Write normal bitcode to a file
+    // std::error_code EC_normal;
+    // raw_fd_ostream normalOutputFile((outputFilename + "_normal.bc").c_str(), EC_normal, sys::fs::OF_None);
+    // if (EC_normal) {
+    //     cerr << "Error opening normal bitcode file: " << EC_normal.message() << endl;
+    //     return 1;
+    // }
+    // WriteBitcodeToFile(*originalModule, normalOutputFile);
+    // if (EC_normal) {
+    //     cerr << "Error writing normal bitcode: " << EC_normal.message() << endl;
+    //     return 1;
+    // }
 
     // Write modified bitcode to a file
     std::error_code EC_modified;
-    raw_fd_ostream modifiedOutputFile(outputFilenameMod.c_str(), EC_modified, sys::fs::OF_None);
+    raw_fd_ostream modifiedOutputFile((outputFilenameMod + ".bc").c_str(), EC_modified, sys::fs::OF_None);
     if (EC_modified) {
         cerr << "Error opening modified bitcode file: " << EC_modified.message() << endl;
         return 1;
@@ -104,6 +140,12 @@ int main(int argc, char **argv) {
         cerr << "Error writing modified bitcode: " << EC_modified.message() << endl;
         return 1;
     }
+
+    // Write normal LLVM assembly to a file
+    writeLLFile(originalModule.get(), (outputFilename + ".ll").c_str());
+
+    // Write modified LLVM assembly to a file
+    writeLLFile(module.get(), (outputFilenameMod + ".ll").c_str());
 
     return 0;
 }
