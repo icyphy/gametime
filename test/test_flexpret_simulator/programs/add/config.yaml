@@ -9,7 +9,7 @@ gametime-project:
     #the directory that contains this YAML file.
     location: add.c
     #Function to analyze.
-    analysis-function: main
+    analysis-function: add
     #Label in the function to start analysis from.
     #If left empty, GameTime will start analysis of the function
     #Sfrom its beginning.

@@ -274,7 +274,7 @@ class Analyzer(object):
         #     raise GameTimeError(err_msg)
 
         location = os.path.join(self.project_config.location_temp_dir,
-                                config.TEMP_DAG)
+                                "." + self.project_config.func + ".dot")
         self.load_dag_from_dot_file(location)
 
         # special case for single node dag
