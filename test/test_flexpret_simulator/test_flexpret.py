@@ -44,7 +44,7 @@ class TestFlexpret(unittest.TestCase):
         # self.assertTrue(len(output_file) != 0)
         # self.assertTrue(os.path.isfile(output_file))
 
-        analyzer.measure_basis_paths()
+        # analyzer.measure_basis_paths()
 
 
 

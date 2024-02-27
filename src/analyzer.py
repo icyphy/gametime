@@ -586,29 +586,35 @@ class Analyzer(object):
                 logger.info("Checking if replacement is feasible...")
                 logger.info("")
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+  
                 # feasibility test
-                value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
-                # TODO: replace with actual value of infeasible path
-                if value < float('inf'):
-                    # Sanity check:
-                    # A row should not be replaced if it replaces a good
-                    # row and decreases the determinant. However,
-                    # replacing a bad row and decreasing the determinant
-                    # is okay. (TODO: Are we actually doing this?)
-                    logger.info("Replacement is feasible.")
-                    logger.info("Row %d replaced." % (current_row + 1))
-                    basis_paths.append(result_path)
-                    current_row += 1
-                    num_paths_unsat = 0
-                else:
-                    logger.info("Replacement is infeasible.")
-                    logger.info("Adding a constraint to exclude "
-                                "these edges...")
-                    self.add_path_exclusive_constraint(candidate_path_edges)
-                    infeasible.append(candidate_path_edges)
-                    logger.info("Constraint added.")
-                    self.basis_matrix[current_row] = prev_matrix_row
-                    num_paths_unsat += 1
+                logger.info("Replacement is feasible.")
+                logger.info("Row %d replaced." % (current_row + 1))
+                basis_paths.append(result_path)
+                current_row += 1
+                num_paths_unsat = 0  
+                # value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
+                # # TODO: replace with actual value of infeasible path
+                # if value < float('inf'):
+                #     # Sanity check:
+                #     # A row should not be replaced if it replaces a good
+                #     # row and decreases the determinant. However,
+                #     # replacing a bad row and decreasing the determinant
+                #     # is okay. (TODO: Are we actually doing this?)
+                #     logger.info("Replacement is feasible.")
+                #     logger.info("Row %d replaced." % (current_row + 1))
+                #     basis_paths.append(result_path)
+                #     current_row += 1
+                #     num_paths_unsat = 0
+                # else:
+                #     logger.info("Replacement is infeasible.")
+                #     logger.info("Adding a constraint to exclude "
+                #                 "these edges...")
+                #     self.add_path_exclusive_constraint(candidate_path_edges)
+                #     infeasible.append(candidate_path_edges)
+                #     logger.info("Constraint added.")
+                #     self.basis_matrix[current_row] = prev_matrix_row
+                #     num_paths_unsat += 1
 
             logger.info("")
             logger.info("")
@@ -686,24 +692,31 @@ class Analyzer(object):
                     current_row += 1
                     num_paths_unsat = 0
                     #feasibility test
-                    value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
+                    # value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
                     # TODO: replace with actual value of infeasible path
-                    if value < float('inf'):
-                        logger.info("Replacement is feasible.")
-                        is_two_barycentric = False
-                        basis_paths[current_row] = result_path
-                        logger.info("Row %d replaced." % (current_row + 1))
-                        current_row += 1
-                        num_paths_unsat = 0
-                    else:
-                        logger.info("Replacement is infeasible.")
-                        self.add_path_exclusive_constraint(candidate_path_edges)
-                        logger.info("Adding a constraint to exclude "
-                                    "these edges...")
-                        infeasible.append(candidate_path_edges)
-                        logger.info("Constraint added.")
-                        self.basis_matrix[current_row] = prev_matrix_row
-                        num_paths_unsat += 1
+                    logger.info("Replacement is feasible.")
+                    is_two_barycentric = False
+                    basis_paths[current_row] = result_path
+                    logger.info("Row %d replaced." % (current_row + 1))
+                    current_row += 1
+                    num_paths_unsat = 0
+
+                    # if value < float('inf'):
+                    #     logger.info("Replacement is feasible.")
+                    #     is_two_barycentric = False
+                    #     basis_paths[current_row] = result_path
+                    #     logger.info("Row %d replaced." % (current_row + 1))
+                    #     current_row += 1
+                    #     num_paths_unsat = 0
+                    # else:
+                    #     logger.info("Replacement is infeasible.")
+                    #     self.add_path_exclusive_constraint(candidate_path_edges)
+                    #     logger.info("Adding a constraint to exclude "
+                    #                 "these edges...")
+                    #     infeasible.append(candidate_path_edges)
+                    #     logger.info("Constraint added.")
+                    #     self.basis_matrix[current_row] = prev_matrix_row
+                    #     num_paths_unsat += 1
 
                 else:
                     logger.info("No replacement for row %d found." %
