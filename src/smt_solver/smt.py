@@ -42,16 +42,16 @@ def extract_labels_from_file(filename):
     return labels
 def run_smt(labels_file):
     # get the current working directory
-    current_working_directory = os.getcwd()
+    #current_working_directory = os.getcwd()
     # print output to the console
-    print(current_working_directory)
+    #print(current_working_directory)
     # file to generate input for
     c_file = './programs/add/add.c'
     # compile to bitcode
     bc_file = compile_c_to_bitcode(c_file)
     # count number of branches
     labels = extract_labels_from_file(labels_file)
-    print(labels)
+    #print(labels)
     num_of_branches = len(labels)
     # format c file to klee 
     klee_file = format_for_klee(c_file, num_of_branches)

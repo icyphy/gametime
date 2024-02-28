@@ -39,7 +39,7 @@ void insertGlobalVariables(Module *module, const vector<int> &labels) {
     for (Function &F : *module) {
         for (BasicBlock &BB : F) {
             string labelString = getSimpleNodeLabel(&BB,&F);
-            cerr << labelString <<endl;
+            //cerr << labelString <<endl;
             //BB.printAsOperand(errs(), false);
             int label = stoi(labelString.substr(1));
             if (find(labels.begin(), labels.end(), label) != labels.end()) {

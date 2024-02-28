@@ -24,9 +24,9 @@ class TestFlexpret(unittest.TestCase):
         paths = analyzer.generate_basis_paths()
 
         self.assertIsNotNone(paths[0], "no paths were found")
-        print([analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node])  for path in paths for node in path.nodes])
+        #print([analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node])  for path in paths for node in path.nodes])
         # extract bitcode from path
-        print(len(paths))
+        #print(len(paths))
         labels = []
         for path in paths:
             bitcode = []

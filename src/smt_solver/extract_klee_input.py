@@ -4,9 +4,9 @@ import subprocess
 def find_test_file(klee_last_dir):
     # Iterate over files in the klee-last directory
     # get the current working directory
-    current_working_directory = os.getcwd()
+    #current_working_directory = os.getcwd()
     # print output to the console
-    print("Hallo", current_working_directory)
+    #print("Hallo", current_working_directory)
     for root, dirs, files in os.walk(klee_last_dir):
         for file in files:
             # Check if the file is a KLEE test case input file
@@ -35,6 +35,6 @@ def find_and_run_test():
                 break
             i += 1
         run_ktest_tool(ktest_file, output_file)
-        print(f"Output saved to {output_file}")
+        print(f"Input saved to {output_file}")
     else:
         print("No ktest file without corresponding assert.err file found.")
