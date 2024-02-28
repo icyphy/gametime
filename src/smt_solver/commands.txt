@@ -1,0 +1,20 @@
+#format file for klee
+python klee/to_klee_format.py
+input: klee_format_test.c
+output: formatted_for_klee.c
+
+#compile c++ program to modify bc
+clang++ -o llvm_scripts/modify_bitcode llvm_scripts/modify_bitcode_2.cpp `llvm-config --cxxflags --ldflags --libs core support bitreader bitwriter irreader`
+./modify_bitcode ../../test/test_flexpret_simulator/programs/add/add_klee_format.c ../../test/test_flexpret_simulator/labels_18.txt./modify_bitcode ../../test/test_flexpret_simulator/programs/add/add_klee_format.c ../../test/test_flexpret_simulator/labels_18.txt
+output: ./modify_bitcode
+
+#run c++ program to modify bc
+output: formatted_for_klee.c.bc, formatted_for_klee_mod.bc, original.ll, modified.ll
+
+#run klee on formatted and modified bc
+klee formatted_for_klee_mod.bc
+output: klee-last (klee tests)
+
+#ouput klee tests
+ktest-tool klee-last/test000001.ktest
+ouput: test-stats

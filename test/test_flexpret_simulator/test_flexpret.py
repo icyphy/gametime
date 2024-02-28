@@ -9,8 +9,8 @@ from project_configuration_parser import YAMLConfigurationParser
 from simulator.flexpret_simulator import flexpret_simulator
 from analyzer import Analyzer
 import os
-import extract_labels
-import smt
+from smt_solver.extract_labels import find_labels
+from smt_solver.smt import run_smt
 
 class TestFlexpret(unittest.TestCase):
     def setUp(self):
@@ -24,17 +24,17 @@ class TestFlexpret(unittest.TestCase):
         paths = analyzer.generate_basis_paths()
 
         self.assertIsNotNone(paths[0], "no paths were found")
-        #print([analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node])  for path in paths for node in path.nodes])
+        print([analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node])  for path in paths for node in path.nodes])
         # extract bitcode from path
+        print(len(paths))
         labels = []
         for path in paths:
             bitcode = []
             for node in path.nodes:
                 bitcode.append(analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node]))
-            labels_file = extract_labels.find_labels("".join(bitcode))
-            smt.run_smt(labels_file)
-            labels.append(bitcode_labels)
-        print(labels)
+            labels_file = find_labels("".join(bitcode))
+            run_smt(labels_file)
+
 
         # path_analyzer = PathAnalyzer(analyzer.preprocessed_path, analyzer.project_config, analyzer.dag, paths[0], "path0")
         # output_file = path_analyzer.change_bt_based_on_path()
@@ -44,7 +44,7 @@ class TestFlexpret(unittest.TestCase):
         # self.assertTrue(len(output_file) != 0)
         # self.assertTrue(os.path.isfile(output_file))
 
-        # analyzer.measure_basis_paths()
+        #analyzer.measure_basis_paths()
 
 
 
