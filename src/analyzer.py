@@ -140,14 +140,14 @@ class Analyzer(object):
         preprocessed_file = self.project_config.location_temp_file
         shutil.copyfile(orig_file, preprocessed_file)
 
-        if True:  # TODO: Make this depend on project configuration
-            flexpret_lib_path = []
-            flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
-                                                  "programs", "lib", "include"))
-            flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
-                                                  "programs", "lib", "printf", 'src'))
-            processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", flexpret_lib_path)
+        # TODO: Make this depend on project configuration
+        flexpret_lib_path = []
+        flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
+            "programs", "lib", "include"))
+        flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
+            "programs", "lib", "printf", 'src'))
+        processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included + flexpret_lib_path)
 
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list

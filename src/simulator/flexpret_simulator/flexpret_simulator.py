@@ -9,6 +9,7 @@ import clang_helper
 from simulator.simulator import Simulator
 from project_configuration import ProjectConfiguration
 from defaults import logger
+from typing import List
 
 
 class FlexpretSimulator(Simulator):
@@ -99,8 +100,7 @@ class FlexpretSimulator(Simulator):
         :return the measured value of path
         """
         stored_folder: str = measure_folder
-        path_object_filepath: str = clang_helper.compile_to_object_flexpret(path_bc_filepath, self.project_config.gametime_path,
-                                                                            self.project_config.gametime_flexpret_path, stored_folder, file_name)
+        path_object_filepath: str = clang_helper.bc_to_object(path_bc_filepath, stored_folder, file_name)
         cycle_count: int = -1
         try:
             self.object_file_to_mem(stored_folder, file_name)

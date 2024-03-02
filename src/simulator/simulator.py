@@ -5,7 +5,7 @@ to interact with, a simulator, which will be used to measure values
 that correspond to different paths in the code that is being analyzed.
 """
 from project_configuration import ProjectConfiguration
-
+from typing import List
 """See the LICENSE file, located in the root directory of
 the source distribution and
 at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
@@ -30,6 +30,7 @@ class Simulator(object):
         #: GameTime project configuration for the code that is being analyzed.
         self.project_config: ProjectConfiguration = project_config
 
+    #TODO: retire this
     def measure(self, path_bc_filepath: str, measure_folder: str, file_name: str) -> int:
         """
         Perform measurement using the simulator.
@@ -37,6 +38,15 @@ class Simulator(object):
         :param path_bc_filepath: the file path to the generated .bc file used for simulation; should correspond to a PATH
         :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of simulator}
         :param file_name: the file name of the measured file, and all generated files will use when applicable
+        :return the measured value of path
+        """
+        return 0
+    
+    def measure(self, inputs: List[any], measure_folder: str) -> int:
+        """
+        Perform measurement using the simulator.
+        :param inputs: the inputs to drive down a PATH
+        :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of simulator}
         :return the measured value of path
         """
         return 0
