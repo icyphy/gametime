@@ -5,10 +5,12 @@ import os
 from defaults import logger
 import clang_helper
 
-def compile_c_to_bitcode(c_file):
+
+
+def compile_c_to_bitcode(c_file, c_file_path, c_file_gt_dir):
     # Command to compile C file to LLVM bitcode
-    bc_file = c_file[:-2] + ".bc"
-    compile_command = ['clang', '-emit-llvm', '-c', c_file, '-o', bc_file]
+    bc_file = os.path.join(c_file_gt_dir, c_file + ".bc") 
+    compile_command = ['clang', '-emit-llvm', '-c', c_file_path, '-o', bc_file]
     # Run compilation command
     subprocess.run(compile_command, check=True)
     return bc_file
@@ -40,21 +42,25 @@ def extract_labels_from_file(filename):
             except ValueError:
                 print(f"Ignoring non-numeric value: {line.strip()}")
     return labels
-def run_smt(labels_file):
+
+def run_smt(project_config, labels_file, output_dir):
+    c_file = project_config.name_orig_no_extension
+    c_file_path = project_config.location_orig_file
+    c_file_gt_dir = project_config.location_temp_dir
     # get the current working directory
     #current_working_directory = os.getcwd()
     # print output to the console
     #print(current_working_directory)
     # file to generate input for
-    c_file = './programs/add/add.c'
+    #c_file = './programs/add/add.c'
     # compile to bitcode
-    bc_file = compile_c_to_bitcode(c_file)
+    #bc_file = compile_c_to_bitcode(c_file, c_file_path, c_file_gt_dir)
     # count number of branches
     labels = extract_labels_from_file(labels_file)
     #print(labels)
     num_of_branches = len(labels)
     # format c file to klee 
-    klee_file = format_for_klee(c_file, num_of_branches)
+    klee_file = format_for_klee(c_file, c_file_path, c_file_gt_dir, num_of_branches)
     # insert assignments of global variables
     cplusplus_file = '../../src/smt_solver/modify_bitcode_2.cpp'
     output_file = '../../src/smt_solver/modify_bitcode'
@@ -63,6 +69,6 @@ def run_smt(labels_file):
     # run klee
     run_klee(modified_klee_file_bc)
     # extract klee input
-    find_and_run_test()
+    find_and_run_test(c_file_gt_dir, output_dir)
 
 

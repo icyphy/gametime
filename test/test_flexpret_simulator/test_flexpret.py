@@ -27,13 +27,15 @@ class TestFlexpret(unittest.TestCase):
         #print([analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node])  for path in paths for node in path.nodes])
         # extract bitcode from path
         #print(len(paths))
+        output_dir = os.path.join(self.project_config.location_temp_dir, "output")
+        os.mkdir(output_dir)
         labels = []
         for path in paths:
             bitcode = []
             for node in path.nodes:
                 bitcode.append(analyzer.dag.get_node_label(analyzer.dag.nodes_indices[node]))
-            labels_file = find_labels("".join(bitcode))
-            run_smt(labels_file)
+            labels_file = find_labels("".join(bitcode), output_dir)
+            run_smt(self.project_config, labels_file, output_dir)
 
 
         # path_analyzer = PathAnalyzer(analyzer.preprocessed_path, analyzer.project_config, analyzer.dag, paths[0], "path0")
