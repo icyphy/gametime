@@ -1,8 +1,9 @@
 import re
+import os
 
-def format_for_klee(original_file, n):
+def format_for_klee(c_file, c_file_path, c_file_gt_dir, n):
     # Read the original C file
-    with open(original_file, 'r') as f:
+    with open(c_file_path, 'r') as f:
         c_code = f.read()
 
     # Regular expression pattern to find header includes (excluding commented lines)
@@ -49,7 +50,7 @@ def format_for_klee(original_file, n):
         main_function += "    return 0;\n}"
 
         # Write the formatted code to the output file
-        klee_file = original_file[:-2] + "_klee_format.c"
+        klee_file = os.path.join(c_file_gt_dir, c_file + "_klee_format.c") 
         with open(klee_file, 'w') as f:
             f.write(klee_headers + '\n')
             for header in header_matches:

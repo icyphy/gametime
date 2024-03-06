@@ -1,13 +1,14 @@
 import re
+import os
 
-def find_labels(bitcode_string):
+def find_labels(bitcode_string, output_dir):
 
     # Use regular expression to find the labels
     labels = re.findall(r'%(\d+):', bitcode_string)
     # Convert labels to integers and store them in a list
     i = 0
     while True:
-        filename = f"labels_{i}.txt"
+        filename = os.path.join(output_dir, f"labels_{i}.txt")
         try:
             with open(filename, 'x') as f:
                 for label in labels:

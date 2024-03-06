@@ -1,6 +1,28 @@
 import os
 import subprocess
 
+import re
+
+def write_klee_input_to_file(filename):
+    # Define a regular expression pattern to extract int values
+    pattern = re.compile(r'int\s+:\s+(-?\d+)')
+
+    # Open the input file
+    with open(filename, 'r') as infile:
+        data = infile.read()
+
+    # Find all int values using regex
+    int_values = pattern.findall(data)
+
+    # Write int values to a new text file
+    values_filename = filename[:-4] + "_values.txt"
+    with open(values_filename, 'w') as outfile:
+        for value in int_values:
+            outfile.write(value + '\n')
+
+    print(f"Values extracted and written to {values_filename}")
+
+
 def find_test_file(klee_last_dir):
     # Iterate over files in the klee-last directory
     # get the current working directory
@@ -23,18 +45,22 @@ def run_ktest_tool(ktest_file, output_file):
     with open(output_file, 'w') as f:
         subprocess.run(['klee.ktest-tool', ktest_file], stdout=f, text=True)
 
-def find_and_run_test():
+#def cleanup_klee():
+
+
+def find_and_run_test(c_file_gt_dir, output_dir):
     #klee_last_dir = 'klee-last'  # Path to the klee-last directory
-    klee_last_dir = "programs/add/klee-last"
+    klee_last_dir = os.path.join(c_file_gt_dir, "klee-last")
     ktest_file = find_test_file(klee_last_dir)
     if ktest_file:
         i = 0
         while True:
-            output_file = f"klee_input_{i}.txt"
+            output_file = os.path.join(output_dir,f"klee_input_{i}.txt") 
             if not os.path.exists(output_file):
                 break
             i += 1
         run_ktest_tool(ktest_file, output_file)
         print(f"Input saved to {output_file}")
+        write_klee_input_to_file(output_file)      
     else:
         print("No ktest file without corresponding assert.err file found.")
