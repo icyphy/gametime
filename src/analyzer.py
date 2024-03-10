@@ -22,9 +22,9 @@ from path_generator import PathGenerator
 from numpy import dot, exp, eye
 from numpy.linalg import det, inv, slogdet
 
-from gametime.src.backend.flexpret_backend.flexpret_backend import FlexpretBackend
-from gametime.src.backend.x86_backend.x86_backend import X86Backend
-from gametime.src.backend.backend import Backend
+from backend.flexpret_backend.flexpret_backend import FlexpretBackend
+from backend.x86_backend.x86_backend import X86Backend
+from backend.backend import Backend
 
 """Defines a class that maintains information about the code being analyzed,
 such as the name of the file that contains the code being analyzed and
@@ -291,9 +291,10 @@ class Analyzer(object):
         """
         logger.info("Generating the DAG and associated information...")
 
-        if nx_helper.construct_dag(self.dag_path):
-            err_msg = "Error running the Phoenix program analyzer."
-            raise GameTimeError(err_msg)
+        #TODO: add back construction dag from filepath
+        # if nx_helper.construct_dag(self.dag_path):
+        #     err_msg = "Error running the Phoenix program analyzer."
+        #     raise GameTimeError(err_msg)
 
         location = os.path.join(self.project_config.location_temp_dir,
                                 "." + self.project_config.func + ".dot")
@@ -827,11 +828,14 @@ class Analyzer(object):
 
 
     def measure_path(self, path: Path, output_name: str) -> int:
-        path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
-        value: int =  path_analyzer.measure_path(self.backend)
-        if value < float('inf'):
-            path.set_measured_value(value)
-        return value
+        if path.path_analyzer == None:
+            path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
+            path.path_analyzer = path_analyzer
+        if path.measured_value == 0:
+            value: int =  path_analyzer.measure_path(self.backend)
+            if value < float('inf'):
+                path.set_measured_value(value)
+        return path.measured_value
 
     def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
         result = []

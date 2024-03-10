@@ -6,7 +6,7 @@ import time
 import stat
 
 import clang_helper
-from gametime.src.backend.backend import Backend
+from backend.backend import Backend
 from project_configuration import ProjectConfiguration
 from defaults import logger
 from typing import List

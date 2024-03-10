@@ -6,7 +6,7 @@ import shutil
 from path_analyzer import PathAnalyzer
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
-from simulator.flexpret_simulator import flexpret_simulator
+from backend.flexpret_backend import flexpret_backend
 from analyzer import Analyzer
 import os
 from smt_solver.extract_labels import find_labels

@@ -3,7 +3,9 @@ import file_helper
 from nx_helper import Dag
 from path import Path
 from project_configuration import ProjectConfiguration
-from gametime.src.backend.backend import Backend
+from backend.backend import Backend
+from smt_solver.extract_labels import find_labels
+from smt_solver.smt import run_smt
 
 class PathAnalyzer(object):
 
@@ -27,6 +29,12 @@ class PathAnalyzer(object):
         self.output_name: str =  f'{path_name}-gt'
         file_helper.create_dir(self.output_folder)
         self.measure_folders: dict[str, str] = {}
+        bitcode = []
+        for node in path.nodes:
+            bitcode.append(self.dag.get_node_label(self.dag.nodes_indices[node]))
+        labels_file = find_labels("".join(bitcode), self.output_folder)
+        run_smt(self.project_config, labels_file, self.output_folder)
+        self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
 
     def measure_path(self, backend: Backend) -> int:
         """
@@ -41,9 +49,7 @@ class PathAnalyzer(object):
             self.measure_folders[backend.name] = temp_folder_backend
 
         file_helper.create_dir(temp_folder_backend)
-        #TODO for abdalla: put that file here and remove the = 0 line
-        # measured_value: int = backend.measure({PLACEHOLDER_FOR_KLEE_INPUT_FILEPATH}, temp_folder_backend)
-        measured_value = 0
+        measured_value: int = backend.measure(self.values_filepath, temp_folder_backend)
         return measured_value
 
     def remove_measure(self, backend: Backend):

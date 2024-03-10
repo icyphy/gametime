@@ -124,14 +124,15 @@ vector<int> parseIntegerFromFile(const string &filepath) {
 
 
 int main(int argc, char **argv) {
-    if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <path to .bc file> <function name> <path to .txt values file>" << std::endl;
+    if (argc < 4) {
+        std::cerr << "Usage: " << argv[0] << " <path to .bc file> <function name> <path to .txt values file> <output folder>" << std::endl;
         return 1;
     }
 
     std::string bitcodeFilePath = argv[1];
     std::string targetFunctionName = argv[2];
     std::string valuesFilePath = argv[3];
+    std::string outputFolderPath = argv[4];
 
     //TODO: Handle general inputs based on function argument types
     std::vector<int> values;
@@ -153,7 +154,8 @@ int main(int argc, char **argv) {
 
     // Write the modified module to a new bitcode file
     std::error_code EC;
-    llvm::raw_fd_ostream OS("modified_output.bc", EC, llvm::sys::fs::OF_None);
+    llvm::raw_fd_ostream OS(outputFolderPath + "/modified_output.bc", EC, llvm::sys::fs::OF_None);
+    
     if (EC) {
         llvm::errs() << "Could not open file: " << EC.message();
         return 1;

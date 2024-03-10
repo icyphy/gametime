@@ -6,7 +6,7 @@ import time
 import stat
 
 import clang_helper
-from gametime.src.backend.backend import Backend
+from backend.backend import Backend
 from project_configuration import ProjectConfiguration
 from defaults import logger
 from typing import List
@@ -16,7 +16,7 @@ from project_configuration_parser import YAMLConfigurationParser
 class X86Backend(Backend):
 
     def __init__(self, project_config: ProjectConfiguration):
-        super(X86Backend, self).__init__(project_config, "Server")
+        super(X86Backend, self).__init__(project_config, "X86")
 
     def generate_executable(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
         # Define the path to your C++ executable
@@ -28,7 +28,8 @@ class X86Backend(Backend):
         values = inputs
 
         # Prepare the command with all arguments
-        command = [cpp_executable, bitcode_file_path, function_name, values]
+        command = [cpp_executable, bitcode_file_path, function_name, values, measure_folder]
+        print(command)
 
         # Run the C++ program
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
