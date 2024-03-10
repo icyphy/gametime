@@ -6,16 +6,16 @@ import time
 import stat
 
 import clang_helper
-from simulator.simulator import Simulator
+from gametime.src.backend.backend import Backend
 from project_configuration import ProjectConfiguration
 from defaults import logger
 from typing import List
 
 
-class FlexpretSimulator(Simulator):
+class FlexpretBackend(Backend):
 
     def __init__(self, project_config: ProjectConfiguration):
-        super(FlexpretSimulator, self).__init__(project_config, "Flexpret")
+        super(FlexpretBackend, self).__init__(project_config, "Flexpret")
 
     def object_file_to_mem (self, stored_folder: str, file_name: str) -> str:
         """
@@ -26,7 +26,7 @@ class FlexpretSimulator(Simulator):
         :return file path of generated .mem file
         """
         # copy the MAKEFILE in FLEXPRET repository to the same folder as .o file
-        makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "simulator", "flexpret_simulator", "Makefile")
+        makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "backend", "flexpret_backend", "Makefile")
 
         makefile_path = os.path.join(stored_folder, "Makefile")
 
@@ -35,14 +35,14 @@ class FlexpretSimulator(Simulator):
         os.chmod(stored_folder, 0o755)  # Read, write, and execute for the user; read and execute for others
         os.chmod(makefile_path, 0o755)  # Same as above
 
-
         # gather all the files needed to run Make, particularly all the possible .c/.o files
-        context_path_from_flexpret_simulator = f'{self.project_config.location_orig_dir}'
-        context_folder = os.listdir(context_path_from_flexpret_simulator)
+        #TODO: maybe user should provide all the paths here?
+        context_path_from_flexpret_backend = f'{self.project_config.location_orig_dir}'
+        context_folder = os.listdir(context_path_from_flexpret_backend)
         context_files = []
         for entry in context_folder:
             if ((not entry == self.project_config.name_orig_file) and entry.endswith('.c')) or entry.endswith('.o'):
-                context_files.append(f'{context_path_from_flexpret_simulator}/{entry}')
+                context_files.append(f'{context_path_from_flexpret_backend}/{entry}')
 
         # add the generated .o file
         context_files.append(file_name + ".o")
@@ -51,8 +51,7 @@ class FlexpretSimulator(Simulator):
         # run make to generate .mem file
         cwd = os.getcwd()
         os.chdir(stored_folder)
-        # the three ".." is to get from the stored folder file to the simulated file,
-        # stored_folder = {simulated_file_path}/{app name}gt/{path name}/{Flexpret}
+        # the three ".." is to get from the stored folder file to the simulated file, equivalent of stored_folder = {simulated_file_path}/{app name}gt/{path name}/{Flexpret}
         os.system(f'make FLEXPRET_ROOT_DIR={os.path.join("..", "..", "..", self.project_config.gametime_file_path, self.project_config.gametime_flexpret_path)} '
                   f'NAME={file_name} APP_SOURCES={app_sources}')
 
@@ -65,7 +64,7 @@ class FlexpretSimulator(Simulator):
 
         return mem_file_path
 
-    def run_simulator_and_parse_output(self, stored_folder: str, file_name: str) -> int:
+    def run_backend_and_parse_output(self, stored_folder: str, file_name: str) -> int:
         """
         Run simulation on the .mem file generated. The measurements are stored in measure.out
         Equivalent to: os.system(f"(cd {dir path of .mem file} && fp-emu --measure +ispm={file_name}.mem)")
@@ -90,9 +89,10 @@ class FlexpretSimulator(Simulator):
         out_file.close()
         return out[0]
 
+    # TODO: remove this
     def measure(self, path_bc_filepath: str, measure_folder: str, file_name: str) -> int:
         """
-        Perform measurement using the Flexpret simulator.
+        Perform measurement using the Flexpret backend.
 
         :param path_bc_filepath: the file path to the generated .bc file used for simulation; should correspond to a PATH
         :param measure_folder: all generated files will be stored in MEASURE_FOLDER/Flexpret
@@ -100,12 +100,26 @@ class FlexpretSimulator(Simulator):
         :return the measured value of path
         """
         stored_folder: str = measure_folder
-        path_object_filepath: str = clang_helper.bc_to_object(path_bc_filepath, stored_folder, file_name)
+        flexpret_flags = ["-target", "riscv32-unknown-elf",
+                    "-mabi=ilp32", "-nostartfiles",
+                    "-march=rv32i"]
+        path_object_filepath: str = clang_helper.bc_to_object(path_bc_filepath, stored_folder, file_name, flexpret_flags)
         cycle_count: int = -1
         try:
             self.object_file_to_mem(stored_folder, file_name)
-            cycle_count: int = self.run_simulator_and_parse_output(stored_folder, file_name)
+            cycle_count: int = self.run_backend_and_parse_output(stored_folder, file_name)
         except EnvironmentError as e:
-            err_msg: str = ("Error in measuring the cycle count of a path when simulated on the Flexpret simulator: %s" % e)
+            err_msg: str = ("Error in measuring the cycle count of a path when simulated on the Flexpret backend: %s" % e)
             logger.info(err_msg)
         return cycle_count
+    
+    def measure(self, inputs: str, measure_folder: str) -> int:
+        """
+        Perform measurement using the Flexpret backend.
+
+        :param inputs: the inputs to drive down a PATH in a txt file
+        :param measure_folder: all generated files will be stored in MEASURE_FOLDER/Flexpret
+        :return the measured value of path
+        """
+        #TODO: figure out how to extract the input from inputs and injest that to the file so Flexpret and run and return value (maybe parsing again)
+        return 0

@@ -6,23 +6,21 @@ import time
 import stat
 
 import clang_helper
-from simulator.simulator import Simulator
+from gametime.src.backend.backend import Backend
 from project_configuration import ProjectConfiguration
 from defaults import logger
 from typing import List
 import subprocess
 from project_configuration_parser import YAMLConfigurationParser
 
-class ServerSimulator(Simulator):
+class X86Backend(Backend):
 
     def __init__(self, project_config: ProjectConfiguration):
-        super(ServerSimulator, self).__init__(project_config, "Server")
+        super(X86Backend, self).__init__(project_config, "Server")
 
-    def generate_executable(self, filepath: str, func_name: str, inputs: List[any], measure_folder: str) -> str:
+    def generate_executable(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
         # Define the path to your C++ executable
-        cpp_executable = f"./{self.project_config.gametime_path}/src/simulator/server_simulator/generate_executable"
-        #TODO: remove it after testing
-        cpp_executable = f"./generate_executable"
+        cpp_executable = f"./{self.project_config.gametime_path}/src/backend/x86_backend/generate_executable"
 
         # Define the arguments for your C++ program
         bitcode_file_path =  clang_helper.compile_to_llvm(filepath, measure_folder, "orig")
@@ -30,7 +28,7 @@ class ServerSimulator(Simulator):
         values = inputs
 
         # Prepare the command with all arguments
-        command = [cpp_executable, bitcode_file_path, function_name] + list(map(str, values))
+        command = [cpp_executable, bitcode_file_path, function_name, values]
 
         # Run the C++ program
         process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -52,6 +50,7 @@ class ServerSimulator(Simulator):
         return clang_helper.bc_to_executable(modified_bitcode_file_path, measure_folder, "driver", [], [])
 
     def run_simulator_and_parse_output(self, stored_folder: str, executable_path: str) -> int:
+        # Assuming the modified bc now print the cycle count to the console.
         os.system(f"{executable_path} > {stored_folder}/measure.out")
 
         out_file_path = os.path.join(stored_folder, "measure.out")
@@ -65,10 +64,10 @@ class ServerSimulator(Simulator):
         out_file.close()
         return end - start
 
-    def measure(self, inputs: List[any], measure_folder: str) -> int:
+    def measure(self, inputs: str, measure_folder: str) -> int:
         """
         Perform measurement using the simulator.
-        :param inputs: the inputs to drive down a PATH
+        :param inputs: the inputs to drive down a PATH in a file
         :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of simulator}
         :return the measured value of path
         """
@@ -80,13 +79,6 @@ class ServerSimulator(Simulator):
         try:
             cycle_count: int = self.run_simulator_and_parse_output(stored_folder, executable_path)
         except EnvironmentError as e:
-            err_msg: str = ("Error in measuring the cycle count of a path when simulated on the Flexpret simulator: %s" % e)
+            err_msg: str = ("Error in measuring the cycle count of a path in X86: %s" % e)
             logger.info(err_msg)
         return cycle_count
-    
-if __name__ == '__main__':
-    proj_config = YAMLConfigurationParser.parse(f"{os.getcwd()}/config.yaml")
-
-    server_simulator = ServerSimulator(proj_config)
-
-    print(server_simulator.measure([1, 2], os.getcwd()))

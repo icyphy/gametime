@@ -22,8 +22,9 @@ from path_generator import PathGenerator
 from numpy import dot, exp, eye
 from numpy.linalg import det, inv, slogdet
 
-from simulator.flexpret_simulator.flexpret_simulator import FlexpretSimulator
-from simulator.simulator import Simulator
+from gametime.src.backend.flexpret_backend.flexpret_backend import FlexpretBackend
+from gametime.src.backend.x86_backend.x86_backend import X86Backend
+from gametime.src.backend.backend import Backend
 
 """Defines a class that maintains information about the code being analyzed,
 such as the name of the file that contains the code being analyzed and
@@ -100,7 +101,7 @@ class Analyzer(object):
         self.dag_path: str = ""
 
         #TODO: make this user input
-        self.simulator: Simulator = FlexpretSimulator(self.project_config)
+        self.backend: Backend = X86Backend(self.project_config)
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -140,14 +141,35 @@ class Analyzer(object):
         preprocessed_file = self.project_config.location_temp_file
         shutil.copyfile(orig_file, preprocessed_file)
 
-        # TODO: Make this depend on project configuration
+        # TODO: Make this depend on project configuration. maybe user should provide the flags and libs?
         flexpret_lib_path = []
         flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
             "programs", "lib", "include"))
         flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
             "programs", "lib", "printf", 'src'))
-        processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included + flexpret_lib_path)
+        flexpret_lib_path.append('/opt/riscv/riscv32-unknown-elf/include')
+        flexpret_flags = [ "--sysroot=/opt/riscv/riscv32-unknown-elf",
+                           "-target", "riscv32-unknown-elf", 
+                           "-march=rv32i", "-mabi=ilp32",
+                           "-Xclang", 
+                           '-g',
+                           '-D_REENT_SMALL',
+                           '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
+                           '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
+                           '-DPRINTF_SUPPORT_EXPONENTIAL_SPECIFIERS=0',
+                           '-DSUPPORT_MSVC_STYLE_INTEGER_SPECIFIERS=0',
+                           '-DPRINTF_SUPPORT_WRITEBACK_SPECIFIER=0',
+                           '-DPRINTF_SUPPORT_LONG_LONG=0',
+                           '-D__EMULATOR__',
+                           '-DDEBUG',
+                           '-D__DYNAMIC_REENT__',]
+        processing: str = ""
+        if isinstance(self.backend, FlexpretBackend):
+            processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included + flexpret_lib_path, flexpret_flags)
+        else:
+            processing = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, [])
 
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list
@@ -269,9 +291,9 @@ class Analyzer(object):
         """
         logger.info("Generating the DAG and associated information...")
 
-        # if nx_helper.construct_dag(self.dag_path):
-        #     err_msg = "Error running the Phoenix program analyzer."
-        #     raise GameTimeError(err_msg)
+        if nx_helper.construct_dag(self.dag_path):
+            err_msg = "Error running the Phoenix program analyzer."
+            raise GameTimeError(err_msg)
 
         location = os.path.join(self.project_config.location_temp_dir,
                                 "." + self.project_config.func + ".dot")
@@ -588,33 +610,28 @@ class Analyzer(object):
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
   
                 # feasibility test
-                logger.info("Replacement is feasible.")
-                logger.info("Row %d replaced." % (current_row + 1))
-                basis_paths.append(result_path)
-                current_row += 1
-                num_paths_unsat = 0  
-                # value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
-                # # TODO: replace with actual value of infeasible path
-                # if value < float('inf'):
-                #     # Sanity check:
-                #     # A row should not be replaced if it replaces a good
-                #     # row and decreases the determinant. However,
-                #     # replacing a bad row and decreasing the determinant
-                #     # is okay. (TODO: Are we actually doing this?)
-                #     logger.info("Replacement is feasible.")
-                #     logger.info("Row %d replaced." % (current_row + 1))
-                #     basis_paths.append(result_path)
-                #     current_row += 1
-                #     num_paths_unsat = 0
-                # else:
-                #     logger.info("Replacement is infeasible.")
-                #     logger.info("Adding a constraint to exclude "
-                #                 "these edges...")
-                #     self.add_path_exclusive_constraint(candidate_path_edges)
-                #     infeasible.append(candidate_path_edges)
-                #     logger.info("Constraint added.")
-                #     self.basis_matrix[current_row] = prev_matrix_row
-                #     num_paths_unsat += 1
+                value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
+                # TODO: replace with actual value of infeasible path
+                if value < float('inf'):
+                    # Sanity check:
+                    # A row should not be replaced if it replaces a good
+                    # row and decreases the determinant. However,
+                    # replacing a bad row and decreasing the determinant
+                    # is okay. (TODO: Are we actually doing this?)
+                    logger.info("Replacement is feasible.")
+                    logger.info("Row %d replaced." % (current_row + 1))
+                    basis_paths.append(result_path)
+                    current_row += 1
+                    num_paths_unsat = 0
+                else:
+                    logger.info("Replacement is infeasible.")
+                    logger.info("Adding a constraint to exclude "
+                                "these edges...")
+                    self.add_path_exclusive_constraint(candidate_path_edges)
+                    infeasible.append(candidate_path_edges)
+                    logger.info("Constraint added.")
+                    self.basis_matrix[current_row] = prev_matrix_row
+                    num_paths_unsat += 1
 
             logger.info("")
             logger.info("")
@@ -691,32 +708,26 @@ class Analyzer(object):
                     basis_paths[current_row] = result_path
                     current_row += 1
                     num_paths_unsat = 0
+                    
                     #feasibility test
-                    # value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
-                    # TODO: replace with actual value of infeasible path
-                    logger.info("Replacement is feasible.")
-                    is_two_barycentric = False
-                    basis_paths[current_row] = result_path
-                    logger.info("Row %d replaced." % (current_row + 1))
-                    current_row += 1
-                    num_paths_unsat = 0
+                    value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
 
-                    # if value < float('inf'):
-                    #     logger.info("Replacement is feasible.")
-                    #     is_two_barycentric = False
-                    #     basis_paths[current_row] = result_path
-                    #     logger.info("Row %d replaced." % (current_row + 1))
-                    #     current_row += 1
-                    #     num_paths_unsat = 0
-                    # else:
-                    #     logger.info("Replacement is infeasible.")
-                    #     self.add_path_exclusive_constraint(candidate_path_edges)
-                    #     logger.info("Adding a constraint to exclude "
-                    #                 "these edges...")
-                    #     infeasible.append(candidate_path_edges)
-                    #     logger.info("Constraint added.")
-                    #     self.basis_matrix[current_row] = prev_matrix_row
-                    #     num_paths_unsat += 1
+                    if value < float('inf'):
+                        logger.info("Replacement is feasible.")
+                        is_two_barycentric = False
+                        basis_paths[current_row] = result_path
+                        logger.info("Row %d replaced." % (current_row + 1))
+                        current_row += 1
+                        num_paths_unsat = 0
+                    else:
+                        logger.info("Replacement is infeasible.")
+                        self.add_path_exclusive_constraint(candidate_path_edges)
+                        logger.info("Adding a constraint to exclude "
+                                    "these edges...")
+                        infeasible.append(candidate_path_edges)
+                        logger.info("Constraint added.")
+                        self.basis_matrix[current_row] = prev_matrix_row
+                        num_paths_unsat += 1
 
                 else:
                     logger.info("No replacement for row %d found." %
@@ -817,8 +828,7 @@ class Analyzer(object):
 
     def measure_path(self, path: Path, output_name: str) -> int:
         path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
-        value: int =  path_analyzer.measure_path(self.simulator)
-        # TODO: replace with actual value of infeasible path
+        value: int =  path_analyzer.measure_path(self.backend)
         if value < float('inf'):
             path.set_measured_value(value)
         return value

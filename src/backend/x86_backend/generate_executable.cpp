@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Verifier.h>
@@ -50,7 +51,7 @@ void insertGlobalVariablesAndModifyMain(Module *module, const string &functionNa
     // Create global variables
     for (int i = 0; i < values.size(); ++i) {
         std::string varName = "globalVar" + std::to_string(i);
-        //TODO: generalize to handle more than Int32
+        //TODO: generalize to handle more than Int32. Maybe combine with parsing part.
         globalVars.push_back(new GlobalVariable(*module, 
                                                 builder.getInt32Ty(), 
                                                 false, 
@@ -106,22 +107,35 @@ void insertGlobalVariablesAndModifyMain(Module *module, const string &functionNa
     
 }
 
+vector<int> parseIntegerFromFile(const string &filepath) {
+    vector<int> values;
+    ifstream file(filepath);
+    if (!file.is_open()) {
+        cerr << "Error: Unable to open file " << filepath << endl;
+        exit(1);
+    }
+    int value;
+    while (file >> value) {
+        values.push_back(value);
+    }
+    file.close();
+    return values;
+}
+
+
 int main(int argc, char **argv) {
     if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <path to .bc file> <function name> <value1> <value2> ..." << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <path to .bc file> <function name> <path to .txt values file>" << std::endl;
         return 1;
     }
 
     std::string bitcodeFilePath = argv[1];
     std::string targetFunctionName = argv[2];
+    std::string valuesFilePath = argv[3];
 
-    //TODO: Handle general inputs
+    //TODO: Handle general inputs based on function argument types
     std::vector<int> values;
-
-    // Parse the variable values from command-line arguments
-    for (int i = 3; i < argc; ++i) {
-        values.push_back(std::atoi(argv[i]));
-    }
+    values = parseIntegerFromFile(valuesFilePath);
 
     // ... Code to initialize LLVM and load the bitcode file ...
     LLVMContext context;

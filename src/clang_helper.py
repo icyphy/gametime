@@ -30,27 +30,7 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    # extra_libs.append('/opt/riscv/riscv32-unknown-elf/include')
-
-    commands: List[str] = ["clang",
-                        #    "--sysroot=/opt/riscv/riscv32-unknown-elf",
-                        #    "-target", "riscv32-unknown-elf", 
-                        #    "-march=rv32i", "-mabi=ilp32",
-                        #    "-Xclang", 
-                        #    "-O0", 
-                        #    '-g',
-                        #    '-D_REENT_SMALL',
-                        #    '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
-                        #    '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
-                        #    '-DPRINTF_SUPPORT_EXPONENTIAL_SPECIFIERS=0',
-                        #    '-DSUPPORT_MSVC_STYLE_INTEGER_SPECIFIERS=0',
-                        #    '-DPRINTF_SUPPORT_WRITEBACK_SPECIFIER=0',
-                        #    '-DPRINTF_SUPPORT_LONG_LONG=0',
-                        #    '-D__EMULATOR__',
-                        #    '-DDEBUG',
-                        #    '-D__DYNAMIC_REENT__',
-                           "-emit-llvm",
-                           "-o", output_file, "-c", file_to_compile] + extra_flags
+    commands: List[str] = ["clang", "-emit-llvm", "-O0", "-o", output_file, "-c", file_to_compile] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
     subprocess.run(commands, check=True)
@@ -63,7 +43,7 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
 
 
 def bc_to_object(path_bc_filepath: str, output_file_folder: str, output_name: str, extra_flags: List[str]=[]) -> str:
-    """ Compile .bc file to .o file using clang through executing shell commands that is interpretable by FLEXPRET simulator
+    """ Compile .bc file to .o file using clang through executing shell commands
 
     :param path_bc_filepath: file path to the .bc file used for compilation
     :param gametime_path: Relative path to the GameTime repo from the simulation running folder.
@@ -75,11 +55,7 @@ def bc_to_object(path_bc_filepath: str, output_file_folder: str, output_name: st
     output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
     # compile bc file
 
-    commands = ["clang",  
-                # "-target", "riscv32-unknown-elf",
-                # "-mabi=ilp32", "-nostartfiles",
-                # "-march=rv32i",
-                "-o", output_file, "-c", path_bc_filepath]
+    commands = ["clang", "-o", output_file, "-c", path_bc_filepath] + extra_flags
 
     subprocess.check_call(commands)
 

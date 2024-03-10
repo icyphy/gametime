@@ -13,7 +13,7 @@ for details on the GameTime license and authors.
 """
 
 
-class Simulator(object):
+class Backend(object):
     """Maintains a representation of a simulator, which will be used
     to measure values that correspond to different paths in the code
     that is being analyzed.
@@ -42,10 +42,10 @@ class Simulator(object):
         """
         return 0
     
-    def measure(self, inputs: List[any], measure_folder: str) -> int:
+    def measure(self, inputs: str, measure_folder: str) -> int:
         """
         Perform measurement using the simulator.
-        :param inputs: the inputs to drive down a PATH
+        :param inputs: the inputs to drive down a PATH in a txt file
         :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of simulator}
         :return the measured value of path
         """
