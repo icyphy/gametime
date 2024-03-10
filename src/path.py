@@ -122,6 +122,8 @@ class Path(object):
         #: an integer or a floating-point number).
         self.measured_value = measured_value
 
+        self.path_analyzer = None
+
     def write_ilp_problem_to_lp_file(self, location) -> None:
         """
         Writes, to an LP file, the integer linear programming problem that,

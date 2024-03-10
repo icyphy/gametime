@@ -4,7 +4,7 @@ import yaml
 
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
-from test_load_class_from_yaml import MyClass as MyClass
+from gametime.test.helper_test.load_class_from_yaml_test import MyClass as MyClass
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper

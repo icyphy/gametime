@@ -295,23 +295,22 @@ class PathGenerator(object):
             current_path_num += 1
             num_paths_unsat = 0
 
-            # value = analyzer.measure_path(result_path, f'feasible-path{current_path_num}')
+            value = analyzer.measure_path(result_path, f'feasible-path{current_path_num}')
 
-            # #TODO: replace with actual value of infeasible path
-            # if value < float('inf'):
-            #     logger.info("Candidate path is feasible.")
-            #     result_path.set_measured_value(value)
-            #     result_path.set_predicted_value(candidate_path_value)
-            #     result_paths.append(result_path)
-            #     logger.info("Path %d generated." % (current_path_num+1))
-            #     analyzer.add_path_exclusive_constraint(candidate_path_edges)
-            #     current_path_num += 1
-            #     num_paths_unsat = 0
-            # else:
-            #     logger.info("Candidate path is infeasible.")
-            #     analyzer.add_path_exclusive_constraint(candidate_path_edges)
-            #     logger.info("Constraint added.")
-            #     num_paths_unsat += 1
+            if value < float('inf'):
+                logger.info("Candidate path is feasible.")
+                result_path.set_measured_value(value)
+                result_path.set_predicted_value(candidate_path_value)
+                result_paths.append(result_path)
+                logger.info("Path %d generated." % (current_path_num+1))
+                analyzer.add_path_exclusive_constraint(candidate_path_edges)
+                current_path_num += 1
+                num_paths_unsat = 0
+            else:
+                logger.info("Candidate path is infeasible.")
+                analyzer.add_path_exclusive_constraint(candidate_path_edges)
+                logger.info("Constraint added.")
+                num_paths_unsat += 1
 
             num_candidate_paths += 1
             if extremum is None:

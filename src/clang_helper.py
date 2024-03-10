@@ -12,7 +12,7 @@ from file_helper import remove_files
 from project_configuration import ProjectConfiguration
 
 
-def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[]) -> str:
+def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
     """ Compile .c file to .bc and .ll file using clang through executing
     shell commands. Should work for programs residing in a single file,
     but can be unreliable with larger programs. Recommended to use this as a
@@ -30,27 +30,7 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    extra_libs.append('/opt/riscv/riscv32-unknown-elf/include')
-
-    commands: List[str] = ["clang",
-                           "--sysroot=/opt/riscv/riscv32-unknown-elf",
-                           "-target", "riscv32-unknown-elf", 
-                           "-march=rv32i", "-mabi=ilp32",
-                           "-Xclang", 
-                           "-O0", 
-                           '-g',
-                           '-D_REENT_SMALL',
-                           '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
-                           '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
-                           '-DPRINTF_SUPPORT_EXPONENTIAL_SPECIFIERS=0',
-                           '-DSUPPORT_MSVC_STYLE_INTEGER_SPECIFIERS=0',
-                           '-DPRINTF_SUPPORT_WRITEBACK_SPECIFIER=0',
-                           '-DPRINTF_SUPPORT_LONG_LONG=0',
-                           '-D__EMULATOR__',
-                           '-DDEBUG',
-                           '-D__DYNAMIC_REENT__',
-                           "-emit-llvm",
-                           "-o", output_file, "-c", file_to_compile]
+    commands: List[str] = ["clang", "-emit-llvm", "-O0", "-o", output_file, "-c", file_to_compile] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
     subprocess.run(commands, check=True)
@@ -62,8 +42,8 @@ def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str,
     return output_file
 
 
-def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gametime_flexpret_path: str, output_file_folder: str, output_name: str) -> str:
-    """ Compile .bc file to .o file using clang through executing shell commands that is interpretable by FLEXPRET simulator
+def bc_to_object(path_bc_filepath: str, output_file_folder: str, output_name: str, extra_flags: List[str]=[]) -> str:
+    """ Compile .bc file to .o file using clang through executing shell commands
 
     :param path_bc_filepath: file path to the .bc file used for compilation
     :param gametime_path: Relative path to the GameTime repo from the simulation running folder.
@@ -75,11 +55,7 @@ def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gameti
     output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
     # compile bc file
 
-    commands = ["clang",  
-                "-target", "riscv32-unknown-elf",
-                "-mabi=ilp32", "-nostartfiles",
-                "-march=rv32i",
-                "-o", output_file, "-c", path_bc_filepath]
+    commands = ["clang", "-o", output_file, "-c", path_bc_filepath] + extra_flags
 
     subprocess.check_call(commands)
 
@@ -90,6 +66,32 @@ def compile_to_object_flexpret(path_bc_filepath: str, gametime_path: str, gameti
     subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
     dumping.wait()
     return output_file
+
+def bc_to_executable(bc_file_path: str, output_folder: str, executable_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
+    """ Compile .bc file to executable using clang.
+    :param bc_file_path: path of the .bc file to compile
+    :param output_folder: the folder path where the executable will be stored
+    :param executable_name: string for the name of the executable WITHOUT extension
+    :param extra_flags: additional flags to pass to clang during compilation
+    :param extra_libs: paths to any additional libraries or include directories required for compilation
+    :return: path of the output executable file
+    """
+
+    # Set the path for the output executable file
+    executable_file = os.path.join(output_folder, executable_name)
+
+    # Prepare the clang command
+    clang_commands = ["clang", bc_file_path, "-o", executable_file] + extra_flags
+
+    # Add extra include directories or libraries
+    for lib in extra_libs:
+        clang_commands.extend(["-I", lib])
+
+    # Run clang to compile the bitcode into an executable
+    subprocess.run(clang_commands, check=True)
+
+    return executable_file
+
 
 def dump_object(object_file: str, output_file_folder: str, o_file_dir: str) -> str:
     """ Dump the .o file to dumped.dmp
@@ -190,7 +192,7 @@ def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> 
     # return output_file
     return input_file
 
-#TODO: remove it or move it to somewhere more suitable
+#TODO: update this
 def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:
     """Removes the temporary files created by CIL during its analysis.
 
