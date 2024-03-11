@@ -61,6 +61,8 @@ def find_and_run_test(c_file_gt_dir, output_dir):
             i += 1
         run_ktest_tool(ktest_file, output_file)
         print(f"Input saved to {output_file}")
-        write_klee_input_to_file(output_file)      
+        write_klee_input_to_file(output_file)
+        return True      
     else:
         print("No ktest file without corresponding assert.err file found.")
+        return False
