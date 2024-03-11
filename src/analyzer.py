@@ -165,10 +165,10 @@ class Analyzer(object):
                            '-D__DYNAMIC_REENT__',]
         processing: str = ""
         if isinstance(self.backend, FlexpretBackend):
-            processing: str = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+            processing: str = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included + flexpret_lib_path, flexpret_flags)
         else:
-            processing = clang_helper.compile_to_llvm(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+            processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, [])
 
         # Preprocessing pass: inline functions.
@@ -831,11 +831,13 @@ class Analyzer(object):
         if path.path_analyzer == None:
             path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
             path.path_analyzer = path_analyzer
-        if path.measured_value == 0:
-            value: int =  path_analyzer.measure_path(self.backend)
-            if value < float('inf'):
-                path.set_measured_value(value)
-        return path.measured_value
+            
+        path_analyzer = path.path_analyzer
+        value: int = path.measured_value
+        if value == 0: # Not measured yet
+            value = path_analyzer.measure_path(self.backend)
+            path.set_measured_value(value)
+        return value
 
     def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
         result = []

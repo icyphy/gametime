@@ -23,7 +23,7 @@ class X86Backend(Backend):
         cpp_executable = f"./{self.project_config.gametime_path}/src/backend/x86_backend/generate_executable"
 
         # Define the arguments for your C++ program
-        bitcode_file_path =  clang_helper.compile_to_llvm(filepath, measure_folder, "orig")
+        bitcode_file_path =  clang_helper.compile_to_llvm_for_exec(filepath, measure_folder, "orig")
         function_name = func_name
         values = inputs
 

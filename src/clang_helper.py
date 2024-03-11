@@ -12,20 +12,23 @@ from file_helper import remove_files
 from project_configuration import ProjectConfiguration
 
 
-def compile_to_llvm(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
-    """ Compile .c file to .bc and .ll file using clang through executing
-    shell commands. Should work for programs residing in a single file,
-    but can be unreliable with larger programs. Recommended to use this as a
-    reference rather and the user should generate their own .bc and .ll before
-    passing into gametime for analysis on more complex behavior.
+def compile_to_llvm_for_exec(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
+    # compile bc file
+    file_to_compile: str = c_file_path
+    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    :param c_file_path: path of the .c file to compile
-    :param output_file_folder: the folder path where .bc and .ll files will be stored
-    :param output_name: string for the name of compiled output WITHOUT extension
-    :param extra_lib: path to all the extra libraries required to compile the file. plugged into the -I flag of clang
-    :return: path of the output .bc file
-    """
+    commands: List[str] = ["clang", "-emit-llvm", "-O0", "-o", output_file, "-c", file_to_compile] + extra_flags
+    for lib in extra_libs:
+        commands.append(f"-I{lib}")
+    subprocess.run(commands, check=True)
 
+    # translate for .ll automatically. (optional)
+    ll_output_file: str = os.path.join(output_file_folder, f"{output_name}.ll")
+    commands = ["llvm-dis", output_file, "-o", ll_output_file]
+    subprocess.run(commands, check=True)
+    return output_file
+
+def compile_to_llvm_for_analysis(c_file_path: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
     # compile bc file
     file_to_compile: str = c_file_path
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
@@ -129,7 +132,7 @@ def generate_dot_file(bc_file: str, bc_file_folder: str) -> str:
 def inline_functions(input_file: str, output_file_folder: str, output_name: str) -> str:
     """ Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
-    is not compiled with `compile_to_llvm` function. If that is the case, the
+    is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
     relying on this built-in function.
 
@@ -156,7 +159,7 @@ def inline_functions(input_file: str, output_file_folder: str, output_name: str)
 def unroll_loops(input_file: str, output_file_folder: str, output_name: str) -> str:
     """ Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
-    is not compiled with `compile_to_llvm` function. If that is the case, the
+    is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
     relying on this built-in function.
 

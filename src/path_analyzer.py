@@ -33,7 +33,7 @@ class PathAnalyzer(object):
         for node in path.nodes:
             bitcode.append(self.dag.get_node_label(self.dag.nodes_indices[node]))
         labels_file = find_labels("".join(bitcode), self.output_folder)
-        run_smt(self.project_config, labels_file, self.output_folder)
+        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder)
         self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
 
     def measure_path(self, backend: Backend) -> int:
@@ -43,6 +43,8 @@ class PathAnalyzer(object):
         :param backend: Backend object used for simulation
         :return the total measurement of path given by backend
         """
+        if not self.is_valid:
+            return float('inf')
         temp_folder_backend: str = os.path.join(self.output_folder, backend.name)
 
         if backend.name not in self.measure_folders.keys():
