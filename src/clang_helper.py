@@ -123,7 +123,7 @@ def generate_dot_file(bc_file: str, bc_file_folder: str) -> str:
     output_file: str = ".main.dot"
     cur_cwd: str = os.getcwd()
     os.chdir(bc_file_folder)  # opt generates .dot in cwd
-    commands: List[str] = ["opt", "-enable-new-pm=0", "-dot-cfg", "-S", bc_file, "-disable-output"]
+    commands: List[str] = ["opt", "-dot-cfg", "-S", bc_file, "-disable-output"]
     subprocess.check_call(commands)
     os.chdir(cur_cwd)
     return output_file
