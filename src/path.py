@@ -124,6 +124,8 @@ class Path(object):
 
         self.path_analyzer = None
 
+        self.name = None
+
     def write_ilp_problem_to_lp_file(self, location) -> None:
         """
         Writes, to an LP file, the integer linear programming problem that,

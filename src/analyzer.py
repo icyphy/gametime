@@ -822,12 +822,14 @@ class Analyzer(object):
     ### NEW Functions ####
     def measure_basis_paths(self):
         for i in range(len(self.basis_paths)):
-            output_name: str = f'basis-path{i}'
             p: Path = self.basis_paths[i]
-            self.measure_path(p, output_name)
+            self.measure_path(p, "")
 
 
+    # Measure the Path if never measured before. If no name was set, the parameter output_name is used. 
     def measure_path(self, path: Path, output_name: str) -> int:
+        if path.name == None:
+            path.name = output_name
         if path.path_analyzer == None:
             path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
             path.path_analyzer = path_analyzer
