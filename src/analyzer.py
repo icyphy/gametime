@@ -823,23 +823,24 @@ class Analyzer(object):
     def measure_basis_paths(self):
         for i in range(len(self.basis_paths)):
             p: Path = self.basis_paths[i]
-            self.measure_path(p, "")
+            self.measure_path(p, f"basis_path{i}")
 
 
     # Measure the Path if never measured before. If no name was set, the parameter output_name is used. 
     def measure_path(self, path: Path, output_name: str) -> int:
-        if path.name == None:
+        # if path.name == None:
+        #     path.name = output_name
+        if path.path_analyzer == None or path.name != output_name:
             path.name = output_name
-        if path.path_analyzer == None:
             path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
             path.path_analyzer = path_analyzer
             
-        path_analyzer = path.path_analyzer
-        value: int = path.measured_value
-        if value == 0: # Not measured yet
+            path_analyzer = path.path_analyzer
+            value: int = path.measured_value
+            # if value == 0: # Not measured yet
             value = path_analyzer.measure_path(self.backend)
             path.set_measured_value(value)
-        return value
+        return path.measured_value
 
     def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
         result = []

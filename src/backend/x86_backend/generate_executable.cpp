@@ -17,6 +17,9 @@
 #include <llvm/Transforms/Utils/Cloning.h>
 #include <llvm/Transforms/IPO/PassManagerBuilder.h>
 #include <llvm/IR/InlineAsm.h>
+#include <stdint.h>
+#include <sstream>
+
 
 using namespace llvm;
 using namespace std;
@@ -43,7 +46,7 @@ void insertPrintTimestampLogic(LLVMContext& context, Module* module, IRBuilder<>
     builder.CreateCall(printfFunc, {formatStr, nowVal});
 }
 
-void insertGlobalVariablesAndModifyMain(Module *module, const string &functionName, const vector<int> &values) {
+void insertGlobalVariablesAndModifyMain(Module *module, const string &functionName, const vector<uint8_t> &values) {
     LLVMContext &context = module->getContext();
     IRBuilder<> builder(context);
     vector<GlobalVariable *> globalVars;
@@ -53,10 +56,12 @@ void insertGlobalVariablesAndModifyMain(Module *module, const string &functionNa
         std::string varName = "globalVar" + std::to_string(i);
         //TODO: generalize to handle more than Int32. Maybe combine with parsing part.
         globalVars.push_back(new GlobalVariable(*module, 
-                                                builder.getInt32Ty(), 
+                                                // getInt32Ty()
+                                                builder.getInt8Ty(), 
                                                 false, 
                                                 GlobalValue::ExternalLinkage, 
-                                                builder.getInt32(values[i]), 
+                                                // builder.getInt32(values[i]), 
+                                                ConstantInt::get(builder.getInt8Ty(), values[i]),
                                                 varName));
     }
 
@@ -107,16 +112,30 @@ void insertGlobalVariablesAndModifyMain(Module *module, const string &functionNa
     
 }
 
-vector<int> parseIntegerFromFile(const string &filepath) {
-    vector<int> values;
+vector<uint8_t> parseIntegerFromFile(const string &filepath) {
+    vector<uint8_t> values;
     ifstream file(filepath);
     if (!file.is_open()) {
         cerr << "Error: Unable to open file " << filepath << endl;
         exit(1);
     }
-    int value;
-    while (file >> value) {
-        values.push_back(value);
+    // uint8_t value;
+    // while (file >> value) {
+    //     // values.push_back(value);
+    //     if(value >= 0 && value <= 255) {
+    //         values.push_back(static_cast<uint8_t>(value));
+    //     } else {
+    //         cerr << "Warning: Value out of range and ignored: " << value << endl;
+    //     }
+    // }
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::stringstream ss;
+        unsigned int temp;
+        ss << std::hex << line;
+        ss >> temp; // Read the hex value as an unsigned integer
+        values.push_back(static_cast<uint8_t>(temp)); // Cast and store in the vector
     }
     file.close();
     return values;
@@ -135,7 +154,7 @@ int main(int argc, char **argv) {
     std::string outputFolderPath = argv[4];
 
     //TODO: Handle general inputs based on function argument types
-    std::vector<int> values;
+    std::vector<uint8_t> values;
     values = parseIntegerFromFile(valuesFilePath);
 
     // ... Code to initialize LLVM and load the bitcode file ...

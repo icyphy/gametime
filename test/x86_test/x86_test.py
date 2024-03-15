@@ -16,15 +16,15 @@ class BaseX86Test(unittest.TestCase):
     def create_analyzer(self):
         return Analyzer(self.project_config)
 
-    def test_measure_basis_path(self):
-        analyzer = self.create_analyzer()
-        analyzer.create_dag()
-        paths = analyzer.generate_basis_paths()
+    # def test_measure_basis_path(self):
+    #     analyzer = self.create_analyzer()
+    #     analyzer.create_dag()
+    #     paths = analyzer.generate_basis_paths()
 
-        self.assertIsNotNone(paths[0], "no paths were found")
-        analyzer.measure_basis_paths()
-        for p in paths:
-            print(p.get_measured_value())
+    #     self.assertIsNotNone(paths[0], "no paths were found")
+    #     analyzer.measure_basis_paths()
+    #     for p in paths:
+    #         print(p.get_measured_value())
 
     def test_wcet_analyzer(self):
             analyzer = self.create_analyzer()

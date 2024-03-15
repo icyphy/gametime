@@ -1,7 +1,7 @@
 import re
 import os
 
-def format_for_klee(c_file, c_file_path, c_file_gt_dir, n):
+def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_labels):
     # Read the original C file
     with open(c_file_path, 'r') as f:
         c_code = f.read()
@@ -22,6 +22,9 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, n):
     global_booleans = "\n"
     for i in range(n):
         global_booleans += f"bool conditional_var_{i} = false;\n"
+
+    for i in range(total_number_of_labels - n):
+        global_booleans += f"bool conditional_var_{i + n} = true;\n"
 
     # Generate main function
     main_function = "int main() {\n"
@@ -44,7 +47,7 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, n):
         main_function += f"    {function_name}("
         main_function += ', '.join([arg.split()[-1] for arg in arguments[1:]]) + ");\n"  # Call original function with symbolic variables
 
-        for i in range(n):
+        for i in range(total_number_of_labels):
             main_function += f"    klee_assert(conditional_var_{i});\n"  # Assert global variables
 
         main_function += "    return 0;\n}"

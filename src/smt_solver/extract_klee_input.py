@@ -3,24 +3,43 @@ import subprocess
 
 import re
 
+# def write_klee_input_to_file(filename):
+#     # Define a regular expression pattern to extract int values
+#     pattern = re.compile(r'uint\s+:\s+(-?\d+)')
+
+#     # Open the input file
+#     with open(filename, 'r') as infile:
+#         data = infile.read()
+
+#     # Find all int values using regex
+#     int_values = pattern.findall(data)
+#     print(int_values)
+#     # Write int values to a new text file
+#     values_filename = filename[:-4] + "_values.txt"
+#     with open(values_filename, 'w') as outfile:
+#         for value in int_values:
+#             outfile.write(value + '\n')
+
+#     print(f"Values extracted and written to {values_filename}")
+
 def write_klee_input_to_file(filename):
-    # Define a regular expression pattern to extract int values
-    pattern = re.compile(r'int\s+:\s+(-?\d+)')
+    # Define a regular expression pattern to extract hex values
+    pattern = re.compile(r'object \d+: hex : (0x[0-9a-fA-F]+)')
 
     # Open the input file
     with open(filename, 'r') as infile:
         data = infile.read()
 
-    # Find all int values using regex
-    int_values = pattern.findall(data)
-
-    # Write int values to a new text file
+    # Find all hex values using regex
+    hex_values = pattern.findall(data)
+    print(hex_values)
+    # Write hex values to a new text file
     values_filename = filename[:-4] + "_values.txt"
     with open(values_filename, 'w') as outfile:
-        for value in int_values:
+        for value in hex_values:
             outfile.write(value + '\n')
 
-    print(f"Values extracted and written to {values_filename}")
+    print(f"Hex values extracted and written to {values_filename}")
 
 
 def find_test_file(klee_last_dir):

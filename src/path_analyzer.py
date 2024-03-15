@@ -33,7 +33,7 @@ class PathAnalyzer(object):
         for node in path.nodes:
             bitcode.append(self.dag.get_node_label(self.dag.nodes_indices[node]))
         labels_file = find_labels("".join(bitcode), self.output_folder)
-        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder)
+        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder, self.dag.num_nodes)
         self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
         self.repeat = repeat
 

@@ -43,7 +43,7 @@ def extract_labels_from_file(filename):
                 print(f"Ignoring non-numeric value: {line.strip()}")
     return labels
 
-def run_smt(project_config, labels_file, output_dir):
+def run_smt(project_config, labels_file, output_dir, number_of_labels):
     c_file = project_config.name_orig_no_extension
     c_file_path = project_config.location_orig_file
     c_file_gt_dir = project_config.location_temp_dir
@@ -51,8 +51,10 @@ def run_smt(project_config, labels_file, output_dir):
     labels = extract_labels_from_file(labels_file)
     num_of_branches = len(labels)
 
+
+
     # format c file to klee 
-    klee_file = format_for_klee(c_file, c_file_path, c_file_gt_dir, num_of_branches)
+    klee_file = format_for_klee(c_file, c_file_path, c_file_gt_dir, num_of_branches, number_of_labels)
 
     # insert assignments of global variables
     # TODO: Find a way to not hard code path

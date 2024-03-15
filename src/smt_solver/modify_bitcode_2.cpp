@@ -33,32 +33,90 @@ static std::string getSimpleNodeLabel(const BasicBlock *Node,
     return OS.str();
 }
 
+// void insertGlobalVariables(Module *module, const vector<int> &labels) {
+//     LLVMContext &context = module->getContext();
+//     int counter = 0;
+//     for (Function &F : *module) {
+//         for (BasicBlock &BB : F) {
+//             string labelString = getSimpleNodeLabel(&BB,&F);
+//             //cerr << labelString <<endl;
+//             //BB.printAsOperand(errs(), false);
+//             int label = stoi(labelString.substr(1));
+            // if (find(labels.begin(), labels.end(), label) != labels.end()) {
+            //     IRBuilder<> builder(BB.getFirstNonPHI());
+            //     GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
+            //     if (!GV) {
+            //         GV = new GlobalVariable(*module,
+            //                                 IntegerType::get(context, 8),
+            //                                 false,
+            //                                 GlobalValue::ExternalLinkage,
+            //                                 ConstantInt::get(IntegerType::get(context, 8), 0),
+            //                                 "conditional_var_" + to_string(counter));
+            //     }
+            //     builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
+            //     counter++;
+            // }
+//         }
+//     }
+// }
+int extractLastNumber(const std::string& str) {
+    size_t lastPercentPos = str.rfind('%');
+    if (lastPercentPos != std::string::npos) {
+        std::string lastNumberStr = str.substr(lastPercentPos + 1);
+        return std::stoi(lastNumberStr);
+    }
+    return -1; // In case no '%' is found, which should not happen in your context
+}
+
 void insertGlobalVariables(Module *module, const vector<int> &labels) {
     LLVMContext &context = module->getContext();
     int counter = 0;
+    int counter_bad_bb = labels.size();
+
     for (Function &F : *module) {
         for (BasicBlock &BB : F) {
-            string labelString = getSimpleNodeLabel(&BB,&F);
-            //cerr << labelString <<endl;
-            //BB.printAsOperand(errs(), false);
-            int label = stoi(labelString.substr(1));
-            if (find(labels.begin(), labels.end(), label) != labels.end()) {
-                IRBuilder<> builder(BB.getFirstNonPHI());
-                GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
-                if (!GV) {
-                    GV = new GlobalVariable(*module,
-                                            IntegerType::get(context, 8),
-                                            false,
-                                            GlobalValue::ExternalLinkage,
-                                            ConstantInt::get(IntegerType::get(context, 8), 0),
-                                            "conditional_var_" + to_string(counter));
+            // Assuming you have a way to convert BasicBlock to an int label
+            std::string blockLabelString = getSimpleNodeLabel(&BB, &F);
+            // Attempt to convert the block label string to an integer
+            // Ensure this logic matches how your block labels are represented
+            int blockLabel = extractLastNumber(blockLabelString);;
+            if (blockLabel != -1 && std::find(labels.begin(), labels.end(), blockLabel) != labels.end()) {
+                // Check if this block's label is in the labels list
+                if (find(labels.begin(), labels.end(), blockLabel) != labels.end()) {
+                    IRBuilder<> builder(BB.getFirstNonPHI());
+                    GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
+                    if (!GV) {
+                        GV = new GlobalVariable(*module,
+                                                IntegerType::get(context, 8),
+                                                false,
+                                                GlobalValue::ExternalLinkage,
+                                                ConstantInt::get(IntegerType::get(context, 8), 0),
+                                                "conditional_var_" + to_string(counter));
+                    }
+                    builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
+                    counter++;
+                } else {
+                    IRBuilder<> builder(BB.getFirstNonPHI());
+                    GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter_bad_bb ));
+                    if (!GV) {
+                        GV = new GlobalVariable(*module,
+                                                IntegerType::get(context, 8),
+                                                false,
+                                                GlobalValue::ExternalLinkage,
+                                                ConstantInt::get(IntegerType::get(context, 8), 0),
+                                                "conditional_var_" + to_string(counter_bad_bb));
+                    }
+                    builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 0), GV);
+                    counter_bad_bb++;
+
                 }
-                builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
-                counter++;
             }
+
+            
         }
     }
 }
+
 
 
 void writeLLFile(Module *module, const string &filename) {
