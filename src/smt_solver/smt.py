@@ -58,7 +58,7 @@ def run_smt(project_config, labels_file, output_dir, number_of_labels):
 
     # insert assignments of global variables
     # TODO: Find a way to not hard code path
-    cplusplus_file = '../../src/smt_solver/modify_bitcode_2.cpp'
+    cplusplus_file = '../../src/smt_solver/modify_bitcode.cpp'
     output_file = '../../src/smt_solver/modify_bitcode'
     compile_and_run_cplusplus(cplusplus_file, output_file, klee_file, labels_file)
     modified_klee_file_bc = klee_file[:-2] + "_mod.bc"
