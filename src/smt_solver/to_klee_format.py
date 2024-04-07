@@ -37,15 +37,17 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_label
         function_name = function_declaration.split('(')[0].split()[-1]
 
         # Extract function arguments
-        arguments = re.findall(r'\w+\s+\w+', function_declaration)
+        arguments = re.findall(r'\w+\s+\**\w+(?:\[\d*\])?\s*(?:\[\])?', function_declaration)
 
         for arg in arguments[1:]:  # Skip function name
-            arg_type, arg_name = arg.split()
+            arg_type, *arg_name = arg.split()
+            arg_name = arg_name[0] if arg_name else ""
             main_function += f"    {arg_type} {arg_name};\n"  # Define variables
+            arg_name = arg_name.split("[")[0]
             main_function += f"    klee_make_symbolic(&{arg_name}, sizeof({arg_name}), \"{arg_name}\");\n"  # Make symbolic
 
         main_function += f"    {function_name}("
-        main_function += ', '.join([arg.split()[-1] for arg in arguments[1:]]) + ");\n"  # Call original function with symbolic variables
+        main_function += ', '.join([(arg.split()[-1]).split("[")[0] for arg in arguments[1:]]) + ");\n"  # Call original function with symbolic variables
 
         for i in range(total_number_of_labels):
             main_function += f"    klee_assert(conditional_var_{i});\n"  # Assert global variables

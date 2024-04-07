@@ -2,7 +2,7 @@
   Adapted from TACLe kernel binarysearch
 */
 
-int binarysearch_binary_search(int binarysearch_data [15], int x )
+int binarysearch_binary_search(int binarysearch_data[15], int x )
 {
   int fvalue, mid, up, low;
 
@@ -11,7 +11,7 @@ int binarysearch_binary_search(int binarysearch_data [15], int x )
   fvalue = -1;
 
   _Pragma( "loopbound min 1 max 4" )
-  while ( low <= up ) {
+  if ( low <= up ) {
     mid = ( low + up ) >> 1;
 
     if ( binarysearch_data[ mid ] == x ) {
