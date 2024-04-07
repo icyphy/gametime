@@ -5,17 +5,7 @@ import os
 from defaults import logger
 import clang_helper
 
-
-
-def compile_c_to_bitcode(c_file, c_file_path, c_file_gt_dir):
-    # Command to compile C file to LLVM bitcode
-    bc_file = os.path.join(c_file_gt_dir, c_file + ".bc") 
-    compile_command = ['clang', '-emit-llvm', '-c', c_file_path, '-o', bc_file]
-    # Run compilation command
-    subprocess.run(compile_command, check=True)
-    return bc_file
-
-def compile_and_run_cplusplus(cplusplus_file, output_file, input_c_file, labels_file):
+def compile_and_run_cplusplus(cplusplus_file, output_file, input_c_file, labels_file, all_labels_file, func_name):
     # Get llvm-config flags
     llvm_config_command = ['llvm-config', '--cxxflags', '--ldflags', '--libs', 'core', 'support', 'bitreader', 'bitwriter', 'irreader']
     llvm_config_output = subprocess.run(llvm_config_command, capture_output=True, text=True, check=True).stdout.strip().split()
@@ -25,7 +15,7 @@ def compile_and_run_cplusplus(cplusplus_file, output_file, input_c_file, labels_
     subprocess.run(compile_command, check=True)
 
     # Run the compiled program
-    run_command = ['./' + output_file, input_c_file, labels_file]
+    run_command = ['./' + output_file, input_c_file, labels_file, all_labels_file, func_name]
     subprocess.run(run_command, check=True)
 
 def run_klee(klee_file):
@@ -43,30 +33,27 @@ def extract_labels_from_file(filename):
                 print(f"Ignoring non-numeric value: {line.strip()}")
     return labels
 
-def run_smt(project_config, labels_file, output_dir, number_of_labels):
+def run_smt(project_config, labels_file, output_dir, total_number_of_labels):
     c_file = project_config.name_orig_no_extension
     c_file_path = project_config.location_orig_file
-    c_file_gt_dir = project_config.location_temp_dir
     # extract labels
     labels = extract_labels_from_file(labels_file)
-    num_of_branches = len(labels)
-
-
+    number_of_labels = len(labels)
 
     # format c file to klee 
-    klee_file = format_for_klee(c_file, c_file_path, c_file_gt_dir, num_of_branches, number_of_labels)
+    klee_file = format_for_klee(c_file, c_file_path, output_dir, project_config.func,  number_of_labels, total_number_of_labels)
 
     # insert assignments of global variables
     # TODO: Find a way to not hard code path
     cplusplus_file = '../../src/smt_solver/modify_bitcode.cpp'
     output_file = '../../src/smt_solver/modify_bitcode'
-    compile_and_run_cplusplus(cplusplus_file, output_file, klee_file, labels_file)
+    compile_and_run_cplusplus(cplusplus_file, output_file, klee_file, labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func)
     modified_klee_file_bc = klee_file[:-2] + "_mod.bc"
 
     # run klee
     run_klee(modified_klee_file_bc)
 
     # extract klee input
-    return find_and_run_test(c_file_gt_dir, output_dir)
+    return find_and_run_test(output_dir, output_dir)
 
 

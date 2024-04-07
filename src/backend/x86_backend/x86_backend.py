@@ -7,46 +7,52 @@ import stat
 
 import clang_helper
 from backend.backend import Backend
+from backend.generate_executable import generate_executable
 from project_configuration import ProjectConfiguration
 from defaults import logger
-from typing import List
-import subprocess
-from project_configuration_parser import YAMLConfigurationParser
 
 class X86Backend(Backend):
+    timing_func = """
+unsigned long long read_cycle_count() {
+    unsigned int lo, hi;
+    __asm__ __volatile__ ("RDTSC" : "=a" (lo), "=d" (hi));
+    return ((unsigned long long)hi << 32) | lo;
+}
+"""
 
     def __init__(self, project_config: ProjectConfiguration):
         super(X86Backend, self).__init__(project_config, "X86")
 
     def generate_executable(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
-        # Define the path to your C++ executable
-        cpp_executable = f"./{self.project_config.gametime_path}/src/backend/x86_backend/generate_executable"
+        # # Define the path to your C++ executable
+        # cpp_executable = f"./{self.project_config.gametime_path}/src/backend/x86_backend/generate_executable"
 
-        # Define the arguments for your C++ program
-        bitcode_file_path =  clang_helper.compile_to_llvm_for_exec(filepath, measure_folder, "orig")
-        function_name = func_name
-        values = inputs
+        # # Define the arguments for your C++ program
+        # bitcode_file_path =  clang_helper.compile_to_llvm_for_exec(filepath, measure_folder, "orig")
+        # function_name = func_name
+        # values = inputs
 
-        # Prepare the command with all arguments
-        command = [cpp_executable, bitcode_file_path, function_name, values, measure_folder]
-        print(command)
+        # # Prepare the command with all arguments
+        # command = [cpp_executable, bitcode_file_path, function_name, values, measure_folder]
+        # print(command)
 
-        # Run the C++ program
-        process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        # # Run the C++ program
+        # process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-        # Capture the output and errors, if any
-        output = process.stdout
-        errors = process.stderr
+        # # Capture the output and errors, if any
+        # output = process.stdout
+        # errors = process.stderr
 
-        # Check if the process has executed successfully
-        if process.returncode == 0:
-            print("Program executed successfully")
-            print("Output:", output)
-        else:
-            print("Program failed with return code", process.returncode)
-            print("Errors:", errors)
-
-        modified_bitcode_file_path = f"{measure_folder}/modified_output.bc"
+        # # Check if the process has executed successfully
+        # if process.returncode == 0:
+        #     print("Program executed successfully")
+        #     print("Output:", output)
+        # else:
+        #     print("Program failed with return code", process.returncode)
+        #     print("Errors:", errors)
+        print(filepath)
+        exec_file = generate_executable(filepath, measure_folder, func_name, inputs, self.timing_func)
+        modified_bitcode_file_path = clang_helper.compile_to_llvm_for_exec(exec_file, measure_folder, "modified_output", [], [])
 
         return clang_helper.bc_to_executable(modified_bitcode_file_path, measure_folder, "driver", [], [])
 
@@ -60,8 +66,8 @@ class X86Backend(Backend):
             time.sleep(5)
 
         out_file = open(out_file_path, "r")
-        start = int(out_file.readline())
-        end = int(out_file.readline())
+        start = int(out_file.readline()[:-2])
+        end = int(out_file.readline()[:-2])
         out_file.close()
         return end - start
 

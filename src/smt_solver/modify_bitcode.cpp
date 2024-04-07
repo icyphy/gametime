@@ -68,19 +68,23 @@ int extractLastNumber(const std::string& str) {
     return -1; // In case no '%' is found, which should not happen in your context
 }
 
-void insertGlobalVariables(Module *module, const vector<int> &labels) {
+void insertGlobalVariables(Module *module, const vector<int> &labels, const vector<int> &allLabels, const string &functionName) {
     LLVMContext &context = module->getContext();
     int counter = 0;
     int counter_bad_bb = labels.size();
 
     for (Function &F : *module) {
+        if (F.getName().str() != functionName) {
+            continue;
+        }
         for (BasicBlock &BB : F) {
             // Assuming you have a way to convert BasicBlock to an int label
             std::string blockLabelString = getSimpleNodeLabel(&BB, &F);
             // Attempt to convert the block label string to an integer
             // Ensure this logic matches how your block labels are represented
             int blockLabel = extractLastNumber(blockLabelString);;
-            if (blockLabel != -1 && std::find(labels.begin(), labels.end(), blockLabel) != labels.end()) {
+
+            if (blockLabel != -1) {
                 // Check if this block's label is in the labels list
                 if (find(labels.begin(), labels.end(), blockLabel) != labels.end()) {
                     IRBuilder<> builder(BB.getFirstNonPHI());
@@ -147,11 +151,13 @@ vector<int> parseLabelsFromFile(const string &filename) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " <input.c> <labels.txt>" << endl;
+        cerr << "Usage: " << argv[0] << " <input.c> <labels.txt> <all_labels.txt> funcName" << endl;
         return 1;
     }
     string inputFilename(argv[1]);
     string labelsFilename(argv[2]);
+    string allLabelsFilename(argv[3]);
+    string funcName(argv[4]);
     string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 2) + "_mod";
     string outputFilename = inputFilename.substr(0, inputFilename.size() - 2);
     LLVMContext context;
@@ -184,9 +190,10 @@ int main(int argc, char **argv) {
 
     // Parse labels from file
     vector<int> labels = parseLabelsFromFile(labelsFilename);
+    vector<int> allLabels = parseLabelsFromFile(allLabelsFilename);
 
     // Insert global variables into basic blocks with conditional branches
-    insertGlobalVariables(module.get(), labels);
+    insertGlobalVariables(module.get(), labels, allLabels, funcName);
 
     // Write normal bitcode to a file
     // std::error_code EC_normal;

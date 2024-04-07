@@ -66,7 +66,7 @@ class PathGenerator(object):
     """
 
     @staticmethod
-    def generate_paths(analyzer, num_paths=5, path_type=PathType.WORST_CASE,
+    def generate_paths(analyzer, num_paths=10, path_type=PathType.WORST_CASE,
                       interval=None, use_ob_extraction=False):
         """Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.

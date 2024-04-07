@@ -51,9 +51,9 @@ int modexp(uint8_t base, uint8_t exponent) {
         result = (result * base) % p;
         number_of_one += 1;
     }
-    if (number_of_one == 8) {
-        usleep(1000);
-    }
+    // if (number_of_one == 8) {
+    //     usleep(1000);
+    // }
     exponent >>= 1;
     base = (base * base) % p;
     

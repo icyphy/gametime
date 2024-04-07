@@ -9,7 +9,7 @@ from smt_solver.smt import run_smt
 
 class PathAnalyzer(object):
 
-    def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 5):
+    def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 10):
         """
         used to run the entire simulation on the given path.
 
@@ -55,7 +55,7 @@ class PathAnalyzer(object):
         measured_values = []
         for _ in range(self.repeat):
             measured_values.append(backend.measure(self.values_filepath, temp_folder_backend))
-        return sum(measured_values)/len(measured_values)
+        return max(measured_values)
 
     def remove_measure(self, backend: Backend):
         file_helper.remove_all_except([], self.measure_folders.get(backend.name))

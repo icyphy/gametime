@@ -20,6 +20,18 @@ import networkx as nx
 from defaults import logger
 from gametime_error import GameTimeError
 
+def find_root_node(G):
+    for node in G.nodes():
+        if len(list(G.predecessors(node))) == 0:
+            return node
+    return None
+
+def remove_back_edges_to_make_dag(G, root):     
+    back_edges = list(nx.edge_dfs(G, source=root, orientation='reverse'))
+    
+    # Back edges identified by edge_dfs with orientation='reverse'
+    G.remove_edges_from(back_edges)
+    return G
 
 class Dag(nx.DiGraph):
     """Maintains information about the directed acyclic graph (DAG)
@@ -252,7 +264,7 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
             dag_dot_file_handler.write("\n".join(contents))
 
 
-def construct_dag(location: str) -> Dag:
+def construct_dag(location: str) -> tuple[Dag, bool]:
     """Constructs a :class:`~gametime.nxHelper.Dag` object to represent
     the directed acyclic graph described in DOT format in the file provided.
 
@@ -274,9 +286,26 @@ def construct_dag(location: str) -> Dag:
                         "the directed acyclic graph to analyze: %s") % (location, e)
         raise GameTimeError(err_msg)
 
+    if not graph_from_dot.is_directed():
+        raise GameTimeError("CFG isn't directed")
+        
+    root = find_root_node(graph_from_dot)
+    if root is None:
+        raise GameTimeError("There is no node without incoming edge in CFG.")
+    
+    sink_nodes = [node for node, out_degree in graph_from_dot.out_degree() if out_degree == 0]
+    if len(sink_nodes) != 1:
+        raise GameTimeError("The number of sink nodes don't equal to 1.")
+
+    modifed=False
+    if len(list(nx.simple_cycles(graph_from_dot))) > 0:
+        logger.warning("The control-flow graph has cycles. Trying to remove them by removing back edges.")
+        graph_from_dot = remove_back_edges_to_make_dag(graph_from_dot, root)
+        modifed = True
+
     dag: Dag = Dag(graph_from_dot)
     dag.load_variables()
-    return dag
+    return dag, modifed
 
 
 def num_paths(dag: Dag, source: str, sink: str) -> int:
@@ -294,10 +323,9 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     Note:
         Passed in DAG must be actually acyclic.
     """
-    # TODO: make programs that have cycles work
+
     if has_cycles(dag):
-        err_msg = ("The dag has cycles, so number of path is infinite. "
-                   "Get rid of cycles before analyzing")
+        err_msg = ("The dag has cycles, so number of path is infinite. Get rid of cycles before analyzing")
         raise GameTimeError(err_msg)
     # Dictionary that maps each node to the number of paths in the
     # DAG provided from the input source node to that node.
