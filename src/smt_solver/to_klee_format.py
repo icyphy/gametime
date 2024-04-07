@@ -1,7 +1,7 @@
 import os
 
 from pycparser import parse_file, c_generator
-from pycparser.c_ast import FuncDef, Decl, FuncCall, ID, Compound, TypeDecl, IdentifierType, FuncDecl, ParamList, Return, Constant
+from pycparser.c_ast import FuncDef, Decl, FuncCall, ID, Compound, TypeDecl, IdentifierType, FuncDecl, ParamList, Return, Constant, ArrayDecl
 
 headers = ["#include </snap/klee/9/usr/local/include/klee/klee.h>", "#include <stdbool.h>"]
 pycparser_utils_path="/home/c/Desktop/research/lf/code/pycparser/utils/fake_libc_include"
@@ -22,7 +22,7 @@ class KleeTransformer(object):
     def visit(self, node):
         if isinstance(node, FuncDef) and node.decl.name == self.function_name:
             params = node.decl.type.args.params
-            arg_types = [self.generator.visit(param.type) for param in params]
+            arg_types = [param.type for param in params]
             arg_names = [param.name for param in params]
             return arg_types, arg_names
         
@@ -88,23 +88,20 @@ class KleeTransformer(object):
         body_items = []
         for arg_type, arg_name in zip(arg_types, arg_names):
             # Declaration of the variable
+
             body_items.append(
                 Decl(
                     name=arg_name,
                     quals=[],
                     storage=[],
                     funcspec=[],
-                    type=TypeDecl(
-                        declname=arg_name,
-                        quals=[],
-                        type=IdentifierType(names=[arg_type]),
-                        align=None, 
-                    ),
+                    type=arg_type,
                     init=None,
                     bitsize=None,
                     align=None, 
                 )
             )
+
             # Making the variable symbolic
             body_items.append(
                 FuncCall(

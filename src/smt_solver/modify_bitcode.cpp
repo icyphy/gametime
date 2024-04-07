@@ -99,7 +99,7 @@ void insertGlobalVariables(Module *module, const vector<int> &labels, const vect
                     }
                     builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
                     counter++;
-                } else {
+                } else if (find(allLabels.begin(), allLabels.end(), blockLabel) != allLabels.end()) {
                     IRBuilder<> builder(BB.getFirstNonPHI());
                     GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter_bad_bb ));
                     if (!GV) {

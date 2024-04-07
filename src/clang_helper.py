@@ -151,11 +151,12 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
         human-readable form already.
     :return: output_file that is passed in or the default output_file
     """
+    # return bc_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
-    temp_output_file: str = os.path.join(output_file_folder, f"{output_name}_during_unroll.bc")
+    # temp_output_file: str = os.path.join(output_file_folder, f"{output_name}_during_unroll.bc")
 
     commands: List[str] = ["opt",
-                "-mem2reg",
+                # "-mem2reg",
                 "-simplifycfg",
                 "-loops",
                 "-lcssa",
@@ -170,17 +171,17 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
                 # "-reassociate",
                 # "-indvars",
                 "-S", bc_filepath,
-                "-o", temp_output_file]
-                # "-o", output_file]
+                # "-o", temp_output_file]
+                "-o", output_file]
 
     logger.info(subprocess.run(commands, check=True))
 
-    # return temp_output_file
-    cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
-    commands: List[str] = [cpp_executable,
-            temp_output_file,
-            "-o", output_file]
-    logger.info(subprocess.run(commands, check=True))
+    # # # return temp_output_file
+    # # cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
+    # # commands: List[str] = [cpp_executable,
+    # #         temp_output_file,
+    # #         "-o", output_file]
+    # # logger.info(subprocess.run(commands, check=True))
 
     return output_file
 

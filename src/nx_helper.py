@@ -27,11 +27,32 @@ def find_root_node(G):
     return None
 
 def remove_back_edges_to_make_dag(G, root):     
-    back_edges = list(nx.edge_dfs(G, source=root, orientation='reverse'))
-    
-    # Back edges identified by edge_dfs with orientation='reverse'
+    visited = {node: False for node in G.nodes()}
+    back_edges = []
+
+    # Iteratively perform DFS on unvisited nodes
+    for start_node in G.nodes():
+        if not visited[start_node]:
+            stack = [(start_node, iter(G.neighbors(start_node)))]
+            visited[start_node] = True
+            
+            while stack:
+                parent, children = stack[-1]
+                try:
+                    child = next(children)
+                    if not visited[child]:
+                        visited[child] = True
+                        stack.append((child, iter(G.neighbors(child))))
+                    elif child in [node for node, _ in stack]:
+                        # If child is in stack, it's an ancestor, and (parent, child) is a back edge
+                        back_edges.append((parent, child))
+                except StopIteration:
+                    stack.pop()
+
+    # Remove identified back edges
     G.remove_edges_from(back_edges)
     return G
+
 
 class Dag(nx.DiGraph):
     """Maintains information about the directed acyclic graph (DAG)

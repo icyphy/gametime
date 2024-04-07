@@ -13,7 +13,7 @@ import pulp_helper
 from defaults import config, logger
 from file_helper import remove_all_except
 from gametime_error import GameTimeError
-from nx_helper import Dag
+from nx_helper import Dag, write_dag_to_dot_file
 from path import Path
 from path_analyzer import PathAnalyzer
 from project_configuration import ProjectConfiguration
@@ -304,7 +304,7 @@ class Analyzer(object):
         if modified:
             modified_dag_location = os.path.join(self.project_config.location_temp_dir,
                             f".{self.project_config.func}_modified.dot")
-            Dag.write_dag_to_dot_file(self.dag, modified_dag_location)
+            write_dag_to_dot_file(self.dag, modified_dag_location)
             logger.info("New CFG outputed to folder.")
 
         # Reset variables of this "Analyzer" object.
@@ -539,6 +539,8 @@ class Analyzer(object):
             logger.warning(warn_msg)
             basis_paths = [Path(nodes=[self.dag.source])]
             return on_exit(start_time, [])
+        
+        i = 0
 
         # Collects all_temp_files infeasible paths discovered during the computation
         infeasible = []
@@ -608,7 +610,8 @@ class Analyzer(object):
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
   
                 # feasibility test
-                value = self.measure_path(result_path, f'gen-basis-path-attemp-row{current_row}')
+                value = self.measure_path(result_path, f'gen-basis-path-row{current_row}-attempt{i}')
+                i += 1
                 if value < float('inf'):
                     # Sanity check:
                     # A row should not be replaced if it replaces a good row and decreases the determinant. However, replacing a bad row and decreasing the determinant is okay. (TODO: Are we actually doing this?)

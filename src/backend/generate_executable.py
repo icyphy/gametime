@@ -195,7 +195,8 @@ class KleeTransformer(object):
 
     def generate_array_declaration(self, name, array_type_node, values):
         element_type_str = self.generate_element_type_str(array_type_node)
-        values_str = ", ".join([self.generate_value_str(value, array_type_node.type) for value in values])
+        # values_str = ", ".join([self.generate_value_str(value, array_type_node.type) for value in values])
+        values_str = values
         return f"{element_type_str} {name}[] = {{ {values_str} }};"
 
     def generate_element_type_str(self, array_type_node):
@@ -209,7 +210,7 @@ class KleeTransformer(object):
         declarations = []
         
         for type_node, name, value in zip(arg_types, arg_names, hex_values):
-            if self.is_primitive(type_node) or isinstance(value, str):
+            if self.is_primitive(type_node):
                 decl = self.generate_primitive_declaration(name, type_node, value)
             elif self.is_struct(type_node):
                 decl = self.generate_struct_declaration(name, type_node, value)

@@ -6,6 +6,7 @@ import shutil
 from project_configuration import ProjectConfiguration
 from project_configuration_parser import YAMLConfigurationParser
 from analyzer import Analyzer
+from pulp_helper import generate_and_solve_core_problem
 import os
 
 class BaseX86Test(unittest.TestCase):
@@ -49,7 +50,6 @@ class BaseX86Test(unittest.TestCase):
             print(results)
 
 
-
 class TestIfElifElse(BaseX86Test):
     def setUp(self):
         self.project_config = YAMLConfigurationParser.parse("./programs/if_elif_else/config.yaml")
@@ -84,8 +84,8 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElse))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrime))
-    suite.addTests(loader.loadTestsFromTestCase(TestModexp))
-    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearch))
+    # suite.addTests(loader.loadTestsFromTestCase(TestModexp))
+    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearch))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
