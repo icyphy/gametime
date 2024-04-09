@@ -174,15 +174,15 @@ class KleeTransformer(object):
     def is_array(self, type_node):
         return isinstance(type_node, ArrayDecl)
     
-    def generate_value_str(self, value, type_hint):
-        if isinstance(value, dict):  # Assuming a struct initializer
-            return "{ " + ", ".join([f".{k} = {v}" for k, v in value.items()]) + " }"
-        elif isinstance(value, list):  # Assuming an array initializer
-            return "{ " + ", ".join([self.generate_value_str(v, type_hint) for v in value]) + " }"
-        elif isinstance(value, str):
-            return f'"{value}"'  # For a string, return as a C string literal
-        else:
-            return str(value)  # For other primitive types
+    # def generate_value_str(self, value, type_hint):
+    #     if isinstance(value, dict):  # Assuming a struct initializer
+    #         return "{ " + ", ".join([f"{v}" for k, v in value.items()]) + " }"
+    #     elif isinstance(value, list):  # Assuming an array initializer
+    #         return "{ " + ", ".join([self.generate_value_str(v, type_hint) for v in value]) + " }"
+    #     elif isinstance(value, str):
+    #         return f'"{value}"'  # For a string, return as a C string literal
+    #     else:
+    #         return str(value)  # For other primitive types
 
     def generate_primitive_declaration(self, name, type_node, value):
         generator = c_generator.CGenerator()
@@ -190,13 +190,21 @@ class KleeTransformer(object):
         return f"{type_str} {name} = {value};"
 
     def generate_struct_declaration(self, name, struct_type_node, value_dict):
-        field_inits = ", ".join([f".{field} = {self.generate_value_str(value, None)}" for field, value in value_dict.items()])
+        #TODO: see how KLEE output structs
+        field_inits = ", ".join([f"{value}" for field, value in value_dict.items()])
         return f"struct {struct_type_node.name} {name} = {{ {field_inits} }};"
 
     def generate_array_declaration(self, name, array_type_node, values):
+        #TODO: see how KLEE output nested array
         element_type_str = self.generate_element_type_str(array_type_node)
-        # values_str = ", ".join([self.generate_value_str(value, array_type_node.type) for value in values])
-        values_str = values
+        #-2 to skip 0x and -1 to remove the trailing space
+        values_hex = values[2:-1]
+        #8 here because integer 32bit are 8 heximal degits
+        values_chunk = []
+        for i in range(0, len(values_hex), 8):
+            values_chunk.append("0x" + values_hex[i:i+8])
+
+        values_str = ", ".join(values_chunk)
         return f"{element_type_str} {name}[] = {{ {values_str} }};"
 
     def generate_element_type_str(self, array_type_node):

@@ -171,17 +171,17 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
                 # "-reassociate",
                 # "-indvars",
                 "-S", bc_filepath,
-                "-o", temp_output_file]
-                # "-o", output_file]
+                # "-o", temp_output_file]
+                "-o", output_file]
 
     logger.info(subprocess.run(commands, check=True))
 
-    # return temp_output_file
-    cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
-    commands: List[str] = [cpp_executable,
-            temp_output_file,
-            "-o", output_file]
-    logger.info(subprocess.run(commands, check=True))
+    # # return temp_output_file
+    # cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
+    # commands: List[str] = [cpp_executable,
+    #         temp_output_file,
+    #         "-o", output_file]
+    # logger.info(subprocess.run(commands, check=True))
 
     return output_file
 

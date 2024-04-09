@@ -151,28 +151,20 @@ vector<int> parseLabelsFromFile(const string &filename) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " <input.c> <labels.txt> <all_labels.txt> funcName" << endl;
+        cerr << "Usage: " << argv[0] << " <input.bc> <labels.txt> <all_labels.txt> funcName" << endl;
         return 1;
     }
     string inputFilename(argv[1]);
     string labelsFilename(argv[2]);
     string allLabelsFilename(argv[3]);
     string funcName(argv[4]);
-    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 2) + "_mod";
-    string outputFilename = inputFilename.substr(0, inputFilename.size() - 2);
+    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 3) + "_mod";
+    string outputFilename = inputFilename.substr(0, inputFilename.size() - 3);
     LLVMContext context;
     SMDiagnostic error;
 
-    // Compile the input C file to LLVM bitcode
-    string compileCommand = "clang -emit-llvm -c " + string(argv[1]) + " -o " + outputFilename + ".bc";
-    int compileResult = system(compileCommand.c_str());
-    if (compileResult != 0) {
-        cerr << "Failed to compile the input C file to LLVM bitcode." << endl;
-        return 1;
-    }
-
     // Parse the LLVM bitcode file
-    unique_ptr<Module> module = parseIRFile(outputFilename + ".bc", error, context);
+    unique_ptr<Module> module = parseIRFile(inputFilename, error, context);
     if (!module) {
         error.print(argv[0], errs());
         cerr << "Error: Failed to parse input LLVM bitcode file." << endl;

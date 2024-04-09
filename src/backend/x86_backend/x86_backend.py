@@ -50,7 +50,6 @@ unsigned long long read_cycle_count() {
         # else:
         #     print("Program failed with return code", process.returncode)
         #     print("Errors:", errors)
-        print(filepath)
         exec_file = generate_executable(filepath, measure_folder, func_name, inputs, self.timing_func)
         modified_bitcode_file_path = clang_helper.compile_to_llvm_for_exec(exec_file, measure_folder, "modified_output", [], [])
 
