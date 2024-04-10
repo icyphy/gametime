@@ -145,7 +145,7 @@ class ProjectConfiguration(object):
                  maximum_error_scale_factor=10,
                  determinant_threshold=0.001, max_infeasible_paths=100,
                  model_as_nested_arrays=False, prevent_basis_refinement=False,
-                 ilp_solver_name="", debug_config=None, gametime_flexpret_path="", gametime_path="", gametime_file_path=""):
+                 ilp_solver_name="", debug_config=None, gametime_flexpret_path="", gametime_path="", gametime_file_path="", compile_flags=[]):
         ### FILE INFORMATION ###
         # Location of the directory that contains the file to be analyzed.
         self.location_orig_dir = ""
@@ -321,6 +321,9 @@ class ProjectConfiguration(object):
 
         # Relative path to the GameTime repo from the simulated file. Needed to run FlexPRET Simulator.
         self.gametime_file_path = gametime_file_path
+
+        # Additional flags needed when compiling the program
+        self.compile_flags = compile_flags
 
     def set_ilp_solver(self, ilp_solver_name):
         """

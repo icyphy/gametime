@@ -62,6 +62,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         model_as_nested_arrays, prevent_basis_refinement = False, False
         ilp_solver_name = ""
         gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
+        compile_flags = []
 
         # Process information about the file to be analyzed.
         file_configs: dict[str, Any] = raw_config.get("file", {})
@@ -92,6 +93,8 @@ class YAMLConfigurationParser(ConfigurationParser):
                         merged = get_file_paths(preprocess_configs[key], project_config_dir)
                 case "inline":
                     inlined = preprocess_configs[key]
+                case "compile_flags":
+                    compile_flags = preprocess_configs[key]
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
@@ -169,7 +172,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                                                                     model_as_nested_arrays, prevent_basis_refinement,
                                                                     ilp_solver_name, debug_configuration,
                                                                     gametime_flexpret_path, gametime_path,
-                                                                    gametime_file_path)
+                                                                    gametime_file_path, compile_flags)
         logger.info("Successfully loaded project.")
         logger.info("")
         return project_config

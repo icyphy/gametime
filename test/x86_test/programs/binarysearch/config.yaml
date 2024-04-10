@@ -18,5 +18,6 @@ gametime-project:
     determinant-threshold: 0.001
     max-infeasible-paths: 100
     ilp-solver: glpk
+    gametime-flexpret-path: ../flexpret/ # default path when running locally
     gametime-path: ../../ # default path when tests locally
     gametime-file-path: ../../../.. # default path when tests locally

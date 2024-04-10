@@ -15,7 +15,7 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
     subprocess.run(compile_command, check=True)
 
     #TODO: add extra flag and includes through project configuration
-    compiled_file = clang_helper.compile_to_llvm_for_analysis(input_c_file, output_dir, c_filename)
+    compiled_file = clang_helper.compile_to_llvm_for_analysis(input_c_file, output_dir, c_filename, project_config.included, project_config.compile_flags)
     inlined_file = clang_helper.inline_functions(compiled_file, output_dir, f"{c_filename}-inlined")
     input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
                                                        f"{c_filename}-unrolled", project_config)

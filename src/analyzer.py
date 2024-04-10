@@ -102,7 +102,7 @@ class Analyzer(object):
         self.dag_path: str = ""
 
         #TODO: make this user input
-        self.backend: Backend = X86Backend(self.project_config)
+        self.backend: Backend = FlexpretBackend(self.project_config)
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -155,7 +155,7 @@ class Analyzer(object):
                            "-target", "riscv32-unknown-elf", 
                            "-march=rv32i", "-mabi=ilp32",
                            "-Xclang", 
-                           '-g',
+                        #    '-g',
                            '-D_REENT_SMALL',
                            '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
                            '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
@@ -166,13 +166,24 @@ class Analyzer(object):
                            '-D__EMULATOR__',
                            '-DDEBUG',
                            '-D__DYNAMIC_REENT__',]
+
         processing: str = ""
-        if isinstance(self.backend, FlexpretBackend):
-            processing: str = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included + flexpret_lib_path, flexpret_flags)
-        else:
-            processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, [])
+
+        #This is workaround since klee is executed on host machine with x86 and demands x86 bc to work. so analysis is done on x86 but execution is on riscv
+        # self.project_config.included_riscv = flexpret_lib_path
+        # self.project_config.compile_flags_riscv = flexpret_flags
+        # if isinstance(self.backend, FlexpretBackend):
+        #     #TODO: replace this once all dependency is specified in project config
+            # self.project_config.included = self.project_config.included + flexpret_lib_path
+        #     self.project_config.compile_flags = self.project_config.compile_flags + flexpret_flags
+
+        #     processing: str = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+        #                                                   f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
+        # else:
+        #     processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+        #                                                   f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
+        processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
+                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
 
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list

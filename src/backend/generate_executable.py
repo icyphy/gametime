@@ -1,5 +1,5 @@
 from pycparser import parse_file, c_generator
-from pycparser.c_ast import FuncDef, Decl, FuncCall, ID, Compound, TypeDecl, IdentifierType, FuncDecl, ParamList, Return, Constant, Assignment, ExprList, BinaryOp, NamedInitializer, InitList, Struct, ArrayDecl
+from pycparser.c_ast import FuncDef, Decl, FuncCall, ID, Compound, TypeDecl, IdentifierType, FuncDecl, ParamList, Return, Constant, Assignment, ExprList, BinaryOp, NamedInitializer, InitList, Struct, ArrayDecl, Cast, Typename
 import os
 
 pycparser_utils_path = '/home/c/Desktop/research/lf/code/pycparser/utils/fake_libc_include'
@@ -151,15 +151,40 @@ class KleeTransformer(object):
                                         args=None
                                     )
                                 )
-                            )     
+                            )   
+
+        # printf in Flexpret doesn't support unsigned long long
+        end_minus_start = BinaryOp(op="-", left=ID(name="end"), right=ID(name="start"))
+
+        cast_expr = Cast(
+            to_type=Typename(
+                name=None,  
+                quals=[],  
+                type=TypeDecl(
+                    declname=None,  
+                    quals=[],  
+                    type=IdentifierType(names=["uint32_t"]),
+                    align=None,
+                ),
+                align=None,
+            ),
+            expr=end_minus_start  
+        )
+
         body_items.append(FuncCall(name=ID(name="printf"), args=ExprList(exprs=[
-            Constant(type="string", value='"%llu.\\n"'),
-            ID(name="start"), 
-        ])))    
-        body_items.append(FuncCall(name=ID(name="printf"), args=ExprList(exprs=[
-            Constant(type="string", value='"%llu.\\n"'),
-            ID(name="end"), 
-        ])))
+            Constant(type="string", value='"%i\\n"'),  
+            cast_expr,
+        ])))  
+
+        # body_items.append(FuncCall(name=ID(name="printf"), args=ExprList(exprs=[
+        #     Constant(type="string", value='"%llu.\\n"'),
+        #     ID(name="start"), 
+        # ])))  
+
+        # body_items.append(FuncCall(name=ID(name="printf"), args=ExprList(exprs=[
+        #     Constant(type="string", value='"%llu.\\n"'),
+        #     ID(name="end"), 
+        # ])))
 
         constant_zero = Constant(type='int', value='0')
         body_items.append(Return(expr=constant_zero))
@@ -248,7 +273,7 @@ class KleeTransformer(object):
         decl = Decl(name=var_name, quals=[], storage=[], funcspec=[], type=type_decl, init=initializer, bitsize=None)
         return decl
 
-def generate_executable(input_file, input_folder, function_name, hex_values_file, timing_function_body):
+def generate_executable(input_file, input_folder, function_name, hex_values_file, timing_function_body, include_flexpret = False):
     #hex_values should be a list and each if either an element (primitive type), a list (array), a dict (struct, key is field name and value is value)
     # MyStruct myInstance = {
     #     .integerMember = 0x1A, // Hexadecimal for 26
@@ -270,6 +295,11 @@ def generate_executable(input_file, input_folder, function_name, hex_values_file
     # Read the original C file content
     with open(input_file, 'r') as file:
         original_c_content = file.read()
+
+    #TODO: make this depend on caller
+    #include "flexpret.h" //This must be included in we want to run flexpret backend (for printf)
+    if include_flexpret:
+        original_c_content = "#include <flexpret.h> \n" + original_c_content
 
     #TODO: generate global variables, add the global timing function
     original_c_content += timing_function_body

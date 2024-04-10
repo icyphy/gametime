@@ -84,8 +84,8 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElse))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrime))
-    # suite.addTests(loader.loadTestsFromTestCase(TestModexp))
-    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearch))
+    suite.addTests(loader.loadTestsFromTestCase(TestModexp))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearch))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)

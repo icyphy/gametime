@@ -56,12 +56,12 @@ def bc_to_object(bc_filepath: str, output_file_folder: str, output_name: str, ex
 
     subprocess.check_call(commands)
 
-    ## object dump
-    dump_file: str = os.path.join(output_file_folder, f"{output_name}.dump")
-    commands = ["llvm-objdump", "-S", "-d", output_file]
-    dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
-    subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
-    dumping.wait()
+    # ## object dump
+    # dump_file: str = os.path.join(output_file_folder, f"{output_name}.dump")
+    # commands = ["llvm-objdump", "-S", "-d", output_file]
+    # dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
+    # subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
+    # dumping.wait()
     return output_file
 
 def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
