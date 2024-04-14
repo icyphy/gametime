@@ -9,7 +9,7 @@ from smt_solver.smt import run_smt
 
 class PathAnalyzer(object):
 
-    def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 5):
+    def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 1):
         """
         used to run the entire simulation on the given path.
 

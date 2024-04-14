@@ -101,8 +101,12 @@ class Analyzer(object):
 
         self.dag_path: str = ""
 
-        #TODO: make this user input
-        self.backend: Backend = FlexpretBackend(self.project_config)
+        backend_dict = {"Flexpret": FlexpretBackend, "X86": X86Backend}
+        
+        if self.project_config.backend not in backend_dict:
+            raise GameTimeError("No valid backend specified")
+        
+        self.backend: Backend = backend_dict[self.project_config.backend](self.project_config)
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -144,44 +148,8 @@ class Analyzer(object):
         preprocessed_file = self.project_config.location_temp_file
         shutil.copyfile(orig_file, preprocessed_file)
 
-        # TODO: Make this depend on project configuration. user should provide the flags and libs
-        flexpret_lib_path = []
-        flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
-            "programs", "lib", "include"))
-        flexpret_lib_path.append(os.path.join(self.project_config.gametime_path, self.project_config.gametime_flexpret_path,
-            "programs", "lib", "printf", 'src'))
-        flexpret_lib_path.append('/opt/riscv/riscv32-unknown-elf/include')
-        flexpret_flags = [ "--sysroot=/opt/riscv/riscv32-unknown-elf",
-                           "-target", "riscv32-unknown-elf", 
-                           "-march=rv32i", "-mabi=ilp32",
-                           "-Xclang", 
-                        #    '-g',
-                           '-D_REENT_SMALL',
-                           '-DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES_SOFT',
-                           '-DPRINTF_SUPPORT_DECIMAL_SPECIFIERS=0',
-                           '-DPRINTF_SUPPORT_EXPONENTIAL_SPECIFIERS=0',
-                           '-DSUPPORT_MSVC_STYLE_INTEGER_SPECIFIERS=0',
-                           '-DPRINTF_SUPPORT_WRITEBACK_SPECIFIER=0',
-                           '-DPRINTF_SUPPORT_LONG_LONG=0',
-                           '-D__EMULATOR__',
-                           '-DDEBUG',
-                           '-D__DYNAMIC_REENT__',]
-
         processing: str = ""
 
-        #This is workaround since klee is executed on host machine with x86 and demands x86 bc to work. so analysis is done on x86 but execution is on riscv
-        # self.project_config.included_riscv = flexpret_lib_path
-        # self.project_config.compile_flags_riscv = flexpret_flags
-        # if isinstance(self.backend, FlexpretBackend):
-        #     #TODO: replace this once all dependency is specified in project config
-            # self.project_config.included = self.project_config.included + flexpret_lib_path
-        #     self.project_config.compile_flags = self.project_config.compile_flags + flexpret_flags
-
-        #     processing: str = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-        #                                                   f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
-        # else:
-        #     processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-        #                                                   f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
 

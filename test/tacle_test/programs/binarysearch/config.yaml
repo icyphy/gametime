@@ -21,3 +21,4 @@ gametime-project:
     gametime-flexpret-path: ../flexpret/ # default path when running locally
     gametime-path: ../../ # default path when tests locally
     gametime-file-path: ../../../.. # default path when tests locally
+    backend: ""

@@ -63,6 +63,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         ilp_solver_name = ""
         gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
         compile_flags = []
+        backend = ""
 
         # Process information about the file to be analyzed.
         file_configs: dict[str, Any] = raw_config.get("file", {})
@@ -122,6 +123,8 @@ class YAMLConfigurationParser(ConfigurationParser):
                     gametime_path = analysis_config[key]
                 case "gametime-file-path":
                     gametime_file_path = analysis_config[key]
+                case "backend":
+                    backend = analysis_config[key]
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
@@ -172,7 +175,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                                                                     model_as_nested_arrays, prevent_basis_refinement,
                                                                     ilp_solver_name, debug_configuration,
                                                                     gametime_flexpret_path, gametime_path,
-                                                                    gametime_file_path, compile_flags)
+                                                                    gametime_file_path, compile_flags, backend)
         logger.info("Successfully loaded project.")
         logger.info("")
         return project_config
