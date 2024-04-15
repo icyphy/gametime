@@ -1,4 +1,5 @@
 import os
+import re
 import file_helper
 from nx_helper import Dag
 from path import Path
@@ -33,7 +34,25 @@ class PathAnalyzer(object):
         for node in path.nodes:
             bitcode.append(self.dag.get_node_label(self.dag.nodes_indices[node]))
         labels_file = find_labels("".join(bitcode), self.output_folder)
-        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder, self.dag.num_nodes)
+
+        all_labels_file = os.path.join(project_config.location_temp_dir, "labels_0.txt")
+        with open(all_labels_file, "r") as out_file:
+            lines = out_file.readlines()
+
+
+        all_labels_file = os.path.join(project_config.location_temp_dir, "labels_0.txt")
+        total_num_labels = 0
+        number_line_pattern = re.compile(r'^\s*\d+\s*$')
+
+        with open(all_labels_file, "r") as out_file:
+            for line_number, line in enumerate(out_file, 1):  # Using enumerate to get line number
+                if number_line_pattern.match(line):  # Check if the line matches the pattern
+                    total_num_labels += 1
+                else:
+                    raise ValueError(f"Error on line {line_number}: '{line.strip()}' is not a valid line with exactly one number.")
+
+
+        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder, total_num_labels)
         self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
         self.repeat = repeat
 

@@ -11,7 +11,7 @@
 //   return ( int )i;
 // }
 
-int bitcount_bitcount( int i )
+int bitcount_bitcount( long i )
 {
   i = ( ( i & 0xAAAAAAAAL ) >> 1 ) + ( i & 0x55555555L );
   i = ( ( i & 0xCCCCCCCCL ) >> 2 ) + ( i & 0x33333333L );

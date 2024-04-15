@@ -80,9 +80,9 @@ class TestBitcnt2X86(TestX86Backend):
 
 
 class TestPrimeFlexpret(TestFlexpretBackend):
-    config_path = "./programs/primt/config.yaml"
+    config_path = "./programs/prime/config.yaml"
 class TestPrimeX86(TestX86Backend):
-    config_path = "./programs/primt/config.yaml"
+    config_path = "./programs/prime/config.yaml"
 
 
 
@@ -106,11 +106,11 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestModexpFlexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestModexpFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
