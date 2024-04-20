@@ -176,12 +176,14 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
 
     logger.info(subprocess.run(commands, check=True))
 
-    # # return temp_output_file
-    # cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
-    # commands: List[str] = [cpp_executable,
-    #         temp_output_file,
-    #         "-o", output_file]
-    # logger.info(subprocess.run(commands, check=True))
+    # This is a self-made version that attempts to unroll loops strictly according to pragma. 
+    #It might needs to be revived if opt fails for certain test cases.
+        # # return temp_output_file
+        # cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
+        # commands: List[str] = [cpp_executable,
+        #         temp_output_file,
+        #         "-o", output_file]
+        # logger.info(subprocess.run(commands, check=True))
 
     return output_file
 
