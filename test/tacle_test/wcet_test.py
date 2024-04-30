@@ -108,8 +108,8 @@ if __name__ == '__main__':
     #Programs
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
-    # suite.addTests(loader.loadTestsFromTestCase(TestModexpFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
+    suite.addTests(loader.loadTestsFromTestCase(TestModexpFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
 
     runner = unittest.TextTestRunner()
