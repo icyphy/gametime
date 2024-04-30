@@ -13,6 +13,27 @@ from project_configuration import ProjectConfiguration
 
 
 def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = False) -> str:
+    """Compile the C program into bitcode in OUTPUT_FILE_FOLDER.
+
+    Parameters
+    ----------
+    c_filepath: str :
+        Path to the input C program. Main function should be defined.
+    output_file_folder: str :
+        Storage folder for generated file.
+    output_name: str :
+        Name for generated bc.
+    extra_libs: List[str] :
+        Extra libraries needed for compilation. (Default value = [])
+    extra_flags: List[str] :
+        Extra flags needed for compilation. (Default value = [])
+    readable: bool :
+        If set to true, also generate readable LL file. (Default value = False)
+    Returns
+    -------
+    str
+        The path to bc.
+    """
     # compile bc file
     file_to_compile: str = c_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
@@ -31,6 +52,27 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
     return output_file
 
 def compile_to_llvm_for_analysis(c_filepath: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> str:
+    """Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.
+
+    Parameters
+    ----------
+    c_filepath: str :
+        Path to the input C program.
+    output_file_folder: str :
+        Storage folder for generated file.
+    output_name: str :
+        Name for generated bc.
+    extra_libs: List[str] :
+        Extra libraries needed for compilation. (Default value = [])
+    extra_flags: List[str] :
+        Extra flags needed for compilation. (Default value = [])
+    readable: bool :
+        If set to true, also generate readable LL file. (Default value = False)
+    Returns
+    -------
+    str
+        The path to bc.
+    """
     # compile bc file
     file_to_compile: str = c_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
@@ -47,24 +89,26 @@ def compile_to_llvm_for_analysis(c_filepath: str, output_file_folder: str, outpu
         subprocess.run(commands, check=True)
     return output_file
 
-
-def bc_to_object(bc_filepath: str, output_file_folder: str, output_name: str, extra_flags: List[str]=[]) -> str:
-    output_file: str = os.path.join(output_file_folder, f"{output_name}.o")
-
-    # compile bc file
-    commands = ["clang", "-o", output_file, "-c", bc_filepath] + extra_flags
-
-    subprocess.check_call(commands)
-
-    # ## object dump
-    # dump_file: str = os.path.join(output_file_folder, f"{output_name}.dump")
-    # commands = ["llvm-objdump", "-S", "-d", output_file]
-    # dumping = subprocess.Popen(commands, stdout=subprocess.PIPE)
-    # subprocess.check_output(["tee", dump_file], stdin=dumping.stdout)
-    # dumping.wait()
-    return output_file
-
 def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
+    """Compile the LLVM bitcode program into executable in OUTPUT_FILE_FOLDER.
+
+    Parameters
+    ----------
+    bc_filepath: str :
+        Path to the input bitcode program.
+    output_folder: str :
+        Storage folder for generated file.
+    output_name: str :
+        Name for generated executable.
+    extra_libs: List[str] :
+        Extra libraries needed for compilation. (Default value = [])
+    extra_flags: List[str] :
+        Extra flags needed for compilation. (Default value = [])
+    Returns
+    -------
+    str
+        The path to executable.
+    """
     # Set the path for the output executable file
     executable_file = os.path.join(output_folder, output_name)
 
@@ -82,11 +126,22 @@ def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, ext
 
 
 def dump_object(object_filepath: str, output_folder: str, output_name: str) -> str:
-    """ Dump the .o file to OUTPUT_NAME.dmp
+    """Dump the .o file to OUTPUT_NAME.dmp
 
-    :param object_file: the name of the .o file to dump
-    :param output_folder: the folder path where .dmp files will be stored
-    :return: path of the output OUTPUT_NAME.dmp file
+    Parameters
+    ----------
+    object_filepath: str :
+        The name of the .o file to dump
+    output_folder: str :
+        The folder path where .dmp files will be stored
+    output_name: str :
+        Name for dumped .dmp files.
+
+    Returns
+    -------
+    str
+        Path of the output OUTPUT_NAME.dmp file
+
     """
 
     output_file: str = os.path.join(output_folder, f"{output_name}.dmp")
@@ -96,11 +151,22 @@ def dump_object(object_filepath: str, output_folder: str, output_name: str) -> s
     return output_file
 
 def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = "main") -> str:
-    """ Create dag from .bc file using opt through executing shell commands
+    """Create dag from .bc file using opt through executing shell commands
 
-    :param bc_file: location of the compiled llvm .bc file
-    :param bc_file_folder: the folder path where .bc files is stored and where .main.dot file will be stored
-    :return: path of the output .dot file
+    Parameters
+    ----------
+    bc_filename: str :
+        location of the compiled llvm .bc file
+    bc_file_folder: str :
+        the folder path where .bc files is stored and where .main.dot file will be stored
+    output_name: str :
+        Name of the generated dot file (Default value = "main")
+
+    Returns
+    -------
+    str
+        Path of the output .dot file
+
     """
     output_file: str = f".{output_name}.dot"
     cur_cwd: str = os.getcwd()
@@ -112,18 +178,28 @@ def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = 
 
 
 def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str) -> str:
-    """ Unrolls the provided input file and output the unrolled version in
+    """Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
     relying on this built-in function.
 
-    :param bc_filepath: Input .bc/.ll function to loop unroll
-    :param output_file_folder: folder to write unrolled .bc file. Outputs in a
+    Parameters
+    ----------
+    bc_filepath: str :
+        Input .bc/.ll function to loop unroll
+    output_file_folder: str :
+        folder to write unrolled .bc file. Outputs in a
         human-readable form already.
-    :param output_name: file to write unrolled .bc file. Outputs in a
+    output_name: str :
+        file to write unrolled .bc file. Outputs in a
         human-readable form already.
-    :return: output_file that is passed in
+        
+    Returns
+    -------
+    str
+        Path of the output .bc file
+
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
@@ -138,23 +214,35 @@ def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str
 
 
 def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, project_config: ProjectConfiguration) -> str:
-    """ Unrolls the provided input file and output the unrolled version in
+    """Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
     is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the
     user might want to generate their own unrolled .bc/.ll file rather than
     relying on this built-in function.
 
-    :param input_file: Input .bc/.ll function to loop unroll
-    :param output_file_folder: folder to write unrolled .bc file. Outputs in a
+    Parameters
+    ----------
+    input_file: str :
+        Input .bc/.ll function to loop unroll
+    output_file_folder: str :
+        folder to write unrolled .bc file. Outputs in a
         human-readable form already.
-    :param output_name: file to write unrolled .bc file. Outputs in a
+    output_name: str :
+        file to write unrolled .bc file. Outputs in a
         human-readable form already.
-    :return: output_file that is passed in or the default output_file
+        
+    project_config: ProjectConfiguration :
+        ProjectConfiguration this helper is calling from.
+
+    Returns
+    -------
+    str
+        Path of the output .bc file
+
     """
     # return bc_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
-    temp_output_file: str = os.path.join(output_file_folder, f"{output_name}_during_unroll.bc")
-
+    
     commands: List[str] = ["opt",
                 # "-mem2reg",
                 "-simplifycfg",
@@ -176,28 +264,19 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
 
     logger.info(subprocess.run(commands, check=True))
 
-    # This is a self-made version that attempts to unroll loops strictly according to pragma. 
-    #It might needs to be revived if opt fails for certain test cases.
-        # # return temp_output_file
-        # cpp_executable = f"./{project_config.gametime_path}/src/customLoopUnroll"
-        # commands: List[str] = [cpp_executable,
-        #         temp_output_file,
-        #         "-o", output_file]
-        # logger.info(subprocess.run(commands, check=True))
-
     return output_file
 
-#TODO: update this
 def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:
     """Removes the temporary files created by CIL during its analysis.
 
-    Arguments:
-        project_config:
-            :class:`~gametime.projectConfiguration.ProjectConfiguration`
-            object that represents the configuration of a GameTime project.
-        all_temp_files:
-            :bool: flag to clear all files in temporary directory (if True)
-            or only -gt files (if False).
+    Parameters
+    ----------
+    project_config :
+        ProjectConfiguration this helper is calling from.
+
+    all_temp_files:
+        True if all files in temperary directory should be removed.
+
     """
     # Remove the files with extension ".cil.*".
     if all_temp_files:

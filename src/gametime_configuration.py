@@ -19,8 +19,7 @@ class Endianness(object):
 
 
 class GametimeConfiguration(object):
-    """Stores information necessary to configure GameTime.
-    """
+    """Stores information necessary to configure GameTime."""
 
     def __init__(self):
         """Constructor for the GametimeConfiguration class."""
@@ -121,13 +120,17 @@ class GametimeConfiguration(object):
 
 def read_gametime_config_yaml(yaml_config_path: str) -> GametimeConfiguration:
     """Creates GametimeConfiguration from yaml files
-    Arguments:
-        yaml_config_path: path of the yaml config file that contains
-            gamtime configuration information
 
-    Returns:
-        GametimeConfiguration object that contains information from YAML file at
-            yaml_config_path
+    Parameters
+    ----------
+    yaml_config_path: str :
+        path of the yaml config file that contains
+
+    Returns
+    -------
+    GametimeConfiguration
+        GametimeConfiguration object that contains information from YAML file at yaml_config_path
+
     """
     # Check file exists
     if not os.path.exists(yaml_config_path):

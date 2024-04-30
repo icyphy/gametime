@@ -27,9 +27,11 @@ def create_dir(location: str) -> None:
     the :mod:`os` module, but does not raise an exception if
     the directory is already present,
 
-    Arguments:
-        location:
-            Location of the directory to be created.
+    Parameters
+    ----------
+    location: str :
+        Location of the directory to be created
+
     """
     try:
         if not os.path.isdir(location):
@@ -42,11 +44,12 @@ def create_dir(location: str) -> None:
 def remove_file(location: str) -> None:
     """Removes the file at the provided location. This is a wrapper around
     the :func:`~os.remove` function of the :mod:`os` module, but does not
-    raise an exception if the file is not present.
 
-    Arguments:
-        location:
-            Location of the file to be removed.
+    Parameters
+    ----------
+    location: str :
+        Location of the file to be removed
+
     """
     try:
         if os.path.exists(location):
@@ -59,11 +62,13 @@ def remove_files(patterns: List[str], dir_location: str) -> None:
     """Removes the files from the directory whose location is provided,
     whose names match any of the patterns in the list provided.
 
-    Arguments:
-        patterns:
-            List of patterns to match filenames against.
-        dir_location:
-            Location of the directory to remove files from.
+    Parameters
+    ----------
+    patterns: List[str] :
+        List of patterns to match filenames against
+    dir_location: str :
+        Location of the directory to remove files from
+
     """
     for filename in os.listdir(dir_location):
         for pattern in patterns:
@@ -75,12 +80,13 @@ def remove_all_except(patterns: List[str], dir_location: str) -> None:
     location is provided, *except* for those files whose names match any
     of the patterns in the list provided.
 
-    Arguments:
-        patterns:
-            List of patterns to match filenames against.
-        dir_location:
-            Location of the directory to remove files and
-            directories from.
+    Parameters
+    ----------
+    patterns: List[str] :
+        List of patterns to match filenames against
+    dir_location: str :
+        Location of the directory to remove files from
+
     """
     # Code from http://stackoverflow.com/a/1073382/1834042.
     root: str
@@ -102,18 +108,17 @@ def move_files(patterns: List[str], source_dir: str, dest_dir: str, overwrite: b
     from the source directory, the former is overwritten if `overwrite` is
     set to `True`; otherwise, the latter will not be moved.
 
-    Arguments:
-        patterns:
-            List of patterns to match filenames against.
-        source_dir:
-            Location of the source directory.
-        dest_dir:
-            Location of the destination directory.
-        overwrite:
-            Whether to overwrite a file in the destination directory that
-            has the same name as a file that is being moved from the source
-            directory. If `True`, the former is overwritten; if `False`,
-            the latter will not be moved.
+    Parameters
+    ----------
+    patterns: List[str] :
+        List of patterns to match filenames against
+    source_dir: str :
+        Location of the source directory
+    dest_dir: str :
+        Location of the destination directory
+    overwrite: bool :
+        Whether to overwrite a file in the destination directory that has the same name as a file that is being moved from the source directory. (Default value = True)
+
     """
     for filename in os.listdir(source_dir):
         for pattern in patterns:

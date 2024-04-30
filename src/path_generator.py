@@ -43,8 +43,17 @@ class PathType(object):
     @staticmethod
     def get_description(path_type):
         """
-        Returns:
-            One-word description of the path type provided.
+
+        Parameters
+        ----------
+        path_type : 
+            One of the predefined path types
+            
+
+        Returns
+        -------
+        One-word description of the path type provided.
+
         """
         return ("worst" if path_type is PathType.WORST_CASE else
                 "best" if path_type is PathType.BEST_CASE else
@@ -56,13 +65,14 @@ class PathType(object):
 class PathGenerator(object):
     """Exposes static methods to generate objects of the ``Path`` class that
     represent different types of feasible paths in the code being analyzed.
-
+    
     This class is closely related to the ``Analyzer`` class: except
     for the private helper methods, all of the static methods
     can also be accessed as instance methods of an ``Analyzer`` object.
-
+    
     These methods are maintained in this class to keep the codebase cleaner
     and more modular. Instances of this class should not need to be made.
+
     """
 
     @staticmethod
@@ -70,54 +80,58 @@ class PathGenerator(object):
                       interval=None, use_ob_extraction=False):
         """Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.
-
+        
         The type of the generated paths is determined by the path_type
         argument, which is a class variable of the ``PathType`` class.
         By default, this argument is ``PathType.WORST_CASE``. For
         a description of the types, refer to the documentation of
         the ``PathType`` class.
-
+        
         The ``num_paths`` argument is an upper bound on how many paths should
         be generated, which is 5 by default. This argument is ignored if
         this method is used to generate all of the feasible paths of the code
         being analyzed.
-
+        
         The ``interval`` argument is an ``Interval`` object that represents
         the interval of values that the generated paths can have. If
         no ``Interval`` object is provided, the interval of values is
         considered to be all real numbers.
-
+        
         This method is idempotent: a second call to this method will produce
         the same list of ``Path`` objects as the first call, assuming that
         nothing has changed between the two calls.
-
+        
         Precondition: The basis ``Path`` objects of the input ``Analyzer``
         object have values associated with them. Refer to either the method
         ``loadBasisValuesFromFile`` or the method ``loadBasisValues`` in
         the ``Analyzer`` class.
 
-        Arguments:
-            analyzer:
-                ``Analyzer`` object that maintains information about
-                the code being analyzed.
-            num_paths:
-                Upper bound on the number of paths to generate.
-            path_type:
-                Type of paths to generate, represented by a class variable of
-                the ``PathType`` class. The different types of paths are
-                described in the documentation of the ``PathType`` class.
-            interval:
-                ``Interval`` object that represents the interval of
-                values that the generated paths can have. If no
-                ``Interval`` object is provided, the interval of values
-                is considered to be all real numbers.
-            use_ob_extraction:
-                Boolean value specifiying whether to use overcomplete
-                basis extraction algorithm
+        Parameters
+        ----------
+        analyzer:
+            ``Analyzer`` object that maintains information about
+            the code being analyzed.
+        num_paths:
+            Upper bound on the number of paths to generate.
+        path_type:
+            Type of paths to generate, represented by a class variable of
+            the ``PathType`` class. The different types of paths are
+            described in the documentation of the ``PathType`` class.
+        interval:
+            ``Interval`` object that represents the interval of
+            values that the generated paths can have. If no
+            ``Interval`` object is provided, the interval of values
+            is considered to be all real numbers.
+        use_ob_extraction:
+            Boolean value specifiying whether to use overcomplete
+            basis extraction algorithm
 
-        Returns:
+        Returns
+        -------
+        List[Path]
             List of feasible paths of the code being analyzed, each
             represented by an object of the ``Path`` class.
+
         """
         paths = None
 
@@ -176,28 +190,32 @@ class PathGenerator(object):
         Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.
 
-        Arguments:
-            analyzer:
-                ``Analyzer`` object that maintains information about
-                the code being analyzed.
-            num_paths:
-                Upper bound on the number of paths to generate.
-            extremum:
-                Type of paths to calculate (longest or shortest),
-                represented by an element of the ``Extremum`` class in
-                the ``pulpHelper`` module.
-            interval:
-                ``Interval`` object that represents the interval of
-                values that the generated paths can have. If
-                no ``Interval`` object is provided, the interval of values
-                is considered to be all real numbers.
-            use_ob_extraction:
-                Boolean value specifiying whether to use overcomplete
-                basis extraction algorithm
+        Parameters
+        ----------
+        analyzer:
+            ``Analyzer`` object that maintains information about
+            the code being analyzed.
+        num_paths:
+            Upper bound on the number of paths to generate.
+        extremum:
+            Type of paths to calculate (longest or shortest),
+            represented by an element of the ``Extremum`` class in
+            the ``pulpHelper`` module.
+        interval:
+            ``Interval`` object that represents the interval of
+            values that the generated paths can have. If
+            no ``Interval`` object is provided, the interval of values
+            is considered to be all real numbers.
+        use_ob_extraction:
+            Boolean value specifiying whether to use overcomplete
+            basis extraction algorithm
 
-        Returns:
+        Returns
+        -------
+        List[Path]
             List of feasible paths of the code being analyzed,
             each represented by an object of the ``Path`` class.
+
         """
         if nx_helper.has_cycles(analyzer.dag):
             logger.log("Loops in the code have been detected.")

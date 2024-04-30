@@ -11,16 +11,22 @@ from smt_solver.smt import run_smt
 class PathAnalyzer(object):
 
     def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 1):
-        """
-        used to run the entire simulation on the given path.
+        """used to run the entire simulation on the given path.
 
-        :param preprocessed_path: the path to file being analyzed
-        :param project_config: configuration of gametime
-        :param dag: DAG representation of file being analyzed
-        :param path: Path object corresponding to the path to drive
-        :param path_name: all output files will be in folder with path_name; all generated files will have name path_name + "-gt"
+        Parameters
+        ----------
+        preprocessed_path :
+            the path to file being analyzed
+        project_config :
+            configuration of gametime
+        dag :
+            DAG representation of file being analyzed
+        path :
+            Path object corresponding to the path to drive
+        path_name :
+            all output files will be in folder with path_name; all generated files will have name path_name + "-gt"
         """
-        #TODO for abdalla: create the KLEE to get the inputs file here and store it or down below in measure_path
+       
         self.preprocessed_path: str = preprocessed_path
         self.project_config: ProjectConfiguration = project_config
         self.dag = dag
@@ -57,11 +63,16 @@ class PathAnalyzer(object):
         self.repeat = repeat
 
     def measure_path(self, backend: Backend) -> int:
-        """
-        run the entire simulation on the given path
+        """run the entire simulation on the given path
 
-        :param backend: Backend object used for simulation
-        :return the total measurement of path given by backend
+        Parameters
+        ----------
+        backend: Backend :
+            Backend object used for simulation
+
+        Returns
+        -------
+        the total measurement of path given by backend
         """
         if not self.is_valid:
             return float('inf')
@@ -76,8 +87,3 @@ class PathAnalyzer(object):
             measured_values.append(backend.measure(self.values_filepath, temp_folder_backend))
         return max(measured_values)
 
-    def remove_measure(self, backend: Backend):
-        file_helper.remove_all_except([], self.measure_folders.get(backend.name))
-
-    def remove_all_measure(self):
-        file_helper.remove_all_except([], self.output_folder)

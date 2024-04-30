@@ -25,44 +25,6 @@ for details on the GameTime license and authors.
 class Path(object):
     """Maintains a representation of, and information about,
     a single path in the code that is being analyzed.
-
-    Attributes:
-        ilp_problem:
-            :class:`~gametime.ilp_problem.IlpProblem` object that represents
-            the integer linear programming problem that, when solved,
-            produced this path.
-        nodes:
-            IDs of the nodes in a directed acyclic graph along this path,
-            represented as a list of strings.
-        line_numbers:
-            Line numbers of the source-level statements along this path,
-            represented as a list of positive integers.
-        conditions:
-            Conditions along this path, represented as a list of strings.
-        condition_edges:
-            Dictionary that associates the number of a condition with
-            the edge in the directed acyclic graph that is associated
-            with the condition, represented as a tuple.
-        condition_truths:
-            Dictionary that associates the line numbers of the conditional
-            points in the code being analyzed with their truth values.
-        array_accesses:
-            Information about array accesses made in conditions along
-            this path, represented as a dictionary that maps the name of
-            an array to a list of tuples, each of which contains
-            the numbers of the temporary index variables in an array access.
-        agg_index_exprs:
-            Information about the expressions associated with the temporary
-            index variables of aggregate accesses along this path, represented
-            as a dictionary that maps the number of a temporary index variable
-            to an :class:`~gametime.indexExpression.IndexExpression` object.
-        assignments:
-            Dictionary of assignments to variables that would drive
-            an execution of the code along this path.
-        predicted_value:
-            Predicted value (runtime, energy consumption, etc.) of this path.
-        measured_value:
-            Measured value (runtime, energy consumption, etc.) of this path.
     """
 
     def __init__(self, ilp_problem: IlpProblem = None, nodes: List[str] = None,
@@ -127,13 +89,14 @@ class Path(object):
         self.name = None
 
     def write_ilp_problem_to_lp_file(self, location) -> None:
-        """
-        Writes, to an LP file, the integer linear programming problem that,
+        """Writes, to an LP file, the integer linear programming problem that,
         when solved, produced this path.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location :
+            Location of the file
+
         """
         if self.ilp_problem is not None:
             _, extension = os.path.splitext(location)
@@ -152,20 +115,24 @@ class Path(object):
 
     def get_nodes(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the IDs of the nodes in
             a directed acyclic graph along this path.
+
         """
         return " ".join(self.nodes)
 
     def write_nodes_to_file(self, location: str) -> None:
-        """
-        Writes the IDs of the nodes in a directed acyclic graph
+        """Writes the IDs of the nodes in a directed acyclic graph
         along this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
         """
         try:
             nodes_file_handler = open(location, "w")
@@ -179,17 +146,21 @@ class Path(object):
 
     @staticmethod
     def read_nodes_from_file(location: str) -> List[str]:
-        """
-        Reads the IDs of the nodes in a directed acyclic graph
+        """Reads the IDs of the nodes in a directed acyclic graph
         along a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
 
-        Returns:
+        Returns
+        -------
+        List[str]
             IDs of the nodes in a directed acyclic graph along a path,
             represented as a list of strings.
+
         """
         try:
             nodes_file_handler = open(location, "r")
@@ -204,20 +175,25 @@ class Path(object):
 
     def get_line_numbers(self) -> str:
         """
-        Returns:
+
+        Returns
+        -------
+        str
             String representation of the line numbers of
             the source-level statements that lie along this path.
+
         """
         return " ".join([str(lineNumber) for lineNumber in self.line_numbers])
 
-    def write_line_numbers_to_file(self, location) -> None:
-        """
-        Writes the line numbers of the source-level statements that
+    def write_line_numbers_to_file(self, location: str) -> None:
+        """Writes the line numbers of the source-level statements that
         lie along this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str:
+            Location of the file
+
         """
         try:
             line_numbers_file_handler = open(location, "w")
@@ -231,17 +207,20 @@ class Path(object):
 
     @staticmethod
     def read_line_numbers_from_file(location: str) -> List[int]:
-        """
-        Reads the line numbers of the source-level statements that
+        """Reads the line numbers of the source-level statements that
         lie along a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
 
-        Returns:
+        Returns
+        -------
+        List[int]
             Line numbers of the source-level statements along this path,
             represented as a list of positive integers.
+
         """
         try:
             line_numbers_file_handler = open(location, "r")
@@ -257,18 +236,23 @@ class Path(object):
 
     def get_conditions(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the conditions along this path.
+
         """
         return "\n".join(self.conditions)
 
     def write_conditions_to_file(self, location: str) -> None:
-        """
-        Writes the conditions along this path to a file.
+        """Writes the conditions along this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+
+
         """
         try:
             conditions_file_handler = open(location, "w")
@@ -281,15 +265,18 @@ class Path(object):
 
     @staticmethod
     def read_conditions_from_file(location: str) -> List[str]:
-        """
-        Reads the conditions along a path from a file.
+        """Reads the conditions along a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
 
-        Returns:
+        Returns
+        -------
+        List[str]
             Conditions along a path, represented as a list of strings.
+
         """
         try:
             conditions_file_handler = open(location, "r")
@@ -306,9 +293,12 @@ class Path(object):
 
     def get_condition_edges(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the numbers of the conditions along
             this path, and the edges that are associated with the conditions.
+
         """
         result = []
         sorted_keys = sorted(self.condition_edges.keys())
@@ -319,13 +309,14 @@ class Path(object):
         return "".join(result)
 
     def write_condition_edges_to_file(self, location: str) -> None:
-        """
-        Writes the numbers of the conditions along this path, and
+        """Writes the numbers of the conditions along this path, and
         the edges that are associated with the conditions, to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+
         """
         try:
             condition_edges_file_handler = open(location, "w")
@@ -340,18 +331,21 @@ class Path(object):
 
     @staticmethod
     def read_condition_edges_from_file(location: str) -> Dict[int, Tuple[str]]:
-        """
-        Reads the numbers of the conditions along a path, and
+        """Reads the numbers of the conditions along a path, and
         the edges that are associated with the conditions, from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
 
-        Returns:
+        Returns
+        -------
+         Dict[int, Tuple[str]]
             Dictionary that associates the number of a condition with
             the edge in the directed acyclic graph that is associated with
             the condition. The edge is represented as a tuple.
+
         """
         try:
             condition_edges_file_handler = open(location, "r")
@@ -372,23 +366,31 @@ class Path(object):
 
     def get_edges_for_conditions(self, condition_nums: List[int]) -> List[Tuple[str]]:
         """
-        Arguments:
-            condition_nums:
-                List of (non-negative) numbers of conditions along this path.
 
-        Returns:
+        Parameters
+        ----------
+        condition_nums: List[int] :
+            List of conditions
+
+        Returns
+        -------
+        List[Tuple[str]]
             List of the edges that are associated with the conditions
             (along this path) whose numbers are provided. Each edge is
             represented as a tuple, and appears only once in the list.
+
         """
         return list(set([self.condition_edges[conditionNum]
                          for conditionNum in condition_nums]))
 
     def get_condition_truths(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the line numbers of the conditional points
             in the code being analyzed, along with their truth values.
+
         """
         result = []
         sorted_keys = sorted([int(key) for key in self.condition_truths.keys()])
@@ -399,13 +401,13 @@ class Path(object):
         return "".join(result)
 
     def write_condition_truths_to_file(self, location: str) -> None:
-        """
-        Writes the line numbers of the conditional points in the code
+        """Writes the line numbers of the conditional points in the code
         being analyzed, along with their truth values, to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
         """
         try:
             condition_truths_file_handler = open(location, "w")
@@ -420,19 +422,23 @@ class Path(object):
 
     @staticmethod
     def read_condition_truths_from_file(location: str) -> Dict[int, bool]:
-        """
-        Reads the line numbers of the conditional points in the code
+        """Reads the line numbers of the conditional points in the code
         being analyzed, along with their truth values along a path,
         from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
 
-        Returns:
+        Returns
+        -------
+        Dict[int, bool]
             Dictionary that associates the line numbers of
             the conditional points in the code being analyzed with
             their truth values.
+
         """
         try:
             condition_truths_file_handler = open(location, "r")
@@ -453,9 +459,12 @@ class Path(object):
 
     def get_array_accesses(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the array accesses made in
             conditions along this path.
+
         """
         result = []
         for array_name in self.array_accesses:
@@ -465,13 +474,15 @@ class Path(object):
         return "".join(result)
 
     def write_array_accesses_to_file(self, location: str) -> None:
-        """
-        Writes information about the array accesses made in conditions
+        """Writes information about the array accesses made in conditions
         along this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
+
         """
         try:
             array_accesses_file_handler = open(location, "w")
@@ -485,18 +496,22 @@ class Path(object):
 
     @staticmethod
     def read_array_accesses_from_file(location: str) -> Dict[str, List[Tuple[int, int]]]:
-        """
-        Reads information about the array accesses made in conditions
+        """Reads information about the array accesses made in conditions
         along a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
 
-        Returns:
+        Returns
+        -------
+        Dict[str, List[Tuple[int, int]]]
             Dictionary that maps an array name to a list of tuples, each of
             which contains the numbers of the temporary index variables
             in an array access.
+
         """
         try:
             array_accesses_file_handler = open(location, "r")
@@ -522,10 +537,13 @@ class Path(object):
 
     def get_agg_index_exprs(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the expressions associated
             with the temporary index variables of aggregate accesses
             along a path.
+
         """
         result = []
         for index_number in self.agg_index_exprs:
@@ -535,14 +553,14 @@ class Path(object):
         return "".join(result)
 
     def write_agg_index_exprs_to_file(self, location: str) -> None:
-        """
-        Writes information about the expressions associated with the
+        """Writes information about the expressions associated with the
         temporary index variables of aggregate accesses along this path
         to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
         """
         try:
             agg_index_exprs_file_handler = open(location, "w")
@@ -557,17 +575,21 @@ class Path(object):
 
     @staticmethod
     def read_agg_index_exprs_from_file(location: str) -> Dict[int, IndexExpression]:
-        """
-        Reads, from a file, information about the expressions associated with
+        """Reads, from a file, information about the expressions associated with
         the temporary index variables of aggregate accesses along a path.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
 
-        Returns:
+        Returns
+        -------
+        Dict[int, IndexExpression]
             Dictionary that maps the number of a temporary index
             variable to an ``IndexExpression`` object.
+
         """
         try:
             agg_index_exprs_file_handler = open(location, "r")
@@ -598,10 +620,13 @@ class Path(object):
 
     def get_assignments(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the assignments to variables
             that would drive an execution of the code under analysis
             along this path.
+
         """
         result = []
         for key in sorted(self.assignments.keys()):
@@ -610,13 +635,15 @@ class Path(object):
         return "".join(result)
 
     def write_assignments_to_file(self, location: str) -> None:
-        """
-        Writes the assignments to variables that would drive an execution
+        """Writes the assignments to variables that would drive an execution
         of the code under analysis along this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+
+
         """
         try:
             assignment_file_handler = open(location, "w")
@@ -631,17 +658,21 @@ class Path(object):
 
     @staticmethod
     def read_assignments_from_file(location: str) -> Dict[str, str]:
-        """
-        Reads, from a file, the assignments to variables that would
+        """Reads, from a file, the assignments to variables that would
         drive an execution of the code under analysis along a path.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+            
 
-        Returns:
+        Returns
+        -------
+        Dict[str, str]
             Dictionary of assignments to variables that would
             drive an execution of the code under analysis along a path.
+
         """
         try:
             assignment_file_handler = open(location, "r")
@@ -664,26 +695,31 @@ class Path(object):
         """Sets the predicted value (runtime, energy consumption, etc.)
         of this path.
 
-        Arguments:
-            value:
-                Value to set as the predicted value of this path.
+        Parameters
+        ----------
+        value: float :
+            Value to set as the predicted value of this path
+
         """
         self.predicted_value = value
 
     def get_predicted_value(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the predicted value
             (runtime, energy consumption, etc.) of this path.
+
         """
         return "%g" % self.predicted_value
 
     def write_predicted_value_to_file(self, location: str) -> None:
-        """Writes the predicted value of this path to a file.
+        """Writes the predicted value of this path to a file.   
+        
+        location: str :
+            Location of the file
 
-        Arguments:
-            location:
-                Location of the file.
         """
         try:
             predicted_value_file_handler = open(location, "w")
@@ -699,13 +735,17 @@ class Path(object):
     def read_predicted_value_from_file(location: str) -> float:
         """Reads the predicted value of a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
 
-        Returns:
+        Returns
+        -------
+        float
             Predicted value of a path, represented as a number
             (either an integer or a floating-point number).
+
         """
         try:
             predicted_value_file_handler = open(location, "r")
@@ -733,26 +773,33 @@ class Path(object):
         """Sets the measured value (runtime, energy consumption, etc.)
         of this path.
 
-        Arguments:
-            value:
-                Value to set as the measured value of this path.
+        Parameters
+        ----------
+        value: float :
+            Value to set as the measured value of this path
+
         """
         self.measured_value = value
 
     def get_measured_value(self) -> str:
         """
-        Returns:
+        Returns
+        -------
+        str
             String representation of the measured value
             (runtime, energy consumption, etc.) of this path.
+
         """
         return "%g" % self.measured_value
 
     def write_measured_value_to_file(self, location: str) -> None:
         """Writes the measured value of this path to a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
+
         """
         try:
             measured_value_file_handler = open(location, "w")
@@ -768,13 +815,17 @@ class Path(object):
     def read_measured_value_from_file(location: str) -> float:
         """Reads the measured value of a path from a file.
 
-        Arguments:
-            location:
-                Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file
 
-        Returns:
+        Returns
+        -------
+        float
             Measured value of a path, represented as a number
             (either an integer or a floating-point number).
+
         """
         try:
             measured_value_file_handler = open(location, "r")

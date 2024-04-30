@@ -43,10 +43,10 @@ class Analyzer(object):
     the name of the file that contains the code being analyzed
     and the basis paths of the code.
 
-    Attributes:
-        project_config:
-            :class:`~gametime.projectConfiguration.ProjectConfiguration`
-            object that represents the configuration of a GameTime project.
+    Parameters
+    ----------
+    project_config: :class:`~gametime.projectConfiguration.ProjectConfiguration`
+        Object that represents the configuration of a GameTime project.
     """
 
     def __init__(self, project_config: ProjectConfiguration):
@@ -167,12 +167,21 @@ class Analyzer(object):
         logger.info("Preprocessing complete.")
         logger.info("")
 
-    def _run_loop_unroller(self, compiled_file: str):
+    def _run_loop_unroller(self, compiled_file: str) -> str:
         """As part of preprocessing, runs CIL on the source file under
         analysis to unroll loops. A copy of the file that results from
         the CIL preprocessing is made and renamed for use by other
         preprocessing phases, and the file itself is renamed and
         stored for later perusal.
+
+        Parameters
+        ----------
+        compiled_file: str :
+            Path to the original file.
+
+        Returns
+        -------
+        Path to unrolled file.
         """
         preprocessed_file: str = self.project_config.location_temp_file
 
@@ -187,16 +196,10 @@ class Analyzer(object):
             raise GameTimeError(err_msg)
         else:
             shutil.copyfile(unrolled_file, preprocessed_file)
-            # shutil.move(unrolled_file,
-            #             "%s%s.bt" % (self.project_config.location_temp_no_extension,
-            #                          config.TEMP_SUFFIX_UNROLLED))
-            # if not self.project_config.debug_config.KEEP_CIL_TEMPS:
-            #     clang_helper.remove_temp_cil_files(self.project_config)
-
+    
             logger.info("")
             logger.info("Loops in the code have been unrolled.")
-            # return "%s%s.bt" % (self.project_config.location_temp_no_extension,
-            #                     config.TEMP_SUFFIX_UNROLLED)
+
             return unrolled_file
 
     def _run_inliner(self, input_file: str):
@@ -205,6 +208,15 @@ class Analyzer(object):
         the CIL preprocessing is made and renamed for use by other
         preprocessing phases, and the file itself is renamed and
         stored for later perusal.
+
+        Parameters
+        ----------
+        input_file: str :
+            Path to input file.
+
+        Returns
+        -------
+        Path to inlined file.
         """
         preprocessed_file = self.project_config.location_temp_file
         # Infer the name of the file that results from the CIL preprocessing.
@@ -218,16 +230,10 @@ class Analyzer(object):
             raise GameTimeError(err_msg)
         else:
             shutil.copyfile(inlined_file, preprocessed_file)
-            # shutil.move(inlined_file,
-            #             "%s%s.bt" % (self.project_config.location_temp_no_extension,
-            #                          config.TEMP_SUFFIX_INLINED))
-            # if not self.project_config.debug_config.KEEP_CIL_TEMPS:
-            #     clang_helper.remove_temp_cil_files(self.project_config)
 
             logger.info("")
             logger.info("Inlining complete.")
-            # return "%s%s.bt" % (self.project_config.location_temp_no_extension,
-            #                     config.TEMP_SUFFIX_INLINED)
+
             return inlined_file
         
     ### GRAPH FUNCTIONS ###
@@ -277,7 +283,11 @@ class Analyzer(object):
     def load_dag_from_dot_file(self, location: str):
         """Loads the DAG that corresponds to the code being analyzed from a DOT file.
 
-        @param location Location of the file.
+        Parameters
+        ----------
+        location: str :
+            Location of the file.
+
         """
         self.dag, modified = nx_helper.construct_dag(location)
         if modified:
@@ -301,7 +311,7 @@ class Analyzer(object):
     def _randomize_basis_matrix(self):
         """Randomizes the rows of the basis matrix using
         a Fisher-Yates shuffle.
-
+        
         Precondition: The basis matrix has been initialized.
         """
         for i in range(self.path_dimension, 0, -1):
@@ -311,8 +321,12 @@ class Analyzer(object):
     def _swap_basis_matrix_rows(self, i, j):
         """Swaps two rows of the basis matrix.
 
-        @param i Index of one row to swap.
-        @param j Index of other row to swap.
+        Parameters
+        ----------
+        i :
+            Index of one row to swap.
+        j :
+            Index of other row to swap.
         """
         row_to_swap_out = self.basis_matrix[j]
         row_to_swap_in = self.basis_matrix[i]
@@ -332,8 +346,11 @@ class Analyzer(object):
         constraints, if not already present. These edges must not
         be taken together along any path through the DAG.
 
-        @param edges List of edges to add to the list of
-        path-exclusive constraints.
+        Parameters
+        ----------
+        edges: List[Tuple[str, str]] :
+            List of edges to add to the list of path-exclusive constraints.
+
         """
         if edges not in self.path_exclusive_constraints:
             self.path_exclusive_constraints.append(edges)
@@ -344,8 +361,11 @@ class Analyzer(object):
         be taken together if at least one of them is taken along
         a path through the DAG.
 
-        @param edges List of edges to add to the list of path-bundled
-        constraints.
+        Parameters
+        ----------
+        edges: List[Tuple[str, str]] :
+            List of edges to add to the list of path-bundled constraints.
+
         """
         if edges not in self.path_bundled_constraints:
             self.path_bundled_constraints.append(edges)
@@ -363,10 +383,14 @@ class Analyzer(object):
         the provided path to a 0-1 vector that is 1 if a
         'non-special' edge is along the path, and 0 otherwise.
 
-        @param path_edges Edges along the path to represent with
-        'non-special' edges.
-        @retval 0-1 vector that is 1 if a `non-special' edge is along
-        the path, and 0 otherwise.
+        Parameters
+        ----------
+        path_edges: List[Tuple[str, str]] :
+            Edges along the path to represent with 'non-special' edges.
+
+        Returns
+        -------
+        0-1 vector that is 1 if a `non-special' edge is along the path, and 0 otherwise.
         """
         return [(1.0 if edge in path_edges else 0.0)
                 for edge in self.dag.edges_reduced]
@@ -378,6 +402,12 @@ class Analyzer(object):
            L1 norm is at most 'k'. This method is for testing purposes
            only as it exhaustively generates all_temp_files paths in the graph!. Use the
            function below for a scalable version.
+
+        Parameters
+        ----------
+        k: int :
+            Maximum value of L1 norm.
+
         """
         logger.info("Generating all_temp_files paths")
         paths = nx.all_simple_paths(self.dag, self.dag.source, self.dag.sink)
@@ -393,6 +423,18 @@ class Analyzer(object):
            specifies the set of paths the iterative algorithm begins with. This
            can be any set of paths, in practice we use the paths generated by
            the standard algorithm.
+
+        Parameters
+        ----------
+        initial_paths: List[List[Tuple[str, str]]] :
+            A list of initial paths to begin with.
+            
+        k: int :
+            Maximum value of L1 norm.
+
+        Returns
+        -------
+        The set of basis paths.
         """
         infeasible = []
         edge_node_paths = initial_paths
@@ -446,7 +488,9 @@ class Analyzer(object):
         a basis path of the code being analyzed. The basis "Path" objects
         are regenerated each time this method is called.
 
-        @retval List of basis paths of the code being analyzed, each
+        Returns
+        -------
+        List of basis paths of the code being analyzed, each
         represented by an object of the "Path" class.
         """
         basis_paths = []
@@ -476,10 +520,16 @@ class Analyzer(object):
             places below, and is defined once to keep the code neat,
             to prevent deeper indentation, and to reduce confusion.
 
-            @param start_time Time when the generation of basis Path objects
-                was started.
-            @retval List of basis paths of the code being analyzed, each
-                represented by an object of the Path class.
+            Parameters
+            ----------
+            start_time :
+                Time when the generation of basis Path objects was started.
+            infeasible :
+                Set of infeasible paths.
+
+            Returns
+            -------
+            List of basis paths of the code being analyzed, each represented by an object of the Path class.
             """
             self.basis_paths = basis_paths
             self.basis_paths_nodes = [path.nodes for path in basis_paths]
@@ -715,8 +765,14 @@ class Analyzer(object):
         subdeterminants of the basis matrix without row i and column j:
         column j corresponds to the `non-special' edge j.
 
-        @param row Row to ignore.
-        @retval List of weights as specified above.
+        Parameters
+        ----------
+        row: int :
+            Row to ignore.
+
+        Returns
+        -------
+        List of weights as specified above.
         """
         edges_reduced = self.dag.edges_reduced
         edges_reduced_indices = self.dag.edges_reduced_indices
@@ -753,7 +809,7 @@ class Analyzer(object):
         """Estimates the weights on the edges of the DAG, using the values
         of the basis "Path" objects. The result is stored in the instance
         variable "edgeWeights".
-
+        
         Precondition: The basis paths have been generated and have values.
         """
         self.dag.reset_edge_weights()
@@ -783,15 +839,27 @@ class Analyzer(object):
 
     ### MEASUREMENT FUNCTIONS ####
     def measure_basis_paths(self):
+        """Measure all generated BASIS_PATHS again
+        """
         for i in range(len(self.basis_paths)):
             p: Path = self.basis_paths[i]
             self.measure_path(p, f"basis_path{i}")
 
-
-    # Measure the Path if never measured before. If no name was set, the parameter output_name is used. 
     def measure_path(self, path: Path, output_name: str) -> int:
-        # if path.name == None:
-        #     path.name = output_name
+        """Measure the Path if never measured before. If no name was set, the parameter output_name is used. 
+
+        Parameters
+        ----------
+        path: Path :
+            The path object
+        output_name: str :
+            Name for this path.
+
+        Returns
+        -------
+        Measured cycle count for PATH.
+        """
+
         if path.path_analyzer == None or path.name != output_name:
             path.name = output_name
             path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
@@ -799,12 +867,24 @@ class Analyzer(object):
             
             path_analyzer = path.path_analyzer
             value: int = path.measured_value
-            # if value == 0: # Not measured yet
             value = max(value, path_analyzer.measure_path(self.backend))
             path.set_measured_value(value)
         return path.measured_value
 
     def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
+        """Measure the list of PATHS. Using prefix and index as name if none is given.
+        
+        Parameters
+        ----------
+        paths: list[Path] :
+            List of paths to measure.
+        output_name_prefix: str :
+            Prefix to use for the name of each path
+
+        Returns
+        -------
+        List of measured values for the paths.
+        """
         result = []
         for i in range(len(paths)):
             output_name: str = f'{output_name_prefix}{i}'

@@ -21,33 +21,56 @@ from defaults import logger
 from gametime_error import GameTimeError
 
 def find_root_node(G):
+    """
+
+    Parameters
+    ----------
+    G :
+        The graph to find root node in
+
+    Returns
+    -------
+    Node
+        Root node of G or None if one doesn't exist.
+    """
     for node in G.nodes():
         if len(list(G.predecessors(node))) == 0:
             return node
     return None
 
 def remove_back_edges_to_make_dag(G, root):     
+    """Remove all back edges from G to make it a DAG. Assuming G is connected and rooted at ROOT.
+
+    Parameters
+    ----------
+    G :
+        The graph to remove root edges
+    root :
+        The root node of G to start DFS with
+
+    Returns
+    -------
+    DAG version of G with all back edges removed.
+    """
     visited = {node: False for node in G.nodes()}
     back_edges = []
-
+    start_node = root
     # Iteratively perform DFS on unvisited nodes
-    for start_node in G.nodes():
-        if not visited[start_node]:
-            stack = [(start_node, iter(G.neighbors(start_node)))]
-            visited[start_node] = True
-            
-            while stack:
-                parent, children = stack[-1]
-                try:
-                    child = next(children)
-                    if not visited[child]:
-                        visited[child] = True
-                        stack.append((child, iter(G.neighbors(child))))
-                    elif child in [node for node, _ in stack]:
-                        # If child is in stack, it's an ancestor, and (parent, child) is a back edge
-                        back_edges.append((parent, child))
-                except StopIteration:
-                    stack.pop()
+    stack = [(start_node, iter(G.neighbors(start_node)))]
+    visited[start_node] = True
+    
+    while stack:
+        parent, children = stack[-1]
+        try:
+            child = next(children)
+            if not visited[child]:
+                visited[child] = True
+                stack.append((child, iter(G.neighbors(child))))
+            elif child in [node for node, _ in stack]:
+                # If child is in stack, it's an ancestor, and (parent, child) is a back edge
+                back_edges.append((parent, child))
+        except StopIteration:
+            stack.pop()
 
     # Remove identified back edges
     G.remove_edges_from(back_edges)
@@ -131,6 +154,7 @@ class Dag(nx.DiGraph):
         self.edge_weights: List[int] = []
 
     def initialize_dictionaries(self):
+        """ """
         self.num_nodes = self.number_of_nodes()
         self.num_edges = self.number_of_edges()
         self.all_nodes = nodes = sorted(self.nodes())
@@ -162,6 +186,7 @@ class Dag(nx.DiGraph):
     def load_variables(self):
         """Loads the instance variables of this object with appropriate
         values. This method is useful when the DAG is loaded from a DOT file.
+
         """
         self.initialize_dictionaries()
         self.reset_edge_weights()
@@ -179,9 +204,10 @@ class Dag(nx.DiGraph):
         the source and sink, chooses a 'special' edge. This edge is taken if
         flow enters the node, but no outgoing edge is 'visibly' selected.
         In other words, it is the 'default' edge for the node.
-
+        
         This method initializes all_temp_files of the data structures necessary
         to keep track of these special edges.
+
         """
         self.edges_reduced = list(self.all_edges)
 
@@ -199,21 +225,31 @@ class Dag(nx.DiGraph):
     @staticmethod
     def get_edges(nodes: List[str]) -> List[Tuple[str, str]]:
         """
-        Arguments:
-            nodes:
-                Nodes of a path in the directed acyclic graph.
 
-        Returns:
-            List of edges that lie along the path.
+        Parameters
+        ----------
+        nodes: List[str] :
+            Nodes of a path in the directed acyclic graph
+
+        Returns
+        -------
+        List of edges that lie along the path.
+
         """
         return list(zip(nodes[:-1], nodes[1:]))
 
     def get_node_label(self, node: int) -> str:
-        """
-        gets node label from node ID
-        :param node: ID of the node of interest
-        :return: label corresponding to the node. (code corresponding to
-        the node in LLVM IR)
+        """gets node label from node ID
+
+        Parameters
+        ----------
+        node: int :
+            ID of the node of interest
+
+        Returns
+        -------
+        label corresponding to the node. (code corresponding to the node in LLVM IR)
+
         """
         return self.all_nodes_with_description[node][1]["label"]
 
@@ -224,28 +260,30 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
                           highlight_color: str = "red"):
     """Writes the directed acyclic graph provided to a file in DOT format.
 
-    Arguments:
-        dag:
-            Dag to save to dot
-        location:
-            Location of the file.
-        dag_name:
-            Name of the directed acyclic graph, as will be written to
-            the file. If this argument is not provided, the directed
-            acyclic graph will not have a name.
-        edges_to_labels:
-            Dictionary that maps an edge to the label that will annotate
-            the edge when the DOT file is processed by a visualization tool.
-            If this argument is not provided, these annotations will not
-            be made.
-        highlighted_edges:
-            List of edges that will be highlighted when the DOT file is
-            processed by a visualization tool. If this argument
-            is not provided, no edges will be highlighted.
-        highlight_color:
-            Color of the highlighted edges. This argument can be any value
-            that is legal in the DOT format. If the `highlightedEdges` argument
-            is not provided, this argument is ignored.
+    Parameters
+    ----------
+    dag : Dag :
+        Dag to save to dot
+    location : str :
+        Location of the file.
+    dag_name : str :
+        Name of the directed acyclic graph, as will be written to
+        the file. If this argument is not provided, the directed
+        acyclic graph will not have a name. (Default value = "")
+    edges_to_labels : Dict[Tuple[str, str], str]:
+        Dictionary that maps an edge to the label that will annotate
+        the edge when the DOT file is processed by a visualization tool.
+        If this argument is not provided, these annotations will not
+        be made. (Default value = None)
+    highlighted_edges : List[Tuple[str, str]]:
+        List of edges that will be highlighted when the DOT file is
+        processed by a visualization tool. If this argument
+        is not provided, no edges will be highlighted. (Default value = None)
+    highlight_color : str:
+        Color of the highlighted edges. This argument can be any value
+        that is legal in the DOT format. If the `highlightedEdges` argument
+        is not provided, this argument is ignored. (Default value = "red")
+
     """
     _, extension = os.path.splitext(location)
     if extension.lower() != ".dot":
@@ -289,14 +327,16 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
     """Constructs a :class:`~gametime.nxHelper.Dag` object to represent
     the directed acyclic graph described in DOT format in the file provided.
 
-    Arguments:
-        location:
-            Path to the file describing a directed acyclic graph
-            in DOT format.
+    Parameters
+    ----------
+    location: str :
+        Path to the file describing a directed acyclic graph in DOT format
 
-    Returns:
-        :class:`~gametime.nxHelper.Dag` object that represents
-        the directed acyclic graph.
+    Returns
+    -------
+    :class:`~gametime.nxHelper.Dag` 
+        Object that represents the directed acyclic graph.
+
     """
     try:
         with open(location, "r") as f:
@@ -331,18 +371,20 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
 
 def num_paths(dag: Dag, source: str, sink: str) -> int:
     """
-    Arguments:
-        dag:
-            DAG represented by a :class:`~gametime.nxHelper.Dag` object.
-        source:
-            Source node.
-        sink:
-            Sink node.
 
-    Returns:
-        Number of paths in the DAG provided.
-    Note:
-        Passed in DAG must be actually acyclic.
+    Parameters
+    ----------
+    dag:
+        DAG represented by a :class:`~gametime.nxHelper.Dag` object.
+    source:
+        Source node.
+    sink:
+        Sink node.
+    Returns
+    -------
+    int
+        Number of paths in the DAG provided. Note: Passed in DAG must be actually acyclic.
+
     """
 
     if has_cycles(dag):
@@ -372,18 +414,23 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
 
 def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
     """
-    Arguments:
-        dag:
-            DAG represented by a :class:`~gametime.nxHelper.Dag` object.
-        source:
-            Source node.
-        sink:
-            Sink node.
 
-    Returns:
+    Parameters
+    ----------
+    dag: Dag :
+        DAG represented by a :class:`~gametime.nxHelper.Dag` object.
+    source: str :
+        source to start path with
+    sink: str :
+        sink to end path with
+
+    Returns
+    -------
+    List[str]
         Random path in the DAG provided from the input source node to
         the input sink node, represented as a list of nodes arranged in
         order of traversal from source to sink.
+
     """
     result_path = [source]
 
@@ -408,11 +455,16 @@ def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
 
 def has_cycles(dag: Dag) -> bool:
     """
-    Arguments:
-        dag:
-            DAG represented by a :class:`~gametime.nxHelper.Dag` object.
 
-    Returns:
+    Parameters
+    ----------
+    dag: Dag :
+        DAG represented by a dag
+
+    Returns
+    -------
+    bool
         `True` if, and only if, the DAG provided has cycles.
+
     """
     return len(list(nx.simple_cycles(dag))) > 0

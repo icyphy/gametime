@@ -15,13 +15,6 @@ for details on the GameTime license and authors.
 class IndexExpression(object):
     """Maintains information about an expression associated with
     a temporary index variable.
-
-    Attributes:
-        name:
-            Name of the variable in the expression.
-        indices:
-            Tuple of temporary index numbers used as
-            indices in the expression.
     """
 
     def __init__(self, name: str, indices: Tuple[int]):
@@ -29,18 +22,12 @@ class IndexExpression(object):
         self.indices: Tuple[int] = indices
 
     def get_name(self) -> str:
-        """
-        Returns:
-            Name of the variable in the expression
-            whose information is stored in this object.
+        """Name of the variable in the expression whose information is stored in this object.
         """
         return self.name
 
     def get_indices(self) -> Tuple[int]:
-        """
-        Returns:
-            Tuple of the temporary index numbers used
-            as indices in the expression.
+        """Tuple of the temporary index numbers used as indices in the expression.
         """
         return self.indices
 
@@ -60,10 +47,6 @@ class VariableIndexExpression(IndexExpression):
     """Maintains information about an expression associated with
     a temporary index variable, where the expression represents a
     variable.
-
-    Attributes:
-        name:
-            Name of the variable in the expression.
     """
     def __init__(self, name):
         IndexExpression.__init__(self, name, [])

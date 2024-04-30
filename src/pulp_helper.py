@@ -79,40 +79,51 @@ _proper_name_map = {
 }
 
 
-def is_ilp_solver_name(name):
+def is_ilp_solver_name(name: str)->bool:
     """
-    Arguments:
-        name:
-            Possible name of an integer linear programming solver.
 
-    Returns:
+    Parameters
+    ----------
+    name: str :  
+        Possible name of an integer linear programming solver
+
+    Returns
+    -------
+    bool
         `True` if, and only if, the name provided is the name of a supported
         integer linear programming solver.
+
     """
     return name in _name_ilp_solver_map
 
 
 def get_ilp_solver_names() -> List[str]:
     """
-    Returns:
+    Returns
+    -------
+    List[str]
         List of the names of the supported integer linear programming solvers.
+
     """
     return [name for name in _name_ilp_solver_map.keys() if name != ""]
 
 
 def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -> Optional[pulp.LpSolver]:
     """
-    Arguments:
-        ilp_solver_name:
-            Name of the integer linear programming solver.
-        project_config:
-            :class:`~gametime.projectConfiguration.uration`
-            object that represents the configuration of a GameTime project.
 
-    Returns:
+    Parameters
+    ----------
+    ilp_solver_name: str :
+        Name of the integer linear programming solver
+    project_config: ProjectConfiguration :
+        ProjectConfiguration object that represents the configuration of a GameTime project
+
+    Returns
+    -------
         PuLP solver object that can interface with the integer
         linear programming solver whose name is provided, or `None`, if
         no such object can be found.
+
     """
     if not is_ilp_solver_name(ilp_solver_name):
         return None
@@ -128,14 +139,20 @@ def get_ilp_solver(ilp_solver_name: str, project_config: ProjectConfiguration) -
 
 def get_ilp_solver_name(ilp_solver: pulp.LpSolver) -> Optional[str]:
     """
-    Arguments:
-        ilp_solver:
-            Object of a PuLP solver class.
 
-    Returns:
+    Parameters
+    ----------
+    
+    ilp_solver: pulp.LpSolver :
+        Object of a PuLP solver class
+
+    Returns
+    -------
+    str, Optional
         Name, as used by GameTime, of the integer linear programming
         solver that the input PuLP solver object can interface with,
         or `None`, if no such name can be found.
+
     """
     ilp_solver_class = ilp_solver.__class__
     for ilp_solver_name in _name_ilp_solver_map:
@@ -147,23 +164,31 @@ def get_ilp_solver_name(ilp_solver: pulp.LpSolver) -> Optional[str]:
 
 def get_proper_name(ilp_solver_name: str) -> str:
     """
-    Arguments:
-        ilp_solver_name:
-            Name of an integer linear programming solver, as
-            used by GameTime.
 
-    Returns:
+    Parameters
+    ----------
+    ilp_solver_name: str :
+        Name of an integer linear programming solver used by GameTime
+
+    Returns
+    -------
+    str
         Proper name of an integer linear programming solver,
         for display purposes.
+
     """
     return _proper_name_map[ilp_solver_name]
 
 
 def get_ilp_solver_proper_names() -> List[str]:
     """
-    Returns:
+
+    Returns
+    -------
+    List[str]
         List of proper names of the supported integer linear programming
         solvers, for display purposes.
+
     """
     return [get_proper_name(name) for name in get_ilp_solver_names()]
 
@@ -186,20 +211,26 @@ def _get_edge_flow_var(analyzer: Analyzer,
                        edge_flow_vars: Dict[int, pulp.LpVariable],
                        edge: Tuple[str, str]) -> pulp.LpVariable:
     """
-    Arguments:
-        analyzer:
-            ``Analyzer`` object that maintains information about
-            the code being analyzed.
-        edge_flow_vars:
-            Dictionary that maps a positive integer to a PuLP variable that
-            represents the flow through an edge. (Each postive integer is
-            the position of an edge in the list of edges maintained by
-            the input ``Analyzer`` object.)
-        edge:
-            Edge whose corresponding PuLP variable is needed.
 
-    Returns:
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    edge_flow_vars:
+        Dictionary that maps a positive integer to a PuLP variable that
+        represents the flow through an edge. (Each postive integer is
+        the position of an edge in the list of edges maintained by
+        the input ``Analyzer`` object.)
+    edge:
+        Edge whose corresponding PuLP variable is needed.
+        
+
+    Returns
+    -------
+    
         PuLP variable that corresponds to the input edge.
+
     """
     return edge_flow_vars[analyzer.dag.edges_indices[edge]]
 
@@ -208,21 +239,27 @@ def _get_edge_flow_vars(analyzer: Analyzer,
                         edge_flow_vars: Dict[int, pulp.LpVariable],
                         edges: List[Tuple[str, str]]) -> List[pulp.LpVariable]:
     """
-    Arguments:
-        analyzer:
-            ``Analyzer`` object that maintains information about
-            the code being analyzed.
-        edge_flow_vars:
-            Dictionary that maps a positive integer to a PuLP variable
-            that represents the flow through an edge. (Each postive integer
-            is the position of an edge in the list of edges maintained by
-            the input analyzer.)
-        edges:
-            List of edges whose corresponding PuLP variables are needed.
 
-    Returns:
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    edge_flow_vars:
+        Dictionary that maps a positive integer to a PuLP variable
+        that represents the flow through an edge. (Each postive integer
+        is the position of an edge in the list of edges maintained by
+        the input analyzer.)
+    edges:
+        List of edges whose corresponding PuLP variables are needed.
+        
+
+    Returns
+    -------
+
         List of the PuLP variables that correspond to each of
         the edges in the input edge list.
+
     """
     return [_get_edge_flow_var(analyzer, edge_flow_vars, edge) for edge in edges]
 
@@ -234,17 +271,21 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths):
        account which paths are feasible and which not; it considers all_temp_files the
        paths in the graph.
 
-       Arguments:
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed.
-           paths:
-               List of paths used in the measurements. Each path is a list of
-               edges in the order in which they are visited by the path
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    paths:
+        List of paths used in the measurements. Each path is a list of
+        edges in the order in which they are visited by the path
 
-       Returns:
-           A floating point value---the least delta compatible with the
-           measurements
+    Returns
+    -------
+    float
+        A floating point value---the least delta compatible with the
+        measurements
+
     """
     dag = analyzer.dag
     source = dag.source
@@ -298,27 +339,30 @@ def find_least_compatible_mu_max(analyzer: Analyzer, paths):
 # compact
 def find_longest_path_with_delta(analyzer, paths, delta,
                                  extremum=Extremum.LONGEST):
-    """ This functions finds the longest/shortest path compatible with the
+    """This functions finds the longest/shortest path compatible with the
         measured lengths of paths, as given in 'paths', such the actual
         lengths are within 'delta' of the measured lengths
 
-         Arguments:
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed.
-           paths:
-               List of paths used in the measurements. Each path is a list of
-               edges in the order in which they are visited by the path
-           delta:
-               the maximal limit by which the length of a measured path is
-               allowed to differ from the measured value
-           extremum:
-               Specifies whether we are calculating Extremum.LONGEST or 
-               Extremum.SHORTEST
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    paths:
+        List of paths used in the measurements. Each path is a list of
+        edges in the order in which they are visited by the path
+    delta:
+        the maximal limit by which the length of a measured path is
+        allowed to differ from the measured value
+    extremum:
+        Specifies whether we are calculating Extremum.LONGEST or 
+        Extremum.SHORTEST
 
-         Returns:
-            Pair consisting of the resulting path and the ILP problem used to
-            calculate the path
+    Returns
+    -------
+    
+        Pair consisting of the resulting path and the ILP problem used to
+        calculate the path
 
     """
     # Increase delta by one percent, so that we do end up with an unsatisfiable
@@ -332,19 +376,24 @@ def find_longest_path_with_delta(analyzer, paths, delta,
 
 
 def make_compact(dag):
-    """  Function to create a compact representation of the given graph
+    """Function to create a compact representation of the given graph
          Compact means that if in the original graph, there is a simple
          path without any branching between two nodes, then in the resulting
          graph the entire simple path is replaced by only one edge
-  
-         Arguments:
-             dag:
-                 The graph that get compactified
-         Returns:
-             A mapping (vertex, vertex) -> edge_number so that the edge 
-             (vertex, vertex) in the original graph 'dag' gets mapped to
-             the edge with number 'edge_number'. All edges on a simple path
-             without branching get mapped to the same 'edge_number'
+
+    Parameters
+    ----------
+    dag:
+        The graph that get compactified
+
+    Returns
+    -------
+    
+        A mapping (vertex, vertex) -> edge_number so that the edge
+        (vertex, vertex) in the original graph 'dag' gets mapped to
+        the edge with number 'edge_number'. All edges on a simple path
+        without branching get mapped to the same 'edge_number'
+
     """
     processed = {}
     result = Dag()
@@ -383,38 +432,42 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
                                     print_problem=False, extremum=Extremum.LONGEST):
     """This function actually constructs the ILP to find the longest path
     in the graph specified by 'analyzer' using the set of measured paths given
-    by 'paths'. 
+    by 'paths'.
 
-        Arguments
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed. Among others, contains the underlying
-               DAG or the collection of infeasible paths.
-           paths:
-               List of paths used in the measurements. Each path is a list of
-               edges in the order in which they are visited by the path
-           pathFunctionUpper:
-               Function of type: path -> float that for a given path should
-               return the upper bound on the length of the given path. The
-               input 'path' is always from 'paths'
-           pathFunctionLower:
-               Function of type: path -> float that for a given path should
-               return the upper bound on the length of the given path. The
-               input 'path' is always from 'paths'
-           weightsPositive:
-               Boolean value specifying whether the individual edge weight are
-               required to be at least 0 (if set to True) or can be arbitrary
-               real value (if set to False)
-           printProblem:
-               Boolean value used for debugging. If set to true, the generated
-               ILP is printed.
-           extremum:
-               Specifies whether we are calculating Extremum.LONGEST or 
-               Extremum.SHORTEST
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed. Among others, contains the underlying
+        DAG or the collection of infeasible paths.
+    paths:
+        List of paths used in the measurements. Each path is a list of
+        edges in the order in which they are visited by the path
+    pathFunctionUpper:
+        Function of type: path -> float that for a given path should
+        return the upper bound on the length of the given path. The
+        input 'path' is always from 'paths'
+    pathFunctionLower:
+        Function of type: path -> float that for a given path should
+        return the upper bound on the length of the given path. The
+        input 'path' is always from 'paths'
+    weightsPositive:
+        Boolean value specifying whether the individual edge weight are
+        required to be at least 0 (if set to True) or can be arbitrary
+        real value (if set to False)
+    printProblem:
+        Boolean value used for debugging. If set to true, the generated
+        ILP is printed.
+    extremum:
+        Specifies whether we are calculating Extremum.LONGEST or 
+        Extremum.SHORTEST
 
-        Returns:
-           Triple consisting of the length of the longest path found, the actual
-           path and the ILP problem generated.
+    Returns
+    -------
+    
+        Triple consisting of the length of the longest path found, the actual
+        path and the ILP problem generated.
+
     """
     dag = analyzer.dag
     dag.initialize_dictionaries()
@@ -593,48 +646,58 @@ def generate_and_solve_core_problem(analyzer, paths, path_function_upper,
 
 
 def find_worst_expressible_path(analyzer, paths, bound):
-    """
-        Function to find the longest path in the underlying graph of 'analyzer'
+    """Function to find the longest path in the underlying graph of 'analyzer'
         assuming the lengths of all_temp_files measured paths are between -1 and 1.
-        Arguments
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed.
-           paths:
-               List of paths used in the measurements. Each path is a list of
-               edges in the order in which they are visited by the path
-           bound:
-           ???
-        Returns:
-           Triple consisting of the length of the longsest path, the path itself
-           and the ILP solved to find the path.
+
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    paths:
+        List of paths used in the measurements. Each path is a list of
+        edges in the order in which they are visited by the path
+    bound:
+        ???
+
+    Returns
+    -------
+    
+        Triple consisting of the length of the longsest path, the path itself
+        and the ILP solved to find the path.
+
     """
     return generate_and_solve_core_problem(
         analyzer, paths, (lambda x: 1), (lambda x: -1), False)
 
 
 def find_goodness_of_fit(analyzer, paths, basis):
-    """
-        This function is here only for test purposes. Each path pi in `paths',
-        can be expressed as a linear combination 
+    """This function is here only for test purposes. Each path pi in `paths',
+        can be expressed as a linear combination
               pi = a_1 b_1 + ... + a_n b_n
         of paths b_i from `basis`. This function returns the least number `c`
         such that every path can be expressed as a linear combination of basis
         paths b_i such that the sum of absolute value of coefficients is at
         most `c`:
            |a_1| + |a_2| + ... + |a_n| <= c
-        Arguments
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed.
-           paths:
-               List of paths that we want to find out how well can be
-               expressed as a linear combination of paths in `basis`
-           basis:
-               List of paths that are used to express `paths` as a linear
-               combination of
-        Returns:
-               The number `c` as described in the paragraph above.
+
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    paths:
+        List of paths that we want to find out how well can be
+        expressed as a linear combination of paths in `basis`
+    basis:
+        List of paths that are used to express `paths` as a linear
+        combination of
+
+    Returns
+    -------
+
+        The number `c` as described in the paragraph above.
+
     """
     dag = analyzer.dag
     source = dag.source
@@ -688,28 +751,34 @@ def find_goodness_of_fit(analyzer, paths, basis):
 
 
 def find_minimal_overcomplete_basis(analyzer: Analyzer, paths, k):
-    """
-        This function is here only for test purposes. The functions finds the
+    """This function is here only for test purposes. The functions finds the
         smallest set of 'basis paths' with the following property: Each path pi
-        in `paths', can be expressed as a linear combination 
+        in `paths', can be expressed as a linear combination
                   pi = a_1 b_1 + ... + a_n b_n
         of paths b_i from `basis`. This function finds the set of basis paths
         such that every path can be expressed as a linear combination of basis
         paths b_i  such that the sum of absolute value of coefficients is at
         most 'k':
            |a_1| + |a_2| + ... + |a_n| <= k
-        Arguments
-           analyzer:
-               ``Analyzer`` object that maintains information about
-               the code being analyzed.
-           paths:
-               List of paths that we want to find out how well can be
-               expressed as a linear combination of paths in `basis`
-           k:
-               bound on how well the 'paths' can be expressed as a linear
-               combination of the calculated basis paths
-        Returns:
-               List of paths satisfying the condition stated above
+
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    paths:
+        List of paths that we want to find out how well can be
+        expressed as a linear combination of paths in `basis`
+    k:
+        bound on how well the 'paths' can be expressed as a linear
+        combination of the calculated basis paths
+
+
+    Returns
+    -------
+    
+        List of paths satisfying the condition stated above
+
     """
     project_config = analyzer.project_config
     dag = analyzer.dag
@@ -773,30 +842,34 @@ def find_extreme_path(analyzer, extremum=Extremum.LONGEST, interval=None):
     """Determines either the longest or the shortest path through the DAG
     with the constraints stored in the ``Analyzer`` object provided.
 
-    Arguments:
-        analyzer:
-            ``Analyzer`` object that maintains information about
-            the code being analyzed.
-        extremum:
-            Type of extreme path to calculate.
-        interval:
-            ``Interval`` object that represents the interval of values
-            that the generated paths can have. If no ``Interval`` object
-            is provided, the interval of values is considered to be
-            all_temp_files real numbers.
+    Parameters
+    ----------
+    analyzer:
+        ``Analyzer`` object that maintains information about
+        the code being analyzed.
+    extremum:
+        Type of extreme path to calculate.
+    interval:
+        ``Interval`` object that represents the interval of values
+        that the generated paths can have. If no ``Interval`` object
+        is provided, the interval of values is considered to be
+        all_temp_files real numbers.
 
-    Returns:
+    Returns
+    -------
+    
         Tuple whose first element is the longest or the shortest path
         through the DAG, as a list of nodes along the path (ordered
         by traversal from source to sink), and whose second element is
         the integer linear programming problem that was solved to obtain
         the path, as an object of the ``IlpProblem`` class.
-
+        
         If no such path is feasible, given the constraints stored in
         the ``Analyzer`` object and the ``Interval`` object provided,
         the first element of the tuple is an empty list, and the second
         element of the tuple is an ``IlpProblem`` object whose ``obj_al``
         instance variable is None.
+
     """
     # Make temporary variables for the frequently accessed
     # variables from the ``Analyzer`` object provided.
@@ -984,11 +1057,14 @@ def _move_ilp_files(source_dir, dest_dir):
     is solved, from the source directory whose location is provided
     to the destination directory whose location is provided.
 
-    Arguments:
-        source_dir:
-            Location of the source directory.
-        dest_dir:
-            Location of the destination directory.
+    Parameters
+    ----------
+    source_dir : 
+        Location of the source directory
+    dest_dir :
+        Location of the destination directory
+
+
     """
     move_files([_LP_NAME + r"-pulp\.lp", _LP_NAME + r"-pulp\.mps",
                 _LP_NAME + r"-pulp\.prt", _LP_NAME + r"-pulp\.sol"],
@@ -998,5 +1074,6 @@ def _move_ilp_files(source_dir, dest_dir):
 def _remove_temp_ilp_files():
     """Removes the temporary files that are generated when an
     integer linear program is solved.
+
     """
     remove_files([r".*\.lp", r".*\.mps", r".*\.prt", r".*\.sol"], os.getcwd())

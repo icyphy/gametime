@@ -21,8 +21,12 @@ class Backend(object):
 
     def __init__(self, project_config: ProjectConfiguration, name: str=""):
         """
-        :param project_config: GameTime project configuration for the code that is being analyzed
-        :param name: name of the backend that this object represents
+        Parameters
+        ----------
+        project_config: ProjectConfiguration:
+            GameTime project configuration for the code that is being analyzed
+        name: str:
+            name of the backend that this object represents
         """
         #: Name of the backend that this object represents.
         self.name: str = name
@@ -31,10 +35,17 @@ class Backend(object):
         self.project_config: ProjectConfiguration = project_config
     
     def measure(self, inputs: str, measure_folder: str) -> int:
-        """
-        Perform measurement using the backend.
-        :param inputs: the inputs to drive down a PATH in a txt file
-        :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of backend}
-        :return the measured value of path
+        """Perform measurement using the backend.
+
+        Parameters
+        ----------
+        inputs: str:
+            the inputs to drive down a PATH in a file
+        measure_folder: str :
+            all generated files will be stored in MEASURE_FOLDER/{name of backend}
+
+        Returns
+        -------
+        The measured value of path
         """
         return 0

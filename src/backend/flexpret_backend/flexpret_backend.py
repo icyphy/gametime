@@ -26,35 +26,52 @@ static inline unsigned long long read_cycle_count() {
         super(FlexpretBackend, self).__init__(project_config, "Flexpret")
 
     def generate_executable_c(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
+        """Modifies the input program to use INPUTS and returns path to modifed C program.
+
+        Parameters
+        ----------
+        filepath: str :
+            Path to C file to modify with inputs.
+        func_name: str :
+            Name of function being analyzed.
+        inputs: str :
+            Path to the INPUTS file containing output of symbolic solver.
+        measure_folder: str :
+            The folder to store generated C code.
+
+        Returns
+        -------
+        Path to the modified C file.
+        """
         exec_file = generate_executable(filepath, measure_folder, func_name, inputs, self.timing_func, True)
         return exec_file
               
 
     def c_file_to_mem (self, stored_folder: str, file_name: str, c_filepath: str) -> str:
+        """Use same Make file mechanism as Flexpret to generate .mem file from .c
+
+        Parameters
+        ----------
+        stored_folder: str :
+            Folder to put all the generated tempraries.
+        file_name: str :
+            Name of function being analyzed.
+        c_filepath: str :
+            Path to C file being executed.
+
+        Returns
+        -------
+        Measured cycle count for C_FILEPATH.
         """
-        Use same Make file mechanism as Flexpret to generate .mem file from .c
-        """
-        # copy the MAKEFILE in FLEXPRET repository to the same folder as .o file
+        # copy the MAKEFILE in FLEXPRET FOLDER to the STORED_FOLDER.
         makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "backend", "flexpret_backend", "Makefile")
-
         makefile_path = os.path.join(stored_folder, "Makefile")
-
         shutil.copy(makefile_template_path, makefile_path)
         os.chmod(stored_folder, 0o755)  # Read, write, and execute for the user; read and execute for others
         os.chmod(makefile_path, 0o755)  # Same as above
-
-        # gather all the files needed to run Make, particularly all the possible .c/.o files
-        # #TODO: maybe user should provide all the paths here?
-        # context_path_from_flexpret_backend = f'{self.project_config.location_orig_dir}'
-        # context_folder = os.listdir(context_path_from_flexpret_backend)
-        # context_files = []
-        # for entry in context_folder:
-        #     if ((not entry == self.project_config.name_orig_file) and entry.endswith('.c')) or entry.endswith('.o'):
-        #         context_files.append(f'{context_path_from_flexpret_backend}/{entry}')
         
         context_files = self.project_config.included.copy()
-
-        # add the generated .o file
+        # add the .C file
         context_files.append(c_filepath)
         app_sources = " ".join(context_files)
 
@@ -74,13 +91,20 @@ static inline unsigned long long read_cycle_count() {
         return mem_file_path
 
     def run_backend_and_parse_output(self, stored_folder: str,  mem_filepath: str) -> int:
-        """
-        Run simulation on the .mem file generated. The measurements are stored in measure.out
+        """Run simulation on the .mem file generated. The measurements are stored in measure.out
         Equivalent to: os.system(f"(cd {dir path of .mem file} && fp-emu --measure +ispm={file_name}.mem)")
 
-        :param stored_folder: the file path of the folder where .mem file is stored
-        :param file_name: the file name of the .mem file
-        :return the measurement value
+        Parameters
+        ----------
+        stored_folder: str :
+            Folder to put all the generated tempraries.
+        mem_filepath: str :
+            Path to the .mem file
+            :return the measurement value   
+
+        Returns
+        -------
+        Measured cycle count for MEM_FILEPATH.
         """
         cwd = os.getcwd()
         os.chdir(stored_folder)
@@ -107,11 +131,18 @@ static inline unsigned long long read_cycle_count() {
             raise GameTimeError("The measure output file is ill-formatted")
 
     def measure(self, inputs: str, measure_folder: str) -> int:
-        """
-        Perform measurement using the simulator.
-        :param inputs: the inputs to drive down a PATH in a file
-        :param measure_folder: all generated files will be stored in MEASURE_FOLDER/{name of simulator}
-        :return the measured value of path
+        """Perform measurement using the backend.
+
+        Parameters
+        ----------
+        inputs: str:
+            the inputs to drive down a PATH in a file
+        measure_folder: str :
+            all generated files will be stored in MEASURE_FOLDER/{name of backend}
+
+        Returns
+        -------
+        The measured value of path
         """
         stored_folder: str = measure_folder
         filepath: str = self.project_config.location_orig_file

@@ -20,9 +20,10 @@ def initialize(logger: logging.Logger) -> None:
     :class:`~logging.Formatter` and :class:`~logging.StreamHandler`
     objects appropriate for GameTime.
 
-    Arguments:
-        logger:
-            Logger to initialize.
+    Parameters
+    ----------
+    logger: logging.Logger :
+        Logger to initialize
     """
     logger.setLevel(logging.DEBUG)
     logger.propagate = False

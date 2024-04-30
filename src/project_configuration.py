@@ -11,38 +11,6 @@ class DebugConfiguration(object):
     determines the debugging information that is shown and
     the temporary files that are dumped.
 
-    Attributes:
-        keep_cil_temps:
-            True if the temporary files that CIL generates during
-            its analysis are to be kept; False otherwise.
-        dump_ir:
-            True if the Phoenix intermediate representation of the function
-            under analysis is to be dumped to a file; False otherwise.
-        keep_ilp_solver_output:
-            True if debugging information and files produced by
-            the integer linear programming solver are to be kept;
-            False otherwise.
-        dump_instruction_trace:
-            True if information produced when an IR-level instruction is
-            traced backward is to be dumped; False otherwise.
-        dump_path:
-            True if information about the path being traced is to be dumped;
-            False otherwise.
-        dump_all_paths:
-            True if information about all_temp_files of the paths that have been traced
-            during analysis are to be dumped to a file; False otherwise.
-        dump_smt_trace:
-            True if information produced during the creation of an SMT query
-            is to be dumped; False otherwise.
-        dump_all_queries:
-            True if information about all_temp_files of the SMT queries that have been
-            made during analysis are to be dumped to a file; False otherwise.
-        keep_parser_output:
-            True if the debugging information and temporary files produced by
-            the parser are to be kept; False otherwise.
-        keep_simulator_output:
-            True if temporary files produced by a simulator when measuring
-            the value of a path are to be kept; False otherwise.
     """
 
     def __init__(self, keep_cil_temps=False, dump_ir=False,
@@ -89,55 +57,7 @@ class DebugConfiguration(object):
 
 
 class ProjectConfiguration(object):
-    """Stores information necessary to configure a GameTime project.
-
-    Attributes:
-        location_file:
-            Absolute path of the file to be analyzed.
-        func:
-            Name of the function to analyze.
-        start_label:
-            Label to start analysis at, if any.
-        end_label:
-            Label to end analysis at, if any.
-        included:
-            List of the locations of directories that contain other files
-            that need to be compiled and linked, but not preprocessed, with
-            the file that contains the function to be analyzed,
-            such as header files.
-        merged:
-            List of the locations of other files to be merged and preprocessed
-            with the file that contains the function to be analyzed.
-        inlined:
-            List of the names of functions to inline.
-        unroll_loops:
-            True if loops present in the function being analyzed are
-            to be unrolled; False otherwise.
-        randomize_initial_basis:
-            True if the basis that GameTime starts the analysis with
-            is to be randomized; False otherwise.
-        maximum_error_scale_factor:
-            Maximum error allowed when expressing a path in terms of
-            basis paths.
-        determinant_threshold:
-            Threshold below which the determinant of the basis matrix
-            is considered "too small".
-        max_infeasible_paths:
-            Maximum number of infeasible candidate paths that can be
-            explored before a row of a basis matrix is considered "bad".
-        model_as_nested_arrays:
-            True if multi-dimensional arrays should be modeled as
-            nested arrays, or arrays whose elements can also
-            be arrays, in an SMT query; False otherwise.
-        prevent_basis_refinement:
-            True if the refinement of the basis into a 2-barycentric
-            spanner should be prevented; False otherwise.
-        ilp_solver_name:
-            Name of the integer linear programming solver used to
-            solve integer linear programs to generate candidate paths.
-        debug_config:
-            Debugging configuration.
-    """
+    """Stores information necessary to configure a GameTime project."""
 
     def __init__(self, location_file, func,
                  start_label="", end_label="", included=None, merged=None,
@@ -332,19 +252,32 @@ class ProjectConfiguration(object):
     def set_ilp_solver(self, ilp_solver_name):
         """
 
-        :param ilp_solver_name:
+        Parameters
+        ----------
+        ilp_solver_name: str:
+            ILP solver name to use
+
         """
         # TODO: Make it real
         self.ilp_solver = ilp_solver_name.lower()
 
     def get_temp_filename_with_extension(self, extension: str, name: str = None) -> str:
-        """ Return path of temporary file with name and extension. Extension should
+        """Return path of temporary file with name and extension. Extension should
         be preceded by a period. For example, calling this function with extension
         ".bc" should return something like ".... maingt/main.bc"
 
-        :param extension: extension of the temporary file
-        :param name: name of the temporary file (defaults to self.nameOrigNoExtension)
-        :return: path of the temporary file
+        Parameters
+        ----------
+        extension: str :
+            extension of the temporary file name
+        name: str :
+            name of the temporary file (defaults to self.nameOrigNoExtension) (Default value = None)
+
+        Returns
+        -------
+        str
+            path of the temporary file
+
         """
         if name is None:
             name = self.name_orig_no_extension
@@ -353,13 +286,22 @@ class ProjectConfiguration(object):
         return temp_filename
 
     def get_orig_filename_with_extension(self, extension: str, name: str = None) -> str:
-        """ Return path of file with name and extension. Extension should
+        """Return path of file with name and extension. Extension should
         be preceded by a period. For example, calling this function with extension
         ".bc" should return something like ".... /main.bc"
 
-        :param extension: extension of the file
-        :param name: name of the file (defaults to self.nameOrigNoExtension)
-        :return: path of the file in the original directory.
+        Parameters
+        ----------
+        extension: str :
+            extension of the file
+        name: str :
+            name of the file (defaults to self.nameOrigNoExtension) (Default value = None)
+
+        Returns
+        -------
+        str
+            path of the file in the original directory.
+
         """
         if name is None:
             name = self.name_orig_no_extension

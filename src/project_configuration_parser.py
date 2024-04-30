@@ -20,17 +20,43 @@ from project_configuration import ProjectConfiguration, DebugConfiguration
 
 
 class ConfigurationParser(object):
+    """ """
 
     @staticmethod
     @abstractmethod
     def parse(configuration_file_path: str) -> ProjectConfiguration:
+        """
+
+        Parameters
+        ----------
+        configuration_file_path: str :
+            Path to configuration file
+
+        Returns
+        -------
+        ProjectConfiguration:
+            ProjectConfiguration object corresponding to file.
+        """
         pass
 
 
 class YAMLConfigurationParser(ConfigurationParser):
+    """ """
 
     @staticmethod
     def parse(configuration_file_path: str) -> ProjectConfiguration:
+        """
+
+        Parameters
+        ----------
+        configuration_file_path: str :
+            Path to configuration file
+
+        Returns
+        -------
+        ProjectConfiguration:
+            ProjectConfiguration object corresponding to file.
+        """
         # Check configuration_file_path exits on the OS
         if not os.path.exists(configuration_file_path):
             err_msg = "Cannot find project configuration file: %s" % configuration_file_path
@@ -182,18 +208,20 @@ class YAMLConfigurationParser(ConfigurationParser):
 
 
 def get_dir_paths(dir_paths_str: str, dir_location: str = None) -> List[str]:
-    """
-    Gets a list of directory paths from the string provided, where
+    """Gets a list of directory paths from the string provided, where
     the directory paths are separated by whitespaces or commas.
 
-    Arguments:
-        dir_paths_str:
-            String of directory paths.
-        dir_location:
-            Directory to which the directory paths may be relative.
+    Parameters
+    ----------ir_paths_str: str :
+        String of directory paths
+    dir_location: str :
+        Directory to which the directory paths may be relative (Default value = None)
 
-    Returns:
+    Returns
+    -------
+    List[str]
         List of directory paths in the string.
+
     """
     dir_paths = re.split(r"[\s,]+", dir_paths_str)
 
@@ -206,19 +234,23 @@ def get_dir_paths(dir_paths_str: str, dir_location: str = None) -> List[str]:
 
 
 def get_file_paths(file_paths_str: str, dir_location: str = None) -> List[str]:
-    """
-    Gets a list of file paths from the string provided, where the file
+    """Gets a list of file paths from the string provided, where the file
     paths are separated by whitespaces or commas. The paths can also be
     Unix-style globs.
 
-    Arguments:
-        file_paths_str:
-            String of file paths.
-        dir_location:
-            Directory to which the file paths may be relative.
+    Parameters
+    ----------
+    
+    file_paths_str: str :
+        String of file paths
+    dir_location: str :
+        Directory to which the file paths may be relative (Default value = None)
 
-    Returns:
+    Returns
+    -------
+    List[str]
         List of file paths in the string.
+
     """
     file_paths = re.split(r"[\s,]+", file_paths_str)
 
