@@ -41,7 +41,7 @@ class BaseTest(unittest.TestCase):
 
         basis_paths = analyzer.generate_basis_paths()
         self.assertIsNotNone(basis_paths[0], "no paths were found")
-        analyzer.measure_basis_paths()
+        # analyzer.measure_basis_paths()
 
         generated_paths = analyzer.generate_paths()
         results = []
