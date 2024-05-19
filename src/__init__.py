@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-from analyzer import Analyzer
-from defaults import logger
-from gametime_error import GameTimeError
-from project_configuration import ProjectConfiguration
+from .analyzer import Analyzer
+from .defaults import logger
+from .gametime_error import GameTimeError
+from .project_configuration import ProjectConfiguration
 
 
 class GameTime(object):

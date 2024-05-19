@@ -1,0 +1,32 @@
+Reminder: this is for linux setup
+
+1. Install flexpret by following it's instructions. Use branch gametime-support. Can use instructions of master branch.
+        ***Remember to export PATH=$PATH:/home/c/Desktop/research/lf/code/flexpret/emulator*** USE ABS PATH
+                        export PATH=$PATH:/opt/riscv/bin
+                        
+2. Pull the lastest Gametime.
+git submodule update --init --recursive
+
+3.
+apt-get install -qqy --no-install-recommends \
+        gnupg2 wget ca-certificates \
+        autoconf automake cmake dpkg-dev file make patch libc6-dev
+
+4. 
+        sudo apt install clang
+        sudo apt install llvm
+
+5.  apt install -qqy --no-install-recommends \
+        coinor-cbc coinor-libcbc-dev \
+        glpk-utils libglpk-dev glpk-doc python3-swiglpk
+
+6. extra dependencies and local module
+        pip install -e .
+        pip install pulp
+        pip install scipy
+        sudo apt-get install graphviz libgraphviz-dev
+        pip install pygraphviz
+
+7. Install KLEE and pycparser. Place pycparser in same directory as gametime to ensure it can find the stubs.
+
+7. To regenerate documentation: install sphinx and numpydoc. Then run: make html; sphinx-build -b html ./ build/ -v
