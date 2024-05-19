@@ -334,7 +334,7 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
 
     Returns
     -------
-    :class:`~gametime.nxHelper.Dag` 
+    :class:`~gametime.src.nx_helper.Dag` 
         Object that represents the directed acyclic graph.
 
     """
@@ -375,7 +375,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     Parameters
     ----------
     dag:
-        DAG represented by a :class:`~gametime.nxHelper.Dag` object.
+        DAG represented by a :class:`~gametime.src.nx_helper.Dag` object.
     source:
         Source node.
     sink:
@@ -418,7 +418,7 @@ def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
     Parameters
     ----------
     dag: Dag :
-        DAG represented by a :class:`~gametime.nxHelper.Dag` object.
+        DAG represented by a :class:`~gametime.src.nx_helper.Dag` object.
     source: str :
         source to start path with
     sink: str :

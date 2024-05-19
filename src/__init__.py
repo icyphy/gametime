@@ -14,11 +14,11 @@ class GameTime(object):
         """
         Arguments:
             project_config:
-                :class:`~gametime.projectConfiguration.ProjectConfiguration`
+                :class:`~gametime.src.projectConfiguration.ProjectConfiguration`
                 object that represents the configuration of a GameTime project.
 
         Returns:
-            :class:`~gametime.analyzer.Analyzer` object for the project
+            :class:`~gametime.src.analyzer.Analyzer` object for the project
             configuration provided.
         """
         try:

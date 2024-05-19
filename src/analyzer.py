@@ -45,7 +45,7 @@ class Analyzer(object):
 
     Parameters
     ----------
-    project_config: :class:`~gametime.projectConfiguration.ProjectConfiguration`
+    project_config: :class:`~gametime.src.projectConfiguration.ProjectConfiguration`
         Object that represents the configuration of a GameTime project.
     """
 
