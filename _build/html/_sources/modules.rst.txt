@@ -14,6 +14,21 @@ src Package Modules
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: gametime.src.backend.arm_backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: gametime.src.backend.flexpret_backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: gametime.src.backend.x86_backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. automodule:: gametime.src.smt_solver
    :members:
    :undoc-members:

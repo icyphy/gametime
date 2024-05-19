@@ -252,6 +252,7 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
                 "-loop-rotate",
                 "-indvars",
                 "-loop-unroll",
+                "-simplifycfg",
                 # "-unroll-threshold=10000000",
                 # "-unroll-count=4",
                 # "-unroll-allow-partial",
