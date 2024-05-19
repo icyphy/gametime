@@ -17,7 +17,7 @@ import sys
 
 def initialize(logger: logging.Logger) -> None:
     """Initializes the logger provided with
-    :class:`~logging.Formatter` and :class:`~logging.StreamHandler`
+    `~logging.Formatter` and `~logging.StreamHandler`
     objects appropriate for GameTime.
 
     Parameters

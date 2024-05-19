@@ -195,7 +195,7 @@ def get_ilp_solver_proper_names() -> List[str]:
 
 class IlpProblem(pulp.LpProblem):
     """Maintains information about an integer linear programming problem.
-    It is a subclass of the :class:`~pulp.LpProblem` class of the PuLP
+    It is a subclass of the `~pulp.LpProblem` class of the PuLP
     package, and stores additional information relevant to the GameTime
     analysis, such as the value of the objective function of the problem.
     """

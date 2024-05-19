@@ -80,7 +80,7 @@ def remove_back_edges_to_make_dag(G, root):
 class Dag(nx.DiGraph):
     """Maintains information about the directed acyclic graph (DAG)
     of the code being analyzed. It is a subclass of
-    the :class:`~networkx.DiGraph` class of the NetworkX graph package,
+    the `~networkx.DiGraph` class of the NetworkX graph package,
     and stores additional information relevant to the GameTime analysis,
     such as the special 'default' edges in the DAG.
     """
@@ -324,7 +324,7 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
 
 
 def construct_dag(location: str) -> tuple[Dag, bool]:
-    """Constructs a :class:`~gametime.nxHelper.Dag` object to represent
+    """Constructs a `~gametime.nxHelper.Dag` object to represent
     the directed acyclic graph described in DOT format in the file provided.
 
     Parameters
@@ -334,7 +334,7 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
 
     Returns
     -------
-    :class:`~gametime.src.nx_helper.Dag` 
+    `~gametime.src.nx_helper.Dag` 
         Object that represents the directed acyclic graph.
 
     """
@@ -375,7 +375,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     Parameters
     ----------
     dag:
-        DAG represented by a :class:`~gametime.src.nx_helper.Dag` object.
+        DAG represented by a `~gametime.src.nx_helper.Dag` object.
     source:
         Source node.
     sink:
@@ -418,7 +418,7 @@ def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
     Parameters
     ----------
     dag: Dag :
-        DAG represented by a :class:`~gametime.src.nx_helper.Dag` object.
+        DAG represented by a `~gametime.src.nx_helper.Dag` object.
     source: str :
         source to start path with
     sink: str :
