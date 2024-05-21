@@ -2,6 +2,22 @@ import re
 import os
 
 def find_labels(bitcode_string, output_dir):
+    """As part of preprocessing, runs CIL on the source file under
+        analysis to unroll loops. A copy of the file that results from
+        the CIL preprocessing is made and renamed for use by other
+        preprocessing phases, and the file itself is renamed and
+        stored for later perusal.
+
+        Parameters
+        ----------
+        filename:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        Returns
+        -------
+        List[String]
+            A List of basic block labels
+        """
 
     # Use regular expression to find the labels
     labels = re.findall(r'%(\d+):', bitcode_string)

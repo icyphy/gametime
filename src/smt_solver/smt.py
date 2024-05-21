@@ -6,6 +6,44 @@ from defaults import logger
 import clang_helper
 
 def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config):
+    """As part of preprocessing, runs CIL on the source file under
+        analysis to unroll loops. A copy of the file that results from
+        the CIL preprocessing is made and renamed for use by other
+        preprocessing phases, and the file itself is renamed and
+        stored for later perusal.
+
+        Parameters
+        ----------
+        modify_bit_code_cpp_file:
+            Path to file cpp which modifies the bitcode and inserts global variables
+        modify_bit_code_exec_file:
+            generated executable for the cpp file
+        input_c_file:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        c_filename:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        labels_file:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        all_labels_file:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        func_name:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        output_dir:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        project_config:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        Returns
+        -------
+        List[String]
+            A List of basic block labels
+        """
     # Get llvm-config flags
     llvm_config_command = ['llvm-config', '--cxxflags', '--ldflags', '--libs', 'core', 'support', 'bitreader', 'bitwriter', 'irreader']
     llvm_config_output = subprocess.run(llvm_config_command, capture_output=True, text=True, check=True).stdout.strip().split()
@@ -27,6 +65,17 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
     subprocess.run(run_command, check=True)
 
 def run_klee(klee_file):
+    """As part of preprocessing, runs CIL on the source file under
+        analysis to unroll loops. A copy of the file that results from
+        the CIL preprocessing is made and renamed for use by other
+        preprocessing phases, and the file itself is renamed and
+        stored for later perusal.
+
+        Parameters
+        ----------
+        klee_file:
+            path to the modified to_klee file which can be executed by klee
+        """
     run_klee_command = ['klee', klee_file]
     subprocess.run(run_klee_command, check=True)
 

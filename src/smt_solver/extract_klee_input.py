@@ -23,6 +23,22 @@ import re
 #     print(f"Values extracted and written to {values_filename}")
 
 def write_klee_input_to_file(filename):
+    """As part of preprocessing, runs CIL on the source file under
+        analysis to unroll loops. A copy of the file that results from
+        the CIL preprocessing is made and renamed for use by other
+        preprocessing phases, and the file itself is renamed and
+        stored for later perusal.
+
+        Parameters
+        ----------
+        filename:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        Returns
+        -------
+        List[String]
+            A List of basic block labels
+        """
     # Define a regular expression pattern to extract hex values
     pattern = re.compile(r'object \d+: hex : (0x[0-9a-fA-F]+)')
 
@@ -43,6 +59,22 @@ def write_klee_input_to_file(filename):
 
 
 def find_test_file(klee_last_dir):
+    """As part of preprocessing, runs CIL on the source file under
+        analysis to unroll loops. A copy of the file that results from
+        the CIL preprocessing is made and renamed for use by other
+        preprocessing phases, and the file itself is renamed and
+        stored for later perusal.
+
+        Parameters
+        ----------
+        filename:
+            A file containing all of the basic block labels of the path to be analyzed,
+            which is generated before running the SMT solver
+        Returns
+        -------
+        List[String]
+            A List of basic block labels
+        """
     # Iterate over files in the klee-last directory
     # get the current working directory
     #current_working_directory = os.getcwd()
