@@ -3,42 +3,19 @@ import subprocess
 
 import re
 
-# def write_klee_input_to_file(filename):
-#     # Define a regular expression pattern to extract int values
-#     pattern = re.compile(r'uint\s+:\s+(-?\d+)')
-
-#     # Open the input file
-#     with open(filename, 'r') as infile:
-#         data = infile.read()
-
-#     # Find all int values using regex
-#     int_values = pattern.findall(data)
-#     print(int_values)
-#     # Write int values to a new text file
-#     values_filename = filename[:-4] + "_values.txt"
-#     with open(values_filename, 'w') as outfile:
-#         for value in int_values:
-#             outfile.write(value + '\n')
-
-#     print(f"Values extracted and written to {values_filename}")
-
 def write_klee_input_to_file(filename):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
+    """
+    Extract hexadecimal values from a KLEE test input file and write them to a new file.
 
-        Parameters
-        ----------
-        filename:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        Returns
-        -------
-        List[String]
-            A List of basic block labels
-        """
+    Parameters
+    ----------
+    filename : str
+        Path to the KLEE test input file.
+
+    Returns
+    -------
+    None
+    """
     # Define a regular expression pattern to extract hex values
     pattern = re.compile(r'object \d+: hex : (0x[0-9a-fA-F]+)')
 
@@ -59,27 +36,20 @@ def write_klee_input_to_file(filename):
 
 
 def find_test_file(klee_last_dir):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
+    """
+    Find the first KLEE test case input file in the specified directory that does not have a corresponding .assert.err file.
 
-        Parameters
-        ----------
-        filename:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        Returns
-        -------
-        List[String]
-            A List of basic block labels
-        """
+    Parameters
+    ----------
+    klee_last_dir : str
+        Path to the directory containing KLEE output files.
+
+    Returns
+    -------
+    str or None
+        Path to the found KLEE test case input file, or None if no such file is found.
+    """
     # Iterate over files in the klee-last directory
-    # get the current working directory
-    #current_working_directory = os.getcwd()
-    # print output to the console
-    #print("Hallo", current_working_directory)
     for root, dirs, files in os.walk(klee_last_dir):
         for file in files:
             # Check if the file is a KLEE test case input file
@@ -92,14 +62,42 @@ def find_test_file(klee_last_dir):
     return None
 
 def run_ktest_tool(ktest_file, output_file):
+    """
+    Run the ktest-tool on a KLEE test case input file and save the output to a specified file.
+
+    Parameters
+    ----------
+    ktest_file : str
+        Path to the KLEE test case input file.
+    output_file : str
+        Path to the file where the output will be saved.
+
+    Returns
+    -------
+    None
+    """
     # Run ktest-tool on the ktest file and save the output to the output file
     with open(output_file, 'w') as f:
         subprocess.run(['klee.ktest-tool', ktest_file], stdout=f, text=True)
 
-#def cleanup_klee():
 
 
 def find_and_run_test(c_file_gt_dir, output_dir):
+    """
+    Find a KLEE test case input file, run ktest-tool on it, and save the input to a new file.
+
+    Parameters
+    ----------
+    c_file_gt_dir : str
+        Path to the directory containing the KLEE output subdirectory 'klee-last'.
+    output_dir : str
+        Directory where the output file will be saved.
+
+    Returns
+    -------
+    bool
+        True if a KLEE test case input file is found and processed, False otherwise.
+    """
     #klee_last_dir = 'klee-last'  # Path to the klee-last directory
     klee_last_dir = os.path.join(c_file_gt_dir, "klee-last")
     ktest_file = find_test_file(klee_last_dir)

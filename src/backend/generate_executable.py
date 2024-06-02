@@ -135,7 +135,7 @@ class ExecutableTransformer(object):
 
         Returns
         -------
-        The new MAIN fucntion AST node.
+        The new MAIN function AST node.
         """
         body_items = []
         body_items.append(Decl(

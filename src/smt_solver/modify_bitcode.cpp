@@ -21,8 +21,15 @@
 using namespace llvm;
 using namespace std;
 
-static std::string getSimpleNodeLabel(const BasicBlock *Node,
-                                      const Function *) {
+/**
+ * Returns a simple label for a BasicBlock, using its name if available,
+ * or otherwise printing it as an operand.
+ *
+ * @param Node - The BasicBlock for which to generate a label.
+ * @param Function - The function containing the BasicBlock.
+ * @return A string representing the label of the BasicBlock.
+ */
+static std::string getSimpleNodeLabel(const BasicBlock *Node, const Function *) {
     if (!Node->getName().empty())
         return Node->getName().str();
 
@@ -33,32 +40,12 @@ static std::string getSimpleNodeLabel(const BasicBlock *Node,
     return OS.str();
 }
 
-// void insertGlobalVariables(Module *module, const vector<int> &labels) {
-//     LLVMContext &context = module->getContext();
-//     int counter = 0;
-//     for (Function &F : *module) {
-//         for (BasicBlock &BB : F) {
-//             string labelString = getSimpleNodeLabel(&BB,&F);
-//             //cerr << labelString <<endl;
-//             //BB.printAsOperand(errs(), false);
-//             int label = stoi(labelString.substr(1));
-            // if (find(labels.begin(), labels.end(), label) != labels.end()) {
-            //     IRBuilder<> builder(BB.getFirstNonPHI());
-            //     GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
-            //     if (!GV) {
-            //         GV = new GlobalVariable(*module,
-            //                                 IntegerType::get(context, 8),
-            //                                 false,
-            //                                 GlobalValue::ExternalLinkage,
-            //                                 ConstantInt::get(IntegerType::get(context, 8), 0),
-            //                                 "conditional_var_" + to_string(counter));
-            //     }
-            //     builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 1), GV);
-            //     counter++;
-            // }
-//         }
-//     }
-// }
+/**
+ * Extracts the last number following a '%' character in a string.
+ *
+ * @param str - The input string from which to extract the number.
+ * @return The extracted number, or -1 if '%' is not found.
+ */
 int extractLastNumber(const std::string& str) {
     size_t lastPercentPos = str.rfind('%');
     if (lastPercentPos != std::string::npos) {
@@ -68,6 +55,14 @@ int extractLastNumber(const std::string& str) {
     return -1; // In case no '%' is found, which should not happen in your context
 }
 
+/**
+ * Inserts global variables into the specified basic blocks based on the provided labels.
+ *
+ * @param module - The LLVM module containing the functions and basic blocks.
+ * @param labels - A vector of labels where global variables should be inserted.
+ * @param allLabels - A vector of all possible labels in the function.
+ * @param functionName - The name of the function where the global variables will be inserted.
+ */
 void insertGlobalVariables(Module *module, const vector<int> &labels, const vector<int> &allLabels, const string &functionName) {
     LLVMContext &context = module->getContext();
     int counter = 0;
@@ -78,14 +73,12 @@ void insertGlobalVariables(Module *module, const vector<int> &labels, const vect
             continue;
         }
         for (BasicBlock &BB : F) {
-            // Assuming you have a way to convert BasicBlock to an int label
+            // Convert BasicBlock label to an integer
             std::string blockLabelString = getSimpleNodeLabel(&BB, &F);
-            // Attempt to convert the block label string to an integer
-            // Ensure this logic matches how your block labels are represented
-            int blockLabel = extractLastNumber(blockLabelString);;
+            int blockLabel = extractLastNumber(blockLabelString);
 
             if (blockLabel != -1) {
-                // Check if this block's label is in the labels list
+                // Insert global variables based on the label's presence in labels or allLabels
                 if (find(labels.begin(), labels.end(), blockLabel) != labels.end()) {
                     IRBuilder<> builder(BB.getFirstNonPHI());
                     GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter));
@@ -101,7 +94,7 @@ void insertGlobalVariables(Module *module, const vector<int> &labels, const vect
                     counter++;
                 } else if (find(allLabels.begin(), allLabels.end(), blockLabel) != allLabels.end()) {
                     IRBuilder<> builder(BB.getFirstNonPHI());
-                    GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter_bad_bb ));
+                    GlobalVariable *GV = module->getGlobalVariable("conditional_var_" + to_string(counter_bad_bb));
                     if (!GV) {
                         GV = new GlobalVariable(*module,
                                                 IntegerType::get(context, 8),
@@ -112,17 +105,18 @@ void insertGlobalVariables(Module *module, const vector<int> &labels, const vect
                     }
                     builder.CreateStore(ConstantInt::get(IntegerType::get(context, 8), 0), GV);
                     counter_bad_bb++;
-
                 }
             }
-
-            
         }
     }
 }
 
-
-
+/**
+ * Writes the LLVM assembly representation of the module to a file.
+ *
+ * @param module - The LLVM module to be written.
+ * @param filename - The name of the file to write the LLVM assembly to.
+ */
 void writeLLFile(Module *module, const string &filename) {
     std::error_code EC;
     raw_fd_ostream outputFile(filename, EC, sys::fs::OF_None);
@@ -134,6 +128,12 @@ void writeLLFile(Module *module, const string &filename) {
     module->print(outputFile, nullptr);
 }
 
+/**
+ * Reads labels from a file and returns them as a vector of integers.
+ *
+ * @param filename - The name of the file containing the labels.
+ * @return A vector of integers representing the labels.
+ */
 vector<int> parseLabelsFromFile(const string &filename) {
     vector<int> labels;
     ifstream file(filename);
@@ -149,8 +149,16 @@ vector<int> parseLabelsFromFile(const string &filename) {
     return labels;
 }
 
+/**
+ * Main function to parse the LLVM bitcode file, insert global variables based on labels,
+ * and write the modified and original LLVM assembly and bitcode to files.
+ *
+ * @param argc - The number of command-line arguments.
+ * @param argv - The array of command-line arguments.
+ * @return 0 on success, 1 on failure.
+ */
 int main(int argc, char **argv) {
-    if (argc < 2) {
+    if (argc < 5) {
         cerr << "Usage: " << argv[0] << " <input.bc> <labels.txt> <all_labels.txt> funcName" << endl;
         return 1;
     }
@@ -186,19 +194,6 @@ int main(int argc, char **argv) {
 
     // Insert global variables into basic blocks with conditional branches
     insertGlobalVariables(module.get(), labels, allLabels, funcName);
-
-    // Write normal bitcode to a file
-    // std::error_code EC_normal;
-    // raw_fd_ostream normalOutputFile((outputFilename + "_normal.bc").c_str(), EC_normal, sys::fs::OF_None);
-    // if (EC_normal) {
-    //     cerr << "Error opening normal bitcode file: " << EC_normal.message() << endl;
-    //     return 1;
-    // }
-    // WriteBitcodeToFile(*originalModule, normalOutputFile);
-    // if (EC_normal) {
-    //     cerr << "Error writing normal bitcode: " << EC_normal.message() << endl;
-    //     return 1;
-    // }
 
     // Write modified bitcode to a file
     std::error_code EC_modified;

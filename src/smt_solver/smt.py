@@ -6,44 +6,34 @@ from defaults import logger
 import clang_helper
 
 def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
+    """
+    Compile and run a C++ file that modifies LLVM bitcode, then process the C file through several steps.
 
-        Parameters
-        ----------
-        modify_bit_code_cpp_file:
-            Path to file cpp which modifies the bitcode and inserts global variables
-        modify_bit_code_exec_file:
-            generated executable for the cpp file
-        input_c_file:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        c_filename:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        labels_file:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        all_labels_file:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        func_name:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        output_dir:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        project_config:
-            A file containing all of the basic block labels of the path to be analyzed,
-            which is generated before running the SMT solver
-        Returns
-        -------
-        List[String]
-            A List of basic block labels
-        """
+    Parameters
+    ----------
+    modify_bit_code_cpp_file : str
+        Path to the C++ file that modifies the LLVM bitcode.
+    modify_bit_code_exec_file : str
+        Path to the executable generated from the C++ file.
+    input_c_file : str
+        Path to the input C file to be processed.
+    c_filename : str
+        The filename of the C file.
+    labels_file : str
+        Path to the file containing labels for the basic blocks.
+    all_labels_file : str
+        Path to the file containing all labels.
+    func_name : str
+        The name of the function to analyze.
+    output_dir : str
+        Directory to store output files.
+    project_config : object
+        Configuration object containing project settings, such as included files and compilation flags.
+
+    Returns
+    -------
+    None
+    """
     # Get llvm-config flags
     llvm_config_command = ['llvm-config', '--cxxflags', '--ldflags', '--libs', 'core', 'support', 'bitreader', 'bitwriter', 'irreader']
     llvm_config_output = subprocess.run(llvm_config_command, capture_output=True, text=True, check=True).stdout.strip().split()
@@ -65,26 +55,23 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
     subprocess.run(run_command, check=True)
 
 def run_klee(klee_file):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
+    """
+    Run KLEE with the specified file.
 
-        Parameters
-        ----------
-        klee_file:
-            path to the modified to_klee file which can be executed by klee
-        """
+    Parameters
+    ----------
+    klee_file : str
+        Path to the file modified for KLEE execution.
+
+    Returns
+    -------
+    None
+    """
     run_klee_command = ['klee', klee_file]
     subprocess.run(run_klee_command, check=True)
 
 def extract_labels_from_file(filename):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
+    """Extracts the block labels from the labels file corresponding to the specific path.
 
         Parameters
         ----------
@@ -107,12 +94,11 @@ def extract_labels_from_file(filename):
     return labels
 
 def run_smt(project_config, labels_file, output_dir, total_number_of_labels):
-    """As part of preprocessing, runs CIL on the source file under
-        analysis to unroll loops. A copy of the file that results from
-        the CIL preprocessing is made and renamed for use by other
-        preprocessing phases, and the file itself is renamed and
-        stored for later perusal.
-
+    """This function generates the input for the program to be analzed to drive down the given path.
+    The input is generated by utilizing the symbolic execution engine KLEE, which uses SMT-Solvers like Z3
+    unde the hood. Before inputting the file into KLEE we need preprocess the file, which involves
+    modifiying the source code, to add the KLEE specific function calls and guide KLEE to only return
+    the input for the path given.
         Parameters
         ----------
         project_config:
