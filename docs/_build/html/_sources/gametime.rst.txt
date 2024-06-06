@@ -1,0 +1,29 @@
+gametime package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gametime.src
+
+Submodules
+----------
+
+gametime.setup module
+---------------------
+
+.. automodule:: gametime.setup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gametime
+   :members:
+   :undoc-members:
+   :show-inheritance:

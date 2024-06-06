@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.project_configuration &mdash; GameTime 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GameTime
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GameTime</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../src.html">src</a></li>
+      <li class="breadcrumb-item active">src.project_configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.project_configuration</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">gametime_error</span> <span class="kn">import</span> <span class="n">GameTimeError</span>
+<span class="kn">from</span> <span class="nn">defaults</span> <span class="kn">import</span> <span class="n">config</span>
+
+
+<div class="viewcode-block" id="DebugConfiguration"><a class="viewcode-back" href="../../src.html#src.project_configuration.DebugConfiguration">[docs]</a><span class="k">class</span> <span class="nc">DebugConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores debugging configuration information, which</span>
+<span class="sd">    determines the debugging information that is shown and</span>
+<span class="sd">    the temporary files that are dumped.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_cil_temps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_ir</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">keep_ilp_solver_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_instruction_trace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">dump_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_all_paths</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dump_smt_trace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">dump_all_queries</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keep_parser_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">keep_simulator_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="c1">#: Keep the temporary files that CIL generates during its analysis.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KEEP_CIL_TEMPS</span> <span class="o">=</span> <span class="n">keep_cil_temps</span>
+
+        <span class="c1">#: Dump the Phoenix intermediate representation of the function</span>
+        <span class="c1">#: under analysis to a file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_IR</span> <span class="o">=</span> <span class="n">dump_ir</span>
+
+        <span class="c1">#: Keep debugging information and files produced by</span>
+        <span class="c1">#: the integer linear programming solver.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KEEP_ILP_SOLVER_OUTPUT</span> <span class="o">=</span> <span class="n">keep_ilp_solver_output</span>
+
+        <span class="c1">#: Dump information produced when an IR-level instruction</span>
+        <span class="c1">#: is traced backward.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_INSTRUCTION_TRACE</span> <span class="o">=</span> <span class="n">dump_instruction_trace</span>
+
+        <span class="c1">#: Dump information about the path being traced.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_PATH</span> <span class="o">=</span> <span class="n">dump_path</span>
+
+        <span class="c1">#: Dump information about all_temp_files of the paths that have been traced</span>
+        <span class="c1">#: during analysis to a file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_ALL_PATHS</span> <span class="o">=</span> <span class="n">dump_all_paths</span>
+
+        <span class="c1">#: Dump information produced when an SMT query is created.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_SMT_TRACE</span> <span class="o">=</span> <span class="n">dump_smt_trace</span>
+
+        <span class="c1">#: Dump information about all_temp_files of the SMT queries that</span>
+        <span class="c1">#: have been made during analysis to a file.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DUMP_ALL_QUERIES</span> <span class="o">=</span> <span class="n">dump_all_queries</span>
+
+        <span class="c1">#: Keep the debugging information and the temporary files</span>
+        <span class="c1">#: produced by the parser.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KEEP_PARSER_OUTPUT</span> <span class="o">=</span> <span class="n">keep_parser_output</span>
+
+        <span class="c1">#: Keep the temporary files produced by a simulator when</span>
+        <span class="c1">#: measuring the value of a path.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KEEP_SIMULATOR_OUTPUT</span> <span class="o">=</span> <span class="n">keep_simulator_output</span></div>
+
+
+<div class="viewcode-block" id="ProjectConfiguration"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration">[docs]</a><span class="k">class</span> <span class="nc">ProjectConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores information necessary to configure a GameTime project.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location_file</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span>
+                 <span class="n">start_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">end_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">included</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">merged</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">inlined</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unroll_loops</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">randomize_initial_basis</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">maximum_error_scale_factor</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                 <span class="n">determinant_threshold</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">max_infeasible_paths</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">model_as_nested_arrays</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prevent_basis_refinement</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">ilp_solver_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">debug_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gametime_flexpret_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> 
+                 <span class="n">gametime_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">gametime_file_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">compile_flags</span><span class="o">=</span><span class="p">[],</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="c1">### FILE INFORMATION ###</span>
+        <span class="c1"># Location of the directory that contains the file to be analyzed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Location of the file to be analyzed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_file</span> <span class="o">=</span> <span class="n">location_file</span>
+
+        <span class="c1"># Location of the file to be analyzed, without the extension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_no_extension</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the file to be analyzed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the file to be analyzed, without the extension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Location of the temporary folder that will store the temporary files</span>
+        <span class="c1"># generated by the GameTime toolflow.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_dir</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Pre-constructed location of the temporary file that will be analyzed</span>
+        <span class="c1"># by GameTime.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Location of the temporary file that will be analyzed by GameTime,</span>
+        <span class="c1"># without the extension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_no_extension</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the temporary file that will be analyzed by GameTime.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_temp_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the temporary file that will be analyzed by GameTime,</span>
+        <span class="c1"># without the extension.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_temp_no_extension</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Location of the temporary XML file that stores</span>
+        <span class="c1"># the project configuration information.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_xml_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the temporary XML file that stores</span>
+        <span class="c1"># the project configuration information.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_xml_file</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="c1"># Name of the function to analyze.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+        <span class="c1"># Label to start analysis at, if any.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_label</span> <span class="o">=</span> <span class="n">start_label</span>
+
+        <span class="c1"># Label to end analysis at, if any.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_label</span> <span class="o">=</span> <span class="n">end_label</span>
+
+        <span class="c1">### PREPROCESSING VARIABLES AND FLAGS ###</span>
+        <span class="c1"># List of the locations of directories that contain other files</span>
+        <span class="c1"># that need to be compiled and linked, but not preprocessed, with</span>
+        <span class="c1"># the file that contains the function to be analyzed,</span>
+        <span class="c1"># such as header files.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">included</span> <span class="o">=</span> <span class="n">included</span> <span class="ow">or</span> <span class="p">[]</span>
+
+        <span class="c1"># List of the locations of other files to be merged and preprocessed</span>
+        <span class="c1"># with the file that contains the function to be analyzed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">merged</span> <span class="o">=</span> <span class="n">merged</span> <span class="ow">or</span> <span class="p">[]</span>
+
+        <span class="c1"># List of the names of functions to inline.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inlined</span> <span class="o">=</span> <span class="n">inlined</span> <span class="ow">or</span> <span class="p">[]</span>
+
+        <span class="c1"># Whether to unroll loops present in the function being analyzed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">UNROLL_LOOPS</span> <span class="o">=</span> <span class="n">unroll_loops</span>
+
+        <span class="c1">### ANALYSIS VARIABLES AND FLAGS ###</span>
+        <span class="c1"># Whether to randomize the basis that GameTime starts</span>
+        <span class="c1"># the analysis with.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RANDOMIZE_INITIAL_BASIS</span> <span class="o">=</span> <span class="n">randomize_initial_basis</span>
+
+        <span class="c1"># Maximum error allowed when expressing a path in terms of</span>
+        <span class="c1"># basis paths.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MAXIMUM_ERROR_SCALE_FACTOR</span> <span class="o">=</span> <span class="n">maximum_error_scale_factor</span>
+
+        <span class="c1"># Threshold below which the determinant of the basis matrix</span>
+        <span class="c1"># is considered &quot;too small&quot;.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DETERMINANT_THRESHOLD</span> <span class="o">=</span> <span class="n">determinant_threshold</span>
+
+        <span class="c1"># Maximum number of infeasible candidate paths that can be explored</span>
+        <span class="c1"># before a row of a basis matrix is considered &quot;bad&quot;.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MAX_INFEASIBLE_PATHS</span> <span class="o">=</span> <span class="n">max_infeasible_paths</span>
+
+        <span class="c1"># Whether to model multi-dimensional arrays as nested arrays,</span>
+        <span class="c1"># or arrays whose elements can also be arrays, in an SMT query.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MODEL_AS_NESTED_ARRAYS</span> <span class="o">=</span> <span class="n">model_as_nested_arrays</span>
+
+        <span class="c1"># Whether to prevent the refinement of the basis into</span>
+        <span class="c1"># a 2-barycentric spanner.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">PREVENT_BASIS_REFINEMENT</span> <span class="o">=</span> <span class="n">prevent_basis_refinement</span>
+
+        <span class="c1"># TODO: comment here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OVER_COMPLETE_BASIS</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">OB_EXTRACTION</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># PuLP solver object that represents the integer linear</span>
+        <span class="c1"># programming solver used to solve integer linear programs</span>
+        <span class="c1"># to generate candidate paths.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ilp_solver</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1">### DEBUGGING ###</span>
+        <span class="c1"># Debugging configuration.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_config</span> <span class="o">=</span> <span class="n">debug_config</span> <span class="ow">or</span> <span class="n">DebugConfiguration</span><span class="p">()</span>
+
+        <span class="c1">### INITIALIZATION ###</span>
+        <span class="c1"># Infer the file path without the file extension.</span>
+        <span class="n">location_orig_with_extension</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_file</span>
+        <span class="n">location_orig_no_extension</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> \
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">location_orig_with_extension</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">extension</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;.c&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_no_extension</span> <span class="o">=</span> <span class="n">location_orig_no_extension</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Error running the project configuration &quot;</span>
+                      <span class="s2">&quot;reader: the name of the file to analyze &quot;</span>
+                      <span class="s2">&quot;does not end with a `.c` extension.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">GameTimeError</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+
+        <span class="c1"># Infer the directory that contains the file to analyze.</span>
+        <span class="n">location_orig_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">location_orig_with_extension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_orig_dir</span> <span class="o">=</span> <span class="n">location_orig_dir</span>
+
+        <span class="c1"># Infer the name of the file, both with</span>
+        <span class="c1"># and without the extension.</span>
+        <span class="n">name_orig_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">location_orig_with_extension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_file</span> <span class="o">=</span> <span class="n">name_orig_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name_orig_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Infer the name of the temporary directory where</span>
+        <span class="c1"># GameTime stores its temporary files during its toolflow.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_dir</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                                <span class="p">(</span><span class="n">location_orig_no_extension</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">TEMP_SUFFIX</span><span class="p">))</span>
+
+        <span class="c1"># Create the temporary directory, if not already present.</span>
+        <span class="n">location_temp_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_dir</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">location_temp_dir</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">location_temp_dir</span><span class="p">)</span>
+
+        <span class="c1"># Infer the name and location of the temporary file to be analyzed</span>
+        <span class="c1"># by GameTime, both with and without the extension.</span>
+        <span class="n">name_orig_no_extension</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span>
+        <span class="n">name_temp_no_extension</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">%s%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                                  <span class="p">(</span><span class="n">name_orig_no_extension</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">TEMP_SUFFIX</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_temp_no_extension</span> <span class="o">=</span> <span class="n">name_temp_no_extension</span>
+        <span class="n">name_temp_file</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.c&quot;</span> <span class="o">%</span> <span class="n">name_temp_no_extension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_temp_file</span> <span class="o">=</span> <span class="n">name_temp_file</span>
+
+        <span class="n">location_temp_file</span> <span class="o">=</span> \
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">location_temp_dir</span><span class="p">,</span> <span class="n">name_temp_file</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_file</span> <span class="o">=</span> <span class="n">location_temp_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_temp_no_extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">location_temp_file</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Infer the name and location of the temporary XML file that</span>
+        <span class="c1"># stores the project configuration information.</span>
+        <span class="n">name_xml_file</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.xml&quot;</span> <span class="o">%</span> <span class="n">config</span><span class="o">.</span><span class="n">TEMP_PROJECT_CONFIG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_xml_file</span> <span class="o">=</span> <span class="n">name_xml_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">location_xml_file</span> <span class="o">=</span> \
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">location_temp_dir</span><span class="p">,</span> <span class="n">name_xml_file</span><span class="p">))</span>
+
+        <span class="c1"># Initialize the PuLP solver object that interfaces with</span>
+        <span class="c1"># the ILP solver whose name is provided.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_ilp_solver</span><span class="p">(</span><span class="n">ilp_solver_name</span><span class="p">)</span>
+        <span class="c1"># self.setIlpSolver(&quot;cplex&quot;)</span>
+
+        <span class="c1"># Relative path to the FlexPRET repo from the GameTime repo. Needed to run FlexPRET Simulator.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gametime_flexpret_path</span> <span class="o">=</span> <span class="n">gametime_flexpret_path</span>
+
+        <span class="c1"># Relative path to the GameTime repo from the simulation running folder. Needed to run FlexPRET Simulator.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gametime_path</span> <span class="o">=</span> <span class="n">gametime_path</span>
+
+        <span class="c1"># Relative path to the GameTime repo from the simulated file. Needed to run FlexPRET Simulator.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gametime_file_path</span> <span class="o">=</span> <span class="n">gametime_file_path</span>
+
+        <span class="c1"># Additional flags needed when compiling the program</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compile_flags</span> <span class="o">=</span> <span class="n">compile_flags</span>
+
+        <span class="c1"># Backend to execute against</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+
+<div class="viewcode-block" id="ProjectConfiguration.set_ilp_solver"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration.set_ilp_solver">[docs]</a>    <span class="k">def</span> <span class="nf">set_ilp_solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ilp_solver_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        ilp_solver_name: str:</span>
+<span class="sd">            ILP solver name to use</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Make it real</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ilp_solver</span> <span class="o">=</span> <span class="n">ilp_solver_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ProjectConfiguration.get_temp_filename_with_extension"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration.get_temp_filename_with_extension">[docs]</a>    <span class="k">def</span> <span class="nf">get_temp_filename_with_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return path of temporary file with name and extension. Extension should</span>
+<span class="sd">        be preceded by a period. For example, calling this function with extension</span>
+<span class="sd">        &quot;.bc&quot; should return something like &quot;.... maingt/main.bc&quot;</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        extension: str :</span>
+<span class="sd">            extension of the temporary file name</span>
+<span class="sd">        name: str :</span>
+<span class="sd">            name of the temporary file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        str</span>
+<span class="sd">            path of the temporary file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="n">extension</span>
+        <span class="n">temp_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_temp_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">temp_filename</span></div>
+
+<div class="viewcode-block" id="ProjectConfiguration.get_orig_filename_with_extension"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration.get_orig_filename_with_extension">[docs]</a>    <span class="k">def</span> <span class="nf">get_orig_filename_with_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return path of file with name and extension. Extension should</span>
+<span class="sd">        be preceded by a period. For example, calling this function with extension</span>
+<span class="sd">        &quot;.bc&quot; should return something like &quot;.... /main.bc&quot;</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        extension: str :</span>
+<span class="sd">            extension of the file</span>
+<span class="sd">        name: str :</span>
+<span class="sd">            name of the file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        str</span>
+<span class="sd">            path of the file in the original directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span>
+        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="n">extension</span>
+        <span class="n">orig_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_orig_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">orig_filename</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Colin Cai, Abdalla Eltayeb, Shaokai Lin, Andrew Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

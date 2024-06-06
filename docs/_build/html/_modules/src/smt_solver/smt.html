@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.smt_solver.smt &mdash; GameTime 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GameTime
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">GameTime</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GameTime</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../src.html">src</a></li>
+      <li class="breadcrumb-item active">src.smt_solver.smt</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.smt_solver.smt</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">smt_solver.to_klee_format</span> <span class="kn">import</span> <span class="n">format_for_klee</span>
+<span class="kn">from</span> <span class="nn">smt_solver.extract_klee_input</span> <span class="kn">import</span> <span class="n">find_and_run_test</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">defaults</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span> <span class="nn">clang_helper</span>
+
+<div class="viewcode-block" id="compile_and_run_cplusplus"><a class="viewcode-back" href="../../../src.smt_solver.html#src.smt_solver.smt.compile_and_run_cplusplus">[docs]</a><span class="k">def</span> <span class="nf">compile_and_run_cplusplus</span><span class="p">(</span><span class="n">modify_bit_code_cpp_file</span><span class="p">,</span> <span class="n">modify_bit_code_exec_file</span><span class="p">,</span> <span class="n">input_c_file</span><span class="p">,</span> <span class="n">c_filename</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">,</span> <span class="n">all_labels_file</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">project_config</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compile and run a C++ file that modifies LLVM bitcode, then process the C file through several steps.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        modify_bit_code_cpp_file : str</span>
+<span class="sd">            Path to the C++ file that modifies the LLVM bitcode.</span>
+<span class="sd">        modify_bit_code_exec_file : str</span>
+<span class="sd">            Path to the executable generated from the C++ file.</span>
+<span class="sd">        input_c_file : str</span>
+<span class="sd">            Path to the input C file to be processed.</span>
+<span class="sd">        c_filename : str</span>
+<span class="sd">            The filename of the C file.</span>
+<span class="sd">        labels_file : str</span>
+<span class="sd">            Path to the file containing labels for the basic blocks.</span>
+<span class="sd">        all_labels_file : str</span>
+<span class="sd">            Path to the file containing all labels.</span>
+<span class="sd">        func_name : str</span>
+<span class="sd">            The name of the function to analyze.</span>
+<span class="sd">        output_dir : str</span>
+<span class="sd">            Directory to store output files.</span>
+<span class="sd">        project_config : object</span>
+<span class="sd">            Configuration object containing project settings, such as included files and compilation flags.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get llvm-config flags</span>
+    <span class="n">llvm_config_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;llvm-config&#39;</span><span class="p">,</span> <span class="s1">&#39;--cxxflags&#39;</span><span class="p">,</span> <span class="s1">&#39;--ldflags&#39;</span><span class="p">,</span> <span class="s1">&#39;--libs&#39;</span><span class="p">,</span> <span class="s1">&#39;core&#39;</span><span class="p">,</span> <span class="s1">&#39;support&#39;</span><span class="p">,</span> <span class="s1">&#39;bitreader&#39;</span><span class="p">,</span> <span class="s1">&#39;bitwriter&#39;</span><span class="p">,</span> <span class="s1">&#39;irreader&#39;</span><span class="p">]</span>
+    <span class="n">llvm_config_output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">llvm_config_command</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="c1"># Compile C++ file</span>
+    <span class="n">compile_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;clang++&#39;</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">modify_bit_code_exec_file</span><span class="p">,</span> <span class="n">modify_bit_code_cpp_file</span><span class="p">]</span> <span class="o">+</span> <span class="n">llvm_config_output</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">compile_command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1">#TODO: add extra flag and includes through project configuration</span>
+    <span class="n">compiled_file</span> <span class="o">=</span> <span class="n">clang_helper</span><span class="o">.</span><span class="n">compile_to_llvm_for_analysis</span><span class="p">(</span><span class="n">input_c_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">c_filename</span><span class="p">,</span> <span class="n">project_config</span><span class="o">.</span><span class="n">included</span><span class="p">,</span> <span class="n">project_config</span><span class="o">.</span><span class="n">compile_flags</span><span class="p">)</span>
+    <span class="n">inlined_file</span> <span class="o">=</span> <span class="n">clang_helper</span><span class="o">.</span><span class="n">inline_functions</span><span class="p">(</span><span class="n">compiled_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c_filename</span><span class="si">}</span><span class="s2">-inlined&quot;</span><span class="p">)</span>
+    <span class="n">input_bc_file</span> <span class="o">=</span> <span class="n">clang_helper</span><span class="o">.</span><span class="n">unroll_loops</span><span class="p">(</span><span class="n">inlined_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
+                                                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c_filename</span><span class="si">}</span><span class="s2">-unrolled&quot;</span><span class="p">,</span> <span class="n">project_config</span><span class="p">)</span>
+    
+
+    <span class="c1"># Run the compiled program</span>
+    <span class="c1"># TODO: change modify bc to take in bc file, not c file</span>
+    <span class="n">run_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;./&#39;</span> <span class="o">+</span> <span class="n">modify_bit_code_exec_file</span><span class="p">,</span> <span class="n">input_bc_file</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">,</span> <span class="n">all_labels_file</span><span class="p">,</span> <span class="n">func_name</span><span class="p">]</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="run_klee"><a class="viewcode-back" href="../../../src.smt_solver.html#src.smt_solver.smt.run_klee">[docs]</a><span class="k">def</span> <span class="nf">run_klee</span><span class="p">(</span><span class="n">klee_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run KLEE with the specified file.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        klee_file : str</span>
+<span class="sd">            Path to the file modified for KLEE execution.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">run_klee_command</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;klee&#39;</span><span class="p">,</span> <span class="n">klee_file</span><span class="p">]</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_klee_command</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="extract_labels_from_file"><a class="viewcode-back" href="../../../src.smt_solver.html#src.smt_solver.smt.extract_labels_from_file">[docs]</a><span class="k">def</span> <span class="nf">extract_labels_from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the block labels from the labels file corresponding to the specific path.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        filename:</span>
+<span class="sd">            A file containing all of the basic block labels of the path to be analyzed,</span>
+<span class="sd">            which is generated before running the SMT solver</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List[String]</span>
+<span class="sd">            A List of basic block labels</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignoring non-numeric value: </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+<div class="viewcode-block" id="run_smt"><a class="viewcode-back" href="../../../src.smt_solver.html#src.smt_solver.smt.run_smt">[docs]</a><span class="k">def</span> <span class="nf">run_smt</span><span class="p">(</span><span class="n">project_config</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">total_number_of_labels</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function generates the input for the program to be analzed to drive down the given path.</span>
+<span class="sd">    The input is generated by utilizing the symbolic execution engine KLEE, which uses SMT-Solvers like Z3</span>
+<span class="sd">    unde the hood. Before inputting the file into KLEE we need preprocess the file, which involves</span>
+<span class="sd">    modifiying the source code, to add the KLEE specific function calls and guide KLEE to only return</span>
+<span class="sd">    the input for the path given.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        project_config</span>
+<span class="sd">                :class:`~gametime.projectConfiguration.ProjectConfiguration`</span>
+<span class="sd">                object that represents the configuration of a GameTime project.</span>
+<span class="sd">        labels_file</span>
+<span class="sd">            A file containing all of the basic block labels of the path to be analyzed,</span>
+<span class="sd">            which is generated before running the SMT solver</span>
+<span class="sd">        output_dir</span>
+<span class="sd">            Path to outputfolder for all files generated by the SMT solver</span>
+<span class="sd">        total_number_of_labels</span>
+<span class="sd">            The total number of basic blocks in the path to be analyzed</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Boolean: A boolean indicating whether the path to be analyzed is feasible</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">c_file</span> <span class="o">=</span> <span class="n">project_config</span><span class="o">.</span><span class="n">name_orig_no_extension</span>
+    <span class="n">c_file_path</span> <span class="o">=</span> <span class="n">project_config</span><span class="o">.</span><span class="n">location_orig_file</span>
+    <span class="c1"># extract labels</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">extract_labels_from_file</span><span class="p">(</span><span class="n">labels_file</span><span class="p">)</span>
+    <span class="n">number_of_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+    <span class="c1"># format c file to klee </span>
+    <span class="n">klee_file_path</span> <span class="o">=</span> <span class="n">format_for_klee</span><span class="p">(</span><span class="n">c_file</span><span class="p">,</span> <span class="n">c_file_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">project_config</span><span class="o">.</span><span class="n">func</span><span class="p">,</span>  <span class="n">number_of_labels</span><span class="p">,</span> <span class="n">total_number_of_labels</span><span class="p">)</span>
+
+    <span class="c1"># insert assignments of global variables</span>
+    <span class="c1"># TODO: Find a way to not hard code path</span>
+    <span class="n">modify_bit_code_cpp_file</span> <span class="o">=</span> <span class="s1">&#39;../../src/smt_solver/modify_bitcode.cpp&#39;</span>
+    <span class="n">modify_bit_code_exec_file</span> <span class="o">=</span> <span class="s1">&#39;../../src/smt_solver/modify_bitcode&#39;</span>
+    <span class="n">compile_and_run_cplusplus</span><span class="p">(</span><span class="n">modify_bit_code_cpp_file</span><span class="p">,</span> <span class="n">modify_bit_code_exec_file</span><span class="p">,</span> <span class="n">klee_file_path</span><span class="p">,</span> <span class="n">c_file</span> <span class="o">+</span> <span class="s2">&quot;_klee_format&quot;</span><span class="p">,</span> <span class="n">labels_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_dir</span><span class="p">,</span> <span class="s2">&quot;labels_0.txt&quot;</span><span class="p">),</span> <span class="n">project_config</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">project_config</span><span class="p">)</span>
+    <span class="n">modified_klee_file_bc</span> <span class="o">=</span> <span class="n">klee_file_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;-unrolled&quot;</span> <span class="o">+</span> <span class="s2">&quot;_mod.bc&quot;</span>
+
+    <span class="c1"># run klee</span>
+    <span class="n">run_klee</span><span class="p">(</span><span class="n">modified_klee_file_bc</span><span class="p">)</span>
+
+    <span class="c1"># extract klee input</span>
+    <span class="k">return</span> <span class="n">find_and_run_test</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Colin Cai, Abdalla Eltayeb, Shaokai Lin, Andrew Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
