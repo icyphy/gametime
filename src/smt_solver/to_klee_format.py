@@ -11,16 +11,15 @@ class KleeTransformer(object):
         """
         Initialize the KleeTransformer with the AST, target function name, and label counts.
 
-        Parameters
-        ----------
-        ast : pycparser.c_ast.FileAST
-            The abstract syntax tree of the parsed C code.
-        function_name : str
-            The name of the function to be transformed.
-        total_path_labels : int
-            Total number of path labels.
-        total_number_of_labels : int
-            Total number of labels.
+        Parameters:
+            ast : pycparser.c_ast.FileAST
+                The abstract syntax tree of the parsed C code.
+            function_name : str
+                The name of the function to be transformed.
+            total_path_labels : int
+                Total number of path labels.
+            total_number_of_labels : int
+                Total number of labels
         """
         self.ast = ast
         self.function_name = function_name
@@ -33,10 +32,9 @@ class KleeTransformer(object):
         """
         Visit the AST to find the target function and generate a new main function.
 
-        Parameters
-        ----------
-        node : pycparser.c_ast.Node
-            The current AST node being visited.
+        Parameters:
+            node : pycparser.c_ast.Node
+                The current AST node being visited.
         """
         arg_types, arg_names = self.visit(node)
         self.new_main = self.gen_main(arg_types, arg_names)
@@ -45,15 +43,13 @@ class KleeTransformer(object):
         """
         Recursively visit nodes in the AST to find the target function and extract its parameters.
 
-        Parameters
-        ----------
-        node : pycparser.c_ast.Node
-            The current AST node being visited.
+        Parameters:
+            node : pycparser.c_ast.Node
+                The current AST node being visited.
 
-        Returns
-        -------
-        tuple
-            A tuple containing lists of argument types and argument names if the function is found, otherwise None.
+        Returns:
+            tuple
+                A tuple containing lists of argument types and argument names if the function is found, otherwise None.
         """
         if isinstance(node, FuncDef) and node.decl.name == self.function_name:
             params = node.decl.type.args.params
@@ -70,17 +66,15 @@ class KleeTransformer(object):
         """
         Generate a new main function that makes the function's parameters symbolic and calls the function.
 
-        Parameters
-        ----------
-        arg_types : list
-            A list of argument types for the function.
-        arg_names : list
-            A list of argument names for the function.
+        Parameters:
+            arg_types : list
+                A list of argument types for the function.
+            arg_names : list
+                A list of argument names for the function.
 
-        Returns
-        -------
-        pycparser.c_ast.FuncDef
-            The new main function definition.
+        Returns:
+            pycparser.c_ast.FuncDef
+                The new main function definition.
         """
         main_arg_types = ['int', 'char **']
         main_arg_names = ['argc', 'argv']
@@ -138,17 +132,15 @@ class KleeTransformer(object):
         """
         Generate the body of the new main function, making variables symbolic and calling the target function.
 
-        Parameters
-        ----------
-        arg_types : list
-            A list of argument types for the function.
-        arg_names : list
-            A list of argument names for the function.
+        Parameters:
+            arg_types : list
+                A list of argument types for the function.
+            arg_names : list
+                A list of argument names for the function.
 
-        Returns
-        -------
-        pycparser.c_ast.Compound
-            The compound statement representing the body of the new main function.
+        Returns:
+            pycparser.c_ast.Compound
+                The compound statement representing the body of the new main function.
         """
         body_items = []
         for arg_type, arg_name in zip(arg_types, arg_names):
@@ -200,25 +192,23 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, function_name, total_pat
     """
     Transform the given C file for use with KLEE by adding symbolic variables and assertions.
 
-    Parameters
-    ----------
-    c_file : str
-        The name of the C file.
-    c_file_path : str
-        The path to the C file.
-    c_file_gt_dir : str
-        The directory to save the transformed C file.
-    function_name : str
-        The name of the function to be transformed.
-    total_path_labels : int
-        Total number of path labels.
-    total_number_of_labels : int
-        Total number of labels.
+    Parameters:
+        c_file : str
+            The name of the C file.
+        c_file_path : str
+            The path to the C file.
+        c_file_gt_dir : str
+            The directory to save the transformed C file.
+        function_name : str
+            The name of the function to be transformed.
+        total_path_labels : int
+            Total number of path labels.
+        total_number_of_labels : int
+            Total number of labels.
 
-    Returns
-    -------
-    str
-        The path to the transformed C file.
+    Returns:
+        str:
+            The path to the transformed C file.
     """
     ast = parse_file(c_file_path, use_cpp=True,
                      cpp_path='clang',
