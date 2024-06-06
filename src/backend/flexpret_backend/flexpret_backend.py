@@ -26,22 +26,22 @@ static inline unsigned long long read_cycle_count() {
         super(FlexpretBackend, self).__init__(project_config, "Flexpret")
 
     def generate_executable_c(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
-        """Modifies the input program to use INPUTS and returns path to modifed C program.
+        """
+        Modifies the input program to use INPUTS and returns path to modifed C program.
 
-        Parameters
-        ----------
-        filepath: str :
-            Path to C file to modify with inputs.
-        func_name: str :
-            Name of function being analyzed.
-        inputs: str :
-            Path to the INPUTS file containing output of symbolic solver.
-        measure_folder: str :
-            The folder to store generated C code.
+        Parameters:
+            filepath: str :
+                Path to C file to modify with inputs.
+            func_name: str :
+                Name of function being analyzed.
+            inputs: str :
+                Path to the INPUTS file containing output of symbolic solver.
+            measure_folder: str :
+                The folder to store generated C code.
 
-        Returns
-        -------
-        Path to the modified C file.
+        Returns:
+            str:
+                Path to the modified C file.
         """
         exec_file = generate_executable(filepath, measure_folder, func_name, inputs, self.timing_func, True)
         return exec_file
@@ -50,18 +50,17 @@ static inline unsigned long long read_cycle_count() {
     def c_file_to_mem (self, stored_folder: str, file_name: str, c_filepath: str) -> str:
         """Use same Make file mechanism as Flexpret to generate .mem file from .c
 
-        Parameters
-        ----------
-        stored_folder: str :
-            Folder to put all the generated tempraries.
-        file_name: str :
-            Name of function being analyzed.
-        c_filepath: str :
-            Path to C file being executed.
+        Parameters:
+            stored_folder: str :
+                Folder to put all the generated tempraries.
+            file_name: str :
+                Name of function being analyzed.
+            c_filepath: str :
+                Path to C file being executed.
 
-        Returns
-        -------
-        Measured cycle count for C_FILEPATH.
+        Returns:
+            int:
+                Measured cycle count for C_FILEPATH.
         """
         # copy the MAKEFILE in FLEXPRET FOLDER to the STORED_FOLDER.
         makefile_template_path = os.path.join(self.project_config.gametime_path, "src", "backend", "flexpret_backend", "Makefile")
@@ -91,20 +90,20 @@ static inline unsigned long long read_cycle_count() {
         return mem_file_path
 
     def run_backend_and_parse_output(self, stored_folder: str,  mem_filepath: str) -> int:
-        """Run simulation on the .mem file generated. The measurements are stored in measure.out
+        """
+        Run simulation on the .mem file generated. The measurements are stored in measure.out
         Equivalent to: os.system(f"(cd {dir path of .mem file} && fp-emu --measure +ispm={file_name}.mem)")
 
-        Parameters
-        ----------
-        stored_folder: str :
-            Folder to put all the generated tempraries.
-        mem_filepath: str :
-            Path to the .mem file
-            :return the measurement value   
+        Parameters:
+            stored_folder: str :
+                Folder to put all the generated tempraries.
+            mem_filepath: str :
+                Path to the .mem file
+                :return the measurement value   
 
-        Returns
-        -------
-        Measured cycle count for MEM_FILEPATH.
+        Returns:
+            int:
+                Measured cycle count for MEM_FILEPATH.
         """
         cwd = os.getcwd()
         os.chdir(stored_folder)
@@ -131,18 +130,18 @@ static inline unsigned long long read_cycle_count() {
             raise GameTimeError("The measure output file is ill-formatted")
 
     def measure(self, inputs: str, measure_folder: str) -> int:
-        """Perform measurement using the backend.
+        """
+        Perform measurement using the backend.
 
-        Parameters
-        ----------
-        inputs: str:
-            the inputs to drive down a PATH in a file
-        measure_folder: str :
-            all generated files will be stored in MEASURE_FOLDER/{name of backend}
+        Parameters:
+            inputs: str:
+                the inputs to drive down a PATH in a file
+            measure_folder: str :
+                all generated files will be stored in MEASURE_FOLDER/{name of backend}
 
-        Returns
-        -------
-        The measured value of path
+        Returns:
+            int:
+                The measured value of path
         """
         stored_folder: str = measure_folder
         filepath: str = self.project_config.location_orig_file

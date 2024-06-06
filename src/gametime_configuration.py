@@ -119,17 +119,16 @@ class GametimeConfiguration(object):
 
 
 def read_gametime_config_yaml(yaml_config_path: str) -> GametimeConfiguration:
-    """Creates GametimeConfiguration from yaml files
+    """
+    Creates GametimeConfiguration from yaml files
 
-    Parameters
-    ----------
-    yaml_config_path: str :
-        path of the yaml config file that contains
+    Parameters:
+        yaml_config_path: str :
+            path of the yaml config file that contains
 
-    Returns
-    -------
-    GametimeConfiguration
-        GametimeConfiguration object that contains information from YAML file at yaml_config_path
+    Returns:
+        GametimeConfiguration
+            GametimeConfiguration object that contains information from YAML file at yaml_config_path
 
     """
     # Check file exists

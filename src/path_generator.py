@@ -44,15 +44,13 @@ class PathType(object):
     def get_description(path_type):
         """
 
-        Parameters
-        ----------
-        path_type : 
-            One of the predefined path types
+        Parameters:
+            path_type : 
+                One of the predefined path types
             
 
-        Returns
-        -------
-        One-word description of the path type provided.
+        Returns:
+            One-word description of the path type provided.
 
         """
         return ("worst" if path_type is PathType.WORST_CASE else
@@ -63,7 +61,8 @@ class PathType(object):
 
 
 class PathGenerator(object):
-    """Exposes static methods to generate objects of the ``Path`` class that
+    """
+    Exposes static methods to generate objects of the ``Path`` class that
     represent different types of feasible paths in the code being analyzed.
     
     This class is closely related to the ``Analyzer`` class: except
@@ -78,7 +77,8 @@ class PathGenerator(object):
     @staticmethod
     def generate_paths(analyzer, num_paths=10, path_type=PathType.WORST_CASE,
                       interval=None, use_ob_extraction=False):
-        """Generates a list of feasible paths of the code being analyzed,
+        """
+        Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.
         
         The type of the generated paths is determined by the path_type
@@ -106,31 +106,29 @@ class PathGenerator(object):
         ``loadBasisValuesFromFile`` or the method ``loadBasisValues`` in
         the ``Analyzer`` class.
 
-        Parameters
-        ----------
-        analyzer:
-            ``Analyzer`` object that maintains information about
-            the code being analyzed.
-        num_paths:
-            Upper bound on the number of paths to generate.
-        path_type:
-            Type of paths to generate, represented by a class variable of
-            the ``PathType`` class. The different types of paths are
-            described in the documentation of the ``PathType`` class.
-        interval:
-            ``Interval`` object that represents the interval of
-            values that the generated paths can have. If no
-            ``Interval`` object is provided, the interval of values
-            is considered to be all real numbers.
-        use_ob_extraction:
-            Boolean value specifiying whether to use overcomplete
-            basis extraction algorithm
+        Parameters:
+            analyzer:
+                ``Analyzer`` object that maintains information about
+                the code being analyzed.
+            num_paths:
+                Upper bound on the number of paths to generate.
+            path_type:
+                Type of paths to generate, represented by a class variable of
+                the ``PathType`` class. The different types of paths are
+                described in the documentation of the ``PathType`` class.
+            interval:
+                ``Interval`` object that represents the interval of
+                values that the generated paths can have. If no
+                ``Interval`` object is provided, the interval of values
+                is considered to be all real numbers.
+            use_ob_extraction:
+                Boolean value specifiying whether to use overcomplete
+                basis extraction algorithm
 
-        Returns
-        -------
-        List[Path]
-            List of feasible paths of the code being analyzed, each
-            represented by an object of the ``Path`` class.
+        Returns:
+            List[Path]
+                List of feasible paths of the code being analyzed, each
+                represented by an object of the ``Path`` class.
 
         """
         paths = None
@@ -186,35 +184,34 @@ class PathGenerator(object):
     def _generate_paths(analyzer, num_paths,
                        extremum=pulp_helper.Extremum.LONGEST,
                        interval=None, use_ob_extraction=False):
-        """Helper static method for the ``generatePaths`` static method.
+        """
+        Helper static method for the ``generatePaths`` static method.
         Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.
 
-        Parameters
-        ----------
-        analyzer:
-            ``Analyzer`` object that maintains information about
-            the code being analyzed.
-        num_paths:
-            Upper bound on the number of paths to generate.
-        extremum:
-            Type of paths to calculate (longest or shortest),
-            represented by an element of the ``Extremum`` class in
-            the ``pulpHelper`` module.
-        interval:
-            ``Interval`` object that represents the interval of
-            values that the generated paths can have. If
-            no ``Interval`` object is provided, the interval of values
-            is considered to be all real numbers.
-        use_ob_extraction:
-            Boolean value specifiying whether to use overcomplete
-            basis extraction algorithm
+        Parameters:
+            analyzer:
+                ``Analyzer`` object that maintains information about
+                the code being analyzed.
+            num_paths:
+                Upper bound on the number of paths to generate.
+            extremum:
+                Type of paths to calculate (longest or shortest),
+                represented by an element of the ``Extremum`` class in
+                the ``pulpHelper`` module.
+            interval:
+                ``Interval`` object that represents the interval of
+                values that the generated paths can have. If
+                no ``Interval`` object is provided, the interval of values
+                is considered to be all real numbers.
+            use_ob_extraction:
+                Boolean value specifiying whether to use overcomplete
+                basis extraction algorithm
 
-        Returns
-        -------
-        List[Path]
-            List of feasible paths of the code being analyzed,
-            each represented by an object of the ``Path`` class.
+        Returns:
+            List[Path]
+                List of feasible paths of the code being analyzed,
+                each represented by an object of the ``Path`` class.
 
         """
         if nx_helper.has_cycles(analyzer.dag):

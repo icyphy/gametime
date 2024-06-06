@@ -32,35 +32,31 @@ class Interval(object):
     @property
     def lower_bound(self) -> int:
         """
-        Returns
-        -------
-        Lower bound of the interval represented by this object, or `None` if the interval has no finite lower bound.
+        Returns:
+            Lower bound of the interval represented by this object, or `None` if the interval has no finite lower bound.
         """
         return self.lower
 
     @property
     def upper_bound(self) -> int:
         """
-        Returns
-        -------
-        Upper bound of the interval represented by this object, or `None` if the interval has no finite upper bound.
+        Returns:
+            Upper bound of the interval represented by this object, or `None` if the interval has no finite upper bound.
         """
         return self.upper
 
     def has_finite_lower_bound(self) -> bool:
         """
-        Returns
-        -------
-        `True` if, and only if, the represented interval has a finite lower bound.
+        Returns:
+            `True` if, and only if, the represented interval has a finite lower bound.
 
         """
         return self.lower is not None
 
     def has_finite_upper_bound(self) -> bool:
         """
-        Returns
-        -------
-        `True` if, and only if, the represented interval has a finite upper bound.
+        Returns:
+            `True` if, and only if, the represented interval has a finite upper bound.
 
         """
         return self.upper is not None

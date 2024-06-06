@@ -19,32 +19,27 @@ class ExecutableTransformer(object):
         self.hexvalues = hexvalues
 
     def visit_func(self, node):
-        """Visit the AST rooted at node. Generated the new main function and arguments definition.
+        """
+        Visit the AST rooted at node. Generated the new main function and arguments definition.
 
-        Parameters
-        ----------
-        node :
-            The root AST node being visited
-
-        Returns
-        -------
-        None
+        Parameters:
+            node :
+                The root AST node being visited
         """
         self.arg_types, self.arg_names = self.visit(node)
         self.new_main = self.gen_main(self.arg_types, self.arg_names)
         self.arguments = self.gen_arguments(self.arg_types, self.arg_names, self.hexvalues)
 
     def visit(self, node):
-        """Recursively viste the AST node until seeing the definition of the function being analyzed.
+        """
+        Recursively viste the AST node until seeing the definition of the function being analyzed.
 
-        Parameters
-        ----------
-        node :
-            Current AST node being analysized.
+        Parameters:
+            node :
+                Current AST node being analysized.
 
-        Returns
-        -------
-        (argument types of function being analyzed, argument names of function being analyzed)
+        Returns:
+            (argument types of function being analyzed, argument names of function being analyzed)
         """
         if isinstance(node, FuncDef) and node.decl.name == self.function_name:
             params = node.decl.type.args.params
@@ -58,18 +53,17 @@ class ExecutableTransformer(object):
                 return ret_val
 
     def gen_main(self, arg_types, arg_names):
-        """Generate the new MAIN function node.
+        """
+        Generate the new MAIN function node.
 
-        Parameters
-        ----------
-        arg_types :
-            Argument types of function being analyzed
-        arg_names :
-            Argument names of function being analyzed
+        Parameters:
+            arg_types :
+                Argument types of function being analyzed
+            arg_names :
+                Argument names of function being analyzed
 
-        Returns
-        -------
-        The new MAIN fucntion AST node.
+        Returns:
+            The new MAIN fucntion AST node.
         """
         main_arg_types = ['int', 'char **']
         main_arg_names = ['argc', 'argv']
@@ -124,18 +118,17 @@ class ExecutableTransformer(object):
         return new_main
 
     def gen_main_body(self, arg_types, arg_names):
-        """Generate the new MAIN function body. Including print statement, timing function call, driver function call.
+        """
+        Generate the new MAIN function body. Including print statement, timing function call, driver function call.
 
-        Parameters
-        ----------
-        arg_types :
-            Argument types of function being analyzed
-        arg_names :
-            Argument names of function being analyzed
+        Parameters:
+            arg_types :
+                Argument types of function being analyzed
+            arg_names :
+                Argument names of function being analyzed
 
-        Returns
-        -------
-        The new MAIN function AST node.
+        Returns:
+            The new MAIN function AST node.
         """
         body_items = []
         body_items.append(Decl(
@@ -232,103 +225,97 @@ class ExecutableTransformer(object):
         return Compound(block_items=body_items)
 
     def is_primitive(self, type_node):
-        """Return if the TYPE_NODE is primitive.
+        """
+        Return if the TYPE_NODE is primitive.
 
-        Parameters
-        ----------
-        type_node :
-            Pycparser type representation.
+        Parameters:
+            type_node :
+                Pycparser type representation.
 
-        Returns
-        -------
-        If TYPE_NODE is primitive.
+        Returns:
+            If TYPE_NODE is primitive.
         """
         return isinstance(type_node, TypeDecl) and isinstance(type_node.type, IdentifierType)
 
     def is_struct(self, type_node):
-        """Return if the TYPE_NODE is struct.
+        """
+        Return if the TYPE_NODE is struct.
 
-        Parameters
-        ----------
-        type_node :
-            Pycparser type representation.
+        Parameters:
+            type_node :
+                Pycparser type representation.
 
-        Returns
-        -------
-        If TYPE_NODE is struct.
+        Returns:
+            If TYPE_NODE is struct.
         """
         return isinstance(type_node, Struct)
 
     def is_array(self, type_node):
-        """Return if the TYPE_NODE is array.
+        """
+        Return if the TYPE_NODE is array.
 
-        Parameters
-        ----------
-        type_node :
-            Pycparser type representation.
+        Parameters:
+            type_node :
+                Pycparser type representation.
 
-        Returns
-        -------
-        If TYPE_NODE is array.
+        Returns:
+            If TYPE_NODE is array.
         """
         return isinstance(type_node, ArrayDecl)
     
 
     def generate_primitive_declaration(self, name, type_node, value):
-        """Generates the variable declaration of primitive variable.
+        """
+        Generates the variable declaration of primitive variable.
 
-        Parameters
-        ----------
-        name :
-            Variable name
-        type_node :
-            Pycparser type node for this variable.
-        value :
-            Value of the variable.
+        Parameters:
+            name :
+                Variable name
+            type_node :
+                Pycparser type node for this variable.
+            value :
+                Value of the variable.
 
-        Returns
-        -------
-        String representation of the variable declaration in C for primitive variables.
+        Returns:
+            String representation of the variable declaration in C for primitive variables.
         """
         generator = c_generator.CGenerator()
         type_str = generator.visit(type_node)
         return f"{type_str} {name} = {value};"
 
     def generate_struct_declaration(self, name, struct_type_node, value_dict):
-        """Generates the variable declaration of struct variable.
+        """
+        Generates the variable declaration of struct variable.
 
-        Parameters
-        ----------
-        name :
-            Variable name
-        struct_type_node :
-            Pycparser type node for this variable.
-        value_dict :
-            Dict of struct field to value. 
+        Parameters:
+            name :
+                Variable name
+            struct_type_node :
+                Pycparser type node for this variable.
+            value_dict :
+                Dict of struct field to value. 
 
-        Returns
-        -------
-        String representation of the variable declaration in C for struct variables.
+        Returns:
+            String representation of the variable declaration in C for struct variables.
         """
         #TODO: see how KLEE output structs
         field_inits = ", ".join([f"{value}" for field, value in value_dict.items()])
         return f"struct {struct_type_node.name} {name} = {{ {field_inits} }};"
 
     def generate_array_declaration(self, name, array_type_node, values):
-        """Generates the variable declaration of struct variable.
+        """
+        Generates the variable declaration of struct variable.
 
-        Parameters
-        ----------
-        name :
-            Variable name
-        array_type_node :
-            Pycparser type node for this variable.
-        value_dict :
-            Dict of struct field to value. 
+        Parameters:
+            name :
+                Variable name
+            array_type_node :
+                Pycparser type node for this variable.
+            value_dict :
+                Dict of struct field to value. 
 
-        Returns
-        -------
-        String representation of the variable declaration in C for array variables.
+        Returns:
+            String representation of the variable declaration in C for array variables.
         """
         #TODO: see how KLEE output nested array
         element_type_str = self.get_element_type_str(array_type_node)
@@ -343,16 +330,15 @@ class ExecutableTransformer(object):
         return f"{element_type_str} {name}[] = {{ {values_str} }};"
 
     def get_element_type_str(self, array_type_node):
-        """Get the base type of array type.
+        """
+        Get the base type of array type.
 
-        Parameters
-        ----------
-        array_type_node :
-            Array pycparser type node.
+        Parameters:
+            array_type_node :
+                Array pycparser type node.
 
-        Returns
-        -------
-        String representation of base type.
+        Returns:
+            String representation of base type.
         """
         generator = c_generator.CGenerator()
         # For arrays, recursively find the base type if it's a multi-dimensional array
@@ -361,23 +347,22 @@ class ExecutableTransformer(object):
         return generator.visit(array_type_node)
 
     def gen_arguments(self, arg_types, arg_names, hex_values):
-        """Generate the string representation of all argument declarations
+        """
+        Generate the string representation of all argument declarations
 
-        Parameters
-        ----------
-        arg_types :
-            List of argument types.
-            
-        arg_names :
-            List of argument names.
-            
-        hex_values :
-            List of hexidecimal values for arguments.
+        Parameters:
+            arg_types :
+                List of argument types.
+                
+            arg_names :
+                List of argument names.
+                
+            hex_values :
+                List of hexidecimal values for arguments.
             
 
-        Returns
-        -------
-        String representation of the arguments declarations.
+        Returns:
+            String representation of the arguments declarations.
         """
         declarations = []
         
@@ -396,31 +381,30 @@ class ExecutableTransformer(object):
         return "\n".join(declarations)
 
 def generate_executable(input_file, input_folder, function_name, hex_values_file, timing_function_body, include_flexpret = False):
-    """Modify INPUT_FILE to ingest the values and generate an executable C file. Stored as INPUT_FOLDER/driver.c
+    """
+    Modify INPUT_FILE to ingest the values and generate an executable C file. Stored as INPUT_FOLDER/driver.c
 
-    Parameters
-    ----------
-    input_file :
-        Input C program.
-        
-    input_folder :
-        The folder to output the modified C program.
+    Parameters:
+        input_file :
+            Input C program.
+            
+        input_folder :
+            The folder to output the modified C program.
 
-    function_name :
-        Name of function being analyzed.
-        
-    hex_values_file :
-        Input values used to modify C program. Should be a list of hexidecimal values, 1 per line.
-        
-    timing_function_body :
-        The timing function to use to get cycle count. Inserted before and after function call.
-        
-    include_flexpret :
-        Flag for if we need to include Flexpret specific headers. (Default value = False)
+        function_name :
+            Name of function being analyzed.
+            
+        hex_values_file :
+            Input values used to modify C program. Should be a list of hexidecimal values, 1 per line.
+            
+        timing_function_body :
+            The timing function to use to get cycle count. Inserted before and after function call.
+            
+        include_flexpret :
+            Flag for if we need to include Flexpret specific headers. (Default value = False)
 
-    Returns
-    -------
-    File path for the modified C program.
+    Returns:
+        File path for the modified C program.
     """
     #hex_values should be a list and each if either an element (primitive type), a list (array), a dict (struct, key is field name and value is value)
 

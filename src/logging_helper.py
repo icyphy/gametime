@@ -16,14 +16,14 @@ import sys
 
 
 def initialize(logger: logging.Logger) -> None:
-    """Initializes the logger provided with
+    """
+    Initializes the logger provided with
     `~logging.Formatter` and `~logging.StreamHandler`
     objects appropriate for GameTime.
 
-    Parameters
-    ----------
-    logger: logging.Logger :
-        Logger to initialize
+    Parameters:
+        logger: logging.Logger :
+            Logger to initialize
     """
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
