@@ -155,15 +155,14 @@
 
 <div class="viewcode-block" id="is_ilp_solver_name"><a class="viewcode-back" href="../../src.html#src.pulp_helper.is_ilp_solver_name">[docs]</a><span class="k">def</span> <span class="nf">is_ilp_solver_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">    Parameters:</span>
-<span class="sd">    name: str :  </span>
-<span class="sd">        Possible name of an integer linear programming solver</span>
+<span class="sd">        name: str :  </span>
+<span class="sd">            Possible name of an integer linear programming solver</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    bool</span>
-<span class="sd">        `True` if, and only if, the name provided is the name of a supported</span>
-<span class="sd">        integer linear programming solver.</span>
+<span class="sd">        bool:</span>
+<span class="sd">            `True` if, and only if, the name provided is the name of a supported</span>
+<span class="sd">            integer linear programming solver.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span></div>
@@ -172,8 +171,8 @@
 <div class="viewcode-block" id="get_ilp_solver_names"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_ilp_solver_names">[docs]</a><span class="k">def</span> <span class="nf">get_ilp_solver_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns:</span>
-<span class="sd">    List[str]</span>
-<span class="sd">        List of the names of the supported integer linear programming solvers.</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            List of the names of the supported integer linear programming solvers.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span></div>
@@ -183,10 +182,10 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    ilp_solver_name: str :</span>
-<span class="sd">        Name of the integer linear programming solver</span>
-<span class="sd">    project_config: ProjectConfiguration :</span>
-<span class="sd">        ProjectConfiguration object that represents the configuration of a GameTime project</span>
+<span class="sd">        ilp_solver_name: str :</span>
+<span class="sd">            Name of the integer linear programming solver</span>
+<span class="sd">        project_config: ProjectConfiguration :</span>
+<span class="sd">            ProjectConfiguration object that represents the configuration of a GameTime project</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        PuLP solver object that can interface with the integer</span>
@@ -210,15 +209,14 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    </span>
-<span class="sd">    ilp_solver: pulp.LpSolver :</span>
-<span class="sd">        Object of a PuLP solver class</span>
+<span class="sd">        ilp_solver: pulp.LpSolver :</span>
+<span class="sd">            Object of a PuLP solver class</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str, Optional</span>
-<span class="sd">        Name, as used by GameTime, of the integer linear programming</span>
-<span class="sd">        solver that the input PuLP solver object can interface with,</span>
-<span class="sd">        or `None`, if no such name can be found.</span>
+<span class="sd">        str, Optional:</span>
+<span class="sd">            Name, as used by GameTime, of the integer linear programming</span>
+<span class="sd">            solver that the input PuLP solver object can interface with,</span>
+<span class="sd">            or `None`, if no such name can be found.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ilp_solver_class</span> <span class="o">=</span> <span class="n">ilp_solver</span><span class="o">.</span><span class="vm">__class__</span>
@@ -233,13 +231,13 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    ilp_solver_name: str :</span>
-<span class="sd">        Name of an integer linear programming solver used by GameTime</span>
+<span class="sd">        ilp_solver_name: str :</span>
+<span class="sd">            Name of an integer linear programming solver used by GameTime</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        Proper name of an integer linear programming solver,</span>
-<span class="sd">        for display purposes.</span>
+<span class="sd">        str:</span>
+<span class="sd">            Proper name of an integer linear programming solver,</span>
+<span class="sd">            for display purposes.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_proper_name_map</span><span class="p">[</span><span class="n">ilp_solver_name</span><span class="p">]</span></div>
@@ -249,16 +247,17 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    List[str]</span>
-<span class="sd">        List of proper names of the supported integer linear programming</span>
-<span class="sd">        solvers, for display purposes.</span>
+<span class="sd">        List[str]:</span>
+<span class="sd">            List of proper names of the supported integer linear programming</span>
+<span class="sd">            solvers, for display purposes.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">get_proper_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_ilp_solver_names</span><span class="p">()]</span></div>
 
 
 <div class="viewcode-block" id="IlpProblem"><a class="viewcode-back" href="../../src.html#src.pulp_helper.IlpProblem">[docs]</a><span class="k">class</span> <span class="nc">IlpProblem</span><span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpProblem</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maintains information about an integer linear programming problem.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maintains information about an integer linear programming problem.</span>
 <span class="sd">    It is a subclass of the `~pulp.LpProblem` class of the PuLP</span>
 <span class="sd">    package, and stores additional information relevant to the GameTime</span>
 <span class="sd">    analysis, such as the value of the objective function of the problem.</span>
@@ -275,22 +274,20 @@
                        <span class="n">edge_flow_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">],</span>
                        <span class="n">edge</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    edge_flow_vars:</span>
-<span class="sd">        Dictionary that maps a positive integer to a PuLP variable that</span>
-<span class="sd">        represents the flow through an edge. (Each postive integer is</span>
-<span class="sd">        the position of an edge in the list of edges maintained by</span>
-<span class="sd">        the input ``Analyzer`` object.)</span>
-<span class="sd">    edge:</span>
-<span class="sd">        Edge whose corresponding PuLP variable is needed.</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        edge_flow_vars:</span>
+<span class="sd">            Dictionary that maps a positive integer to a PuLP variable that</span>
+<span class="sd">            represents the flow through an edge. (Each postive integer is</span>
+<span class="sd">            the position of an edge in the list of edges maintained by</span>
+<span class="sd">            the input ``Analyzer`` object.)</span>
+<span class="sd">        edge:</span>
+<span class="sd">            Edge whose corresponding PuLP variable is needed.</span>
 <span class="sd">        </span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    </span>
 <span class="sd">        PuLP variable that corresponds to the input edge.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -303,20 +300,19 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    edge_flow_vars:</span>
-<span class="sd">        Dictionary that maps a positive integer to a PuLP variable</span>
-<span class="sd">        that represents the flow through an edge. (Each postive integer</span>
-<span class="sd">        is the position of an edge in the list of edges maintained by</span>
-<span class="sd">        the input analyzer.)</span>
-<span class="sd">    edges:</span>
-<span class="sd">        List of edges whose corresponding PuLP variables are needed.</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        edge_flow_vars:</span>
+<span class="sd">            Dictionary that maps a positive integer to a PuLP variable</span>
+<span class="sd">            that represents the flow through an edge. (Each postive integer</span>
+<span class="sd">            is the position of an edge in the list of edges maintained by</span>
+<span class="sd">            the input analyzer.)</span>
+<span class="sd">        edges:</span>
+<span class="sd">            List of edges whose corresponding PuLP variables are needed.</span>
 <span class="sd">        </span>
 
 <span class="sd">    Returns:</span>
-
 <span class="sd">        List of the PuLP variables that correspond to each of</span>
 <span class="sd">        the edges in the input edge list.</span>
 
@@ -325,24 +321,25 @@
 
 
 <div class="viewcode-block" id="find_least_compatible_mu_max"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_least_compatible_mu_max">[docs]</a><span class="k">def</span> <span class="nf">find_least_compatible_mu_max</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function returns the least dealta in the underlying graph, as</span>
-<span class="sd">       specified by &#39;analyzer&#39;, that is feasible with the given set of</span>
-<span class="sd">       measurements as specified by &#39;paths&#39;. The method does not take into</span>
-<span class="sd">       account which paths are feasible and which not; it considers all_temp_files the</span>
-<span class="sd">       paths in the graph.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the least dealta in the underlying graph, as</span>
+<span class="sd">    specified by &#39;analyzer&#39;, that is feasible with the given set of</span>
+<span class="sd">    measurements as specified by &#39;paths&#39;. The method does not take into</span>
+<span class="sd">    account which paths are feasible and which not; it considers all_temp_files the</span>
+<span class="sd">    paths in the graph.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    paths:</span>
-<span class="sd">        List of paths used in the measurements. Each path is a list of</span>
-<span class="sd">        edges in the order in which they are visited by the path</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    float</span>
-<span class="sd">        A floating point value---the least delta compatible with the</span>
-<span class="sd">        measurements</span>
+<span class="sd">        float:</span>
+<span class="sd">            A floating point value---the least delta compatible with the</span>
+<span class="sd">            measurements</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
@@ -397,26 +394,26 @@
 <span class="c1"># compact</span>
 <div class="viewcode-block" id="find_longest_path_with_delta"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_longest_path_with_delta">[docs]</a><span class="k">def</span> <span class="nf">find_longest_path_with_delta</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span>
                                  <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This functions finds the longest/shortest path compatible with the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This functions finds the longest/shortest path compatible with the</span>
 <span class="sd">        measured lengths of paths, as given in &#39;paths&#39;, such the actual</span>
 <span class="sd">        lengths are within &#39;delta&#39; of the measured lengths</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    paths:</span>
-<span class="sd">        List of paths used in the measurements. Each path is a list of</span>
-<span class="sd">        edges in the order in which they are visited by the path</span>
-<span class="sd">    delta:</span>
-<span class="sd">        the maximal limit by which the length of a measured path is</span>
-<span class="sd">        allowed to differ from the measured value</span>
-<span class="sd">    extremum:</span>
-<span class="sd">        Specifies whether we are calculating Extremum.LONGEST or </span>
-<span class="sd">        Extremum.SHORTEST</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        delta:</span>
+<span class="sd">            the maximal limit by which the length of a measured path is</span>
+<span class="sd">            allowed to differ from the measured value</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Specifies whether we are calculating Extremum.LONGEST or </span>
+<span class="sd">            Extremum.SHORTEST</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    </span>
 <span class="sd">        Pair consisting of the resulting path and the ILP problem used to</span>
 <span class="sd">        calculate the path</span>
 
@@ -432,17 +429,17 @@
 
 
 <div class="viewcode-block" id="make_compact"><a class="viewcode-back" href="../../src.html#src.pulp_helper.make_compact">[docs]</a><span class="k">def</span> <span class="nf">make_compact</span><span class="p">(</span><span class="n">dag</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to create a compact representation of the given graph</span>
-<span class="sd">         Compact means that if in the original graph, there is a simple</span>
-<span class="sd">         path without any branching between two nodes, then in the resulting</span>
-<span class="sd">         graph the entire simple path is replaced by only one edge</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to create a compact representation of the given graph</span>
+<span class="sd">    Compact means that if in the original graph, there is a simple</span>
+<span class="sd">    path without any branching between two nodes, then in the resulting</span>
+<span class="sd">    graph the entire simple path is replaced by only one edge</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    dag:</span>
-<span class="sd">        The graph that get compactified</span>
+<span class="sd">        dag:</span>
+<span class="sd">            The graph that get compactified</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    </span>
+<span class="sd">    Returns:  </span>
 <span class="sd">        A mapping (vertex, vertex) -&gt; edge_number so that the edge</span>
 <span class="sd">        (vertex, vertex) in the original graph &#39;dag&#39; gets mapped to</span>
 <span class="sd">        the edge with number &#39;edge_number&#39;. All edges on a simple path</span>
@@ -484,39 +481,39 @@
 <div class="viewcode-block" id="generate_and_solve_core_problem"><a class="viewcode-back" href="../../src.html#src.pulp_helper.generate_and_solve_core_problem">[docs]</a><span class="k">def</span> <span class="nf">generate_and_solve_core_problem</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">path_function_upper</span><span class="p">,</span>
                                     <span class="n">path_function_lower</span><span class="p">,</span> <span class="n">weights_positive</span><span class="p">,</span>
                                     <span class="n">print_problem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function actually constructs the ILP to find the longest path</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function actually constructs the ILP to find the longest path</span>
 <span class="sd">    in the graph specified by &#39;analyzer&#39; using the set of measured paths given</span>
 <span class="sd">    by &#39;paths&#39;.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed. Among others, contains the underlying</span>
-<span class="sd">        DAG or the collection of infeasible paths.</span>
-<span class="sd">    paths:</span>
-<span class="sd">        List of paths used in the measurements. Each path is a list of</span>
-<span class="sd">        edges in the order in which they are visited by the path</span>
-<span class="sd">    pathFunctionUpper:</span>
-<span class="sd">        Function of type: path -&gt; float that for a given path should</span>
-<span class="sd">        return the upper bound on the length of the given path. The</span>
-<span class="sd">        input &#39;path&#39; is always from &#39;paths&#39;</span>
-<span class="sd">    pathFunctionLower:</span>
-<span class="sd">        Function of type: path -&gt; float that for a given path should</span>
-<span class="sd">        return the upper bound on the length of the given path. The</span>
-<span class="sd">        input &#39;path&#39; is always from &#39;paths&#39;</span>
-<span class="sd">    weightsPositive:</span>
-<span class="sd">        Boolean value specifying whether the individual edge weight are</span>
-<span class="sd">        required to be at least 0 (if set to True) or can be arbitrary</span>
-<span class="sd">        real value (if set to False)</span>
-<span class="sd">    printProblem:</span>
-<span class="sd">        Boolean value used for debugging. If set to true, the generated</span>
-<span class="sd">        ILP is printed.</span>
-<span class="sd">    extremum:</span>
-<span class="sd">        Specifies whether we are calculating Extremum.LONGEST or </span>
-<span class="sd">        Extremum.SHORTEST</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed. Among others, contains the underlying</span>
+<span class="sd">            DAG or the collection of infeasible paths.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        pathFunctionUpper:</span>
+<span class="sd">            Function of type: path -&gt; float that for a given path should</span>
+<span class="sd">            return the upper bound on the length of the given path. The</span>
+<span class="sd">            input &#39;path&#39; is always from &#39;paths&#39;</span>
+<span class="sd">        pathFunctionLower:</span>
+<span class="sd">            Function of type: path -&gt; float that for a given path should</span>
+<span class="sd">            return the upper bound on the length of the given path. The</span>
+<span class="sd">            input &#39;path&#39; is always from &#39;paths&#39;</span>
+<span class="sd">        weightsPositive:</span>
+<span class="sd">            Boolean value specifying whether the individual edge weight are</span>
+<span class="sd">            required to be at least 0 (if set to True) or can be arbitrary</span>
+<span class="sd">            real value (if set to False)</span>
+<span class="sd">        printProblem:</span>
+<span class="sd">            Boolean value used for debugging. If set to true, the generated</span>
+<span class="sd">            ILP is printed.</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Specifies whether we are calculating Extremum.LONGEST or </span>
+<span class="sd">            Extremum.SHORTEST</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    </span>
+<span class="sd">    Returns:   </span>
 <span class="sd">        Triple consisting of the length of the longest path found, the actual</span>
 <span class="sd">        path and the ILP problem generated.</span>
 
@@ -698,21 +695,21 @@
 
 
 <div class="viewcode-block" id="find_worst_expressible_path"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_worst_expressible_path">[docs]</a><span class="k">def</span> <span class="nf">find_worst_expressible_path</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">bound</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to find the longest path in the underlying graph of &#39;analyzer&#39;</span>
-<span class="sd">        assuming the lengths of all_temp_files measured paths are between -1 and 1.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to find the longest path in the underlying graph of &#39;analyzer&#39;</span>
+<span class="sd">    assuming the lengths of all_temp_files measured paths are between -1 and 1.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    paths:</span>
-<span class="sd">        List of paths used in the measurements. Each path is a list of</span>
-<span class="sd">        edges in the order in which they are visited by the path</span>
-<span class="sd">    bound:</span>
-<span class="sd">        ???</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        bound:</span>
+<span class="sd">            ???</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    </span>
+<span class="sd">    Returns: </span>
 <span class="sd">        Triple consisting of the length of the longsest path, the path itself</span>
 <span class="sd">        and the ILP solved to find the path.</span>
 
@@ -722,27 +719,27 @@
 
 
 <div class="viewcode-block" id="find_goodness_of_fit"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_goodness_of_fit">[docs]</a><span class="k">def</span> <span class="nf">find_goodness_of_fit</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">basis</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is here only for test purposes. Each path pi in `paths&#39;,</span>
-<span class="sd">        can be expressed as a linear combination</span>
-<span class="sd">              pi = a_1 b_1 + ... + a_n b_n</span>
-<span class="sd">        of paths b_i from `basis`. This function returns the least number `c`</span>
-<span class="sd">        such that every path can be expressed as a linear combination of basis</span>
-<span class="sd">        paths b_i such that the sum of absolute value of coefficients is at</span>
-<span class="sd">        most `c`: |a_1| + |a_2| + ... + |a_n| &lt;= c</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is here only for test purposes. Each path pi in `paths&#39;,</span>
+<span class="sd">    can be expressed as a linear combination</span>
+<span class="sd">    pi = a_1 b_1 + ... + a_n b_n</span>
+<span class="sd">    of paths b_i from `basis`. This function returns the least number `c`</span>
+<span class="sd">    such that every path can be expressed as a linear combination of basis</span>
+<span class="sd">    paths b_i such that the sum of absolute value of coefficients is at</span>
+<span class="sd">    most `c`: |a_1| + |a_2| + ... + |a_n| &lt;= c</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    paths:</span>
-<span class="sd">        List of paths that we want to find out how well can be</span>
-<span class="sd">        expressed as a linear combination of paths in `basis`</span>
-<span class="sd">    basis:</span>
-<span class="sd">        List of paths that are used to express `paths` as a linear</span>
-<span class="sd">        combination of</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths that we want to find out how well can be</span>
+<span class="sd">            expressed as a linear combination of paths in `basis`</span>
+<span class="sd">        basis:</span>
+<span class="sd">            List of paths that are used to express `paths` as a linear</span>
+<span class="sd">            combination of</span>
 
 <span class="sd">    Returns:</span>
-
 <span class="sd">        The number `c` as described in the paragraph above.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -798,14 +795,15 @@
 
 
 <div class="viewcode-block" id="find_minimal_overcomplete_basis"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_minimal_overcomplete_basis">[docs]</a><span class="k">def</span> <span class="nf">find_minimal_overcomplete_basis</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is here only for test purposes. The functions finds the</span>
-<span class="sd">        smallest set of &#39;basis paths&#39; with the following property: Each path pi</span>
-<span class="sd">        in `paths&#39;, can be expressed as a linear combination</span>
-<span class="sd">                  pi = a_1 b_1 + ... + a_n b_n</span>
-<span class="sd">        of paths b_i from `basis`. This function finds the set of basis paths</span>
-<span class="sd">        such that every path can be expressed as a linear combination of basis</span>
-<span class="sd">        paths b_i  such that the sum of absolute value of coefficients is at</span>
-<span class="sd">        most &#39;k&#39;: |a_1| + |a_2| + ... + |a_n| &lt;= k</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is here only for test purposes. The functions finds the</span>
+<span class="sd">    smallest set of &#39;basis paths&#39; with the following property: Each path pi</span>
+<span class="sd">    in `paths&#39;, can be expressed as a linear combination</span>
+<span class="sd">    pi = a_1 b_1 + ... + a_n b_n</span>
+<span class="sd">    of paths b_i from `basis`. This function finds the set of basis paths</span>
+<span class="sd">    such that every path can be expressed as a linear combination of basis</span>
+<span class="sd">    paths b_i  such that the sum of absolute value of coefficients is at</span>
+<span class="sd">    most &#39;k&#39;: |a_1| + |a_2| + ... + |a_n| &lt;= k</span>
 
 <span class="sd">    Parameters:</span>
 <span class="sd">        analyzer:</span>
@@ -820,7 +818,6 @@
 
 
 <span class="sd">    Returns:</span>
-
 <span class="sd">        List of paths satisfying the condition stated above</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -883,23 +880,23 @@
 
 
 <div class="viewcode-block" id="find_extreme_path"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_extreme_path">[docs]</a><span class="k">def</span> <span class="nf">find_extreme_path</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determines either the longest or the shortest path through the DAG</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines either the longest or the shortest path through the DAG</span>
 <span class="sd">    with the constraints stored in the ``Analyzer`` object provided.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    analyzer:</span>
-<span class="sd">        ``Analyzer`` object that maintains information about</span>
-<span class="sd">        the code being analyzed.</span>
-<span class="sd">    extremum:</span>
-<span class="sd">        Type of extreme path to calculate.</span>
-<span class="sd">    interval:</span>
-<span class="sd">        ``Interval`` object that represents the interval of values</span>
-<span class="sd">        that the generated paths can have. If no ``Interval`` object</span>
-<span class="sd">        is provided, the interval of values is considered to be</span>
-<span class="sd">        all_temp_files real numbers.</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Type of extreme path to calculate.</span>
+<span class="sd">        interval:</span>
+<span class="sd">            ``Interval`` object that represents the interval of values</span>
+<span class="sd">            that the generated paths can have. If no ``Interval`` object</span>
+<span class="sd">            is provided, the interval of values is considered to be</span>
+<span class="sd">            all_temp_files real numbers.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">    </span>
+<span class="sd">    Returns:   </span>
 <span class="sd">        Tuple whose first element is the longest or the shortest path</span>
 <span class="sd">        through the DAG, as a list of nodes along the path (ordered</span>
 <span class="sd">        by traversal from source to sink), and whose second element is</span>
@@ -1095,17 +1092,16 @@
 
 
 <span class="k">def</span> <span class="nf">_move_ilp_files</span><span class="p">(</span><span class="n">source_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Moves the files that are generated when an integer linear program</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moves the files that are generated when an integer linear program</span>
 <span class="sd">    is solved, from the source directory whose location is provided</span>
 <span class="sd">    to the destination directory whose location is provided.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    source_dir : </span>
-<span class="sd">        Location of the source directory</span>
-<span class="sd">    dest_dir :</span>
-<span class="sd">        Location of the destination directory</span>
-
-
+<span class="sd">        source_dir : </span>
+<span class="sd">            Location of the source directory</span>
+<span class="sd">        dest_dir :</span>
+<span class="sd">            Location of the destination directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">move_files</span><span class="p">([</span><span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.lp&quot;</span><span class="p">,</span> <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.mps&quot;</span><span class="p">,</span>
                 <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.prt&quot;</span><span class="p">,</span> <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.sol&quot;</span><span class="p">],</span>
@@ -1113,7 +1109,8 @@
 
 
 <span class="k">def</span> <span class="nf">_remove_temp_ilp_files</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes the temporary files that are generated when an</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the temporary files that are generated when an</span>
 <span class="sd">    integer linear program is solved.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>

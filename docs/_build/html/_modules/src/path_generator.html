@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -119,12 +119,12 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        path_type : </span>
-<span class="sd">            One of the predefined path types</span>
+<span class="sd">            path_type : </span>
+<span class="sd">                One of the predefined path types</span>
 <span class="sd">            </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        One-word description of the path type provided.</span>
+<span class="sd">            One-word description of the path type provided.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;worst&quot;</span> <span class="k">if</span> <span class="n">path_type</span> <span class="ow">is</span> <span class="n">PathType</span><span class="o">.</span><span class="n">WORST_CASE</span> <span class="k">else</span>
@@ -135,7 +135,8 @@
 
 
 <div class="viewcode-block" id="PathGenerator"><a class="viewcode-back" href="../../src.html#src.path_generator.PathGenerator">[docs]</a><span class="k">class</span> <span class="nc">PathGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exposes static methods to generate objects of the ``Path`` class that</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exposes static methods to generate objects of the ``Path`` class that</span>
 <span class="sd">    represent different types of feasible paths in the code being analyzed.</span>
 <span class="sd">    </span>
 <span class="sd">    This class is closely related to the ``Analyzer`` class: except</span>
@@ -150,7 +151,8 @@
 <div class="viewcode-block" id="PathGenerator.generate_paths"><a class="viewcode-back" href="../../src.html#src.path_generator.PathGenerator.generate_paths">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">generate_paths</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">num_paths</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">path_type</span><span class="o">=</span><span class="n">PathType</span><span class="o">.</span><span class="n">WORST_CASE</span><span class="p">,</span>
                       <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_ob_extraction</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a list of feasible paths of the code being analyzed,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a list of feasible paths of the code being analyzed,</span>
 <span class="sd">        each represented by an object of the ``Path`` class.</span>
 <span class="sd">        </span>
 <span class="sd">        The type of the generated paths is determined by the path_type</span>
@@ -179,28 +181,28 @@
 <span class="sd">        the ``Analyzer`` class.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        analyzer:</span>
-<span class="sd">            ``Analyzer`` object that maintains information about</span>
-<span class="sd">            the code being analyzed.</span>
-<span class="sd">        num_paths:</span>
-<span class="sd">            Upper bound on the number of paths to generate.</span>
-<span class="sd">        path_type:</span>
-<span class="sd">            Type of paths to generate, represented by a class variable of</span>
-<span class="sd">            the ``PathType`` class. The different types of paths are</span>
-<span class="sd">            described in the documentation of the ``PathType`` class.</span>
-<span class="sd">        interval:</span>
-<span class="sd">            ``Interval`` object that represents the interval of</span>
-<span class="sd">            values that the generated paths can have. If no</span>
-<span class="sd">            ``Interval`` object is provided, the interval of values</span>
-<span class="sd">            is considered to be all real numbers.</span>
-<span class="sd">        use_ob_extraction:</span>
-<span class="sd">            Boolean value specifiying whether to use overcomplete</span>
-<span class="sd">            basis extraction algorithm</span>
+<span class="sd">            analyzer:</span>
+<span class="sd">                ``Analyzer`` object that maintains information about</span>
+<span class="sd">                the code being analyzed.</span>
+<span class="sd">            num_paths:</span>
+<span class="sd">                Upper bound on the number of paths to generate.</span>
+<span class="sd">            path_type:</span>
+<span class="sd">                Type of paths to generate, represented by a class variable of</span>
+<span class="sd">                the ``PathType`` class. The different types of paths are</span>
+<span class="sd">                described in the documentation of the ``PathType`` class.</span>
+<span class="sd">            interval:</span>
+<span class="sd">                ``Interval`` object that represents the interval of</span>
+<span class="sd">                values that the generated paths can have. If no</span>
+<span class="sd">                ``Interval`` object is provided, the interval of values</span>
+<span class="sd">                is considered to be all real numbers.</span>
+<span class="sd">            use_ob_extraction:</span>
+<span class="sd">                Boolean value specifiying whether to use overcomplete</span>
+<span class="sd">                basis extraction algorithm</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[Path]</span>
-<span class="sd">            List of feasible paths of the code being analyzed, each</span>
-<span class="sd">            represented by an object of the ``Path`` class.</span>
+<span class="sd">            List[Path]</span>
+<span class="sd">                List of feasible paths of the code being analyzed, each</span>
+<span class="sd">                represented by an object of the ``Path`` class.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="kc">None</span>
@@ -256,33 +258,34 @@
     <span class="k">def</span> <span class="nf">_generate_paths</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">num_paths</span><span class="p">,</span>
                        <span class="n">extremum</span><span class="o">=</span><span class="n">pulp_helper</span><span class="o">.</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">,</span>
                        <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_ob_extraction</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper static method for the ``generatePaths`` static method.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Helper static method for the ``generatePaths`` static method.</span>
 <span class="sd">        Generates a list of feasible paths of the code being analyzed,</span>
 <span class="sd">        each represented by an object of the ``Path`` class.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        analyzer:</span>
-<span class="sd">            ``Analyzer`` object that maintains information about</span>
-<span class="sd">            the code being analyzed.</span>
-<span class="sd">        num_paths:</span>
-<span class="sd">            Upper bound on the number of paths to generate.</span>
-<span class="sd">        extremum:</span>
-<span class="sd">            Type of paths to calculate (longest or shortest),</span>
-<span class="sd">            represented by an element of the ``Extremum`` class in</span>
-<span class="sd">            the ``pulpHelper`` module.</span>
-<span class="sd">        interval:</span>
-<span class="sd">            ``Interval`` object that represents the interval of</span>
-<span class="sd">            values that the generated paths can have. If</span>
-<span class="sd">            no ``Interval`` object is provided, the interval of values</span>
-<span class="sd">            is considered to be all real numbers.</span>
-<span class="sd">        use_ob_extraction:</span>
-<span class="sd">            Boolean value specifiying whether to use overcomplete</span>
-<span class="sd">            basis extraction algorithm</span>
+<span class="sd">            analyzer:</span>
+<span class="sd">                ``Analyzer`` object that maintains information about</span>
+<span class="sd">                the code being analyzed.</span>
+<span class="sd">            num_paths:</span>
+<span class="sd">                Upper bound on the number of paths to generate.</span>
+<span class="sd">            extremum:</span>
+<span class="sd">                Type of paths to calculate (longest or shortest),</span>
+<span class="sd">                represented by an element of the ``Extremum`` class in</span>
+<span class="sd">                the ``pulpHelper`` module.</span>
+<span class="sd">            interval:</span>
+<span class="sd">                ``Interval`` object that represents the interval of</span>
+<span class="sd">                values that the generated paths can have. If</span>
+<span class="sd">                no ``Interval`` object is provided, the interval of values</span>
+<span class="sd">                is considered to be all real numbers.</span>
+<span class="sd">            use_ob_extraction:</span>
+<span class="sd">                Boolean value specifiying whether to use overcomplete</span>
+<span class="sd">                basis extraction algorithm</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[Path]</span>
-<span class="sd">            List of feasible paths of the code being analyzed,</span>
-<span class="sd">            each represented by an object of the ``Path`` class.</span>
+<span class="sd">            List[Path]</span>
+<span class="sd">                List of feasible paths of the code being analyzed,</span>
+<span class="sd">                each represented by an object of the ``Path`` class.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">nx_helper</span><span class="o">.</span><span class="n">has_cycles</span><span class="p">(</span><span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span><span class="p">):</span>

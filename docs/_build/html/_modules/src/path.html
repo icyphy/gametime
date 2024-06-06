@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -97,7 +97,8 @@
 
 
 <div class="viewcode-block" id="Path"><a class="viewcode-back" href="../../src.html#src.path.Path">[docs]</a><span class="k">class</span> <span class="nc">Path</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maintains a representation of, and information about,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maintains a representation of, and information about,</span>
 <span class="sd">    a single path in the code that is being analyzed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -163,12 +164,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Path.write_ilp_problem_to_lp_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_ilp_problem_to_lp_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_ilp_problem_to_lp_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes, to an LP file, the integer linear programming problem that,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes, to an LP file, the integer linear programming problem that,</span>
 <span class="sd">        when solved, produced this path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ilp_problem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -189,20 +191,21 @@
 <div class="viewcode-block" id="Path.get_nodes"><a class="viewcode-back" href="../../src.html#src.path.Path.get_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">get_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the IDs of the nodes in</span>
-<span class="sd">            a directed acyclic graph along this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the IDs of the nodes in</span>
+<span class="sd">                a directed acyclic graph along this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_nodes_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_nodes_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_nodes_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the IDs of the nodes in a directed acyclic graph</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the IDs of the nodes in a directed acyclic graph</span>
 <span class="sd">        along this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -217,18 +220,19 @@
 
 <div class="viewcode-block" id="Path.read_nodes_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_nodes_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_nodes_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the IDs of the nodes in a directed acyclic graph</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the IDs of the nodes in a directed acyclic graph</span>
 <span class="sd">        along a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">            </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[str]</span>
-<span class="sd">            IDs of the nodes in a directed acyclic graph along a path,</span>
-<span class="sd">            represented as a list of strings.</span>
+<span class="sd">            List[str]</span>
+<span class="sd">                IDs of the nodes in a directed acyclic graph along a path,</span>
+<span class="sd">                represented as a list of strings.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -246,20 +250,21 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the line numbers of</span>
-<span class="sd">            the source-level statements that lie along this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the line numbers of</span>
+<span class="sd">                the source-level statements that lie along this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">lineNumber</span><span class="p">)</span> <span class="k">for</span> <span class="n">lineNumber</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">line_numbers</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="Path.write_line_numbers_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_line_numbers_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_line_numbers_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the line numbers of the source-level statements that</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the line numbers of the source-level statements that</span>
 <span class="sd">        lie along this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str:</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str:</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -274,17 +279,18 @@
 
 <div class="viewcode-block" id="Path.read_line_numbers_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_line_numbers_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_line_numbers_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the line numbers of the source-level statements that</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the line numbers of the source-level statements that</span>
 <span class="sd">        lie along a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[int]</span>
-<span class="sd">            Line numbers of the source-level statements along this path,</span>
-<span class="sd">            represented as a list of positive integers.</span>
+<span class="sd">            List[int]</span>
+<span class="sd">                Line numbers of the source-level statements along this path,</span>
+<span class="sd">                represented as a list of positive integers.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -302,19 +308,19 @@
 <div class="viewcode-block" id="Path.get_conditions"><a class="viewcode-back" href="../../src.html#src.path.Path.get_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">get_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the conditions along this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the conditions along this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_conditions_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_conditions_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_conditions_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the conditions along this path to a file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the conditions along this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -328,15 +334,16 @@
 
 <div class="viewcode-block" id="Path.read_conditions_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_conditions_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_conditions_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the conditions along a path from a file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the conditions along a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[str]</span>
-<span class="sd">            Conditions along a path, represented as a list of strings.</span>
+<span class="sd">            List[str]:</span>
+<span class="sd">                Conditions along a path, represented as a list of strings.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -355,9 +362,9 @@
 <div class="viewcode-block" id="Path.get_condition_edges"><a class="viewcode-back" href="../../src.html#src.path.Path.get_condition_edges">[docs]</a>    <span class="k">def</span> <span class="nf">get_condition_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the numbers of the conditions along</span>
-<span class="sd">            this path, and the edges that are associated with the conditions.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the numbers of the conditions along</span>
+<span class="sd">                this path, and the edges that are associated with the conditions.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -369,12 +376,13 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_condition_edges_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_condition_edges_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_condition_edges_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the numbers of the conditions along this path, and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the numbers of the conditions along this path, and</span>
 <span class="sd">        the edges that are associated with the conditions, to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -390,18 +398,19 @@
 
 <div class="viewcode-block" id="Path.read_condition_edges_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_condition_edges_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_condition_edges_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the numbers of the conditions along a path, and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the numbers of the conditions along a path, and</span>
 <span class="sd">        the edges that are associated with the conditions, from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">         Dict[int, Tuple[str]]</span>
-<span class="sd">            Dictionary that associates the number of a condition with</span>
-<span class="sd">            the edge in the directed acyclic graph that is associated with</span>
-<span class="sd">            the condition. The edge is represented as a tuple.</span>
+<span class="sd">            Dict[int, Tuple[str]]:</span>
+<span class="sd">                Dictionary that associates the number of a condition with</span>
+<span class="sd">                the edge in the directed acyclic graph that is associated with</span>
+<span class="sd">                the condition. The edge is represented as a tuple.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -425,14 +434,14 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        condition_nums: List[int] :</span>
-<span class="sd">            List of conditions</span>
+<span class="sd">            condition_nums: List[int] :</span>
+<span class="sd">                List of conditions</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List[Tuple[str]]</span>
-<span class="sd">            List of the edges that are associated with the conditions</span>
-<span class="sd">            (along this path) whose numbers are provided. Each edge is</span>
-<span class="sd">            represented as a tuple, and appears only once in the list.</span>
+<span class="sd">            List[Tuple[str]]:</span>
+<span class="sd">                List of the edges that are associated with the conditions</span>
+<span class="sd">                (along this path) whose numbers are provided. Each edge is</span>
+<span class="sd">                represented as a tuple, and appears only once in the list.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">condition_edges</span><span class="p">[</span><span class="n">conditionNum</span><span class="p">]</span>
@@ -441,9 +450,9 @@
 <div class="viewcode-block" id="Path.get_condition_truths"><a class="viewcode-back" href="../../src.html#src.path.Path.get_condition_truths">[docs]</a>    <span class="k">def</span> <span class="nf">get_condition_truths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the line numbers of the conditional points</span>
-<span class="sd">            in the code being analyzed, along with their truth values.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the line numbers of the conditional points</span>
+<span class="sd">                in the code being analyzed, along with their truth values.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -455,12 +464,13 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_condition_truths_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_condition_truths_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_condition_truths_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the line numbers of the conditional points in the code</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the line numbers of the conditional points in the code</span>
 <span class="sd">        being analyzed, along with their truth values, to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">condition_truths_file_handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -475,20 +485,20 @@
 
 <div class="viewcode-block" id="Path.read_condition_truths_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_condition_truths_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_condition_truths_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the line numbers of the conditional points in the code</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the line numbers of the conditional points in the code</span>
 <span class="sd">        being analyzed, along with their truth values along a path,</span>
 <span class="sd">        from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">            </span>
-
 <span class="sd">        Returns:</span>
-<span class="sd">        Dict[int, bool]</span>
-<span class="sd">            Dictionary that associates the line numbers of</span>
-<span class="sd">            the conditional points in the code being analyzed with</span>
-<span class="sd">            their truth values.</span>
+<span class="sd">            Dict[int, bool]:</span>
+<span class="sd">                Dictionary that associates the line numbers of</span>
+<span class="sd">                the conditional points in the code being analyzed with</span>
+<span class="sd">                their truth values.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -511,9 +521,9 @@
 <div class="viewcode-block" id="Path.get_array_accesses"><a class="viewcode-back" href="../../src.html#src.path.Path.get_array_accesses">[docs]</a>    <span class="k">def</span> <span class="nf">get_array_accesses</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the array accesses made in</span>
-<span class="sd">            conditions along this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the array accesses made in</span>
+<span class="sd">                conditions along this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -524,14 +534,13 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_array_accesses_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_array_accesses_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_array_accesses_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes information about the array accesses made in conditions</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes information about the array accesses made in conditions</span>
 <span class="sd">        along this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-<span class="sd">            </span>
-
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">array_accesses_file_handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -545,19 +554,20 @@
 
 <div class="viewcode-block" id="Path.read_array_accesses_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_array_accesses_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_array_accesses_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads information about the array accesses made in conditions</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads information about the array accesses made in conditions</span>
 <span class="sd">        along a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-<span class="sd">            </span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
+<span class="sd">                </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Dict[str, List[Tuple[int, int]]]</span>
-<span class="sd">            Dictionary that maps an array name to a list of tuples, each of</span>
-<span class="sd">            which contains the numbers of the temporary index variables</span>
-<span class="sd">            in an array access.</span>
+<span class="sd">            Dict[str, List[Tuple[int, int]]]:</span>
+<span class="sd">                Dictionary that maps an array name to a list of tuples, each of</span>
+<span class="sd">                which contains the numbers of the temporary index variables</span>
+<span class="sd">                in an array access.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -585,10 +595,10 @@
 <div class="viewcode-block" id="Path.get_agg_index_exprs"><a class="viewcode-back" href="../../src.html#src.path.Path.get_agg_index_exprs">[docs]</a>    <span class="k">def</span> <span class="nf">get_agg_index_exprs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the expressions associated</span>
-<span class="sd">            with the temporary index variables of aggregate accesses</span>
-<span class="sd">            along a path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the expressions associated</span>
+<span class="sd">                with the temporary index variables of aggregate accesses</span>
+<span class="sd">                along a path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -599,13 +609,14 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_agg_index_exprs_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_agg_index_exprs_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_agg_index_exprs_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes information about the expressions associated with the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes information about the expressions associated with the</span>
 <span class="sd">        temporary index variables of aggregate accesses along this path</span>
 <span class="sd">        to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">agg_index_exprs_file_handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -620,18 +631,19 @@
 
 <div class="viewcode-block" id="Path.read_agg_index_exprs_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_agg_index_exprs_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_agg_index_exprs_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">IndexExpression</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads, from a file, information about the expressions associated with</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads, from a file, information about the expressions associated with</span>
 <span class="sd">        the temporary index variables of aggregate accesses along a path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">            </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Dict[int, IndexExpression]</span>
-<span class="sd">            Dictionary that maps the number of a temporary index</span>
-<span class="sd">            variable to an ``IndexExpression`` object.</span>
+<span class="sd">            Dict[int, IndexExpression]:</span>
+<span class="sd">                Dictionary that maps the number of a temporary index</span>
+<span class="sd">                variable to an ``IndexExpression`` object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -664,10 +676,10 @@
 <div class="viewcode-block" id="Path.get_assignments"><a class="viewcode-back" href="../../src.html#src.path.Path.get_assignments">[docs]</a>    <span class="k">def</span> <span class="nf">get_assignments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the assignments to variables</span>
-<span class="sd">            that would drive an execution of the code under analysis</span>
-<span class="sd">            along this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the assignments to variables</span>
+<span class="sd">                that would drive an execution of the code under analysis</span>
+<span class="sd">                along this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -677,14 +689,13 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Path.write_assignments_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_assignments_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_assignments_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the assignments to variables that would drive an execution</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the assignments to variables that would drive an execution</span>
 <span class="sd">        of the code under analysis along this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-
-
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">assignment_file_handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -699,18 +710,17 @@
 
 <div class="viewcode-block" id="Path.read_assignments_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_assignments_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_assignments_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads, from a file, the assignments to variables that would</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads, from a file, the assignments to variables that would</span>
 <span class="sd">        drive an execution of the code under analysis along a path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-<span class="sd">            </span>
-
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        Dict[str, str]</span>
-<span class="sd">            Dictionary of assignments to variables that would</span>
-<span class="sd">            drive an execution of the code under analysis along a path.</span>
+<span class="sd">            Dict[str, str]:</span>
+<span class="sd">                Dictionary of assignments to variables that would</span>
+<span class="sd">                drive an execution of the code under analysis along a path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -731,12 +741,13 @@
                 <span class="k">return</span> <span class="n">assignments</span></div>
 
 <div class="viewcode-block" id="Path.set_predicted_value"><a class="viewcode-back" href="../../src.html#src.path.Path.set_predicted_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_predicted_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the predicted value (runtime, energy consumption, etc.)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the predicted value (runtime, energy consumption, etc.)</span>
 <span class="sd">        of this path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        value: float :</span>
-<span class="sd">            Value to set as the predicted value of this path</span>
+<span class="sd">            value: float :</span>
+<span class="sd">                Value to set as the predicted value of this path</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">predicted_value</span> <span class="o">=</span> <span class="n">value</span></div>
@@ -744,19 +755,20 @@
 <div class="viewcode-block" id="Path.get_predicted_value"><a class="viewcode-back" href="../../src.html#src.path.Path.get_predicted_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_predicted_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the predicted value</span>
-<span class="sd">            (runtime, energy consumption, etc.) of this path.</span>
+<span class="sd">            str</span>
+<span class="sd">                String representation of the predicted value</span>
+<span class="sd">                (runtime, energy consumption, etc.) of this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">predicted_value</span></div>
 
 <div class="viewcode-block" id="Path.write_predicted_value_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_predicted_value_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_predicted_value_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the predicted value of this path to a file.   </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the predicted value of this path to a file.   </span>
 <span class="sd">        </span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
-
+<span class="sd">        Parameters:</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">predicted_value_file_handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -770,16 +782,17 @@
 
 <div class="viewcode-block" id="Path.read_predicted_value_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_predicted_value_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_predicted_value_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the predicted value of a path from a file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the predicted value of a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        float</span>
-<span class="sd">            Predicted value of a path, represented as a number</span>
-<span class="sd">            (either an integer or a floating-point number).</span>
+<span class="sd">            float:</span>
+<span class="sd">                Predicted value of a path, represented as a number</span>
+<span class="sd">                (either an integer or a floating-point number).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -805,12 +818,13 @@
                 <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="Path.set_measured_value"><a class="viewcode-back" href="../../src.html#src.path.Path.set_measured_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_measured_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the measured value (runtime, energy consumption, etc.)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the measured value (runtime, energy consumption, etc.)</span>
 <span class="sd">        of this path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        value: float :</span>
-<span class="sd">            Value to set as the measured value of this path</span>
+<span class="sd">            value: float :</span>
+<span class="sd">                Value to set as the measured value of this path</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">measured_value</span> <span class="o">=</span> <span class="n">value</span></div>
@@ -818,19 +832,20 @@
 <div class="viewcode-block" id="Path.get_measured_value"><a class="viewcode-back" href="../../src.html#src.path.Path.get_measured_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_measured_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            String representation of the measured value</span>
-<span class="sd">            (runtime, energy consumption, etc.) of this path.</span>
+<span class="sd">            str:</span>
+<span class="sd">                String representation of the measured value</span>
+<span class="sd">                (runtime, energy consumption, etc.) of this path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">measured_value</span></div>
 
 <div class="viewcode-block" id="Path.write_measured_value_to_file"><a class="viewcode-back" href="../../src.html#src.path.Path.write_measured_value_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_measured_value_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Writes the measured value of this path to a file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes the measured value of this path to a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -845,16 +860,17 @@
 
 <div class="viewcode-block" id="Path.read_measured_value_from_file"><a class="viewcode-back" href="../../src.html#src.path.Path.read_measured_value_from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">read_measured_value_from_file</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reads the measured value of a path from a file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the measured value of a path from a file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        float</span>
-<span class="sd">            Measured value of a path, represented as a number</span>
-<span class="sd">            (either an integer or a floating-point number).</span>
+<span class="sd">            float:</span>
+<span class="sd">                Measured value of a path, represented as a number</span>
+<span class="sd">                (either an integer or a floating-point number).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>

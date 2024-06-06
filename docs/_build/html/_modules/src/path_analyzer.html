@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -85,19 +85,20 @@
 <div class="viewcode-block" id="PathAnalyzer"><a class="viewcode-back" href="../../src.html#src.path_analyzer.PathAnalyzer">[docs]</a><span class="k">class</span> <span class="nc">PathAnalyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preprocessed_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">,</span> <span class="n">dag</span><span class="p">:</span> <span class="n">Dag</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">path_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repeat</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;used to run the entire simulation on the given path.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        used to run the entire simulation on the given path.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        preprocessed_path :</span>
-<span class="sd">            the path to file being analyzed</span>
-<span class="sd">        project_config :</span>
-<span class="sd">            configuration of gametime</span>
-<span class="sd">        dag :</span>
-<span class="sd">            DAG representation of file being analyzed</span>
-<span class="sd">        path :</span>
-<span class="sd">            Path object corresponding to the path to drive</span>
-<span class="sd">        path_name :</span>
-<span class="sd">            all output files will be in folder with path_name; all generated files will have name path_name + &quot;-gt&quot;</span>
+<span class="sd">            preprocessed_path :</span>
+<span class="sd">                the path to file being analyzed</span>
+<span class="sd">            project_config :</span>
+<span class="sd">                configuration of gametime</span>
+<span class="sd">            dag :</span>
+<span class="sd">                DAG representation of file being analyzed</span>
+<span class="sd">            path :</span>
+<span class="sd">                Path object corresponding to the path to drive</span>
+<span class="sd">            path_name :</span>
+<span class="sd">                all output files will be in folder with path_name; all generated files will have name path_name + &quot;-gt&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
        
         <span class="bp">self</span><span class="o">.</span><span class="n">preprocessed_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">preprocessed_path</span>
@@ -136,14 +137,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="o">=</span> <span class="n">repeat</span>
 
 <div class="viewcode-block" id="PathAnalyzer.measure_path"><a class="viewcode-back" href="../../src.html#src.path_analyzer.PathAnalyzer.measure_path">[docs]</a>    <span class="k">def</span> <span class="nf">measure_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="n">Backend</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;run the entire simulation on the given path</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        run the entire simulation on the given path</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        backend: Backend :</span>
-<span class="sd">            Backend object used for simulation</span>
+<span class="sd">            backend: Backend :</span>
+<span class="sd">                Backend object used for simulation</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        the total measurement of path given by backend</span>
+<span class="sd">            the total measurement of path given by backend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>

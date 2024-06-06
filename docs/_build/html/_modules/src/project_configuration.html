@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -81,7 +81,8 @@
 
 
 <div class="viewcode-block" id="DebugConfiguration"><a class="viewcode-back" href="../../src.html#src.project_configuration.DebugConfiguration">[docs]</a><span class="k">class</span> <span class="nc">DebugConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores debugging configuration information, which</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores debugging configuration information, which</span>
 <span class="sd">    determines the debugging information that is shown and</span>
 <span class="sd">    the temporary files that are dumped.</span>
 
@@ -131,7 +132,9 @@
 
 
 <div class="viewcode-block" id="ProjectConfiguration"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration">[docs]</a><span class="k">class</span> <span class="nc">ProjectConfiguration</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stores information necessary to configure a GameTime project.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stores information necessary to configure a GameTime project.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location_file</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span>
                  <span class="n">start_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">end_label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">included</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">merged</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -327,27 +330,28 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        ilp_solver_name: str:</span>
-<span class="sd">            ILP solver name to use</span>
+<span class="sd">            ilp_solver_name: str:</span>
+<span class="sd">                ILP solver name to use</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: Make it real</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ilp_solver</span> <span class="o">=</span> <span class="n">ilp_solver_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="ProjectConfiguration.get_temp_filename_with_extension"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration.get_temp_filename_with_extension">[docs]</a>    <span class="k">def</span> <span class="nf">get_temp_filename_with_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return path of temporary file with name and extension. Extension should</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return path of temporary file with name and extension. Extension should</span>
 <span class="sd">        be preceded by a period. For example, calling this function with extension</span>
 <span class="sd">        &quot;.bc&quot; should return something like &quot;.... maingt/main.bc&quot;</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        extension: str :</span>
-<span class="sd">            extension of the temporary file name</span>
-<span class="sd">        name: str :</span>
-<span class="sd">            name of the temporary file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
+<span class="sd">            extension: str :</span>
+<span class="sd">                extension of the temporary file name</span>
+<span class="sd">            name: str :</span>
+<span class="sd">                name of the temporary file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            path of the temporary file</span>
+<span class="sd">            str:</span>
+<span class="sd">                path of the temporary file</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -357,20 +361,19 @@
         <span class="k">return</span> <span class="n">temp_filename</span></div>
 
 <div class="viewcode-block" id="ProjectConfiguration.get_orig_filename_with_extension"><a class="viewcode-back" href="../../src.html#src.project_configuration.ProjectConfiguration.get_orig_filename_with_extension">[docs]</a>    <span class="k">def</span> <span class="nf">get_orig_filename_with_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return path of file with name and extension. Extension should</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return path of file with name and extension. Extension should</span>
 <span class="sd">        be preceded by a period. For example, calling this function with extension</span>
 <span class="sd">        &quot;.bc&quot; should return something like &quot;.... /main.bc&quot;</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        extension: str :</span>
-<span class="sd">            extension of the file</span>
-<span class="sd">        name: str :</span>
-<span class="sd">            name of the file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
-
+<span class="sd">            extension: str :</span>
+<span class="sd">                extension of the file</span>
+<span class="sd">            name: str :</span>
+<span class="sd">                name of the file (defaults to self.nameOrigNoExtension) (Default value = None)</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        str</span>
-<span class="sd">            path of the file in the original directory.</span>
-
+<span class="sd">            str:</span>
+<span class="sd">                path of the file in the original directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_orig_no_extension</span>

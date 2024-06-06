@@ -159,14 +159,14 @@ and the basis paths of the code.</p>
 <dd><p>Adds the edges provided to the list of path-bundled
 constraints, if not already present. These edges must
 be taken together if at least one of them is taken along
-a path through the DAG.
-Parameters:</p>
-<blockquote>
-<div><dl class="simple">
+a path through the DAG.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>edges: List[Tuple[str, str]] :</dt><dd><p>List of edges to add to the list of path-bundled constraints.</p>
 </dd>
 </dl>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1026,7 +1026,7 @@ the directed acyclic graph described in DOT format in the file provided.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.get_random_path">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">get_random_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">Dag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.nx_helper.get_random_path" title="Permalink to this definition"></a></dt>
-<dd><dl>
+<dd><dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>dag: Dag :</dt><dd><p>DAG represented by a <cite>~gametime.src.nx_helper.Dag</cite> object.</p>
 </dd>
@@ -1038,10 +1038,10 @@ the directed acyclic graph described in DOT format in the file provided.</p>
 </dd>
 <dt>Returns:</dt><dd><dl class="simple">
 <dt>List[str]:</dt><dd><p>Random path in the DAG provided from the input source node to
-the input sink node, represented as a list of nodes arranged in</p>
+the input sink node, represented as a list of nodes arranged in
+order of traversal from source to sink.</p>
 </dd>
 </dl>
-<p>order of traversal from source to sink.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1087,17 +1087,15 @@ the input sink node, represented as a list of nodes arranged in</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.remove_back_edges_to_make_dag">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">remove_back_edges_to_make_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.nx_helper.remove_back_edges_to_make_dag" title="Permalink to this definition"></a></dt>
-<dd><p>Remove all back edges from G to make it a DAG. Assuming G is connected and rooted at ROOT.
-Parameters:</p>
-<blockquote>
-<div><dl class="simple">
+<dd><p>Remove all back edges from G to make it a DAG. Assuming G is connected and rooted at ROOT.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>G :</dt><dd><p>The graph to remove root edges</p>
 </dd>
 <dt>root :</dt><dd><p>The root node of G to start DFS with</p>
 </dd>
 </dl>
-</div></blockquote>
-<dl class="simple">
+</dd>
 <dt>Returns:</dt><dd><p>DAG version of G with all back edges removed.</p>
 </dd>
 </dl>
@@ -1195,129 +1193,151 @@ in the code being analyzed with their truth values.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_agg_index_exprs">
 <span class="sig-name descname"><span class="pre">get_agg_index_exprs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_agg_index_exprs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_agg_index_exprs" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the expressions associated
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the expressions associated
 with the temporary index variables of aggregate accesses
 along a path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_array_accesses">
 <span class="sig-name descname"><span class="pre">get_array_accesses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_array_accesses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_array_accesses" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the array accesses made in
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the array accesses made in
 conditions along this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_assignments">
 <span class="sig-name descname"><span class="pre">get_assignments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_assignments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_assignments" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the assignments to variables
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the assignments to variables
 that would drive an execution of the code under analysis
 along this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_condition_edges">
 <span class="sig-name descname"><span class="pre">get_condition_edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_condition_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_condition_edges" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the numbers of the conditions along
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the numbers of the conditions along
 this path, and the edges that are associated with the conditions.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_condition_truths">
 <span class="sig-name descname"><span class="pre">get_condition_truths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_condition_truths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_condition_truths" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the line numbers of the conditional points
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the line numbers of the conditional points
 in the code being analyzed, along with their truth values.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_conditions">
 <span class="sig-name descname"><span class="pre">get_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_conditions" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the conditions along this path.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the conditions along this path.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_edges_for_conditions">
 <span class="sig-name descname"><span class="pre">get_edges_for_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition_nums</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_edges_for_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_edges_for_conditions" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-condition_nums: List[int] :</p>
-<blockquote>
-<div><p>List of conditions</p>
-</div></blockquote>
-<p>Returns:
-List[Tuple[str]]</p>
-<blockquote>
-<div><p>List of the edges that are associated with the conditions
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>condition_nums: List[int] :</dt><dd><p>List of conditions</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[Tuple[str]]:</dt><dd><p>List of the edges that are associated with the conditions
 (along this path) whose numbers are provided. Each edge is
 represented as a tuple, and appears only once in the list.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_line_numbers">
 <span class="sig-name descname"><span class="pre">get_line_numbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_line_numbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_line_numbers" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the line numbers of
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the line numbers of
 the source-level statements that lie along this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_measured_value">
 <span class="sig-name descname"><span class="pre">get_measured_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_measured_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_measured_value" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the measured value
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the measured value
 (runtime, energy consumption, etc.) of this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_nodes">
 <span class="sig-name descname"><span class="pre">get_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_nodes" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the IDs of the nodes in
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>String representation of the IDs of the nodes in
 a directed acyclic graph along this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.get_predicted_value">
 <span class="sig-name descname"><span class="pre">get_predicted_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.get_predicted_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.get_predicted_value" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-str</p>
-<blockquote>
-<div><p>String representation of the predicted value
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str</dt><dd><p>String representation of the predicted value
 (runtime, energy consumption, etc.) of this path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -1362,17 +1382,19 @@ an integer or a floating-point number).</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_agg_index_exprs_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#src.index_expression.IndexExpression" title="src.index_expression.IndexExpression"><span class="pre">IndexExpression</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_agg_index_exprs_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_agg_index_exprs_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads, from a file, information about the expressions associated with
 the temporary index variables of aggregate accesses along a path.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-Dict[int, IndexExpression]</p>
-<blockquote>
-<div><p>Dictionary that maps the number of a temporary index
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Dict[int, IndexExpression]:</dt><dd><p>Dictionary that maps the number of a temporary index
 variable to an <code class="docutils literal notranslate"><span class="pre">IndexExpression</span></code> object.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1380,18 +1402,20 @@ variable to an <code class="docutils literal notranslate"><span class="pre">Inde
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_array_accesses_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_array_accesses_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_array_accesses_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads information about the array accesses made in conditions
 along a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-Dict[str, List[Tuple[int, int]]]</p>
-<blockquote>
-<div><p>Dictionary that maps an array name to a list of tuples, each of
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Dict[str, List[Tuple[int, int]]]:</dt><dd><p>Dictionary that maps an array name to a list of tuples, each of
 which contains the numbers of the temporary index variables
 in an array access.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1399,17 +1423,19 @@ in an array access.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_assignments_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_assignments_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_assignments_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads, from a file, the assignments to variables that would
 drive an execution of the code under analysis along a path.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-Dict[str, str]</p>
-<blockquote>
-<div><p>Dictionary of assignments to variables that would
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Dict[str, str]:</dt><dd><p>Dictionary of assignments to variables that would
 drive an execution of the code under analysis along a path.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1417,14 +1443,14 @@ drive an execution of the code under analysis along a path.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_condition_edges_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_condition_edges_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_condition_edges_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the numbers of the conditions along a path, and
 the edges that are associated with the conditions, from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
 <dt>Returns:</dt><dd><dl class="simple">
-<dt>Dict[int, Tuple[str]]</dt><dd><p>Dictionary that associates the number of a condition with
+<dt>Dict[int, Tuple[str]]:</dt><dd><p>Dictionary that associates the number of a condition with
 the edge in the directed acyclic graph that is associated with
 the condition. The edge is represented as a tuple.</p>
 </dd>
@@ -1439,34 +1465,38 @@ the condition. The edge is represented as a tuple.</p>
 <dd><p>Reads the line numbers of the conditional points in the code
 being analyzed, along with their truth values along a path,
 from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-Dict[int, bool]</p>
-<blockquote>
-<div><p>Dictionary that associates the line numbers of
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Dict[int, bool]:</dt><dd><p>Dictionary that associates the line numbers of
 the conditional points in the code being analyzed with
 their truth values.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.read_conditions_from_file">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_conditions_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_conditions_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_conditions_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the conditions along a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>Conditions along a path, represented as a list of strings.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]:</dt><dd><p>Conditions along a path, represented as a list of strings.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1474,34 +1504,38 @@ List[str]</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_line_numbers_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_line_numbers_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_line_numbers_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the line numbers of the source-level statements that
 lie along a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-List[int]</p>
-<blockquote>
-<div><p>Line numbers of the source-level statements along this path,
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[int]</dt><dd><p>Line numbers of the source-level statements along this path,
 represented as a list of positive integers.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.read_measured_value_from_file">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_measured_value_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_measured_value_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_measured_value_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the measured value of a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-float</p>
-<blockquote>
-<div><p>Measured value of a path, represented as a number
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>Measured value of a path, represented as a number
 (either an integer or a floating-point number).</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1509,34 +1543,38 @@ float</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_nodes_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_nodes_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_nodes_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the IDs of the nodes in a directed acyclic graph
 along a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>IDs of the nodes in a directed acyclic graph along a path,
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]</dt><dd><p>IDs of the nodes in a directed acyclic graph along a path,
 represented as a list of strings.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.read_predicted_value_from_file">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_predicted_value_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.read_predicted_value_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.read_predicted_value_from_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the predicted value of a path from a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
-<p>Returns:
-float</p>
-<blockquote>
-<div><p>Predicted value of a path, represented as a number
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>Predicted value of a path, represented as a number
 (either an integer or a floating-point number).</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1544,11 +1582,13 @@ float</p>
 <span class="sig-name descname"><span class="pre">set_measured_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.set_measured_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.set_measured_value" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the measured value (runtime, energy consumption, etc.)
 of this path.</p>
-<p>Parameters:
-value: float :</p>
-<blockquote>
-<div><p>Value to set as the measured value of this path</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>value: float :</dt><dd><p>Value to set as the measured value of this path</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1556,11 +1596,13 @@ value: float :</p>
 <span class="sig-name descname"><span class="pre">set_predicted_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/path.html#Path.set_predicted_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.set_predicted_value" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the predicted value (runtime, energy consumption, etc.)
 of this path.</p>
-<p>Parameters:
-value: float :</p>
-<blockquote>
-<div><p>Value to set as the predicted value of this path</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>value: float :</dt><dd><p>Value to set as the predicted value of this path</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1569,11 +1611,13 @@ value: float :</p>
 <dd><p>Writes information about the expressions associated with the
 temporary index variables of aggregate accesses along this path
 to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1581,11 +1625,13 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_array_accesses_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_array_accesses_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_array_accesses_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes information about the array accesses made in conditions
 along this path to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1593,11 +1639,13 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_assignments_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_assignments_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_assignments_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the assignments to variables that would drive an execution
 of the code under analysis along this path to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1605,11 +1653,13 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_condition_edges_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_condition_edges_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_condition_edges_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the numbers of the conditions along this path, and
 the edges that are associated with the conditions, to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1617,22 +1667,26 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_condition_truths_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_condition_truths_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_condition_truths_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the line numbers of the conditional points in the code
 being analyzed, along with their truth values, to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.write_conditions_to_file">
 <span class="sig-name descname"><span class="pre">write_conditions_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_conditions_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_conditions_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the conditions along this path to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1640,11 +1694,13 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_ilp_problem_to_lp_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_ilp_problem_to_lp_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_ilp_problem_to_lp_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes, to an LP file, the integer linear programming problem that,
 when solved, produced this path.</p>
-<p>Parameters:
-location :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1652,22 +1708,26 @@ location :</p>
 <span class="sig-name descname"><span class="pre">write_line_numbers_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_line_numbers_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_line_numbers_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the line numbers of the source-level statements that
 lie along this path to a file.</p>
-<p>Parameters:
-location: str:</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str:</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path.Path.write_measured_value_to_file">
 <span class="sig-name descname"><span class="pre">write_measured_value_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_measured_value_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_measured_value_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the measured value of this path to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1675,11 +1735,13 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_nodes_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_nodes_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_nodes_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the IDs of the nodes in a directed acyclic graph
 along this path to a file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1687,7 +1749,10 @@ location: str :</p>
 <span class="sig-name descname"><span class="pre">write_predicted_value_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/path.html#Path.write_predicted_value_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path.Path.write_predicted_value_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the predicted value of this path to a file.</p>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>location: str :</dt><dd><p>Location of the file</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -1705,13 +1770,15 @@ location: str :</p>
 <dt class="sig sig-object py" id="src.path_analyzer.PathAnalyzer.measure_path">
 <span class="sig-name descname"><span class="pre">measure_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.backend.html#src.backend.backend.Backend" title="src.backend.backend.Backend"><span class="pre">Backend</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/src/path_analyzer.html#PathAnalyzer.measure_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path_analyzer.PathAnalyzer.measure_path" title="Permalink to this definition"></a></dt>
 <dd><p>run the entire simulation on the given path</p>
-<p>Parameters:
-backend: Backend :</p>
-<blockquote>
-<div><p>Backend object used for simulation</p>
-</div></blockquote>
-<p>Returns:
-the total measurement of path given by backend</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>backend: Backend :</dt><dd><p>Backend object used for simulation</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>the total measurement of path given by backend</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1758,13 +1825,11 @@ nothing has changed between the two calls.</p>
 object have values associated with them. Refer to either the method
 <code class="docutils literal notranslate"><span class="pre">loadBasisValuesFromFile</span></code> or the method <code class="docutils literal notranslate"><span class="pre">loadBasisValues</span></code> in
 the <code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> class.</p>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
-the code being analyzed.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+the code being analyzed.</p>
+</dd>
 <dt>num_paths:</dt><dd><p>Upper bound on the number of paths to generate.</p>
 </dd>
 <dt>path_type:</dt><dd><p>Type of paths to generate, represented by a class variable of
@@ -1780,12 +1845,14 @@ is considered to be all real numbers.</p>
 basis extraction algorithm</p>
 </dd>
 </dl>
-<p>Returns:
-List[Path]</p>
-<blockquote>
-<div><p>List of feasible paths of the code being analyzed, each
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[Path]</dt><dd><p>List of feasible paths of the code being analyzed, each
 represented by an object of the <code class="docutils literal notranslate"><span class="pre">Path</span></code> class.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1828,13 +1895,15 @@ represented by an object of the <code class="docutils literal notranslate"><span
 <dl class="py method">
 <dt class="sig sig-object py" id="src.path_generator.PathType.get_description">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/path_generator.html#PathType.get_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.path_generator.PathType.get_description" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-path_type :</p>
-<blockquote>
-<div><p>One of the predefined path types</p>
-</div></blockquote>
-<p>Returns:
-One-word description of the path type provided.</p>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>path_type<span class="classifier"></span></dt><dd><p>One of the predefined path types</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>One-word description of the path type provided.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1929,20 +1998,20 @@ measuring the value of a path.</p>
 <dd><p>Return path of file with name and extension. Extension should
 be preceded by a period. For example, calling this function with extension
 “.bc” should return something like “…. /main.bc”</p>
-<p>Parameters:
-extension: str :</p>
-<blockquote>
-<div><p>extension of the file</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>extension: str :</dt><dd><p>extension of the file</p>
+</dd>
 <dt>name: str :</dt><dd><p>name of the file (defaults to self.nameOrigNoExtension) (Default value = None)</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>path of the file in the original directory.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>path of the file in the original directory.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1951,30 +2020,32 @@ str</p>
 <dd><p>Return path of temporary file with name and extension. Extension should
 be preceded by a period. For example, calling this function with extension
 “.bc” should return something like “…. maingt/main.bc”</p>
-<p>Parameters:
-extension: str :</p>
-<blockquote>
-<div><p>extension of the temporary file name</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>extension: str :</dt><dd><p>extension of the temporary file name</p>
+</dd>
 <dt>name: str :</dt><dd><p>name of the temporary file (defaults to self.nameOrigNoExtension) (Default value = None)</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>path of the temporary file</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>path of the temporary file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.project_configuration.ProjectConfiguration.set_ilp_solver">
 <span class="sig-name descname"><span class="pre">set_ilp_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ilp_solver_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/project_configuration.html#ProjectConfiguration.set_ilp_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.project_configuration.ProjectConfiguration.set_ilp_solver" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-ilp_solver_name: str:</p>
-<blockquote>
-<div><p>ILP solver name to use</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>ilp_solver_name: str:</dt><dd><p>ILP solver name to use</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1989,16 +2060,18 @@ ilp_solver_name: str:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.project_configuration_parser.ConfigurationParser.parse">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.project_configuration.ProjectConfiguration" title="src.project_configuration.ProjectConfiguration"><span class="pre">ProjectConfiguration</span></a></span></span><a class="reference internal" href="_modules/src/project_configuration_parser.html#ConfigurationParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.project_configuration_parser.ConfigurationParser.parse" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-configuration_file_path: str :</p>
-<blockquote>
-<div><p>Path to configuration file</p>
-</div></blockquote>
-<p>Returns:
-ProjectConfiguration:</p>
-<blockquote>
-<div><p>ProjectConfiguration object corresponding to file.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>configuration_file_path: str :</dt><dd><p>Path to configuration file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>ProjectConfiguration:</dt><dd><p>ProjectConfiguration object corresponding to file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2010,16 +2083,18 @@ ProjectConfiguration:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.project_configuration_parser.YAMLConfigurationParser.parse">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configuration_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.project_configuration.ProjectConfiguration" title="src.project_configuration.ProjectConfiguration"><span class="pre">ProjectConfiguration</span></a></span></span><a class="reference internal" href="_modules/src/project_configuration_parser.html#YAMLConfigurationParser.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.project_configuration_parser.YAMLConfigurationParser.parse" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-configuration_file_path: str :</p>
-<blockquote>
-<div><p>Path to configuration file</p>
-</div></blockquote>
-<p>Returns:
-ProjectConfiguration:</p>
-<blockquote>
-<div><p>ProjectConfiguration object corresponding to file.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>configuration_file_path: str :</dt><dd><p>Path to configuration file</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>ProjectConfiguration:</dt><dd><p>ProjectConfiguration object corresponding to file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2030,16 +2105,19 @@ ProjectConfiguration:</p>
 <dd><p>Gets a list of directory paths from the string provided, where
 the directory paths are separated by whitespaces or commas.</p>
 <dl class="simple">
-<dt>Parameters:ir_paths_str: str :</dt><dd><p>String of directory paths</p>
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>ir_paths_str: str :</dt><dd><p>String of directory paths</p>
 </dd>
 <dt>dir_location: str :</dt><dd><p>Directory to which the directory paths may be relative (Default value = None)</p>
 </dd>
 </dl>
-<p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>List of directory paths in the string.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]:</dt><dd><p>List of directory paths in the string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2048,18 +2126,20 @@ List[str]</p>
 <dd><p>Gets a list of file paths from the string provided, where the file
 paths are separated by whitespaces or commas. The paths can also be
 Unix-style globs.</p>
-<p>Parameters:</p>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>file_paths_str: str :</dt><dd><p>String of file paths</p>
 </dd>
 <dt>dir_location: str :</dt><dd><p>Directory to which the file paths may be relative (Default value = None)</p>
 </dd>
 </dl>
-<p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>List of file paths in the string.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]:</dt><dd><p>List of file paths in the string.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -2107,13 +2187,11 @@ analysis, such as the value of the objective function of the problem.</p>
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">find_extreme_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extremum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#find_extreme_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.find_extreme_path" title="Permalink to this definition"></a></dt>
 <dd><p>Determines either the longest or the shortest path through the DAG
 with the constraints stored in the <code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object provided.</p>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+<dl>
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
 the code being analyzed.</p>
-</div></blockquote>
-<dl class="simple">
+</dd>
 <dt>extremum:</dt><dd><p>Type of extreme path to calculate.</p>
 </dd>
 <dt>interval:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Interval</span></code> object that represents the interval of values
@@ -2122,9 +2200,8 @@ is provided, the interval of values is considered to be
 all_temp_files real numbers.</p>
 </dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>Tuple whose first element is the longest or the shortest path
+</dd>
+<dt>Returns:   </dt><dd><p>Tuple whose first element is the longest or the shortest path
 through the DAG, as a list of nodes along the path (ordered
 by traversal from source to sink), and whose second element is
 the integer linear programming problem that was solved to obtain
@@ -2134,30 +2211,25 @@ the <code class="docutils literal notranslate"><span class="pre">Analyzer</span>
 the first element of the tuple is an empty list, and the second
 element of the tuple is an <code class="docutils literal notranslate"><span class="pre">IlpProblem</span></code> object whose <code class="docutils literal notranslate"><span class="pre">obj_al</span></code>
 instance variable is None.</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.find_goodness_of_fit">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">find_goodness_of_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#find_goodness_of_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.find_goodness_of_fit" title="Permalink to this definition"></a></dt>
-<dd><dl>
-<dt>This function is here only for test purposes. Each path pi in <a href="#id1"><span class="problematic" id="id2">`</span></a>paths’,</dt><dd><dl class="simple">
-<dt>can be expressed as a linear combination</dt><dd><p>pi = a_1 b_1 + … + a_n b_n</p>
-</dd>
-</dl>
-<p>of paths b_i from <cite>basis</cite>. This function returns the least number <cite>c</cite>
+<dd><p>This function is here only for test purposes. Each path pi in <cite>paths’,
+can be expressed as a linear combination
+pi = a_1 b_1 + … + a_n b_n
+of paths b_i from `basis</cite>. This function returns the least number <cite>c</cite>
 such that every path can be expressed as a linear combination of basis
 paths b_i such that the sum of absolute value of coefficients is at
-most <cite>c</cite>: <a href="#id5"><span class="problematic" id="id6">|a_1|</span></a> + <a href="#id7"><span class="problematic" id="id8">|a_2|</span></a> + … + <a href="#id9"><span class="problematic" id="id10">|a_n|</span></a> &lt;= c</p>
-</dd>
-</dl>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
-the code being analyzed.</p>
-</div></blockquote>
+most <cite>c</cite>: <a href="#id1"><span class="problematic" id="id2">|a_1|</span></a> + <a href="#id3"><span class="problematic" id="id4">|a_2|</span></a> + … + <a href="#id5"><span class="problematic" id="id6">|a_n|</span></a> &lt;= c</p>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+the code being analyzed.</p>
+</dd>
 <dt>paths:</dt><dd><p>List of paths that we want to find out how well can be
 expressed as a linear combination of paths in <cite>basis</cite></p>
 </dd>
@@ -2165,39 +2237,37 @@ expressed as a linear combination of paths in <cite>basis</cite></p>
 combination of</p>
 </dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>The number <cite>c</cite> as described in the paragraph above.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><p>The number <cite>c</cite> as described in the paragraph above.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.find_least_compatible_mu_max">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">find_least_compatible_mu_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.analyzer.Analyzer" title="src.analyzer.Analyzer"><span class="pre">Analyzer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#find_least_compatible_mu_max"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.find_least_compatible_mu_max" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>This function returns the least dealta in the underlying graph, as</dt><dd><p>specified by ‘analyzer’, that is feasible with the given set of
+<dd><p>This function returns the least dealta in the underlying graph, as
+specified by ‘analyzer’, that is feasible with the given set of
 measurements as specified by ‘paths’. The method does not take into
 account which paths are feasible and which not; it considers all_temp_files the
 paths in the graph.</p>
-</dd>
-</dl>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
-the code being analyzed.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+the code being analyzed.</p>
+</dd>
 <dt>paths:</dt><dd><p>List of paths used in the measurements. Each path is a list of
 edges in the order in which they are visited by the path</p>
 </dd>
 </dl>
-<p>Returns:
-float</p>
-<blockquote>
-<div><p>A floating point value—the least delta compatible with the
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>float:</dt><dd><p>A floating point value—the least delta compatible with the
 measurements</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2207,14 +2277,10 @@ measurements</p>
 <dt>This functions finds the longest/shortest path compatible with the</dt><dd><p>measured lengths of paths, as given in ‘paths’, such the actual
 lengths are within ‘delta’ of the measured lengths</p>
 </dd>
-</dl>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
 the code being analyzed.</p>
-</div></blockquote>
-<dl class="simple">
+</dd>
 <dt>paths:</dt><dd><p>List of paths used in the measurements. Each path is a list of
 edges in the order in which they are visited by the path</p>
 </dd>
@@ -2225,27 +2291,25 @@ allowed to differ from the measured value</p>
 Extremum.SHORTEST</p>
 </dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>Pair consisting of the resulting path and the ILP problem used to
+</dd>
+<dt>Returns:</dt><dd><p>Pair consisting of the resulting path and the ILP problem used to
 calculate the path</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.find_minimal_overcomplete_basis">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">find_minimal_overcomplete_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.analyzer.Analyzer" title="src.analyzer.Analyzer"><span class="pre">Analyzer</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#find_minimal_overcomplete_basis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.find_minimal_overcomplete_basis" title="Permalink to this definition"></a></dt>
-<dd><dl>
-<dt>This function is here only for test purposes. The functions finds the</dt><dd><p>smallest set of ‘basis paths’ with the following property: Each path pi
-in <a href="#id3"><span class="problematic" id="id4">`</span></a>paths’, can be expressed as a linear combination</p>
-<blockquote>
-<div><p>pi = a_1 b_1 + … + a_n b_n</p>
-</div></blockquote>
-<p>of paths b_i from <cite>basis</cite>. This function finds the set of basis paths
+<dd><p>This function is here only for test purposes. The functions finds the
+smallest set of ‘basis paths’ with the following property: Each path pi
+in <cite>paths’, can be expressed as a linear combination
+pi = a_1 b_1 + … + a_n b_n
+of paths b_i from `basis</cite>. This function finds the set of basis paths
 such that every path can be expressed as a linear combination of basis
 paths b_i  such that the sum of absolute value of coefficients is at
-most ‘k’: <a href="#id11"><span class="problematic" id="id12">|a_1|</span></a> + <a href="#id13"><span class="problematic" id="id14">|a_2|</span></a> + … + <a href="#id15"><span class="problematic" id="id16">|a_n|</span></a> &lt;= k</p>
-</dd>
+most ‘k’: <a href="#id7"><span class="problematic" id="id8">|a_1|</span></a> + <a href="#id9"><span class="problematic" id="id10">|a_2|</span></a> + … + <a href="#id11"><span class="problematic" id="id12">|a_n|</span></a> &lt;= k</p>
+<dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
 <dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
 the code being analyzed.</p>
@@ -2258,38 +2322,32 @@ combination of the calculated basis paths</p>
 </dd>
 </dl>
 </dd>
+<dt>Returns:</dt><dd><p>List of paths satisfying the condition stated above</p>
+</dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>List of paths satisfying the condition stated above</p>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.find_worst_expressible_path">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">find_worst_expressible_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">analyzer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#find_worst_expressible_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.find_worst_expressible_path" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Function to find the longest path in the underlying graph of ‘analyzer’</dt><dd><p>assuming the lengths of all_temp_files measured paths are between -1 and 1.</p>
-</dd>
-</dl>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
-the code being analyzed.</p>
-</div></blockquote>
+<dd><p>Function to find the longest path in the underlying graph of ‘analyzer’
+assuming the lengths of all_temp_files measured paths are between -1 and 1.</p>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+the code being analyzed.</p>
+</dd>
 <dt>paths:</dt><dd><p>List of paths used in the measurements. Each path is a list of
 edges in the order in which they are visited by the path</p>
 </dd>
 <dt>bound:</dt><dd><p>???</p>
 </dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>Triple consisting of the length of the longsest path, the path itself
+</dd>
+<dt>Returns: </dt><dd><p>Triple consisting of the length of the longsest path, the path itself
 and the ILP solved to find the path.</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -2298,14 +2356,12 @@ and the ILP solved to find the path.</p>
 <dd><p>This function actually constructs the ILP to find the longest path
 in the graph specified by ‘analyzer’ using the set of measured paths given
 by ‘paths’.</p>
-<p>Parameters:
-analyzer:</p>
-<blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>analyzer:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Analyzer</span></code> object that maintains information about
 the code being analyzed. Among others, contains the underlying
 DAG or the collection of infeasible paths.</p>
-</div></blockquote>
-<dl class="simple">
+</dd>
 <dt>paths:</dt><dd><p>List of paths used in the measurements. Each path is a list of
 edges in the order in which they are visited by the path</p>
 </dd>
@@ -2328,23 +2384,23 @@ ILP is printed.</p>
 Extremum.SHORTEST</p>
 </dd>
 </dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>Triple consisting of the length of the longest path found, the actual
+</dd>
+<dt>Returns:   </dt><dd><p>Triple consisting of the length of the longest path found, the actual
 path and the ILP problem generated.</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.get_ilp_solver">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">get_ilp_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ilp_solver_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.project_configuration.ProjectConfiguration" title="src.project_configuration.ProjectConfiguration"><span class="pre">ProjectConfiguration</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pulp.LpSolver</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#get_ilp_solver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.get_ilp_solver" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-ilp_solver_name: str :</p>
-<blockquote>
-<div><p>Name of the integer linear programming solver</p>
-</div></blockquote>
-<dl class="simple">
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>ilp_solver_name: str :</dt><dd><p>Name of the integer linear programming solver</p>
+</dd>
 <dt>project_config: ProjectConfiguration :</dt><dd><p>ProjectConfiguration object that represents the configuration of a GameTime project</p>
+</dd>
+</dl>
 </dd>
 <dt>Returns:</dt><dd><p>PuLP solver object that can interface with the integer
 linear programming solver whose name is provided, or <cite>None</cite>, if
@@ -2356,94 +2412,102 @@ no such object can be found.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.get_ilp_solver_name">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">get_ilp_solver_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ilp_solver</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">LpSolver</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#get_ilp_solver_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.get_ilp_solver_name" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:</p>
-<dl class="simple">
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>ilp_solver: pulp.LpSolver :</dt><dd><p>Object of a PuLP solver class</p>
 </dd>
 </dl>
-<p>Returns:
-str, Optional</p>
-<blockquote>
-<div><p>Name, as used by GameTime, of the integer linear programming
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str, Optional:</dt><dd><p>Name, as used by GameTime, of the integer linear programming
 solver that the input PuLP solver object can interface with,
 or <cite>None</cite>, if no such name can be found.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.get_ilp_solver_names">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">get_ilp_solver_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#get_ilp_solver_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.get_ilp_solver_names" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>List of the names of the supported integer linear programming solvers.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]</dt><dd><p>List of the names of the supported integer linear programming solvers.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.get_ilp_solver_proper_names">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">get_ilp_solver_proper_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#get_ilp_solver_proper_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.get_ilp_solver_proper_names" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>List of proper names of the supported integer linear programming
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]:</dt><dd><p>List of proper names of the supported integer linear programming
 solvers, for display purposes.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.get_proper_name">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">get_proper_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ilp_solver_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#get_proper_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.get_proper_name" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-ilp_solver_name: str :</p>
-<blockquote>
-<div><p>Name of an integer linear programming solver used by GameTime</p>
-</div></blockquote>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>Proper name of an integer linear programming solver,
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>ilp_solver_name: str :</dt><dd><p>Name of an integer linear programming solver used by GameTime</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>Proper name of an integer linear programming solver,
 for display purposes.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.is_ilp_solver_name">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">is_ilp_solver_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/src/pulp_helper.html#is_ilp_solver_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.is_ilp_solver_name" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-name: str :</p>
-<blockquote>
-<div><p>Possible name of an integer linear programming solver</p>
-</div></blockquote>
-<p>Returns:
-bool</p>
-<blockquote>
-<div><p><cite>True</cite> if, and only if, the name provided is the name of a supported
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>name: str<span class="classifier"></span></dt><dd><p>Possible name of an integer linear programming solver</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>bool:</dt><dd><p><cite>True</cite> if, and only if, the name provided is the name of a supported
 integer linear programming solver.</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.pulp_helper.make_compact">
 <span class="sig-prename descclassname"><span class="pre">src.pulp_helper.</span></span><span class="sig-name descname"><span class="pre">make_compact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/pulp_helper.html#make_compact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.pulp_helper.make_compact" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Function to create a compact representation of the given graph</dt><dd><p>Compact means that if in the original graph, there is a simple
+<dd><p>Function to create a compact representation of the given graph
+Compact means that if in the original graph, there is a simple
 path without any branching between two nodes, then in the resulting
 graph the entire simple path is replaced by only one edge</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>dag:</dt><dd><p>The graph that get compactified</p>
 </dd>
 </dl>
-<p>Parameters:
-dag:</p>
-<blockquote>
-<div><p>The graph that get compactified</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>A mapping (vertex, vertex) -&gt; edge_number so that the edge
+</dd>
+<dt>Returns:  </dt><dd><p>A mapping (vertex, vertex) -&gt; edge_number so that the edge
 (vertex, vertex) in the original graph ‘dag’ gets mapped to
 the edge with number ‘edge_number’. All edges on a simple path
 without branching get mapped to the same ‘edge_number’</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
