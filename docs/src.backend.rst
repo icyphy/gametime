@@ -12,7 +12,7 @@ Backend Types
    src.backend.x86_backend
 
 
-src.backend.backend
+backend.backend
 -------------------
 
 .. automodule:: src.backend.backend
@@ -20,7 +20,7 @@ src.backend.backend
    :undoc-members:
    :show-inheritance:
 
-src.backend.generate\_executable
+backend.generate\_executable
 --------------------------------
 
 .. automodule:: src.backend.generate_executable

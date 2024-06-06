@@ -1,7 +1,7 @@
-src.backend.x86\_backend package
+backend.x86\_backend package
 ================================
 
-src.backend.x86\_backend.x86\_backend module
+backend.x86\_backend.x86\_backend
 --------------------------------------------
 
 .. automodule:: src.backend.x86_backend.x86_backend

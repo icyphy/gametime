@@ -1,7 +1,7 @@
-src.backend.flexpret\_backend package
+backend.flexpret\_backend package
 =====================================
 
-src.backend.flexpret\_backend.flexpret\_backend module
+backend.flexpret\_backend.flexpret\_backend
 ------------------------------------------------------
 
 .. automodule:: src.backend.flexpret_backend.flexpret_backend

@@ -1,7 +1,7 @@
 SMT-Solver
 ==========
 
-src.smt\_solver.extract\_klee\_input
+smt\_solver.extract\_klee\_input
 ------------------------------------
 
 .. automodule:: src.smt_solver.extract_klee_input
@@ -9,7 +9,7 @@ src.smt\_solver.extract\_klee\_input
    :undoc-members:
    :show-inheritance:
 
-src.smt\_solver.extract\_labels
+smt\_solver.extract\_labels
 -------------------------------
 
 .. automodule:: src.smt_solver.extract_labels
@@ -17,7 +17,7 @@ src.smt\_solver.extract\_labels
    :undoc-members:
    :show-inheritance:
 
-src.smt\_solver.smt
+smt\_solver.smt
 -------------------
 
 .. automodule:: src.smt_solver.smt
@@ -25,7 +25,7 @@ src.smt\_solver.smt
    :undoc-members:
    :show-inheritance:
 
-src.smt\_solver.to\_klee\_format
+smt\_solver.to\_klee\_format
 --------------------------------
 
 .. automodule:: src.smt_solver.to_klee_format

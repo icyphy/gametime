@@ -5,7 +5,7 @@
    src.smt_solver
 
 
-src.analyze\_project module
+analyze\_project
 ---------------------------
 
 .. automodule:: src.analyze_project
@@ -13,7 +13,7 @@ src.analyze\_project module
    :undoc-members:
    :show-inheritance:
 
-src.analyzer module
+analyzer
 -------------------
 
 .. automodule:: src.analyzer
@@ -21,7 +21,7 @@ src.analyzer module
    :undoc-members:
    :show-inheritance:
 
-src.clang\_helper module
+clang\_helper
 ------------------------
 
 .. automodule:: src.clang_helper
@@ -29,7 +29,7 @@ src.clang\_helper module
    :undoc-members:
    :show-inheritance:
 
-src.defaults module
+defaults
 -------------------
 
 .. automodule:: src.defaults
@@ -37,7 +37,7 @@ src.defaults module
    :undoc-members:
    :show-inheritance:
 
-src.file\_helper module
+file\_helper
 -----------------------
 
 .. automodule:: src.file_helper
@@ -45,7 +45,7 @@ src.file\_helper module
    :undoc-members:
    :show-inheritance:
 
-src.gametime\_configuration module
+gametime\_configuration module
 ----------------------------------
 
 .. automodule:: src.gametime_configuration
@@ -53,7 +53,7 @@ src.gametime\_configuration module
    :undoc-members:
    :show-inheritance:
 
-src.gametime\_error module
+gametime\_error
 --------------------------
 
 .. automodule:: src.gametime_error
@@ -61,7 +61,7 @@ src.gametime\_error module
    :undoc-members:
    :show-inheritance:
 
-src.histogram module
+histogram
 --------------------
 
 .. automodule:: src.histogram
@@ -69,7 +69,7 @@ src.histogram module
    :undoc-members:
    :show-inheritance:
 
-src.index\_expression module
+index\_expression
 ----------------------------
 
 .. automodule:: src.index_expression
@@ -77,7 +77,7 @@ src.index\_expression module
    :undoc-members:
    :show-inheritance:
 
-src.interval module
+interval
 -------------------
 
 .. automodule:: src.interval
@@ -85,7 +85,7 @@ src.interval module
    :undoc-members:
    :show-inheritance:
 
-src.logging\_helper module
+logging\_helper
 --------------------------
 
 .. automodule:: src.logging_helper
@@ -93,7 +93,7 @@ src.logging\_helper module
    :undoc-members:
    :show-inheritance:
 
-src.nx\_helper module
+nx\_helper
 ---------------------
 
 .. automodule:: src.nx_helper
@@ -101,7 +101,7 @@ src.nx\_helper module
    :undoc-members:
    :show-inheritance:
 
-src.path module
+path
 ---------------
 
 .. automodule:: src.path
@@ -109,7 +109,7 @@ src.path module
    :undoc-members:
    :show-inheritance:
 
-src.path\_analyzer module
+path\_analyzer
 -------------------------
 
 .. automodule:: src.path_analyzer
@@ -117,7 +117,7 @@ src.path\_analyzer module
    :undoc-members:
    :show-inheritance:
 
-src.path\_generator module
+path\_generator
 --------------------------
 
 .. automodule:: src.path_generator
@@ -125,7 +125,7 @@ src.path\_generator module
    :undoc-members:
    :show-inheritance:
 
-src.project\_configuration module
+project\_configuration
 ---------------------------------
 
 .. automodule:: src.project_configuration
@@ -133,7 +133,7 @@ src.project\_configuration module
    :undoc-members:
    :show-inheritance:
 
-src.project\_configuration\_parser module
+project\_configuration\_parser
 -----------------------------------------
 
 .. automodule:: src.project_configuration_parser
@@ -141,18 +141,10 @@ src.project\_configuration\_parser module
    :undoc-members:
    :show-inheritance:
 
-src.pulp\_helper module
+pulp\_helper
 -----------------------
 
 .. automodule:: src.pulp_helper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: src
    :members:
    :undoc-members:
    :show-inheritance:
