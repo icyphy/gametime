@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -107,7 +107,7 @@
     <span class="k">def</span> <span class="nf">lower_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        Lower bound of the interval represented by this object, or `None` if the interval has no finite lower bound.</span>
+<span class="sd">            Lower bound of the interval represented by this object, or `None` if the interval has no finite lower bound.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span>
 
@@ -115,14 +115,14 @@
     <span class="k">def</span> <span class="nf">upper_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        Upper bound of the interval represented by this object, or `None` if the interval has no finite upper bound.</span>
+<span class="sd">            Upper bound of the interval represented by this object, or `None` if the interval has no finite upper bound.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span>
 
 <div class="viewcode-block" id="Interval.has_finite_lower_bound"><a class="viewcode-back" href="../../src.html#src.interval.Interval.has_finite_lower_bound">[docs]</a>    <span class="k">def</span> <span class="nf">has_finite_lower_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        `True` if, and only if, the represented interval has a finite lower bound.</span>
+<span class="sd">            `True` if, and only if, the represented interval has a finite lower bound.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
@@ -130,7 +130,7 @@
 <div class="viewcode-block" id="Interval.has_finite_upper_bound"><a class="viewcode-back" href="../../src.html#src.interval.Interval.has_finite_upper_bound">[docs]</a>    <span class="k">def</span> <span class="nf">has_finite_upper_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">        `True` if, and only if, the represented interval has a finite upper bound.</span>
+<span class="sd">            `True` if, and only if, the represented interval has a finite upper bound.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div></div>

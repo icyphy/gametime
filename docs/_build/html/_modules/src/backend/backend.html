@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -96,10 +96,10 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters:</span>
-<span class="sd">        project_config: ProjectConfiguration:</span>
-<span class="sd">            GameTime project configuration for the code that is being analyzed</span>
-<span class="sd">        name: str:</span>
-<span class="sd">            name of the backend that this object represents</span>
+<span class="sd">            project_config: ProjectConfiguration:</span>
+<span class="sd">                GameTime project configuration for the code that is being analyzed</span>
+<span class="sd">            name: str:</span>
+<span class="sd">                name of the backend that this object represents</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#: Name of the backend that this object represents.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
@@ -108,16 +108,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span> <span class="o">=</span> <span class="n">project_config</span>
     
 <div class="viewcode-block" id="Backend.measure"><a class="viewcode-back" href="../../../src.backend.html#src.backend.backend.Backend.measure">[docs]</a>    <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform measurement using the backend.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform measurement using the backend.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        inputs: str:</span>
-<span class="sd">            the inputs to drive down a PATH in a file</span>
-<span class="sd">        measure_folder: str :</span>
-<span class="sd">            all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
+<span class="sd">            inputs: str:</span>
+<span class="sd">                the inputs to drive down a PATH in a file</span>
+<span class="sd">            measure_folder: str :</span>
+<span class="sd">                all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        The measured value of path</span>
+<span class="sd">            int:</span>
+<span class="sd">                The measured value of path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">0</span></div></div>
 </pre></div>

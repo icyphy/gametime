@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -87,24 +87,25 @@
 
 
 <div class="viewcode-block" id="compile_to_llvm_for_exec"><a class="viewcode-back" href="../../src.html#src.clang_helper.compile_to_llvm_for_exec">[docs]</a><span class="k">def</span> <span class="nf">compile_to_llvm_for_exec</span><span class="p">(</span><span class="n">c_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extra_libs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[],</span> <span class="n">extra_flags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[],</span> <span class="n">readable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile the C program into bitcode in OUTPUT_FILE_FOLDER.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compile the C program into bitcode in OUTPUT_FILE_FOLDER.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    c_filepath: str :</span>
-<span class="sd">        Path to the input C program. Main function should be defined.</span>
-<span class="sd">    output_file_folder: str :</span>
-<span class="sd">        Storage folder for generated file.</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        Name for generated bc.</span>
-<span class="sd">    extra_libs: List[str] :</span>
-<span class="sd">        Extra libraries needed for compilation. (Default value = [])</span>
-<span class="sd">    extra_flags: List[str] :</span>
-<span class="sd">        Extra flags needed for compilation. (Default value = [])</span>
-<span class="sd">    readable: bool :</span>
-<span class="sd">        If set to true, also generate readable LL file. (Default value = False)</span>
+<span class="sd">        c_filepath: str :</span>
+<span class="sd">            Path to the input C program. Main function should be defined.</span>
+<span class="sd">        output_file_folder: str :</span>
+<span class="sd">            Storage folder for generated file.</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            Name for generated bc.</span>
+<span class="sd">        extra_libs: List[str] :</span>
+<span class="sd">            Extra libraries needed for compilation. (Default value = [])</span>
+<span class="sd">        extra_flags: List[str] :</span>
+<span class="sd">            Extra flags needed for compilation. (Default value = [])</span>
+<span class="sd">        readable: bool :</span>
+<span class="sd">            If set to true, also generate readable LL file. (Default value = False)</span>
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        The path to bc.</span>
+<span class="sd">        str:</span>
+<span class="sd">            The path to bc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># compile bc file</span>
     <span class="n">file_to_compile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">c_filepath</span>
@@ -124,24 +125,25 @@
     <span class="k">return</span> <span class="n">output_file</span></div>
 
 <div class="viewcode-block" id="compile_to_llvm_for_analysis"><a class="viewcode-back" href="../../src.html#src.clang_helper.compile_to_llvm_for_analysis">[docs]</a><span class="k">def</span> <span class="nf">compile_to_llvm_for_analysis</span><span class="p">(</span><span class="n">c_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extra_libs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[],</span> <span class="n">extra_flags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[],</span> <span class="n">readable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    c_filepath: str :</span>
-<span class="sd">        Path to the input C program.</span>
-<span class="sd">    output_file_folder: str :</span>
-<span class="sd">        Storage folder for generated file.</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        Name for generated bc.</span>
-<span class="sd">    extra_libs: List[str] :</span>
-<span class="sd">        Extra libraries needed for compilation. (Default value = [])</span>
-<span class="sd">    extra_flags: List[str] :</span>
-<span class="sd">        Extra flags needed for compilation. (Default value = [])</span>
-<span class="sd">    readable: bool :</span>
-<span class="sd">        If set to true, also generate readable LL file. (Default value = False)</span>
+<span class="sd">        c_filepath: str :</span>
+<span class="sd">            Path to the input C program.</span>
+<span class="sd">        output_file_folder: str :</span>
+<span class="sd">            Storage folder for generated file.</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            Name for generated bc.</span>
+<span class="sd">        extra_libs: List[str] :</span>
+<span class="sd">            Extra libraries needed for compilation. (Default value = [])</span>
+<span class="sd">        extra_flags: List[str] :</span>
+<span class="sd">            Extra flags needed for compilation. (Default value = [])</span>
+<span class="sd">        readable: bool :</span>
+<span class="sd">            If set to true, also generate readable LL file. (Default value = False)</span>
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        The path to bc.</span>
+<span class="sd">        str:</span>
+<span class="sd">            The path to bc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># compile bc file</span>
     <span class="n">file_to_compile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">c_filepath</span>
@@ -160,22 +162,23 @@
     <span class="k">return</span> <span class="n">output_file</span></div>
 
 <div class="viewcode-block" id="bc_to_executable"><a class="viewcode-back" href="../../src.html#src.clang_helper.bc_to_executable">[docs]</a><span class="k">def</span> <span class="nf">bc_to_executable</span><span class="p">(</span><span class="n">bc_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extra_libs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[],</span> <span class="n">extra_flags</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="p">[])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile the LLVM bitcode program into executable in OUTPUT_FILE_FOLDER.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compile the LLVM bitcode program into executable in OUTPUT_FILE_FOLDER.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    bc_filepath: str :</span>
-<span class="sd">        Path to the input bitcode program.</span>
-<span class="sd">    output_folder: str :</span>
-<span class="sd">        Storage folder for generated file.</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        Name for generated executable.</span>
-<span class="sd">    extra_libs: List[str] :</span>
-<span class="sd">        Extra libraries needed for compilation. (Default value = [])</span>
-<span class="sd">    extra_flags: List[str] :</span>
-<span class="sd">        Extra flags needed for compilation. (Default value = [])</span>
+<span class="sd">        bc_filepath: str :</span>
+<span class="sd">            Path to the input bitcode program.</span>
+<span class="sd">        output_folder: str :</span>
+<span class="sd">            Storage folder for generated file.</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            Name for generated executable.</span>
+<span class="sd">        extra_libs: List[str] :</span>
+<span class="sd">            Extra libraries needed for compilation. (Default value = [])</span>
+<span class="sd">        extra_flags: List[str] :</span>
+<span class="sd">            Extra flags needed for compilation. (Default value = [])</span>
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        The path to executable.</span>
+<span class="sd">        str:</span>
+<span class="sd">            The path to executable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Set the path for the output executable file</span>
     <span class="n">executable_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span>
@@ -194,19 +197,20 @@
 
 
 <div class="viewcode-block" id="dump_object"><a class="viewcode-back" href="../../src.html#src.clang_helper.dump_object">[docs]</a><span class="k">def</span> <span class="nf">dump_object</span><span class="p">(</span><span class="n">object_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dump the .o file to OUTPUT_NAME.dmp</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dump the .o file to OUTPUT_NAME.dmp</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    object_filepath: str :</span>
-<span class="sd">        The name of the .o file to dump</span>
-<span class="sd">    output_folder: str :</span>
-<span class="sd">        The folder path where .dmp files will be stored</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        Name for dumped .dmp files.</span>
+<span class="sd">        object_filepath: str :</span>
+<span class="sd">            The name of the .o file to dump</span>
+<span class="sd">        output_folder: str :</span>
+<span class="sd">            The folder path where .dmp files will be stored</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            Name for dumped .dmp files.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        Path of the output OUTPUT_NAME.dmp file</span>
+<span class="sd">        str:</span>
+<span class="sd">            Path of the output OUTPUT_NAME.dmp file</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -217,19 +221,20 @@
     <span class="k">return</span> <span class="n">output_file</span></div>
 
 <div class="viewcode-block" id="generate_dot_file"><a class="viewcode-back" href="../../src.html#src.clang_helper.generate_dot_file">[docs]</a><span class="k">def</span> <span class="nf">generate_dot_file</span><span class="p">(</span><span class="n">bc_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bc_file_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dag from .bc file using opt through executing shell commands</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create dag from .bc file using opt through executing shell commands</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    bc_filename: str :</span>
-<span class="sd">        location of the compiled llvm .bc file</span>
-<span class="sd">    bc_file_folder: str :</span>
-<span class="sd">        the folder path where .bc files is stored and where .main.dot file will be stored</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        Name of the generated dot file (Default value = &quot;main&quot;)</span>
+<span class="sd">        bc_filename: str :</span>
+<span class="sd">            location of the compiled llvm .bc file</span>
+<span class="sd">        bc_file_folder: str :</span>
+<span class="sd">            the folder path where .bc files is stored and where .main.dot file will be stored</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            Name of the generated dot file (Default value = &quot;main&quot;)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        Path of the output .dot file</span>
+<span class="sd">        str:</span>
+<span class="sd">            Path of the output .dot file</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">.dot&quot;</span>
@@ -242,25 +247,26 @@
 
 
 <div class="viewcode-block" id="inline_functions"><a class="viewcode-back" href="../../src.html#src.clang_helper.inline_functions">[docs]</a><span class="k">def</span> <span class="nf">inline_functions</span><span class="p">(</span><span class="n">bc_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unrolls the provided input file and output the unrolled version in</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unrolls the provided input file and output the unrolled version in</span>
 <span class="sd">    the output file using llvm&#39;s opt utility. Could be unreliable if input_file</span>
 <span class="sd">    is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the</span>
 <span class="sd">    user might want to generate their own unrolled .bc/.ll file rather than</span>
 <span class="sd">    relying on this built-in function.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    bc_filepath: str :</span>
-<span class="sd">        Input .bc/.ll function to loop unroll</span>
-<span class="sd">    output_file_folder: str :</span>
-<span class="sd">        folder to write unrolled .bc file. Outputs in a</span>
-<span class="sd">        human-readable form already.</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        file to write unrolled .bc file. Outputs in a</span>
-<span class="sd">        human-readable form already.</span>
+<span class="sd">        bc_filepath: str :</span>
+<span class="sd">            Input .bc/.ll function to loop unroll</span>
+<span class="sd">        output_file_folder: str :</span>
+<span class="sd">            folder to write unrolled .bc file. Outputs in a</span>
+<span class="sd">            human-readable form already.</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            file to write unrolled .bc file. Outputs in a</span>
+<span class="sd">            human-readable form already.</span>
 <span class="sd">        </span>
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        Path of the output .bc file</span>
+<span class="sd">        str:</span>
+<span class="sd">            Path of the output .bc file</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_file_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">.bc&quot;</span><span class="p">)</span>
@@ -276,28 +282,28 @@
 
 
 <div class="viewcode-block" id="unroll_loops"><a class="viewcode-back" href="../../src.html#src.clang_helper.unroll_loops">[docs]</a><span class="k">def</span> <span class="nf">unroll_loops</span><span class="p">(</span><span class="n">bc_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unrolls the provided input file and output the unrolled version in</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unrolls the provided input file and output the unrolled version in</span>
 <span class="sd">    the output file using llvm&#39;s opt utility. Could be unreliable if input_file</span>
 <span class="sd">    is not compiled with `compile_to_llvm_for_analysis` function. If that is the case, the</span>
 <span class="sd">    user might want to generate their own unrolled .bc/.ll file rather than</span>
 <span class="sd">    relying on this built-in function.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    input_file: str :</span>
-<span class="sd">        Input .bc/.ll function to loop unroll</span>
-<span class="sd">    output_file_folder: str :</span>
-<span class="sd">        folder to write unrolled .bc file. Outputs in a</span>
-<span class="sd">        human-readable form already.</span>
-<span class="sd">    output_name: str :</span>
-<span class="sd">        file to write unrolled .bc file. Outputs in a</span>
-<span class="sd">        human-readable form already.</span>
-<span class="sd">        </span>
-<span class="sd">    project_config: ProjectConfiguration :</span>
-<span class="sd">        ProjectConfiguration this helper is calling from.</span>
+<span class="sd">        input_file: str :</span>
+<span class="sd">            Input .bc/.ll function to loop unroll</span>
+<span class="sd">        output_file_folder: str :</span>
+<span class="sd">            folder to write unrolled .bc file. Outputs in a</span>
+<span class="sd">            human-readable form already.</span>
+<span class="sd">        output_name: str :</span>
+<span class="sd">            file to write unrolled .bc file. Outputs in a</span>
+<span class="sd">            human-readable form already.</span>
+<span class="sd">        project_config: ProjectConfiguration :</span>
+<span class="sd">            ProjectConfiguration this helper is calling from.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str</span>
-<span class="sd">        Path of the output .bc file</span>
+<span class="sd">        str:</span>
+<span class="sd">            Path of the output .bc file</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># return bc_filepath</span>
@@ -328,15 +334,15 @@
     <span class="k">return</span> <span class="n">output_file</span></div>
 
 <div class="viewcode-block" id="remove_temp_cil_files"><a class="viewcode-back" href="../../src.html#src.clang_helper.remove_temp_cil_files">[docs]</a><span class="k">def</span> <span class="nf">remove_temp_cil_files</span><span class="p">(</span><span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">,</span> <span class="n">all_temp_files</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes the temporary files created by CIL during its analysis.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the temporary files created by CIL during its analysis.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    project_config :</span>
-<span class="sd">        ProjectConfiguration this helper is calling from.</span>
+<span class="sd">        project_config :</span>
+<span class="sd">            ProjectConfiguration this helper is calling from.</span>
 
-<span class="sd">    all_temp_files:</span>
-<span class="sd">        True if all files in temperary directory should be removed.</span>
-
+<span class="sd">        all_temp_files:</span>
+<span class="sd">            True if all files in temperary directory should be removed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Remove the files with extension &quot;.cil.*&quot;.</span>
     <span class="k">if</span> <span class="n">all_temp_files</span><span class="p">:</span>

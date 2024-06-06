@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -113,13 +113,14 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Analyzer"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer">[docs]</a><span class="k">class</span> <span class="nc">Analyzer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Maintains information about the code being analyzed, such as</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maintains information about the code being analyzed, such as</span>
 <span class="sd">    the name of the file that contains the code being analyzed</span>
 <span class="sd">    and the basis paths of the code.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    project_config:</span>
-<span class="sd">        Object that represents the configuration of a GameTime project.</span>
+<span class="sd">        project_config:</span>
+<span class="sd">            Object that represents the configuration of a GameTime project.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">):</span>
@@ -185,7 +186,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preprocesses the file before analysis. The preprocessing steps are:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preprocesses the file before analysis. The preprocessing steps are:</span>
 <span class="sd">        1. Create a temporary directory that will contain the files</span>
 <span class="sd">        generated during analysis.</span>
 <span class="sd">        2. Copy the source file being analyzed into this temporary directory.</span>
@@ -241,18 +243,19 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_loop_unroller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compiled_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;As part of preprocessing, runs CIL on the source file under</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        As part of preprocessing, runs CIL on the source file under</span>
 <span class="sd">        analysis to unroll loops. A copy of the file that results from</span>
 <span class="sd">        the CIL preprocessing is made and renamed for use by other</span>
 <span class="sd">        preprocessing phases, and the file itself is renamed and</span>
 <span class="sd">        stored for later perusal.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        compiled_file: str :</span>
-<span class="sd">            Path to the original file.</span>
+<span class="sd">            compiled_file: str :</span>
+<span class="sd">                Path to the original file.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Path to unrolled file.</span>
+<span class="sd">            Path to unrolled file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">preprocessed_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_file</span>
 
@@ -274,18 +277,19 @@
             <span class="k">return</span> <span class="n">unrolled_file</span>
 
     <span class="k">def</span> <span class="nf">_run_inliner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;As part of preprocessing, runs CIL on the source file under</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        As part of preprocessing, runs CIL on the source file under</span>
 <span class="sd">        analysis to inline functions. A copy of the file that results from</span>
 <span class="sd">        the CIL preprocessing is made and renamed for use by other</span>
 <span class="sd">        preprocessing phases, and the file itself is renamed and</span>
 <span class="sd">        stored for later perusal.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        input_file: str :</span>
-<span class="sd">            Path to input file.</span>
+<span class="sd">            input_file: str :</span>
+<span class="sd">                Path to input file.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Path to inlined file.</span>
+<span class="sd">            Path to inlined file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">preprocessed_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_file</span>
         <span class="c1"># Infer the name of the file that results from the CIL preprocessing.</span>
@@ -307,7 +311,8 @@
         
     <span class="c1">### GRAPH FUNCTIONS ###</span>
 <div class="viewcode-block" id="Analyzer.create_dag"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.create_dag">[docs]</a>    <span class="k">def</span> <span class="nf">create_dag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the DAG corresponding to the code being analyzed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the DAG corresponding to the code being analyzed</span>
 <span class="sd">        and dumps the DAG, in DOT format, to a temporary file for further</span>
 <span class="sd">        analysis. This method also stores a local copy in a data</span>
 <span class="sd">        structure that represents the DAG.</span>
@@ -350,11 +355,12 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Analyzer.load_dag_from_dot_file"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.load_dag_from_dot_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_dag_from_dot_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Loads the DAG that corresponds to the code being analyzed from a DOT file.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the DAG that corresponds to the code being analyzed from a DOT file.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        location: str :</span>
-<span class="sd">            Location of the file.</span>
+<span class="sd">            location: str :</span>
+<span class="sd">                Location of the file.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dag</span><span class="p">,</span> <span class="n">modified</span> <span class="o">=</span> <span class="n">nx_helper</span><span class="o">.</span><span class="n">construct_dag</span><span class="p">(</span><span class="n">location</span><span class="p">)</span>
@@ -377,7 +383,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_randomize_basis_matrix</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_randomize_basis_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Randomizes the rows of the basis matrix using</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Randomizes the rows of the basis matrix using</span>
 <span class="sd">        a Fisher-Yates shuffle.</span>
 <span class="sd">        </span>
 <span class="sd">        Precondition: The basis matrix has been initialized.</span>
@@ -387,13 +394,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_swap_basis_matrix_rows</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_swap_basis_matrix_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Swaps two rows of the basis matrix.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Swaps two rows of the basis matrix.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        i :</span>
-<span class="sd">            Index of one row to swap.</span>
-<span class="sd">        j :</span>
-<span class="sd">            Index of other row to swap.</span>
+<span class="sd">            i: </span>
+<span class="sd">                Index of one row to swap.</span>
+<span class="sd">            j:</span>
+<span class="sd">                Index of other row to swap.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">row_to_swap_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_matrix</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
         <span class="n">row_to_swap_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -409,27 +417,28 @@
 
     <span class="c1">### PATH GENERATION FUNCTIONS ###</span>
 <div class="viewcode-block" id="Analyzer.add_path_exclusive_constraint"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.add_path_exclusive_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_path_exclusive_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the edges provided to the list of path-exclusive</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the edges provided to the list of path-exclusive</span>
 <span class="sd">        constraints, if not already present. These edges must not</span>
 <span class="sd">        be taken together along any path through the DAG.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        edges: List[Tuple[str, str]] :</span>
-<span class="sd">            List of edges to add to the list of path-exclusive constraints.</span>
+<span class="sd">            edges: List[Tuple[str, str]] :</span>
+<span class="sd">                List of edges to add to the list of path-exclusive constraints.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">edges</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_exclusive_constraints</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path_exclusive_constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Analyzer.add_path_bundled_constraint"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.add_path_bundled_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_path_bundled_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds the edges provided to the list of path-bundled</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the edges provided to the list of path-bundled</span>
 <span class="sd">        constraints, if not already present. These edges must</span>
 <span class="sd">        be taken together if at least one of them is taken along</span>
 <span class="sd">        a path through the DAG.</span>
-
 <span class="sd">        Parameters:</span>
-<span class="sd">        edges: List[Tuple[str, str]] :</span>
-<span class="sd">            List of edges to add to the list of path-bundled constraints.</span>
+<span class="sd">            edges: List[Tuple[str, str]] :</span>
+<span class="sd">                List of edges to add to the list of path-bundled constraints.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">edges</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_bundled_constraints</span><span class="p">:</span>
@@ -444,31 +453,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">path_bundled_constraints</span> <span class="o">=</span> <span class="p">[]</span></div>
 
     <span class="k">def</span> <span class="nf">_compress_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compresses the path provided: this method converts</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compresses the path provided: this method converts</span>
 <span class="sd">        the provided path to a 0-1 vector that is 1 if a</span>
 <span class="sd">        &#39;non-special&#39; edge is along the path, and 0 otherwise.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        path_edges: List[Tuple[str, str]] :</span>
-<span class="sd">            Edges along the path to represent with &#39;non-special&#39; edges.</span>
+<span class="sd">            path_edges: List[Tuple[str, str]] :</span>
+<span class="sd">                Edges along the path to represent with &#39;non-special&#39; edges.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        0-1 vector that is 1 if a `non-special&#39; edge is along the path, and 0 otherwise.</span>
+<span class="sd">            0-1 vector that is 1 if a `non-special&#39; edge is along the path, and 0 otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[(</span><span class="mf">1.0</span> <span class="k">if</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">path_edges</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag</span><span class="o">.</span><span class="n">edges_reduced</span><span class="p">]</span>
 
     <span class="c1">####### Fuctions to FIX</span>
 <div class="viewcode-block" id="Analyzer.generate_overcomplete_basis"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.generate_overcomplete_basis">[docs]</a>    <span class="k">def</span> <span class="nf">generate_overcomplete_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates an overcomplete basis so that each feasible path can be</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates an overcomplete basis so that each feasible path can be</span>
 <span class="sd">           written as a liner combination of the paths in the basis so that the</span>
 <span class="sd">           L1 norm is at most &#39;k&#39;. This method is for testing purposes</span>
 <span class="sd">           only as it exhaustively generates all_temp_files paths in the graph!. Use the</span>
 <span class="sd">           function below for a scalable version.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        k: int :</span>
-<span class="sd">            Maximum value of L1 norm.</span>
+<span class="sd">            k: int :</span>
+<span class="sd">                Maximum value of L1 norm.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating all_temp_files paths&quot;</span><span class="p">)</span>
@@ -479,7 +490,8 @@
 
 
 <div class="viewcode-block" id="Analyzer.iteratively_find_overcomplete_basis"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.iteratively_find_overcomplete_basis">[docs]</a>    <span class="k">def</span> <span class="nf">iteratively_find_overcomplete_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]],</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates overcomplete basis such the lenth of the longest</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates overcomplete basis such the lenth of the longest</span>
 <span class="sd">        feasible path is at most &#39;k&#39;. The basis is computed by iteratively</span>
 <span class="sd">        extending the basis with the longest path.  Parameter &#39;initial_paths&#39;</span>
 <span class="sd">        specifies the set of paths the iterative algorithm begins with. This</span>
@@ -544,13 +556,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_paths</span></div>
 
 <div class="viewcode-block" id="Analyzer.generate_basis_paths"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.generate_basis_paths">[docs]</a>    <span class="k">def</span>  <span class="nf">generate_basis_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a list of &quot;Path&quot; objects, each of which represents</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a list of &quot;Path&quot; objects, each of which represents</span>
 <span class="sd">        a basis path of the code being analyzed. The basis &quot;Path&quot; objects</span>
 <span class="sd">        are regenerated each time this method is called.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List of basis paths of the code being analyzed, each</span>
-<span class="sd">        represented by an object of the &quot;Path&quot; class.</span>
+<span class="sd">            List of basis paths of the code being analyzed, each</span>
+<span class="sd">            represented by an object of the &quot;Path&quot; class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">basis_paths</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -573,22 +586,21 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">on_exit</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">infeasible</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Helper function that is called when this method is about to</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Helper function that is called when this method is about to</span>
 <span class="sd">            return the basis Path objects, and performs the appropriate</span>
 <span class="sd">            pre-exit cleanup. This inner function will be used in two</span>
 <span class="sd">            places below, and is defined once to keep the code neat,</span>
 <span class="sd">            to prevent deeper indentation, and to reduce confusion.</span>
 
-<span class="sd">            Parameters</span>
-<span class="sd">            ----------</span>
-<span class="sd">            start_time :</span>
-<span class="sd">                Time when the generation of basis Path objects was started.</span>
-<span class="sd">            infeasible :</span>
-<span class="sd">                Set of infeasible paths.</span>
+<span class="sd">            Parameters:</span>
+<span class="sd">                start_time :</span>
+<span class="sd">                    Time when the generation of basis Path objects was started.</span>
+<span class="sd">                infeasible :</span>
+<span class="sd">                    Set of infeasible paths.</span>
 
-<span class="sd">            Returns</span>
-<span class="sd">            -------</span>
-<span class="sd">            List of basis paths of the code being analyzed, each represented by an object of the Path class.</span>
+<span class="sd">            Returns:            </span>
+<span class="sd">                List of basis paths of the code being analyzed, each represented by an object of the Path class.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">basis_paths</span> <span class="o">=</span> <span class="n">basis_paths</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">basis_paths_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">nodes</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">basis_paths</span><span class="p">]</span>
@@ -819,17 +831,18 @@
 
     <span class="c1">### PATH GENERATION HELPER FUNCTIONS ###</span>
     <span class="k">def</span> <span class="nf">_calculate_subdets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of weights, where weight i is assigned to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of weights, where weight i is assigned to</span>
 <span class="sd">        edge i. The weights assigned to the `non-special&#39; edges are</span>
 <span class="sd">        subdeterminants of the basis matrix without row i and column j:</span>
 <span class="sd">        column j corresponds to the `non-special&#39; edge j.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        row: int :</span>
-<span class="sd">            Row to ignore.</span>
+<span class="sd">            row: int :</span>
+<span class="sd">                Row to ignore.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List of weights as specified above.</span>
+<span class="sd">            List of weights as specified above.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">edges_reduced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag</span><span class="o">.</span><span class="n">edges_reduced</span>
         <span class="n">edges_reduced_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dag</span><span class="o">.</span><span class="n">edges_reduced_indices</span>
@@ -863,7 +876,8 @@
 
 
 <div class="viewcode-block" id="Analyzer.estimate_edge_weights"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.estimate_edge_weights">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_edge_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimates the weights on the edges of the DAG, using the values</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimates the weights on the edges of the DAG, using the values</span>
 <span class="sd">        of the basis &quot;Path&quot; objects. The result is stored in the instance</span>
 <span class="sd">        variable &quot;edgeWeights&quot;.</span>
 <span class="sd">        </span>
@@ -903,16 +917,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">measure_path</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;basis_path</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Analyzer.measure_path"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.measure_path">[docs]</a>    <span class="k">def</span> <span class="nf">measure_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Measure the Path if never measured before. If no name was set, the parameter output_name is used. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Measure the Path if never measured before. If no name was set, the parameter output_name is used. </span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        path: Path :</span>
-<span class="sd">            The path object</span>
-<span class="sd">        output_name: str :</span>
-<span class="sd">            Name for this path.</span>
+<span class="sd">            path: Path :</span>
+<span class="sd">                The path object</span>
+<span class="sd">            output_name: str :</span>
+<span class="sd">                Name for this path.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Measured cycle count for PATH.</span>
+<span class="sd">            Measured cycle count for PATH.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">path_analyzer</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">output_name</span><span class="p">:</span>
@@ -927,16 +942,17 @@
         <span class="k">return</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span></div>
 
 <div class="viewcode-block" id="Analyzer.measure_paths"><a class="viewcode-back" href="../../src.html#src.analyzer.Analyzer.measure_paths">[docs]</a>    <span class="k">def</span> <span class="nf">measure_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="n">output_name_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Measure the list of PATHS. Using prefix and index as name if none is given.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Measure the list of PATHS. Using prefix and index as name if none is given.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters:</span>
-<span class="sd">        paths: list[Path] :</span>
-<span class="sd">            List of paths to measure.</span>
-<span class="sd">        output_name_prefix: str :</span>
-<span class="sd">            Prefix to use for the name of each path</span>
+<span class="sd">            paths: list[Path] :</span>
+<span class="sd">                List of paths to measure.</span>
+<span class="sd">            output_name_prefix: str :</span>
+<span class="sd">                Prefix to use for the name of each path</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        List of measured values for the paths.</span>
+<span class="sd">            List of measured values for the paths.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)):</span>

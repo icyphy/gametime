@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -97,37 +97,41 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">ArmBackend</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project_config</span><span class="p">,</span> <span class="s2">&quot;Arm&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ArmBackend.generate_executable"><a class="viewcode-back" href="../../../../src.backend.arm_backend.html#src.backend.arm_backend.arm_backend.ArmBackend.generate_executable">[docs]</a>    <span class="k">def</span> <span class="nf">generate_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the input program to use INPUTS and generates the executable code. Stored at MEASURE_FOLDER/driver</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modifies the input program to use INPUTS and generates the executable code. Stored at MEASURE_FOLDER/driver</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        filepath: str :</span>
-<span class="sd">            Path to C file to modify with inputs.</span>
-<span class="sd">        func_name: str :</span>
-<span class="sd">            Name of function being analyzed.</span>
-<span class="sd">        inputs: str :</span>
-<span class="sd">            Path to the INPUTS file containing output of symbolic solver.</span>
-<span class="sd">        measure_folder: str :</span>
-<span class="sd">            The folder to store generated executable.</span>
+<span class="sd">            filepath: str :</span>
+<span class="sd">                Path to C file to modify with inputs.</span>
+<span class="sd">            func_name: str :</span>
+<span class="sd">                Name of function being analyzed.</span>
+<span class="sd">            inputs: str :</span>
+<span class="sd">                Path to the INPUTS file containing output of symbolic solver.</span>
+<span class="sd">            measure_folder: str :</span>
+<span class="sd">                The folder to store generated executable.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Path to the executable code.</span>
+<span class="sd">            str: </span>
+<span class="sd">                Path to the executable code.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">exec_file</span> <span class="o">=</span> <span class="n">generate_executable</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timing_func</span><span class="p">)</span>
         <span class="n">modified_bitcode_file_path</span> <span class="o">=</span> <span class="n">clang_helper</span><span class="o">.</span><span class="n">compile_to_llvm_for_exec</span><span class="p">(</span><span class="n">exec_file</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">,</span> <span class="s2">&quot;modified_output&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">included</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">compile_flags</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">clang_helper</span><span class="o">.</span><span class="n">bc_to_executable</span><span class="p">(</span><span class="n">modified_bitcode_file_path</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">,</span> <span class="s2">&quot;driver&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">included</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">compile_flags</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArmBackend.run_backend_and_parse_output"><a class="viewcode-back" href="../../../../src.backend.arm_backend.html#src.backend.arm_backend.arm_backend.ArmBackend.run_backend_and_parse_output">[docs]</a>    <span class="k">def</span> <span class="nf">run_backend_and_parse_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">executable_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the executable in EXECUTABLE_PATH in host machine and extracts the outputs from program.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the executable in EXECUTABLE_PATH in host machine and extracts the outputs from program.</span>
 <span class="sd">        Temperaries are stored in STORED_FOLDER.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        stored_folder: str :</span>
-<span class="sd">            Folder to put all the generated tempraries.</span>
-<span class="sd">        executable_path: str :</span>
-<span class="sd">            Path to executable.</span>
+<span class="sd">            stored_folder: str :</span>
+<span class="sd">                Folder to put all the generated tempraries.</span>
+<span class="sd">            executable_path: str :</span>
+<span class="sd">                Path to executable.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Measured cycle count for EXECUTABLE_PATH.</span>
+<span class="sd">            int:</span>
+<span class="sd">                Measured cycle count for EXECUTABLE_PATH.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Assuming the modified bc now print the cycle count to the console.</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">executable_path</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="n">stored_folder</span><span class="si">}</span><span class="s2">/measure.out&quot;</span><span class="p">)</span>
@@ -156,16 +160,18 @@
             <span class="k">raise</span> <span class="n">GameTimeError</span><span class="p">(</span><span class="s2">&quot;The measure output file is ill-formatted&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArmBackend.measure"><a class="viewcode-back" href="../../../../src.backend.arm_backend.html#src.backend.arm_backend.arm_backend.ArmBackend.measure">[docs]</a>    <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform measurement using the backend.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform measurement using the backend.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        inputs: str:</span>
-<span class="sd">            the inputs to drive down a PATH in a file</span>
-<span class="sd">        measure_folder: str :</span>
-<span class="sd">            all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
+<span class="sd">            inputs: str:</span>
+<span class="sd">                the inputs to drive down a PATH in a file</span>
+<span class="sd">            measure_folder: str :</span>
+<span class="sd">                all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        The measured value of path</span>
+<span class="sd">            int:</span>
+<span class="sd">                The measured value of path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">measure_folder</span>
         <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_orig_file</span>

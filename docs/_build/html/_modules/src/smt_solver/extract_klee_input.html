@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -82,11 +82,8 @@
 <span class="sd">    Extract hexadecimal values from a KLEE test input file and write them to a new file.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    filename : str</span>
-<span class="sd">        Path to the KLEE test input file.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    None</span>
+<span class="sd">        filename : str</span>
+<span class="sd">            Path to the KLEE test input file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Define a regular expression pattern to extract hex values</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;object \d+: hex : (0x[0-9a-fA-F]+)&#39;</span><span class="p">)</span>
@@ -112,12 +109,12 @@
 <span class="sd">    Find the first KLEE test case input file in the specified directory that does not have a corresponding .assert.err file.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    klee_last_dir : str</span>
-<span class="sd">        Path to the directory containing KLEE output files.</span>
+<span class="sd">        klee_last_dir : str</span>
+<span class="sd">            Path to the directory containing KLEE output files.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    str or None</span>
-<span class="sd">        Path to the found KLEE test case input file, or None if no such file is found.</span>
+<span class="sd">        str or None</span>
+<span class="sd">            Path to the found KLEE test case input file, or None if no such file is found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Iterate over files in the klee-last directory</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">klee_last_dir</span><span class="p">):</span>
@@ -136,13 +133,10 @@
 <span class="sd">    Run the ktest-tool on a KLEE test case input file and save the output to a specified file.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    ktest_file : str</span>
-<span class="sd">        Path to the KLEE test case input file.</span>
-<span class="sd">    output_file : str</span>
-<span class="sd">        Path to the file where the output will be saved.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">    None</span>
+<span class="sd">        ktest_file : str</span>
+<span class="sd">            Path to the KLEE test case input file.</span>
+<span class="sd">        output_file : str</span>
+<span class="sd">            Path to the file where the output will be saved.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Run ktest-tool on the ktest file and save the output to the output file</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -155,14 +149,14 @@
 <span class="sd">    Find a KLEE test case input file, run ktest-tool on it, and save the input to a new file.</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    c_file_gt_dir : str</span>
-<span class="sd">        Path to the directory containing the KLEE output subdirectory &#39;klee-last&#39;.</span>
-<span class="sd">    output_dir : str</span>
-<span class="sd">        Directory where the output file will be saved.</span>
+<span class="sd">        c_file_gt_dir : str</span>
+<span class="sd">            Path to the directory containing the KLEE output subdirectory &#39;klee-last&#39;.</span>
+<span class="sd">        output_dir : str</span>
+<span class="sd">            Directory where the output file will be saved.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    bool</span>
-<span class="sd">        True if a KLEE test case input file is found and processed, False otherwise.</span>
+<span class="sd">        bool:</span>
+<span class="sd">            True if a KLEE test case input file is found and processed, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#klee_last_dir = &#39;klee-last&#39;  # Path to the klee-last directory</span>
     <span class="n">klee_last_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c_file_gt_dir</span><span class="p">,</span> <span class="s2">&quot;klee-last&quot;</span><span class="p">)</span>

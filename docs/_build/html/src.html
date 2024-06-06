@@ -146,22 +146,26 @@
 <p>Maintains information about the code being analyzed, such as
 the name of the file that contains the code being analyzed
 and the basis paths of the code.</p>
-<p>Parameters:
-project_config:</p>
-<blockquote>
-<div><p>Object that represents the configuration of a GameTime project.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>project_config:</dt><dd><p>Object that represents the configuration of a GameTime project.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.analyzer.Analyzer.add_path_bundled_constraint">
 <span class="sig-name descname"><span class="pre">add_path_bundled_constraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/analyzer.html#Analyzer.add_path_bundled_constraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.analyzer.Analyzer.add_path_bundled_constraint" title="Permalink to this definition"></a></dt>
 <dd><p>Adds the edges provided to the list of path-bundled
 constraints, if not already present. These edges must
 be taken together if at least one of them is taken along
-a path through the DAG.</p>
-<p>Parameters:
-edges: List[Tuple[str, str]] :</p>
+a path through the DAG.
+Parameters:</p>
 <blockquote>
-<div><p>List of edges to add to the list of path-bundled constraints.</p>
+<div><dl class="simple">
+<dt>edges: List[Tuple[str, str]] :</dt><dd><p>List of edges to add to the list of path-bundled constraints.</p>
+</dd>
+</dl>
 </div></blockquote>
 </dd></dl>
 
@@ -171,11 +175,13 @@ edges: List[Tuple[str, str]] :</p>
 <dd><p>Adds the edges provided to the list of path-exclusive
 constraints, if not already present. These edges must not
 be taken together along any path through the DAG.</p>
-<p>Parameters:
-edges: List[Tuple[str, str]] :</p>
-<blockquote>
-<div><p>List of edges to add to the list of path-exclusive constraints.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>edges: List[Tuple[str, str]] :</dt><dd><p>List of edges to add to the list of path-exclusive constraints.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -214,9 +220,11 @@ variable “edgeWeights”.</p>
 <dd><p>Generates a list of “Path” objects, each of which represents
 a basis path of the code being analyzed. The basis “Path” objects
 are regenerated each time this method is called.</p>
-<p>Returns:
-List of basis paths of the code being analyzed, each
+<dl class="simple">
+<dt>Returns:</dt><dd><p>List of basis paths of the code being analyzed, each
 represented by an object of the “Path” class.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -228,12 +236,12 @@ L1 norm is at most ‘k’. This method is for testing purposes
 only as it exhaustively generates all_temp_files paths in the graph!. Use the
 function below for a scalable version.</p>
 </dd>
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>k: int :</dt><dd><p>Maximum value of L1 norm.</p>
+</dd>
 </dl>
-<p>Parameters:
-k: int :</p>
-<blockquote>
-<div><p>Maximum value of L1 norm.</p>
-</div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -267,11 +275,13 @@ the standard algorithm.</p>
 <dt class="sig sig-object py" id="src.analyzer.Analyzer.load_dag_from_dot_file">
 <span class="sig-name descname"><span class="pre">load_dag_from_dot_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/analyzer.html#Analyzer.load_dag_from_dot_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.analyzer.Analyzer.load_dag_from_dot_file" title="Permalink to this definition"></a></dt>
 <dd><p>Loads the DAG that corresponds to the code being analyzed from a DOT file.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -284,34 +294,34 @@ location: str :</p>
 <dt class="sig sig-object py" id="src.analyzer.Analyzer.measure_path">
 <span class="sig-name descname"><span class="pre">measure_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.path.Path" title="src.path.Path"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/src/analyzer.html#Analyzer.measure_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.analyzer.Analyzer.measure_path" title="Permalink to this definition"></a></dt>
 <dd><p>Measure the Path if never measured before. If no name was set, the parameter output_name is used.</p>
-<p>Parameters:
-path: Path :</p>
-<blockquote>
-<div><p>The path object</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>path: Path :</dt><dd><p>The path object</p>
+</dd>
 <dt>output_name: str :</dt><dd><p>Name for this path.</p>
 </dd>
 </dl>
-<p>Returns:
-Measured cycle count for PATH.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Measured cycle count for PATH.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.analyzer.Analyzer.measure_paths">
 <span class="sig-name descname"><span class="pre">measure_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.path.Path" title="src.path.Path"><span class="pre">path.Path</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/src/analyzer.html#Analyzer.measure_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.analyzer.Analyzer.measure_paths" title="Permalink to this definition"></a></dt>
 <dd><p>Measure the list of PATHS. Using prefix and index as name if none is given.</p>
-<p>Parameters:
-paths: list[Path] :</p>
-<blockquote>
-<div><p>List of paths to measure.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>paths: list[Path] :</dt><dd><p>List of paths to measure.</p>
+</dd>
 <dt>output_name_prefix: str :</dt><dd><p>Prefix to use for the name of each path</p>
 </dd>
 </dl>
-<p>Returns:
-List of measured values for the paths.</p>
+</dd>
+<dt>Returns:</dt><dd><p>List of measured values for the paths.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -367,12 +377,10 @@ line. Allows creation of dags</p>
 <dt class="sig sig-object py" id="src.clang_helper.bc_to_executable">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">bc_to_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bc_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_libs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#bc_to_executable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.bc_to_executable" title="Permalink to this definition"></a></dt>
 <dd><p>Compile the LLVM bitcode program into executable in OUTPUT_FILE_FOLDER.</p>
-<p>Parameters:
-bc_filepath: str :</p>
-<blockquote>
-<div><p>Path to the input bitcode program.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>bc_filepath: str :</dt><dd><p>Path to the input bitcode program.</p>
+</dd>
 <dt>output_folder: str :</dt><dd><p>Storage folder for generated file.</p>
 </dd>
 <dt>output_name: str :</dt><dd><p>Name for generated executable.</p>
@@ -382,23 +390,23 @@ bc_filepath: str :</p>
 <dt>extra_flags: List[str] :</dt><dd><p>Extra flags needed for compilation. (Default value = [])</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>The path to executable.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>The path to executable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.clang_helper.compile_to_llvm_for_analysis">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">compile_to_llvm_for_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_libs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#compile_to_llvm_for_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.compile_to_llvm_for_analysis" title="Permalink to this definition"></a></dt>
 <dd><p>Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.</p>
-<p>Parameters:
-c_filepath: str :</p>
-<blockquote>
-<div><p>Path to the input C program.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>c_filepath: str :</dt><dd><p>Path to the input C program.</p>
+</dd>
 <dt>output_file_folder: str :</dt><dd><p>Storage folder for generated file.</p>
 </dd>
 <dt>output_name: str :</dt><dd><p>Name for generated bc.</p>
@@ -410,23 +418,23 @@ c_filepath: str :</p>
 <dt>readable: bool :</dt><dd><p>If set to true, also generate readable LL file. (Default value = False)</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>The path to bc.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>The path to bc.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.clang_helper.compile_to_llvm_for_exec">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">compile_to_llvm_for_exec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_libs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_flags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#compile_to_llvm_for_exec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.compile_to_llvm_for_exec" title="Permalink to this definition"></a></dt>
 <dd><p>Compile the C program into bitcode in OUTPUT_FILE_FOLDER.</p>
-<p>Parameters:
-c_filepath: str :</p>
-<blockquote>
-<div><p>Path to the input C program. Main function should be defined.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>c_filepath: str :</dt><dd><p>Path to the input C program. Main function should be defined.</p>
+</dd>
 <dt>output_file_folder: str :</dt><dd><p>Storage folder for generated file.</p>
 </dd>
 <dt>output_name: str :</dt><dd><p>Name for generated bc.</p>
@@ -438,55 +446,57 @@ c_filepath: str :</p>
 <dt>readable: bool :</dt><dd><p>If set to true, also generate readable LL file. (Default value = False)</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>The path to bc.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>The path to bc.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.clang_helper.dump_object">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">dump_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#dump_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.dump_object" title="Permalink to this definition"></a></dt>
 <dd><p>Dump the .o file to OUTPUT_NAME.dmp</p>
-<p>Parameters:
-object_filepath: str :</p>
-<blockquote>
-<div><p>The name of the .o file to dump</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>object_filepath: str :</dt><dd><p>The name of the .o file to dump</p>
+</dd>
 <dt>output_folder: str :</dt><dd><p>The folder path where .dmp files will be stored</p>
 </dd>
 <dt>output_name: str :</dt><dd><p>Name for dumped .dmp files.</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>Path of the output OUTPUT_NAME.dmp file</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>Path of the output OUTPUT_NAME.dmp file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.clang_helper.generate_dot_file">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">generate_dot_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bc_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bc_file_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#generate_dot_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.generate_dot_file" title="Permalink to this definition"></a></dt>
 <dd><p>Create dag from .bc file using opt through executing shell commands</p>
-<p>Parameters:
-bc_filename: str :</p>
-<blockquote>
-<div><p>location of the compiled llvm .bc file</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>bc_filename: str :</dt><dd><p>location of the compiled llvm .bc file</p>
+</dd>
 <dt>bc_file_folder: str :</dt><dd><p>the folder path where .bc files is stored and where .main.dot file will be stored</p>
 </dd>
 <dt>output_name: str :</dt><dd><p>Name of the generated dot file (Default value = “main”)</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>Path of the output .dot file</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>Path of the output .dot file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -497,12 +507,10 @@ the output file using llvm’s opt utility. Could be unreliable if input_file
 is not compiled with <cite>compile_to_llvm_for_analysis</cite> function. If that is the case, the
 user might want to generate their own unrolled .bc/.ll file rather than
 relying on this built-in function.</p>
-<p>Parameters:
-bc_filepath: str :</p>
-<blockquote>
-<div><p>Input .bc/.ll function to loop unroll</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>bc_filepath: str :</dt><dd><p>Input .bc/.ll function to loop unroll</p>
+</dd>
 <dt>output_file_folder: str :</dt><dd><p>folder to write unrolled .bc file. Outputs in a
 human-readable form already.</p>
 </dd>
@@ -510,24 +518,26 @@ human-readable form already.</p>
 human-readable form already.</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>Path of the output .bc file</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>Path of the output .bc file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.clang_helper.remove_temp_cil_files">
 <span class="sig-prename descclassname"><span class="pre">src.clang_helper.</span></span><span class="sig-name descname"><span class="pre">remove_temp_cil_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.project_configuration.ProjectConfiguration" title="src.project_configuration.ProjectConfiguration"><span class="pre">ProjectConfiguration</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_temp_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/clang_helper.html#remove_temp_cil_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.clang_helper.remove_temp_cil_files" title="Permalink to this definition"></a></dt>
 <dd><p>Removes the temporary files created by CIL during its analysis.</p>
-<p>Parameters:
-project_config :</p>
-<blockquote>
-<div><p>ProjectConfiguration this helper is calling from.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>project_config :</dt><dd><p>ProjectConfiguration this helper is calling from.</p>
+</dd>
 <dt>all_temp_files:</dt><dd><p>True if all files in temperary directory should be removed.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -540,12 +550,10 @@ the output file using llvm’s opt utility. Could be unreliable if input_file
 is not compiled with <cite>compile_to_llvm_for_analysis</cite> function. If that is the case, the
 user might want to generate their own unrolled .bc/.ll file rather than
 relying on this built-in function.</p>
-<p>Parameters:
-input_file: str :</p>
-<blockquote>
-<div><p>Input .bc/.ll function to loop unroll</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>input_file: str :</dt><dd><p>Input .bc/.ll function to loop unroll</p>
+</dd>
 <dt>output_file_folder: str :</dt><dd><p>folder to write unrolled .bc file. Outputs in a
 human-readable form already.</p>
 </dd>
@@ -555,11 +563,13 @@ human-readable form already.</p>
 <dt>project_config: ProjectConfiguration :</dt><dd><p>ProjectConfiguration this helper is calling from.</p>
 </dd>
 </dl>
-<p>Returns:
-str</p>
-<blockquote>
-<div><p>Path of the output .bc file</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str:</dt><dd><p>Path of the output .bc file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -605,11 +615,13 @@ intermediate-level directories needed to contain the directory.
 This is a wrapper around the <code class="xref py py-func docutils literal notranslate"><span class="pre">makedirs()</span></code> function of
 the <code class="xref py py-mod docutils literal notranslate"><span class="pre">os</span></code> module, but does not raise an exception if
 the directory is already present,</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the directory to be created</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the directory to be created</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -621,17 +633,17 @@ the destination directory whose location is provided. If a file in
 the destination directory has the same name as a file that is being moved
 from the source directory, the former is overwritten if <cite>overwrite</cite> is
 set to <cite>True</cite>; otherwise, the latter will not be moved.</p>
-<p>Parameters:
-patterns: List[str] :</p>
-<blockquote>
-<div><p>List of patterns to match filenames against</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>patterns: List[str] :</dt><dd><p>List of patterns to match filenames against</p>
+</dd>
 <dt>source_dir: str :</dt><dd><p>Location of the source directory</p>
 </dd>
 <dt>dest_dir: str :</dt><dd><p>Location of the destination directory</p>
 </dd>
 <dt>overwrite: bool :</dt><dd><p>Whether to overwrite a file in the destination directory that has the same name as a file that is being moved from the source directory. (Default value = True)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -642,13 +654,13 @@ patterns: List[str] :</p>
 <dd><p>Removes all_temp_files of the files and directories from the directory whose
 location is provided, <em>except</em> for those files whose names match any
 of the patterns in the list provided.</p>
-<p>Parameters:
-patterns: List[str] :</p>
-<blockquote>
-<div><p>List of patterns to match filenames against</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>patterns: List[str] :</dt><dd><p>List of patterns to match filenames against</p>
+</dd>
 <dt>dir_location: str :</dt><dd><p>Location of the directory to remove files from</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -658,11 +670,13 @@ patterns: List[str] :</p>
 <span class="sig-prename descclassname"><span class="pre">src.file_helper.</span></span><span class="sig-name descname"><span class="pre">remove_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/file_helper.html#remove_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.file_helper.remove_file" title="Permalink to this definition"></a></dt>
 <dd><p>Removes the file at the provided location. This is a wrapper around
 the <code class="xref py py-func docutils literal notranslate"><span class="pre">remove()</span></code> function of the <code class="xref py py-mod docutils literal notranslate"><span class="pre">os</span></code> module, but does not</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Location of the file to be removed</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Location of the file to be removed</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -670,13 +684,13 @@ location: str :</p>
 <span class="sig-prename descclassname"><span class="pre">src.file_helper.</span></span><span class="sig-name descname"><span class="pre">remove_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patterns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/src/file_helper.html#remove_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.file_helper.remove_files" title="Permalink to this definition"></a></dt>
 <dd><p>Removes the files from the directory whose location is provided,
 whose names match any of the patterns in the list provided.</p>
-<p>Parameters:
-patterns: List[str] :</p>
-<blockquote>
-<div><p>List of patterns to match filenames against</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>patterns: List[str] :</dt><dd><p>List of patterns to match filenames against</p>
+</dd>
 <dt>dir_location: str :</dt><dd><p>Location of the directory to remove files from</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -712,16 +726,18 @@ patterns: List[str] :</p>
 <dt class="sig sig-object py" id="src.gametime_configuration.read_gametime_config_yaml">
 <span class="sig-prename descclassname"><span class="pre">src.gametime_configuration.</span></span><span class="sig-name descname"><span class="pre">read_gametime_config_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_config_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.gametime_configuration.GametimeConfiguration" title="src.gametime_configuration.GametimeConfiguration"><span class="pre">GametimeConfiguration</span></a></span></span><a class="reference internal" href="_modules/src/gametime_configuration.html#read_gametime_config_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.gametime_configuration.read_gametime_config_yaml" title="Permalink to this definition"></a></dt>
 <dd><p>Creates GametimeConfiguration from yaml files</p>
-<p>Parameters:
-yaml_config_path: str :</p>
-<blockquote>
-<div><p>path of the yaml config file that contains</p>
-</div></blockquote>
-<p>Returns:
-GametimeConfiguration</p>
-<blockquote>
-<div><p>GametimeConfiguration object that contains information from YAML file at yaml_config_path</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>yaml_config_path: str :</dt><dd><p>path of the yaml config file that contains</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>GametimeConfiguration</dt><dd><p>GametimeConfiguration object that contains information from YAML file at yaml_config_path</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -755,36 +771,8 @@ feasible paths generated by GameTime. This function is
 a wrapper around the function <code class="xref py py-func docutils literal notranslate"><span class="pre">histogram()</span></code> from
 the module <code class="xref py py-mod docutils literal notranslate"><span class="pre">numpy</span></code>. Refer to the documentation of this
 function for more information about the computed histogram.</p>
-<p>Parameters:
-paths: list[Path] :</p>
-<blockquote>
-<div><p>List of feasible paths generated by GameTime, each represented by a <cite>~gametime.src.path.Path</cite> object.</p>
-</div></blockquote>
 <dl class="simple">
-<dt>bins:</dt><dd><p>Same purpose as the same-named argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>.</p>
-</dd>
-<dt>path_value_range:</dt><dd><p>Same purpose as the range argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>. (Default value = None)</p>
-</dd>
-<dt>measured :</dt><dd><p><cite>True</cite> if, and only if, the values that will be used for the histogram are the measured values of the feasible paths. (Default value = False)</p>
-</dd>
-</dl>
-<p>Returns:
-Tuple</p>
-<blockquote>
-<div><p>Tuple, whose first element is an array of the values of the histogram, and whose second element is an array of the left edges of the bins.</p>
-</div></blockquote>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="src.histogram.write_histogram_to_file">
-<span class="sig-prename descclassname"><span class="pre">src.histogram.</span></span><span class="sig-name descname"><span class="pre">write_histogram_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_value_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/histogram.html#write_histogram_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.histogram.write_histogram_to_file" title="Permalink to this definition"></a></dt>
-<dd><p>Create a histogram and write it to location.</p>
-<p>Parameters:
-location :</p>
-<blockquote>
-<div><p>The stored folder for histogram file</p>
-</div></blockquote>
-<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
 <dt>paths: list[Path] :</dt><dd><p>List of feasible paths generated by GameTime, each represented by a <cite>~gametime.src.path.Path</cite> object.</p>
 </dd>
 <dt>bins:</dt><dd><p>Same purpose as the same-named argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>.</p>
@@ -792,6 +780,34 @@ location :</p>
 <dt>path_value_range:</dt><dd><p>Same purpose as the range argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>. (Default value = None)</p>
 </dd>
 <dt>measured :</dt><dd><p><cite>True</cite> if, and only if, the values that will be used for the histogram are the measured values of the feasible paths. (Default value = False)</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Tuple</dt><dd><p>Tuple, whose first element is an array of the values of the histogram, and whose second element is an array of the left edges of the bins.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.histogram.write_histogram_to_file">
+<span class="sig-prename descclassname"><span class="pre">src.histogram.</span></span><span class="sig-name descname"><span class="pre">write_histogram_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_value_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measured</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/histogram.html#write_histogram_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.histogram.write_histogram_to_file" title="Permalink to this definition"></a></dt>
+<dd><p>Create a histogram and write it to location.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location :</dt><dd><p>The stored folder for histogram file</p>
+</dd>
+<dt>paths: list[Path] :</dt><dd><p>List of feasible paths generated by GameTime, each represented by a <cite>~gametime.src.path.Path</cite> object.</p>
+</dd>
+<dt>bins:</dt><dd><p>Same purpose as the same-named argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>.</p>
+</dd>
+<dt>path_value_range:</dt><dd><p>Same purpose as the range argument of the function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.histogram()</span></code>. (Default value = None)</p>
+</dd>
+<dt>measured :</dt><dd><p><cite>True</cite> if, and only if, the values that will be used for the histogram are the measured values of the feasible paths. (Default value = False)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -853,29 +869,37 @@ an interval of values.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.interval.Interval.has_finite_lower_bound">
 <span class="sig-name descname"><span class="pre">has_finite_lower_bound</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/src/interval.html#Interval.has_finite_lower_bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.interval.Interval.has_finite_lower_bound" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-<cite>True</cite> if, and only if, the represented interval has a finite lower bound.</p>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><p><cite>True</cite> if, and only if, the represented interval has a finite lower bound.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.interval.Interval.has_finite_upper_bound">
 <span class="sig-name descname"><span class="pre">has_finite_upper_bound</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/src/interval.html#Interval.has_finite_upper_bound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.interval.Interval.has_finite_upper_bound" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-<cite>True</cite> if, and only if, the represented interval has a finite upper bound.</p>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><p><cite>True</cite> if, and only if, the represented interval has a finite upper bound.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="src.interval.Interval.lower_bound">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower_bound</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#src.interval.Interval.lower_bound" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-Lower bound of the interval represented by this object, or <cite>None</cite> if the interval has no finite lower bound.</p>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><p>Lower bound of the interval represented by this object, or <cite>None</cite> if the interval has no finite lower bound.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="src.interval.Interval.upper_bound">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upper_bound</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#src.interval.Interval.upper_bound" title="Permalink to this definition"></a></dt>
-<dd><p>Returns:
-Upper bound of the interval represented by this object, or <cite>None</cite> if the interval has no finite upper bound.</p>
+<dd><dl class="simple">
+<dt>Returns:</dt><dd><p>Upper bound of the interval represented by this object, or <cite>None</cite> if the interval has no finite upper bound.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -891,11 +915,13 @@ the <code class="xref py py-mod docutils literal notranslate"><span class="pre">
 <dd><p>Initializes the logger provided with
 <cite>~logging.Formatter</cite> and <cite>~logging.StreamHandler</cite>
 objects appropriate for GameTime.</p>
-<p>Parameters:
-logger: logging.Logger :</p>
-<blockquote>
-<div><p>Logger to initialize</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>logger: logging.Logger :</dt><dd><p>Logger to initialize</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -915,26 +941,30 @@ such as the special ‘default’ edges in the DAG.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.nx_helper.Dag.get_edges">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.nx_helper.Dag.get_edges" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-nodes: List[str] :</p>
-<blockquote>
-<div><p>Nodes of a path in the directed acyclic graph</p>
-</div></blockquote>
-<p>Returns:
-List of edges that lie along the path.</p>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>nodes: List[str] :</dt><dd><p>Nodes of a path in the directed acyclic graph</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>List of edges that lie along the path.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.nx_helper.Dag.get_node_label">
 <span class="sig-name descname"><span class="pre">get_node_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#src.nx_helper.Dag.get_node_label" title="Permalink to this definition"></a></dt>
 <dd><p>gets node label from node ID</p>
-<p>Parameters:
-node: int :</p>
-<blockquote>
-<div><p>ID of the node of interest</p>
-</div></blockquote>
-<p>Returns:
-label corresponding to the node. (code corresponding to the node in LLVM IR)</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>node: int :</dt><dd><p>ID of the node of interest</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>label corresponding to the node. (code corresponding to the node in LLVM IR)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -962,119 +992,125 @@ values. This method is useful when the DAG is loaded from a DOT file.</p>
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">construct_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">src.nx_helper.Dag</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.nx_helper.construct_dag" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a <cite>~gametime.nxHelper.Dag</cite> object to represent
 the directed acyclic graph described in DOT format in the file provided.</p>
-<p>Parameters:
-location: str :</p>
-<blockquote>
-<div><p>Path to the file describing a directed acyclic graph in DOT format</p>
-</div></blockquote>
-<p>Returns:
-<cite>~gametime.src.nx_helper.Dag</cite></p>
-<blockquote>
-<div><p>Object that represents the directed acyclic graph.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>location: str :</dt><dd><p>Path to the file describing a directed acyclic graph in DOT format</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt><cite>~gametime.src.nx_helper.Dag</cite>: </dt><dd><p>Object that represents the directed acyclic graph.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.find_root_node">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">find_root_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.nx_helper.find_root_node" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-G :</p>
-<blockquote>
-<div><p>The graph to find root node in</p>
-</div></blockquote>
-<p>Returns:
-Node</p>
-<blockquote>
-<div><p>Root node of G or None if one doesn’t exist.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>G :</dt><dd><p>The graph to find root node in</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Node</dt><dd><p>Root node of G or None if one doesn’t exist.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.get_random_path">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">get_random_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">Dag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.nx_helper.get_random_path" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-dag: Dag :</p>
-<blockquote>
-<div><p>DAG represented by a <cite>~gametime.src.nx_helper.Dag</cite> object.</p>
-</div></blockquote>
-<dl class="simple">
+<dd><dl>
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>dag: Dag :</dt><dd><p>DAG represented by a <cite>~gametime.src.nx_helper.Dag</cite> object.</p>
+</dd>
 <dt>source: str :</dt><dd><p>source to start path with</p>
 </dd>
 <dt>sink: str :</dt><dd><p>sink to end path with</p>
 </dd>
 </dl>
-<p>Returns:
-List[str]</p>
-<blockquote>
-<div><p>Random path in the DAG provided from the input source node to
-the input sink node, represented as a list of nodes arranged in
-order of traversal from source to sink.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>List[str]:</dt><dd><p>Random path in the DAG provided from the input source node to
+the input sink node, represented as a list of nodes arranged in</p>
+</dd>
+</dl>
+<p>order of traversal from source to sink.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.has_cycles">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">has_cycles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">Dag</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.nx_helper.has_cycles" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-dag: Dag :</p>
-<blockquote>
-<div><p>DAG represented by a dag</p>
-</div></blockquote>
-<p>Returns:
-bool</p>
-<blockquote>
-<div><p><cite>True</cite> if, and only if, the DAG provided has cycles.</p>
-</div></blockquote>
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>dag: Dag :</dt><dd><p>DAG represented by a dag</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>bool:</dt><dd><p><cite>True</cite> if, and only if, the DAG provided has cycles.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.num_paths">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">num_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">Dag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#src.nx_helper.num_paths" title="Permalink to this definition"></a></dt>
-<dd><p>Parameters:
-dag:</p>
-<blockquote>
-<div><p>DAG represented by a <cite>~gametime.src.nx_helper.Dag</cite> object.</p>
-</div></blockquote>
-<dl class="simple">
+<dd><dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>dag:</dt><dd><p>DAG represented by a <cite>~gametime.src.nx_helper.Dag</cite> object.</p>
+</dd>
 <dt>source:</dt><dd><p>Source node.</p>
 </dd>
 <dt>sink:</dt><dd><p>Sink node.</p>
 </dd>
 </dl>
-<p>Returns:
-int</p>
-<blockquote>
-<div><p>Number of paths in the DAG provided. Note: Passed in DAG must be actually acyclic.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>int:</dt><dd><p>Number of paths in the DAG provided. Note: Passed in DAG must be actually acyclic.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.remove_back_edges_to_make_dag">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">remove_back_edges_to_make_dag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.nx_helper.remove_back_edges_to_make_dag" title="Permalink to this definition"></a></dt>
 <dd><p>Remove all back edges from G to make it a DAG. Assuming G is connected and rooted at ROOT.
-Parameters:
-G :</p>
+Parameters:</p>
 <blockquote>
-<div><p>The graph to remove root edges</p>
-</div></blockquote>
-<dl class="simple">
+<div><dl class="simple">
+<dt>G :</dt><dd><p>The graph to remove root edges</p>
+</dd>
 <dt>root :</dt><dd><p>The root node of G to start DFS with</p>
 </dd>
 </dl>
-<p>Returns:
-DAG version of G with all back edges removed.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>DAG version of G with all back edges removed.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.nx_helper.write_dag_to_dot_file">
 <span class="sig-prename descclassname"><span class="pre">src.nx_helper.</span></span><span class="sig-name descname"><span class="pre">write_dag_to_dot_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#src.nx_helper.Dag" title="src.nx_helper.Dag"><span class="pre">Dag</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dag_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_to_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlighted_edges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'red'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.nx_helper.write_dag_to_dot_file" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the directed acyclic graph provided to a file in DOT format.</p>
-<p>Parameters:
-dag : Dag :</p>
-<blockquote>
-<div><p>Dag to save to dot</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>dag<span class="classifier">Dag :</span></dt><dd><p>Dag to save to dot</p>
+</dd>
 <dt>location<span class="classifier">str :</span></dt><dd><p>Location of the file.</p>
 </dd>
 <dt>dag_name<span class="classifier">str :</span></dt><dd><p>Name of the directed acyclic graph, as will be written to
@@ -1093,6 +1129,8 @@ is not provided, no edges will be highlighted. (Default value = None)</p>
 <dt>highlight_color<span class="classifier">str:</span></dt><dd><p>Color of the highlighted edges. This argument can be any value
 that is legal in the DOT format. If the <cite>highlightedEdges</cite> argument
 is not provided, this argument is ignored. (Default value = “red”)</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>

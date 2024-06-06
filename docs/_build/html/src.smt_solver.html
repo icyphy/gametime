@@ -111,66 +111,66 @@
 <dt class="sig sig-object py" id="src.smt_solver.extract_klee_input.find_and_run_test">
 <span class="sig-prename descclassname"><span class="pre">src.smt_solver.extract_klee_input.</span></span><span class="sig-name descname"><span class="pre">find_and_run_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">c_file_gt_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/smt_solver/extract_klee_input.html#find_and_run_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.smt_solver.extract_klee_input.find_and_run_test" title="Permalink to this definition"></a></dt>
 <dd><p>Find a KLEE test case input file, run ktest-tool on it, and save the input to a new file.</p>
-<p>Parameters:
-c_file_gt_dir : str</p>
-<blockquote>
-<div><p>Path to the directory containing the KLEE output subdirectory ‘klee-last’.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>c_file_gt_dir<span class="classifier">str</span></dt><dd><p>Path to the directory containing the KLEE output subdirectory ‘klee-last’.</p>
+</dd>
 <dt>output_dir<span class="classifier">str</span></dt><dd><p>Directory where the output file will be saved.</p>
 </dd>
 </dl>
-<p>Returns:
-bool</p>
-<blockquote>
-<div><p>True if a KLEE test case input file is found and processed, False otherwise.</p>
-</div></blockquote>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>bool:</dt><dd><p>True if a KLEE test case input file is found and processed, False otherwise.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.smt_solver.extract_klee_input.find_test_file">
 <span class="sig-prename descclassname"><span class="pre">src.smt_solver.extract_klee_input.</span></span><span class="sig-name descname"><span class="pre">find_test_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">klee_last_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/smt_solver/extract_klee_input.html#find_test_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.smt_solver.extract_klee_input.find_test_file" title="Permalink to this definition"></a></dt>
 <dd><p>Find the first KLEE test case input file in the specified directory that does not have a corresponding .assert.err file.</p>
-<p>Parameters:
-klee_last_dir : str</p>
-<blockquote>
-<div><p>Path to the directory containing KLEE output files.</p>
-</div></blockquote>
-<p>Returns:
-str or None</p>
-<blockquote>
-<div><p>Path to the found KLEE test case input file, or None if no such file is found.</p>
-</div></blockquote>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>klee_last_dir<span class="classifier">str</span></dt><dd><p>Path to the directory containing KLEE output files.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>str or None</dt><dd><p>Path to the found KLEE test case input file, or None if no such file is found.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.smt_solver.extract_klee_input.run_ktest_tool">
 <span class="sig-prename descclassname"><span class="pre">src.smt_solver.extract_klee_input.</span></span><span class="sig-name descname"><span class="pre">run_ktest_tool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ktest_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/smt_solver/extract_klee_input.html#run_ktest_tool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.smt_solver.extract_klee_input.run_ktest_tool" title="Permalink to this definition"></a></dt>
 <dd><p>Run the ktest-tool on a KLEE test case input file and save the output to a specified file.</p>
-<p>Parameters:
-ktest_file : str</p>
-<blockquote>
-<div><p>Path to the KLEE test case input file.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>ktest_file<span class="classifier">str</span></dt><dd><p>Path to the KLEE test case input file.</p>
+</dd>
 <dt>output_file<span class="classifier">str</span></dt><dd><p>Path to the file where the output will be saved.</p>
 </dd>
 </dl>
-<p>Returns:
-None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="src.smt_solver.extract_klee_input.write_klee_input_to_file">
 <span class="sig-prename descclassname"><span class="pre">src.smt_solver.extract_klee_input.</span></span><span class="sig-name descname"><span class="pre">write_klee_input_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/smt_solver/extract_klee_input.html#write_klee_input_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.smt_solver.extract_klee_input.write_klee_input_to_file" title="Permalink to this definition"></a></dt>
 <dd><p>Extract hexadecimal values from a KLEE test input file and write them to a new file.</p>
-<p>Parameters:
-filename : str</p>
-<blockquote>
-<div><p>Path to the KLEE test input file.</p>
-</div></blockquote>
-<p>Returns:
-None</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>filename<span class="classifier">str</span></dt><dd><p>Path to the KLEE test input file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -182,7 +182,7 @@ None</p>
 <dd><p>Extract labels from bitcode string representation of Path.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
-<dt>filename:</dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
+<dt>filename<span class="classifier">str</span></dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
 which is generated before running the SMT solver</p>
 </dd>
 </dl>
@@ -233,7 +233,7 @@ which is generated before running the SMT solver</p>
 <dd><p>Extracts the block labels from the labels file corresponding to the specific path.</p>
 <dl class="simple">
 <dt>Parameters:</dt><dd><dl class="simple">
-<dt>filename:</dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
+<dt>filename<span class="classifier">str</span></dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
 which is generated before running the SMT solver</p>
 </dd>
 </dl>
@@ -272,16 +272,16 @@ the input for the path given.</p>
 <dt>project_config</dt><dd><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectConfiguration</span></code>
 object that represents the configuration of a GameTime project.</p>
 </dd>
-<dt>labels_file</dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
+<dt>labels_file<span class="classifier">str</span></dt><dd><p>A file containing all of the basic block labels of the path to be analyzed,
 which is generated before running the SMT solver</p>
 </dd>
-<dt>output_dir</dt><dd><p>Path to outputfolder for all files generated by the SMT solver</p>
+<dt>output_dir<span class="classifier">str</span></dt><dd><p>Path to outputfolder for all files generated by the SMT solver</p>
 </dd>
-<dt>total_number_of_labels</dt><dd><p>The total number of basic blocks in the path to be analyzed</p>
+<dt>total_number_of_labels<span class="classifier">int</span></dt><dd><p>The total number of basic blocks in the path to be analyzed</p>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><p>Boolean: A boolean indicating whether the path to be analyzed is feasible</p>
+<dt>Returns:</dt><dd><p>bool: A boolean indicating whether the path to be analyzed is feasible</p>
 </dd>
 </dl>
 </dd></dl>
@@ -387,7 +387,7 @@ which is generated before running the SMT solver</p>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="simple">
-<dt>str</dt><dd><p>The path to the transformed C file.</p>
+<dt>str:</dt><dd><p>The path to the transformed C file.</p>
 </dd>
 </dl>
 </dd>

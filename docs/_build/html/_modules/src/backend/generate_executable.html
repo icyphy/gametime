@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -93,28 +93,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hexvalues</span> <span class="o">=</span> <span class="n">hexvalues</span>
 
 <div class="viewcode-block" id="ExecutableTransformer.visit_func"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.visit_func">[docs]</a>    <span class="k">def</span> <span class="nf">visit_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Visit the AST rooted at node. Generated the new main function and arguments definition.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Visit the AST rooted at node. Generated the new main function and arguments definition.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        node :</span>
-<span class="sd">            The root AST node being visited</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        None</span>
+<span class="sd">            node :</span>
+<span class="sd">                The root AST node being visited</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arg_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">new_main</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_main</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arg_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_names</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_arguments</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">arg_types</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">arg_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hexvalues</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.visit"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.visit">[docs]</a>    <span class="k">def</span> <span class="nf">visit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursively viste the AST node until seeing the definition of the function being analyzed.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively viste the AST node until seeing the definition of the function being analyzed.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        node :</span>
-<span class="sd">            Current AST node being analysized.</span>
+<span class="sd">            node :</span>
+<span class="sd">                Current AST node being analysized.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        (argument types of function being analyzed, argument names of function being analyzed)</span>
+<span class="sd">            (argument types of function being analyzed, argument names of function being analyzed)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">FuncDef</span><span class="p">)</span> <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">decl</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_name</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">decl</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">params</span>
@@ -128,16 +127,17 @@
                 <span class="k">return</span> <span class="n">ret_val</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.gen_main"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.gen_main">[docs]</a>    <span class="k">def</span> <span class="nf">gen_main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_types</span><span class="p">,</span> <span class="n">arg_names</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the new MAIN function node.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the new MAIN function node.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        arg_types :</span>
-<span class="sd">            Argument types of function being analyzed</span>
-<span class="sd">        arg_names :</span>
-<span class="sd">            Argument names of function being analyzed</span>
+<span class="sd">            arg_types :</span>
+<span class="sd">                Argument types of function being analyzed</span>
+<span class="sd">            arg_names :</span>
+<span class="sd">                Argument names of function being analyzed</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        The new MAIN fucntion AST node.</span>
+<span class="sd">            The new MAIN fucntion AST node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">main_arg_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;char **&#39;</span><span class="p">]</span>
         <span class="n">main_arg_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;argc&#39;</span><span class="p">,</span> <span class="s1">&#39;argv&#39;</span><span class="p">]</span>
@@ -192,16 +192,17 @@
         <span class="k">return</span> <span class="n">new_main</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.gen_main_body"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.gen_main_body">[docs]</a>    <span class="k">def</span> <span class="nf">gen_main_body</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_types</span><span class="p">,</span> <span class="n">arg_names</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the new MAIN function body. Including print statement, timing function call, driver function call.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the new MAIN function body. Including print statement, timing function call, driver function call.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        arg_types :</span>
-<span class="sd">            Argument types of function being analyzed</span>
-<span class="sd">        arg_names :</span>
-<span class="sd">            Argument names of function being analyzed</span>
+<span class="sd">            arg_types :</span>
+<span class="sd">                Argument types of function being analyzed</span>
+<span class="sd">            arg_names :</span>
+<span class="sd">                Argument names of function being analyzed</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        The new MAIN function AST node.</span>
+<span class="sd">            The new MAIN function AST node.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">body_items</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">body_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decl</span><span class="p">(</span>
@@ -298,91 +299,97 @@
         <span class="k">return</span> <span class="n">Compound</span><span class="p">(</span><span class="n">block_items</span><span class="o">=</span><span class="n">body_items</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.is_primitive"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.is_primitive">[docs]</a>    <span class="k">def</span> <span class="nf">is_primitive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return if the TYPE_NODE is primitive.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return if the TYPE_NODE is primitive.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        type_node :</span>
-<span class="sd">            Pycparser type representation.</span>
+<span class="sd">            type_node :</span>
+<span class="sd">                Pycparser type representation.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        If TYPE_NODE is primitive.</span>
+<span class="sd">            If TYPE_NODE is primitive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_node</span><span class="p">,</span> <span class="n">TypeDecl</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_node</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">IdentifierType</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.is_struct"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.is_struct">[docs]</a>    <span class="k">def</span> <span class="nf">is_struct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return if the TYPE_NODE is struct.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return if the TYPE_NODE is struct.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        type_node :</span>
-<span class="sd">            Pycparser type representation.</span>
+<span class="sd">            type_node :</span>
+<span class="sd">                Pycparser type representation.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        If TYPE_NODE is struct.</span>
+<span class="sd">            If TYPE_NODE is struct.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_node</span><span class="p">,</span> <span class="n">Struct</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.is_array"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.is_array">[docs]</a>    <span class="k">def</span> <span class="nf">is_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return if the TYPE_NODE is array.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return if the TYPE_NODE is array.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        type_node :</span>
-<span class="sd">            Pycparser type representation.</span>
+<span class="sd">            type_node :</span>
+<span class="sd">                Pycparser type representation.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        If TYPE_NODE is array.</span>
+<span class="sd">            If TYPE_NODE is array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_node</span><span class="p">,</span> <span class="n">ArrayDecl</span><span class="p">)</span></div>
     
 
 <div class="viewcode-block" id="ExecutableTransformer.generate_primitive_declaration"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.generate_primitive_declaration">[docs]</a>    <span class="k">def</span> <span class="nf">generate_primitive_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">type_node</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the variable declaration of primitive variable.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the variable declaration of primitive variable.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        name :</span>
-<span class="sd">            Variable name</span>
-<span class="sd">        type_node :</span>
-<span class="sd">            Pycparser type node for this variable.</span>
-<span class="sd">        value :</span>
-<span class="sd">            Value of the variable.</span>
+<span class="sd">            name :</span>
+<span class="sd">                Variable name</span>
+<span class="sd">            type_node :</span>
+<span class="sd">                Pycparser type node for this variable.</span>
+<span class="sd">            value :</span>
+<span class="sd">                Value of the variable.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        String representation of the variable declaration in C for primitive variables.</span>
+<span class="sd">            String representation of the variable declaration in C for primitive variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">generator</span> <span class="o">=</span> <span class="n">c_generator</span><span class="o">.</span><span class="n">CGenerator</span><span class="p">()</span>
         <span class="n">type_str</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">type_node</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">;&quot;</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.generate_struct_declaration"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.generate_struct_declaration">[docs]</a>    <span class="k">def</span> <span class="nf">generate_struct_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">struct_type_node</span><span class="p">,</span> <span class="n">value_dict</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the variable declaration of struct variable.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the variable declaration of struct variable.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        name :</span>
-<span class="sd">            Variable name</span>
-<span class="sd">        struct_type_node :</span>
-<span class="sd">            Pycparser type node for this variable.</span>
-<span class="sd">        value_dict :</span>
-<span class="sd">            Dict of struct field to value. </span>
+<span class="sd">            name :</span>
+<span class="sd">                Variable name</span>
+<span class="sd">            struct_type_node :</span>
+<span class="sd">                Pycparser type node for this variable.</span>
+<span class="sd">            value_dict :</span>
+<span class="sd">                Dict of struct field to value. </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        String representation of the variable declaration in C for struct variables.</span>
+<span class="sd">            String representation of the variable declaration in C for struct variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#TODO: see how KLEE output structs</span>
         <span class="n">field_inits</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">value_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;struct </span><span class="si">{</span><span class="n">struct_type_node</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> = </span><span class="se">{{</span><span class="s2"> </span><span class="si">{</span><span class="n">field_inits</span><span class="si">}</span><span class="s2"> </span><span class="se">}}</span><span class="s2">;&quot;</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.generate_array_declaration"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.generate_array_declaration">[docs]</a>    <span class="k">def</span> <span class="nf">generate_array_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">array_type_node</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the variable declaration of struct variable.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the variable declaration of struct variable.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        name :</span>
-<span class="sd">            Variable name</span>
-<span class="sd">        array_type_node :</span>
-<span class="sd">            Pycparser type node for this variable.</span>
-<span class="sd">        value_dict :</span>
-<span class="sd">            Dict of struct field to value. </span>
+<span class="sd">            name :</span>
+<span class="sd">                Variable name</span>
+<span class="sd">            array_type_node :</span>
+<span class="sd">                Pycparser type node for this variable.</span>
+<span class="sd">            value_dict :</span>
+<span class="sd">                Dict of struct field to value. </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        String representation of the variable declaration in C for array variables.</span>
+<span class="sd">            String representation of the variable declaration in C for array variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#TODO: see how KLEE output nested array</span>
         <span class="n">element_type_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_element_type_str</span><span class="p">(</span><span class="n">array_type_node</span><span class="p">)</span>
@@ -397,14 +404,15 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">element_type_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">[] = </span><span class="se">{{</span><span class="s2"> </span><span class="si">{</span><span class="n">values_str</span><span class="si">}</span><span class="s2"> </span><span class="se">}}</span><span class="s2">;&quot;</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.get_element_type_str"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.get_element_type_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_element_type_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array_type_node</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the base type of array type.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the base type of array type.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        array_type_node :</span>
-<span class="sd">            Array pycparser type node.</span>
+<span class="sd">            array_type_node :</span>
+<span class="sd">                Array pycparser type node.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        String representation of base type.</span>
+<span class="sd">            String representation of base type.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">generator</span> <span class="o">=</span> <span class="n">c_generator</span><span class="o">.</span><span class="n">CGenerator</span><span class="p">()</span>
         <span class="c1"># For arrays, recursively find the base type if it&#39;s a multi-dimensional array</span>
@@ -413,21 +421,22 @@
         <span class="k">return</span> <span class="n">generator</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">array_type_node</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ExecutableTransformer.gen_arguments"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.ExecutableTransformer.gen_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">gen_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg_types</span><span class="p">,</span> <span class="n">arg_names</span><span class="p">,</span> <span class="n">hex_values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the string representation of all argument declarations</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the string representation of all argument declarations</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        arg_types :</span>
-<span class="sd">            List of argument types.</span>
-<span class="sd">            </span>
-<span class="sd">        arg_names :</span>
-<span class="sd">            List of argument names.</span>
-<span class="sd">            </span>
-<span class="sd">        hex_values :</span>
-<span class="sd">            List of hexidecimal values for arguments.</span>
+<span class="sd">            arg_types :</span>
+<span class="sd">                List of argument types.</span>
+<span class="sd">                </span>
+<span class="sd">            arg_names :</span>
+<span class="sd">                List of argument names.</span>
+<span class="sd">                </span>
+<span class="sd">            hex_values :</span>
+<span class="sd">                List of hexidecimal values for arguments.</span>
 <span class="sd">            </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        String representation of the arguments declarations.</span>
+<span class="sd">            String representation of the arguments declarations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">declarations</span> <span class="o">=</span> <span class="p">[]</span>
         
@@ -446,29 +455,30 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">declarations</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="generate_executable"><a class="viewcode-back" href="../../../src.backend.html#src.backend.generate_executable.generate_executable">[docs]</a><span class="k">def</span> <span class="nf">generate_executable</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">input_folder</span><span class="p">,</span> <span class="n">function_name</span><span class="p">,</span> <span class="n">hex_values_file</span><span class="p">,</span> <span class="n">timing_function_body</span><span class="p">,</span> <span class="n">include_flexpret</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modify INPUT_FILE to ingest the values and generate an executable C file. Stored as INPUT_FOLDER/driver.c</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modify INPUT_FILE to ingest the values and generate an executable C file. Stored as INPUT_FOLDER/driver.c</span>
 
 <span class="sd">    Parameters:</span>
-<span class="sd">    input_file :</span>
-<span class="sd">        Input C program.</span>
-<span class="sd">        </span>
-<span class="sd">    input_folder :</span>
-<span class="sd">        The folder to output the modified C program.</span>
+<span class="sd">        input_file :</span>
+<span class="sd">            Input C program.</span>
+<span class="sd">            </span>
+<span class="sd">        input_folder :</span>
+<span class="sd">            The folder to output the modified C program.</span>
 
-<span class="sd">    function_name :</span>
-<span class="sd">        Name of function being analyzed.</span>
-<span class="sd">        </span>
-<span class="sd">    hex_values_file :</span>
-<span class="sd">        Input values used to modify C program. Should be a list of hexidecimal values, 1 per line.</span>
-<span class="sd">        </span>
-<span class="sd">    timing_function_body :</span>
-<span class="sd">        The timing function to use to get cycle count. Inserted before and after function call.</span>
-<span class="sd">        </span>
-<span class="sd">    include_flexpret :</span>
-<span class="sd">        Flag for if we need to include Flexpret specific headers. (Default value = False)</span>
+<span class="sd">        function_name :</span>
+<span class="sd">            Name of function being analyzed.</span>
+<span class="sd">            </span>
+<span class="sd">        hex_values_file :</span>
+<span class="sd">            Input values used to modify C program. Should be a list of hexidecimal values, 1 per line.</span>
+<span class="sd">            </span>
+<span class="sd">        timing_function_body :</span>
+<span class="sd">            The timing function to use to get cycle count. Inserted before and after function call.</span>
+<span class="sd">            </span>
+<span class="sd">        include_flexpret :</span>
+<span class="sd">            Flag for if we need to include Flexpret specific headers. (Default value = False)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">    File path for the modified C program.</span>
+<span class="sd">        File path for the modified C program.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#hex_values should be a list and each if either an element (primitive type), a list (array), a dict (struct, key is field name and value is value)</span>
 

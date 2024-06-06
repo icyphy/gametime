@@ -145,17 +145,20 @@ that is being analyzed.</p>
 <dt class="sig sig-object py" id="src.backend.backend.Backend.measure">
 <span class="sig-name descname"><span class="pre">measure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measure_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/src/backend/backend.html#Backend.measure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.backend.Backend.measure" title="Permalink to this definition"></a></dt>
 <dd><p>Perform measurement using the backend.</p>
-<p>Parameters:
-inputs: str:</p>
-<blockquote>
-<div><p>the inputs to drive down a PATH in a file</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>inputs: str:</dt><dd><p>the inputs to drive down a PATH in a file</p>
+</dd>
 <dt>measure_folder: str :</dt><dd><p>all generated files will be stored in MEASURE_FOLDER/{name of backend}</p>
 </dd>
 </dl>
-<p>Returns:
-The measured value of path</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>int:</dt><dd><p>The measured value of path</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -184,188 +187,198 @@ The measured value of path</p>
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.gen_arguments">
 <span class="sig-name descname"><span class="pre">gen_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex_values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.gen_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.gen_arguments" title="Permalink to this definition"></a></dt>
 <dd><p>Generate the string representation of all argument declarations</p>
-<p>Parameters:
-arg_types :</p>
-<blockquote>
-<div><p>List of argument types.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>arg_types :</dt><dd><p>List of argument types.</p>
+</dd>
 <dt>arg_names :</dt><dd><p>List of argument names.</p>
 </dd>
 <dt>hex_values :</dt><dd><p>List of hexidecimal values for arguments.</p>
 </dd>
 </dl>
-<p>Returns:
-String representation of the arguments declarations.</p>
+</dd>
+<dt>Returns:</dt><dd><p>String representation of the arguments declarations.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.gen_main">
 <span class="sig-name descname"><span class="pre">gen_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.gen_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.gen_main" title="Permalink to this definition"></a></dt>
 <dd><p>Generate the new MAIN function node.</p>
-<p>Parameters:
-arg_types :</p>
-<blockquote>
-<div><p>Argument types of function being analyzed</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>arg_types :</dt><dd><p>Argument types of function being analyzed</p>
+</dd>
 <dt>arg_names :</dt><dd><p>Argument names of function being analyzed</p>
 </dd>
 </dl>
-<p>Returns:
-The new MAIN fucntion AST node.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The new MAIN fucntion AST node.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.gen_main_body">
 <span class="sig-name descname"><span class="pre">gen_main_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.gen_main_body"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.gen_main_body" title="Permalink to this definition"></a></dt>
 <dd><p>Generate the new MAIN function body. Including print statement, timing function call, driver function call.</p>
-<p>Parameters:
-arg_types :</p>
-<blockquote>
-<div><p>Argument types of function being analyzed</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>arg_types :</dt><dd><p>Argument types of function being analyzed</p>
+</dd>
 <dt>arg_names :</dt><dd><p>Argument names of function being analyzed</p>
 </dd>
 </dl>
-<p>Returns:
-The new MAIN function AST node.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The new MAIN function AST node.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.generate_array_declaration">
 <span class="sig-name descname"><span class="pre">generate_array_declaration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array_type_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.generate_array_declaration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.generate_array_declaration" title="Permalink to this definition"></a></dt>
 <dd><p>Generates the variable declaration of struct variable.</p>
-<p>Parameters:
-name :</p>
-<blockquote>
-<div><p>Variable name</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>name :</dt><dd><p>Variable name</p>
+</dd>
 <dt>array_type_node :</dt><dd><p>Pycparser type node for this variable.</p>
 </dd>
 <dt>value_dict :</dt><dd><p>Dict of struct field to value.</p>
 </dd>
 </dl>
-<p>Returns:
-String representation of the variable declaration in C for array variables.</p>
+</dd>
+<dt>Returns:</dt><dd><p>String representation of the variable declaration in C for array variables.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.generate_primitive_declaration">
 <span class="sig-name descname"><span class="pre">generate_primitive_declaration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.generate_primitive_declaration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.generate_primitive_declaration" title="Permalink to this definition"></a></dt>
 <dd><p>Generates the variable declaration of primitive variable.</p>
-<p>Parameters:
-name :</p>
-<blockquote>
-<div><p>Variable name</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>name :</dt><dd><p>Variable name</p>
+</dd>
 <dt>type_node :</dt><dd><p>Pycparser type node for this variable.</p>
 </dd>
 <dt>value :</dt><dd><p>Value of the variable.</p>
 </dd>
 </dl>
-<p>Returns:
-String representation of the variable declaration in C for primitive variables.</p>
+</dd>
+<dt>Returns:</dt><dd><p>String representation of the variable declaration in C for primitive variables.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.generate_struct_declaration">
 <span class="sig-name descname"><span class="pre">generate_struct_declaration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">struct_type_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.generate_struct_declaration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.generate_struct_declaration" title="Permalink to this definition"></a></dt>
 <dd><p>Generates the variable declaration of struct variable.</p>
-<p>Parameters:
-name :</p>
-<blockquote>
-<div><p>Variable name</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>name :</dt><dd><p>Variable name</p>
+</dd>
 <dt>struct_type_node :</dt><dd><p>Pycparser type node for this variable.</p>
 </dd>
 <dt>value_dict :</dt><dd><p>Dict of struct field to value.</p>
 </dd>
 </dl>
-<p>Returns:
-String representation of the variable declaration in C for struct variables.</p>
+</dd>
+<dt>Returns:</dt><dd><p>String representation of the variable declaration in C for struct variables.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.get_element_type_str">
 <span class="sig-name descname"><span class="pre">get_element_type_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array_type_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.get_element_type_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.get_element_type_str" title="Permalink to this definition"></a></dt>
 <dd><p>Get the base type of array type.</p>
-<p>Parameters:
-array_type_node :</p>
-<blockquote>
-<div><p>Array pycparser type node.</p>
-</div></blockquote>
-<p>Returns:
-String representation of base type.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>array_type_node :</dt><dd><p>Array pycparser type node.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>String representation of base type.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.is_array">
 <span class="sig-name descname"><span class="pre">is_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.is_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.is_array" title="Permalink to this definition"></a></dt>
 <dd><p>Return if the TYPE_NODE is array.</p>
-<p>Parameters:
-type_node :</p>
-<blockquote>
-<div><p>Pycparser type representation.</p>
-</div></blockquote>
-<p>Returns:
-If TYPE_NODE is array.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>type_node :</dt><dd><p>Pycparser type representation.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>If TYPE_NODE is array.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.is_primitive">
 <span class="sig-name descname"><span class="pre">is_primitive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.is_primitive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.is_primitive" title="Permalink to this definition"></a></dt>
 <dd><p>Return if the TYPE_NODE is primitive.</p>
-<p>Parameters:
-type_node :</p>
-<blockquote>
-<div><p>Pycparser type representation.</p>
-</div></blockquote>
-<p>Returns:
-If TYPE_NODE is primitive.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>type_node :</dt><dd><p>Pycparser type representation.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>If TYPE_NODE is primitive.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.is_struct">
 <span class="sig-name descname"><span class="pre">is_struct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.is_struct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.is_struct" title="Permalink to this definition"></a></dt>
 <dd><p>Return if the TYPE_NODE is struct.</p>
-<p>Parameters:
-type_node :</p>
-<blockquote>
-<div><p>Pycparser type representation.</p>
-</div></blockquote>
-<p>Returns:
-If TYPE_NODE is struct.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>type_node :</dt><dd><p>Pycparser type representation.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>If TYPE_NODE is struct.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.visit">
 <span class="sig-name descname"><span class="pre">visit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.visit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.visit" title="Permalink to this definition"></a></dt>
 <dd><p>Recursively viste the AST node until seeing the definition of the function being analyzed.</p>
-<p>Parameters:
-node :</p>
-<blockquote>
-<div><p>Current AST node being analysized.</p>
-</div></blockquote>
-<p>Returns:
-(argument types of function being analyzed, argument names of function being analyzed)</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>node :</dt><dd><p>Current AST node being analysized.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>(argument types of function being analyzed, argument names of function being analyzed)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="src.backend.generate_executable.ExecutableTransformer.visit_func">
 <span class="sig-name descname"><span class="pre">visit_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#ExecutableTransformer.visit_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.ExecutableTransformer.visit_func" title="Permalink to this definition"></a></dt>
 <dd><p>Visit the AST rooted at node. Generated the new main function and arguments definition.</p>
-<p>Parameters:
-node :</p>
-<blockquote>
-<div><p>The root AST node being visited</p>
-</div></blockquote>
-<p>Returns:
-None</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>node :</dt><dd><p>The root AST node being visited</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -374,12 +387,10 @@ None</p>
 <dt class="sig sig-object py" id="src.backend.generate_executable.generate_executable">
 <span class="sig-prename descclassname"><span class="pre">src.backend.generate_executable.</span></span><span class="sig-name descname"><span class="pre">generate_executable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timing_function_body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_flexpret</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/backend/generate_executable.html#generate_executable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.backend.generate_executable.generate_executable" title="Permalink to this definition"></a></dt>
 <dd><p>Modify INPUT_FILE to ingest the values and generate an executable C file. Stored as INPUT_FOLDER/driver.c</p>
-<p>Parameters:
-input_file :</p>
-<blockquote>
-<div><p>Input C program.</p>
-</div></blockquote>
 <dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>input_file :</dt><dd><p>Input C program.</p>
+</dd>
 <dt>input_folder :</dt><dd><p>The folder to output the modified C program.</p>
 </dd>
 <dt>function_name :</dt><dd><p>Name of function being analyzed.</p>
@@ -391,8 +402,10 @@ input_file :</p>
 <dt>include_flexpret :</dt><dd><p>Flag for if we need to include Flexpret specific headers. (Default value = False)</p>
 </dd>
 </dl>
-<p>Returns:
-File path for the modified C program.</p>
+</dd>
+<dt>Returns:</dt><dd><p>File path for the modified C program.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

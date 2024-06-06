@@ -43,7 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../src.html">GameTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">GameTime</a></li>
 </ul>
 
         </div>
@@ -100,20 +100,22 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">FlexpretBackend</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project_config</span><span class="p">,</span> <span class="s2">&quot;Flexpret&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FlexpretBackend.generate_executable_c"><a class="viewcode-back" href="../../../../src.backend.flexpret_backend.html#src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.generate_executable_c">[docs]</a>    <span class="k">def</span> <span class="nf">generate_executable_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the input program to use INPUTS and returns path to modifed C program.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Modifies the input program to use INPUTS and returns path to modifed C program.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        filepath: str :</span>
-<span class="sd">            Path to C file to modify with inputs.</span>
-<span class="sd">        func_name: str :</span>
-<span class="sd">            Name of function being analyzed.</span>
-<span class="sd">        inputs: str :</span>
-<span class="sd">            Path to the INPUTS file containing output of symbolic solver.</span>
-<span class="sd">        measure_folder: str :</span>
-<span class="sd">            The folder to store generated C code.</span>
+<span class="sd">            filepath: str :</span>
+<span class="sd">                Path to C file to modify with inputs.</span>
+<span class="sd">            func_name: str :</span>
+<span class="sd">                Name of function being analyzed.</span>
+<span class="sd">            inputs: str :</span>
+<span class="sd">                Path to the INPUTS file containing output of symbolic solver.</span>
+<span class="sd">            measure_folder: str :</span>
+<span class="sd">                The folder to store generated C code.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Path to the modified C file.</span>
+<span class="sd">            str:</span>
+<span class="sd">                Path to the modified C file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">exec_file</span> <span class="o">=</span> <span class="n">generate_executable</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timing_func</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">exec_file</span></div>
@@ -123,15 +125,16 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Use same Make file mechanism as Flexpret to generate .mem file from .c</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        stored_folder: str :</span>
-<span class="sd">            Folder to put all the generated tempraries.</span>
-<span class="sd">        file_name: str :</span>
-<span class="sd">            Name of function being analyzed.</span>
-<span class="sd">        c_filepath: str :</span>
-<span class="sd">            Path to C file being executed.</span>
+<span class="sd">            stored_folder: str :</span>
+<span class="sd">                Folder to put all the generated tempraries.</span>
+<span class="sd">            file_name: str :</span>
+<span class="sd">                Name of function being analyzed.</span>
+<span class="sd">            c_filepath: str :</span>
+<span class="sd">                Path to C file being executed.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Measured cycle count for C_FILEPATH.</span>
+<span class="sd">            int:</span>
+<span class="sd">                Measured cycle count for C_FILEPATH.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># copy the MAKEFILE in FLEXPRET FOLDER to the STORED_FOLDER.</span>
         <span class="n">makefile_template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">gametime_path</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;backend&quot;</span><span class="p">,</span> <span class="s2">&quot;flexpret_backend&quot;</span><span class="p">,</span> <span class="s2">&quot;Makefile&quot;</span><span class="p">)</span>
@@ -161,18 +164,20 @@
         <span class="k">return</span> <span class="n">mem_file_path</span></div>
 
 <div class="viewcode-block" id="FlexpretBackend.run_backend_and_parse_output"><a class="viewcode-back" href="../../../../src.backend.flexpret_backend.html#src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.run_backend_and_parse_output">[docs]</a>    <span class="k">def</span> <span class="nf">run_backend_and_parse_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="n">mem_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run simulation on the .mem file generated. The measurements are stored in measure.out</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run simulation on the .mem file generated. The measurements are stored in measure.out</span>
 <span class="sd">        Equivalent to: os.system(f&quot;(cd {dir path of .mem file} &amp;&amp; fp-emu --measure +ispm={file_name}.mem)&quot;)</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        stored_folder: str :</span>
-<span class="sd">            Folder to put all the generated tempraries.</span>
-<span class="sd">        mem_filepath: str :</span>
-<span class="sd">            Path to the .mem file</span>
-<span class="sd">            :return the measurement value   </span>
+<span class="sd">            stored_folder: str :</span>
+<span class="sd">                Folder to put all the generated tempraries.</span>
+<span class="sd">            mem_filepath: str :</span>
+<span class="sd">                Path to the .mem file</span>
+<span class="sd">                :return the measurement value   </span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        Measured cycle count for MEM_FILEPATH.</span>
+<span class="sd">            int:</span>
+<span class="sd">                Measured cycle count for MEM_FILEPATH.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">)</span>
@@ -199,16 +204,18 @@
             <span class="k">raise</span> <span class="n">GameTimeError</span><span class="p">(</span><span class="s2">&quot;The measure output file is ill-formatted&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FlexpretBackend.measure"><a class="viewcode-back" href="../../../../src.backend.flexpret_backend.html#src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.measure">[docs]</a>    <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform measurement using the backend.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform measurement using the backend.</span>
 
 <span class="sd">        Parameters:</span>
-<span class="sd">        inputs: str:</span>
-<span class="sd">            the inputs to drive down a PATH in a file</span>
-<span class="sd">        measure_folder: str :</span>
-<span class="sd">            all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
+<span class="sd">            inputs: str:</span>
+<span class="sd">                the inputs to drive down a PATH in a file</span>
+<span class="sd">            measure_folder: str :</span>
+<span class="sd">                all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">        The measured value of path</span>
+<span class="sd">            int:</span>
+<span class="sd">                The measured value of path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">measure_folder</span>
         <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_orig_file</span>
