@@ -1,10 +1,11 @@
 name: Deploy Sphinx documentation to Pages
 
-on:
+on: 
   push:
     branches: [master] # branch to trigger deployment
+  workflow_dispatch:
 
-jobs:
+jobs:  
   pages:
     runs-on: ubuntu-20.04
     environment:
