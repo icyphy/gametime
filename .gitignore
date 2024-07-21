@@ -1,3 +1,5 @@
 test/**/*gt/*
 **/__pycache__
 /Dockerfile*
+env
+build
