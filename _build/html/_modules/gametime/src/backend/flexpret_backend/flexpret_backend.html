@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gametime.src.backend.flexpret_backend.flexpret_backend &mdash; GameTime 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            GameTime
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../modules.html">gametime</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">GameTime</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../../src.html">gametime.src</a></li>
+      <li class="breadcrumb-item active">gametime.src.backend.flexpret_backend.flexpret_backend</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gametime.src.backend.flexpret_backend.flexpret_backend</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">backend.backend</span> <span class="kn">import</span> <span class="n">Backend</span>
+<span class="kn">from</span> <span class="nn">backend.generate_executable</span> <span class="kn">import</span> <span class="n">generate_executable</span>
+<span class="kn">from</span> <span class="nn">project_configuration</span> <span class="kn">import</span> <span class="n">ProjectConfiguration</span>
+<span class="kn">from</span> <span class="nn">defaults</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">gametime_error</span> <span class="kn">import</span> <span class="n">GameTimeError</span>
+
+
+<div class="viewcode-block" id="FlexpretBackend"><a class="viewcode-back" href="../../../../../gametime.src.backend.flexpret_backend.html#gametime.src.backend.flexpret_backend.flexpret_backend.FlexpretBackend">[docs]</a><span class="k">class</span> <span class="nc">FlexpretBackend</span><span class="p">(</span><span class="n">Backend</span><span class="p">):</span>
+        
+    <span class="n">timing_func</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">static inline unsigned long long read_cycle_count() {</span>
+<span class="s2">    unsigned long long cycles;</span>
+<span class="s2">    asm volatile (&quot;rdcycle %0&quot; : &quot;=r&quot; (cycles));</span>
+<span class="s2">    return cycles;</span>
+<span class="s2">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FlexpretBackend</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">project_config</span><span class="p">,</span> <span class="s2">&quot;Flexpret&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FlexpretBackend.generate_executable_c"><a class="viewcode-back" href="../../../../../gametime.src.backend.flexpret_backend.html#gametime.src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.generate_executable_c">[docs]</a>    <span class="k">def</span> <span class="nf">generate_executable_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the input program to use INPUTS and returns path to modifed C program.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filepath: str :</span>
+<span class="sd">            Path to C file to modify with inputs.</span>
+<span class="sd">        func_name: str :</span>
+<span class="sd">            Name of function being analyzed.</span>
+<span class="sd">        inputs: str :</span>
+<span class="sd">            Path to the INPUTS file containing output of symbolic solver.</span>
+<span class="sd">        measure_folder: str :</span>
+<span class="sd">            The folder to store generated C code.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Path to the modified C file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">exec_file</span> <span class="o">=</span> <span class="n">generate_executable</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timing_func</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exec_file</span></div>
+              
+
+<div class="viewcode-block" id="FlexpretBackend.c_file_to_mem"><a class="viewcode-back" href="../../../../../gametime.src.backend.flexpret_backend.html#gametime.src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.c_file_to_mem">[docs]</a>    <span class="k">def</span> <span class="nf">c_file_to_mem</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">c_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Use same Make file mechanism as Flexpret to generate .mem file from .c</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stored_folder: str :</span>
+<span class="sd">            Folder to put all the generated tempraries.</span>
+<span class="sd">        file_name: str :</span>
+<span class="sd">            Name of function being analyzed.</span>
+<span class="sd">        c_filepath: str :</span>
+<span class="sd">            Path to C file being executed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Measured cycle count for C_FILEPATH.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># copy the MAKEFILE in FLEXPRET FOLDER to the STORED_FOLDER.</span>
+        <span class="n">makefile_template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">gametime_path</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;backend&quot;</span><span class="p">,</span> <span class="s2">&quot;flexpret_backend&quot;</span><span class="p">,</span> <span class="s2">&quot;Makefile&quot;</span><span class="p">)</span>
+        <span class="n">makefile_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="s2">&quot;Makefile&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">makefile_template_path</span><span class="p">,</span> <span class="n">makefile_path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>  <span class="c1"># Read, write, and execute for the user; read and execute for others</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">makefile_path</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>  <span class="c1"># Same as above</span>
+        
+        <span class="n">context_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">included</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># add the .C file</span>
+        <span class="n">context_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c_filepath</span><span class="p">)</span>
+        <span class="n">app_sources</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context_files</span><span class="p">)</span>
+
+        <span class="c1"># run make to generate .mem file</span>
+        <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">)</span>
+        <span class="c1"># the three &quot;..&quot; is to get from the stored folder file to the simulated file, equivalent of stored_folder = {simulated_file_path}/{app name}gt/{path name}/{Flexpret}</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;make FLEXPRET_ROOT_DIR=</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">gametime_file_path</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">gametime_flexpret_path</span><span class="p">)</span><span class="si">}</span><span class="s1"> &#39;</span>
+                  <span class="sa">f</span><span class="s1">&#39;NAME=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1"> APP_SOURCES=</span><span class="si">{</span><span class="n">app_sources</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
+        
+        <span class="n">mem_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">.mem&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">mem_file_path</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Waiting for .mem file to be generated by FlexPRET&#39;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mem_file_path</span></div>
+
+<div class="viewcode-block" id="FlexpretBackend.run_backend_and_parse_output"><a class="viewcode-back" href="../../../../../gametime.src.backend.flexpret_backend.html#gametime.src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.run_backend_and_parse_output">[docs]</a>    <span class="k">def</span> <span class="nf">run_backend_and_parse_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="n">mem_filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run simulation on the .mem file generated. The measurements are stored in measure.out</span>
+<span class="sd">        Equivalent to: os.system(f&quot;(cd {dir path of .mem file} &amp;&amp; fp-emu --measure +ispm={file_name}.mem)&quot;)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stored_folder: str :</span>
+<span class="sd">            Folder to put all the generated tempraries.</span>
+<span class="sd">        mem_filepath: str :</span>
+<span class="sd">            Path to the .mem file</span>
+<span class="sd">            :return the measurement value   </span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Measured cycle count for MEM_FILEPATH.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fp-emu +ispm=</span><span class="si">{</span><span class="n">mem_filepath</span><span class="si">}</span><span class="s2"> &gt; measure.out&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
+
+        <span class="n">out_filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="s2">&quot;measure.out&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">out_filepath</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Waiting for measure.out file to be generated by FlexPRET&#39;</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_filepath</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">out_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        
+        <span class="c1">#flexpret console output has two extra lines at the end</span>
+        <span class="n">print_line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+$&#39;</span><span class="p">,</span> <span class="n">print_line</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">extracted_integer</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">extracted_integer</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GameTimeError</span><span class="p">(</span><span class="s2">&quot;The measure output file is ill-formatted&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FlexpretBackend.measure"><a class="viewcode-back" href="../../../../../gametime.src.backend.flexpret_backend.html#gametime.src.backend.flexpret_backend.flexpret_backend.FlexpretBackend.measure">[docs]</a>    <span class="k">def</span> <span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform measurement using the backend.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputs: str:</span>
+<span class="sd">            the inputs to drive down a PATH in a file</span>
+<span class="sd">        measure_folder: str :</span>
+<span class="sd">            all generated files will be stored in MEASURE_FOLDER/{name of backend}</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The measured value of path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stored_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">measure_folder</span>
+        <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">location_orig_file</span>
+        <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_config</span><span class="o">.</span><span class="n">func</span>
+        <span class="n">c_filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_executable_c</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">measure_folder</span><span class="p">)</span>
+        <span class="n">mem_filepath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_file_to_mem</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="s2">&quot;driver&quot;</span><span class="p">,</span> <span class="n">c_filepath</span><span class="p">)</span>
+        <span class="n">cycle_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cycle_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_backend_and_parse_output</span><span class="p">(</span><span class="n">stored_folder</span><span class="p">,</span> <span class="n">mem_filepath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">EnvironmentError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">err_msg</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Error in measuring the cycle count of a path in Flexpret: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">err_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cycle_count</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Colin Cai, Abdalla Eltayeb, Shaokai Lin, Andrew Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
