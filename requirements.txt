@@ -1,0 +1,9 @@
+# -e git+https://github.com/icyphy/gametime.git@c946fab9d11575b1193c9298ac7b5c25a70e904c#egg=gametime
+networkx==3.3
+numpy==2.0.0
+PuLP==2.9.0
+pycparser==2.22
+pycparser-fake-libc==2.21
+pygraphviz==1.13
+PyYAML==6.0.1
+scipy==1.14.0
