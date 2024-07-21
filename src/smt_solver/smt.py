@@ -112,7 +112,7 @@ def run_smt(project_config, labels_file, output_dir, total_number_of_labels):
     number_of_labels = len(labels)
 
     # format c file to klee 
-    klee_file_path = format_for_klee(c_file, c_file_path, output_dir, project_config.func,  number_of_labels, total_number_of_labels)
+    klee_file_path = format_for_klee(c_file, c_file_path, output_dir, number_of_labels, total_number_of_labels)
 
     # insert assignments of global variables
     # TODO: Find a way to not hard code path
