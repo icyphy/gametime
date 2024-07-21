@@ -66,7 +66,7 @@ def run_ktest_tool(ktest_file, output_file):
     """
     # Run ktest-tool on the ktest file and save the output to the output file
     with open(output_file, 'w') as f:
-        subprocess.run(['klee.ktest-tool', ktest_file], stdout=f, text=True)
+        subprocess.run(['ktest-tool', ktest_file], stdout=f, text=True)
 
 
 
