@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdio.h>
 
 int test (int x) {
    // if (x < 0 && b < 0) {

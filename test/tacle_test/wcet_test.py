@@ -62,12 +62,16 @@ class TestFlexpretBackend(BaseTest):
     backend_value = "Flexpret"
 class TestX86Backend(BaseTest):
     backend_value = "X86"
+class TestARMBackend(BaseTest):
+    backend_value = "ARM"
 
 
 #### Benchmarks
 class TestIfElifElseFlexpret(TestFlexpretBackend):
     config_path = "./programs/if_elif_else/config.yaml"
 class TestIfElifElseX86(TestX86Backend):
+    config_path = "./programs/if_elif_else/config.yaml"
+class TestIfElifElseARM(TestARMBackend):
     config_path = "./programs/if_elif_else/config.yaml"
 
 
@@ -109,8 +113,9 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestModexpFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
+    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)

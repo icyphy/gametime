@@ -24,6 +24,7 @@ from numpy.linalg import det, inv, slogdet
 
 from backend.flexpret_backend.flexpret_backend import FlexpretBackend
 from backend.x86_backend.x86_backend import X86Backend
+from backend.arm_backend.arm_backend import ArmBackend
 from backend.backend import Backend
 from smt_solver.extract_labels import find_labels
 
@@ -101,7 +102,7 @@ class Analyzer(object):
 
         self.dag_path: str = ""
 
-        backend_dict = {"Flexpret": FlexpretBackend, "X86": X86Backend}
+        backend_dict = {"Flexpret": FlexpretBackend, "X86": X86Backend, "ARM": ArmBackend}
         
         if self.project_config.backend not in backend_dict:
             raise GameTimeError("No valid backend specified")
