@@ -1,7 +1,7 @@
 Reminder: this is for linux setup
 
 1. Install flexpret by following it's instructions. Use branch gametime-support. Can use instructions of master branch.
-        ***Remember to export PATH=$PATH:/home/c/Desktop/research/lf/code/flexpret/emulator*** USE ABS PATH
+        ***Remember to export PATH=$PATH:/Users/abdallaeltayeb/Desktop/Gamtime_project/flexpret/emulator*** USE ABS PATH
                         export PATH=$PATH:/opt/riscv/bin
                         
 2. Pull the lastest Gametime.
@@ -30,3 +30,4 @@ apt-get install -qqy --no-install-recommends \
 7. Install KLEE and pycparser. Place pycparser in same directory as gametime to ensure it can find the stubs.
 
 7. To regenerate documentation: install sphinx and numpydoc. Then run: make html; sphinx-build -b html ./ build/ -v
+export PATH="/opt/homebrew/opt/llvm@14/bin:$PATH"

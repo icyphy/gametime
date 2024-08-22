@@ -427,7 +427,9 @@ def generate_executable(input_file, input_folder, function_name, hex_values_file
 
     # This must be included in we want to run flexpret backend (for printf)
     if include_flexpret:
-        original_c_content = "#include <flexpret.h> \n" + original_c_content
+        original_c_content = "#include <flexpret.h> \n" +  original_c_content
+    else:
+        original_c_content = "#include <time.h> \n" +  original_c_content
 
     #TODO: generate global variables, add the global timing function
     original_c_content += timing_function_body

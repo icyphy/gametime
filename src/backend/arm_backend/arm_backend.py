@@ -13,9 +13,10 @@ from gametime_error import GameTimeError
 class ArmBackend(Backend):
     timing_func = """
 static inline unsigned long long read_cycle_count() {
-    unsigned long long val;
-    asm volatile("mrs %0, PMCCNTR_EL0" : "=r" (val));
-    return val;
+    struct timespec time;
+    clock_gettime(CLOCK_MONOTONIC, &time);
+    unsigned long long nanoTime = time.tv_sec * 1000000000L + time.tv_nsec;
+    return nanoTime;
 }
 """    
 
