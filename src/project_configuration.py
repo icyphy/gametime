@@ -62,7 +62,7 @@ class ProjectConfiguration(object):
     Stores information necessary to configure a GameTime project.
     """
 
-    def __init__(self, location_file, func,
+    def __init__(self, location_file, location_additional_files, func,
                  start_label="", end_label="", included=None, merged=None,
                  inlined=None, unroll_loops=False, randomize_initial_basis=False,
                  maximum_error_scale_factor=10,
@@ -76,6 +76,9 @@ class ProjectConfiguration(object):
 
         # Location of the file to be analyzed.
         self.location_orig_file = location_file
+        
+        # Location of the additional files to be analyzed.
+        self.location_additional_files = location_additional_files
 
         # Location of the file to be analyzed, without the extension.
         self.location_orig_no_extension = ""

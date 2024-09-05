@@ -4,8 +4,9 @@ from smt_solver.extract_klee_input import find_and_run_test
 import os
 from defaults import logger
 import clang_helper
+import inliner
 
-def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config):
+def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, additional_files, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config):
     """
     Compile and run a C++ file that modifies LLVM bitcode, then process the C file through several steps.
 
@@ -39,9 +40,11 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
 
     #TODO: add extra flag and includes through project configuration
     compiled_file = clang_helper.compile_to_llvm_for_analysis(input_c_file, output_dir, c_filename, project_config.included, project_config.compile_flags)
-    inlined_file = clang_helper.inline_functions(compiled_file, output_dir, f"{c_filename}-inlined")
-    input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
-                                                       f"{c_filename}-unrolled", project_config)
+    compiled_additional_file = clang_helper.compile_to_llvm_for_analysis(additional_files, output_dir, "helper_smt", project_config.included, project_config.compile_flags)
+    compiled_files = [compiled_file, compiled_additional_file]
+    input_bc_file = inliner.inline_functions(compiled_files, output_dir, f"{c_filename}-inlined")
+    # input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
+                                                       # f"{c_filename}-unrolled", project_config)
     
 
     # Run the compiled program
@@ -107,6 +110,7 @@ def run_smt(project_config, labels_file, output_dir, total_number_of_labels):
     """
     c_file = project_config.name_orig_no_extension
     c_file_path = project_config.location_orig_file
+    additional_files_path = project_config.location_additional_files
     # extract labels
     labels = extract_labels_from_file(labels_file)
     number_of_labels = len(labels)
@@ -118,8 +122,8 @@ def run_smt(project_config, labels_file, output_dir, total_number_of_labels):
     # TODO: Find a way to not hard code path
     modify_bit_code_cpp_file = '../../src/smt_solver/modify_bitcode.cpp'
     modify_bit_code_exec_file = '../../src/smt_solver/modify_bitcode'
-    compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
-    modified_klee_file_bc = klee_file_path[:-2] + "-unrolled" + "_mod.bc"
+    compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
+    modified_klee_file_bc = klee_file_path[:-2] + "-inlined" + "_mod.bc"
 
     # run klee
     run_klee(modified_klee_file_bc)

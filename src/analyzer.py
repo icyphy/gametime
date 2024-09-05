@@ -10,6 +10,7 @@ import networkx as nx
 import clang_helper
 import nx_helper
 import pulp_helper
+import inliner
 from defaults import config, logger
 from file_helper import remove_all_except
 from gametime_error import GameTimeError
@@ -128,6 +129,14 @@ class Analyzer(object):
             shutil.rmtree(project_temp_dir)
             err_msg = "File to analyze not found: %s" % orig_file
             raise GameTimeError(err_msg)
+        
+        # Check if the additional files to be analyzed exists.
+        additional_files = self.project_config.location_additional_files
+        project_temp_dir = self.project_config.location_temp_dir
+        if not os.path.exists(additional_files):
+            shutil.rmtree(project_temp_dir)
+            err_msg = "File to analyze not found: %s" % additional_files
+            raise GameTimeError(err_msg)
 
         # Remove any temporary directory created during a previous run
         # of the same GameTime project, and create a fresh new
@@ -154,10 +163,13 @@ class Analyzer(object):
 
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
-
+        
+        additional_files_processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
+                                                          f"{self.project_config.location_additional_files[:-2]}gt", self.project_config.included, self.project_config.compile_flags)
+        
         # Preprocessing pass: inline functions.
         if self.project_config.inlined:  # Note: This is made into a bool rather than a list
-            processing = self._run_inliner(input_file=processing)
+            processing = self._run_inliner(input_file=processing, additional_files=additional_files_processing)
 
         # Preprocessing pass: unroll loops.
         if self.project_config.UNROLL_LOOPS:
@@ -203,7 +215,7 @@ class Analyzer(object):
 
             return unrolled_file
 
-    def _run_inliner(self, input_file: str):
+    def _run_inliner(self, input_file: str, additional_files: str):
         """
         As part of preprocessing, runs CIL on the source file under
         analysis to inline functions. A copy of the file that results from
@@ -223,8 +235,14 @@ class Analyzer(object):
 
         logger.info("Preprocessing the file: inlining...")
 
-        inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
+        # inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
+        #                                              f"{self.project_config.name_orig_no_extension}gt-inlined")
+        
+        input_files = [input_file, additional_files]
+        inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
                                                      f"{self.project_config.name_orig_no_extension}gt-inlined")
+        
+        
         if not inlined_file:
             err_msg = "Error running the inliner."
             raise GameTimeError(err_msg)
