@@ -1,5 +1,5 @@
 #include "helper.h"
-#include </snap/klee/9/usr/local/include/klee/klee.h>
+#include </opt/homebrew/opt/klee/include/klee/klee.h>
 
 int ext_func(int x){
     if (abs(x) == 4) {

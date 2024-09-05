@@ -3,6 +3,7 @@ gametime-project:
   file:
     location: if_elif_else.c
     analysis-function: test
+    additional-files: helper.c
     start-label: null
     end-label: null
 
@@ -11,7 +12,7 @@ gametime-project:
     include: null
     merge: null
     inline: yes
-    unroll-loops: Yes
+    unroll-loops: null
 
   analysis:
     maximum-error-scale-factor: 10
