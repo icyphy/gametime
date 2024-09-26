@@ -132,11 +132,13 @@ class Analyzer(object):
         
         # Check if the additional files to be analyzed exists.
         additional_files = self.project_config.location_additional_files
-        project_temp_dir = self.project_config.location_temp_dir
-        if not os.path.exists(additional_files):
-            shutil.rmtree(project_temp_dir)
-            err_msg = "File to analyze not found: %s" % additional_files
-            raise GameTimeError(err_msg)
+        if additional_files:
+            for additional_file in additional_files:
+                project_temp_dir = self.project_config.location_temp_dir
+                if not os.path.exists(additional_file):
+                    shutil.rmtree(project_temp_dir)
+                    err_msg = "File to analyze not found: %s" % additional_file
+                    raise GameTimeError(err_msg)
 
         # Remove any temporary directory created during a previous run
         # of the same GameTime project, and create a fresh new
@@ -164,17 +166,19 @@ class Analyzer(object):
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
         
-        additional_files_processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.location_additional_files[:-2]}gt", self.project_config.included, self.project_config.compile_flags)
+        if additional_files:
+            additional_files_processing = clang_helper.compile_list_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
+                                                        self.project_config.included, self.project_config.compile_flags)
         
         # Preprocessing pass: inline functions.
-        if self.project_config.inlined:  # Note: This is made into a bool rather than a list
+        if self.project_config.inlined and additional_files:  # Note: This is made into a bool rather than a list
             processing = self._run_inliner(input_file=processing, additional_files=additional_files_processing)
 
         # Preprocessing pass: unroll loops.
         if self.project_config.UNROLL_LOOPS:
             processing = self._run_loop_unroller(compiled_file=processing)
-
+        print("PROCESSING", processing)
+        print("LOCATION", self.project_config.location_temp_dir)
         self.dag_path: str = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir)
         self.preprocessed_path: str = processing
         # We are done with the preprocessing.
@@ -238,7 +242,7 @@ class Analyzer(object):
         # inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
         #                                              f"{self.project_config.name_orig_no_extension}gt-inlined")
         
-        input_files = [input_file, additional_files]
+        input_files = [input_file] + additional_files
         inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
                                                      f"{self.project_config.name_orig_no_extension}gt-inlined")
         

@@ -76,7 +76,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         # Initialize the instantiation variables for
         # the ProjectConfiguration object.
         location_file, func = "", ""
-        location_additional_files = ""
+        location_additional_files = []
         start_label, end_label = "", ""
         included, merged, inlined, unroll_loops = [], [], [], False
         randomize_initial_basis = False
@@ -95,7 +95,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                 case "location":
                     location_file = os.path.normpath(os.path.join(project_config_dir, file_configs[key]))
                 case "additional-files":
-                    location_additional_files = os.path.normpath(os.path.join(project_config_dir, file_configs[key]))
+                    location_additional_files = [os.path.normpath(os.path.join(project_config_dir, additional_file)) for additional_file in file_configs[key]]
                 case "analysis-function":
                     func = file_configs[key]
                 case "start-label":
@@ -191,7 +191,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                                                                      dump_all_queries, keep_parser_output,
                                                                      keep_simulator_output)
 
-        project_config: ProjectConfiguration = ProjectConfiguration(location_file, location_additional_files, func,
+        project_config: ProjectConfiguration = ProjectConfiguration(location_file, func, location_additional_files,
                                                                     start_label, end_label, included,
                                                                     merged, inlined, unroll_loops,
                                                                     randomize_initial_basis,

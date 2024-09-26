@@ -50,7 +50,13 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
 
     return output_file
 
-def compile_to_llvm_for_analysis(c_filepath: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> str:
+def compile_list_to_llvm_for_analysis(c_filepaths: List[str] , output_file_folder: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> List[str]:
+    compiled_files = []
+    for c_filepath in c_filepaths:
+        compiled_files.append(compile_to_llvm_for_analysis(c_filepath, output_file_folder, f"{c_filepath[:-2]}gt", extra_libs, extra_flags, readable))
+    return compiled_files
+
+def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> str:
     """
     Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.
 
