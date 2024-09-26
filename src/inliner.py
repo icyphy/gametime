@@ -27,19 +27,58 @@ def link_bitcode(bitcode_files, output_file):
 def disassemble_bitcode(input_file, output_file):
     run_command(f"llvm-dis {input_file} -o {output_file}")
 
-def modify_llvm_ir(input_file, output_file):
-    with open(input_file, 'r') as file:
-        ir_content = file.read()
+def modify_llvm_ir(input_file, output_file, skip_function):
+    # Read the LLVM IR code from the file
+    with open(input_file, 'r') as f:
+        llvm_ir = f.read()
 
-    # Replace all occurrences of 'noinline' with 'alwaysinline'
-    ir_content = re.sub(r'\bnoinline\b', 'alwaysinline', ir_content)
+    # Split the content by lines for easier processing
+    lines = llvm_ir.splitlines()
 
-    # Remove all occurrences of 'optnone'
-    ir_content = re.sub(r'\boptnone \b', '', ir_content)
+    # Dictionary to map function tags to whether they should be skipped
+    skip_tags = set()
 
-    # Write the modified content to the output file
-    with open(output_file, 'w') as file:
-        file.write(ir_content)
+    # Process each line
+    modified_lines = []
+    for i in range(len(lines)):
+        line = lines[i]
+
+        # Check if the line is a function definition
+        func_match = re.match(r'define\s+\S+\s+@\S+\s*\(.*\)\s*(#\d+)\s*{', line)
+        if func_match:
+            func_tag = func_match.group(1)
+            if f'@{skip_function}(' in line:
+                # If this function is the one to skip, record its tag
+                skip_tags.add(func_tag)
+            else:
+                # Replace 'noinline' with 'alwaysinline' if not skipping
+                if 'noinline' in lines[i-1]:  # Check previous line for noinline
+                    modified_lines[-1] = modified_lines[-1].replace('noinline', 'alwaysinline')
+        
+        # Remove "optnone" from the current line
+        line = line.replace('optnone', '')
+
+        # Add the processed line to the list of modified lines
+        modified_lines.append(line)
+
+    # Second pass: Modify the attributes section
+    final_lines = []
+    for line in modified_lines:
+        # Match the attributes definition
+        attr_match = re.match(r'attributes\s+(#\d+)\s*=\s*{', line)
+        if attr_match:
+            attr_tag = attr_match.group(1)
+            if attr_tag not in skip_tags:
+                # Replace 'noinline' with 'alwaysinline' in the attributes if not skipping
+                line = line.replace('noinline', 'alwaysinline')
+        final_lines.append(line)
+
+    # Join the final lines back into a single string
+    modified_llvm_ir = '\n'.join(final_lines)
+
+    # Write the modified LLVM IR back to the output file
+    with open(output_file, 'w') as f:
+        f.write(modified_llvm_ir)
 
 def assemble_bitcode(input_file, output_file):
     run_command(f"llvm-as {input_file} -o {output_file}")
@@ -72,7 +111,7 @@ if __name__ == "__main__":
     disassemble_bitcode(combined_bc, combined_ll)
 
     # Step 4: Modify the LLVM IR file
-    modify_llvm_ir(combined_ll, combined_mod_ll)
+    modify_llvm_ir(combined_ll, combined_mod_ll, "test")
 
     # Step 5: Assemble the modified LLVM IR back to bitcode
     assemble_bitcode(combined_mod_ll, combined_mod_bc)
@@ -106,7 +145,7 @@ def inline_functions(bc_filepaths: str, output_file_folder: str, output_name: st
     disassemble_bitcode(combined_bc, combined_ll)
 
     # Step 4: Modify the LLVM IR file
-    modify_llvm_ir(combined_ll, combined_mod_ll)
+    modify_llvm_ir(combined_ll, combined_mod_ll, "test")
 
     # Step 5: Assemble the modified LLVM IR back to bitcode
     assemble_bitcode(combined_mod_ll, combined_mod_bc)
