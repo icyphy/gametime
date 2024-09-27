@@ -87,6 +87,8 @@ class TestPrimeFlexpret(TestFlexpretBackend):
     config_path = "./programs/prime/config.yaml"
 class TestPrimeX86(TestX86Backend):
     config_path = "./programs/prime/config.yaml"
+class TestPrimeARM(TestARMBackend):
+    config_path = "./programs/prime/config.yaml"
 
 
 
@@ -99,6 +101,8 @@ class TestModexpX86(TestX86Backend):
 class TestBinarysearchFlexpret(TestFlexpretBackend):
     config_path = "./programs/binarysearch/config.yaml"
 class TestBinarysearchX86(TestX86Backend):
+    config_path = "./programs/binarysearch/config.yaml"
+class TestBinarysearchARM(TestARMBackend):
     config_path = "./programs/binarysearch/config.yaml"
     
 
@@ -114,8 +118,9 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
-    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
-    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
+    suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)

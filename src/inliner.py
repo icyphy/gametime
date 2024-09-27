@@ -21,7 +21,6 @@ def compile_to_bitcode(files):
     return bitcode_files
 
 def link_bitcode(bitcode_files, output_file):
-    print("BITCODE_FILES: ",bitcode_files)
     run_command(f"llvm-link {' '.join(bitcode_files)} -o {output_file}")
 
 def disassemble_bitcode(input_file, output_file):
@@ -85,6 +84,7 @@ def assemble_bitcode(input_file, output_file):
 
 def inline_bitcode(input_file, output_file):
     run_command(f"opt -always-inline -inline -inline-threshold=10000000 {input_file} -o {output_file}")
+    run_command(f"opt -always-inline -inline -inline-threshold=10000000 {input_file} -o inlined.bc")
 
 def generate_cfg(input_file):
     run_command(f"opt -dot-cfg {input_file}")
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     print(f"  Inlined bitcode: {inlined_bc}")
     print("CFG files generated in the current directory.")
 
-def inline_functions(bc_filepaths: str, output_file_folder: str, output_name: str) -> str:
+def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str) -> str:
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     
     combined_bc = "combined.bc"
@@ -138,8 +138,11 @@ def inline_functions(bc_filepaths: str, output_file_folder: str, output_name: st
     combined_mod_ll = "combined_mod.ll"
     combined_mod_bc = "combined_mod.bc"
     
-    # Step 2: Link all bitcode files into a single combined bitcode file
-    link_bitcode(bc_filepaths, combined_bc)
+    if len(bc_filepaths) > 1:
+        # Step 2: Link all bitcode files into a single combined bitcode file
+        link_bitcode(bc_filepaths, combined_bc)
+    else:
+        combined_bc = bc_filepaths[0]
 
     # Step 3: Disassemble the combined bitcode file to LLVM IR
     disassemble_bitcode(combined_bc, combined_ll)
@@ -152,6 +155,8 @@ def inline_functions(bc_filepaths: str, output_file_folder: str, output_name: st
 
     # Step 6: Inline the functions in the modified bitcode
     inline_bitcode(combined_mod_bc, output_file)
+    
+    disassemble_bitcode("inlined.bc", "inlined.ll")
     
     return output_file
 

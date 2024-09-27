@@ -1,7 +1,7 @@
 import re
 import os
 
-def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_labels):
+def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_labels, func_name):
     # Read the original C file
     with open(c_file_path, 'r') as f:
         c_code = f.read()
@@ -28,7 +28,7 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_label
 
     # Generate main function
     main_function = "int main() {\n"
-    function_pattern = r'(?:^[^\n\S]*\w+\s+\w+\s*\([^)]*\)\s*\{)'
+    function_pattern = rf'^[^\n\S]*\w+\s+{func_name}\s*\([^)]*\)\s*\{{'
     match = re.search(function_pattern, c_code, flags=re.MULTILINE)
     if match:
         function_declaration = match.group()

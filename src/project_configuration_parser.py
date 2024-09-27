@@ -87,6 +87,7 @@ class YAMLConfigurationParser(ConfigurationParser):
         gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
         compile_flags = []
         backend = ""
+        
 
         # Process information about the file to be analyzed.
         file_configs: dict[str, Any] = raw_config.get("file", {})
@@ -95,7 +96,7 @@ class YAMLConfigurationParser(ConfigurationParser):
                 case "location":
                     location_file = os.path.normpath(os.path.join(project_config_dir, file_configs[key]))
                 case "additional-files":
-                    location_additional_files = [os.path.normpath(os.path.join(project_config_dir, additional_file)) for additional_file in file_configs[key]]
+                    location_additional_files = [os.path.normpath(os.path.join(project_config_dir, additional_file)) for additional_file in file_configs[key]] if file_configs[key] else [] 
                 case "analysis-function":
                     func = file_configs[key]
                 case "start-label":

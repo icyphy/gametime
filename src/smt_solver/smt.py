@@ -41,8 +41,10 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
 
     #TODO: add extra flag and includes through project configuration
     compiled_file = clang_helper.compile_to_llvm_for_analysis(input_c_file, output_dir, c_filename, project_config.included, project_config.compile_flags)
-    if project_config.inlined and additional_files:
-        compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir, "helper_smt", project_config.included, project_config.compile_flags)
+    if project_config.inlined :
+        compiled_additional_files = []
+        if additional_files:
+            compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir, "helper_smt", project_config.included, project_config.compile_flags)
         compiled_files = [compiled_file] + compiled_additional_files
         input_bc_file = inliner.inline_functions(compiled_files, output_dir, f"{c_filename}_inlined")
     else: 
@@ -120,7 +122,7 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
     number_of_labels = len(labels)
 
     # format c file to klee 
-    klee_file_path = format_for_klee(c_file, c_file_path, output_dir, number_of_labels, total_number_of_labels)
+    klee_file_path = format_for_klee(c_file, c_file_path, output_dir, number_of_labels, total_number_of_labels, project_config.func)
 
     # insert assignments of global variables
     # TODO: Find a way to not hard code path
@@ -128,7 +130,7 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
     modify_bit_code_exec_file = '../../src/smt_solver/modify_bitcode'
     compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
     inline_str = ""
-    if project_config.inlined and additional_files_path:
+    if project_config.inlined:
         inline_str = "_inlined"
         
     modified_klee_file_bc = klee_file_path[:-2] + inline_str + "_mod.bc"

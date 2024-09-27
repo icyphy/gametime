@@ -137,7 +137,7 @@ class Analyzer(object):
                 project_temp_dir = self.project_config.location_temp_dir
                 if not os.path.exists(additional_file):
                     shutil.rmtree(project_temp_dir)
-                    err_msg = "File to analyze not found: %s" % additional_file
+                    err_msg = "External File to analyze not found: %s" % additional_file
                     raise GameTimeError(err_msg)
 
         # Remove any temporary directory created during a previous run
@@ -165,13 +165,13 @@ class Analyzer(object):
 
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
                                                           f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
-        
+        additional_files_processing = []
         if additional_files:
             additional_files_processing = clang_helper.compile_list_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
                                                         self.project_config.included, self.project_config.compile_flags)
         
         # Preprocessing pass: inline functions.
-        if self.project_config.inlined and additional_files:  # Note: This is made into a bool rather than a list
+        if self.project_config.inlined:  # Note: This is made into a bool rather than a list
             processing = self._run_inliner(input_file=processing, additional_files=additional_files_processing)
 
         # Preprocessing pass: unroll loops.
