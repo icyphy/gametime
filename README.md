@@ -40,7 +40,6 @@ To install version 13 of `clang` and `llvm`, follow these steps:
    export PATH="/usr/local/opt/llvm@13/bin:$PATH"
    ```
 
-
 ### 3. Install Extra Dependencies and Local Modules
 
 Install the Python dependencies and additional required libraries:
@@ -68,6 +67,37 @@ brew install graphviz
 
 #### KLEE Installation
 For KLEE installation instructions, visit the [KLEE official website](https://klee.github.io/).
+
+
+## Running Tests
+
+To run a test, follow these steps to add and configure the YAML file for your test:
+
+### 1. Configure the YAML File
+Make sure the YAML configuration file for your test is set up properly. This file contains the necessary configuration details for the test.
+
+### 2. Add Your Test Class
+Go to `wcet.py` and create a new class for your test that uses on of the avalaible backend classes. Add the path to your YAML file as the `config_path`.
+
+#### Example:
+```python
+class TestBinarysearchARM(TestARMBackend):
+    config_path = "./programs/binarysearch/config.yaml"
+```
+
+### 3. Add the Test Class to the Main Function
+Add your test class to the `main` function so that it can be executed.
+
+#### Example:
+```python
+suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
+```
+
+### 4. Run the Test
+Finally, run the test using the following command:
+```bash
+python wcet.py
+```
 
 ## License
 This project is licensed under the terms of the [MIT License](LICENSE).
