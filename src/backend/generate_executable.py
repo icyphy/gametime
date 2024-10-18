@@ -1,8 +1,9 @@
 from pycparser import parse_file, c_generator
 from pycparser.c_ast import FuncDef, Decl, FuncCall, ID, Compound, TypeDecl, IdentifierType, FuncDecl, ParamList, Return, Constant, Assignment, ExprList, BinaryOp, NamedInitializer, InitList, Struct, ArrayDecl, Cast, Typename
 import os
+import pycparser_fake_libc
 
-pycparser_utils_path = '/Users/abdallaeltayeb/Desktop/Gamtime_project/pycparser/utils/fake_libc_include'
+pycparser_utils_path = pycparser_fake_libc.directory
 
 class ExecutableTransformer(object):
     """ 
