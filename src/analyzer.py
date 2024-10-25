@@ -244,7 +244,7 @@ class Analyzer(object):
         
         input_files = [input_file] + additional_files
         inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
-                                                     f"{self.project_config.name_orig_no_extension}gt-inlined")
+                                                     f"{self.project_config.name_orig_no_extension}gt-inlined", self.project_config.func)
         
         
         if not inlined_file:

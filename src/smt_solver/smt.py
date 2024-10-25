@@ -44,9 +44,9 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
     if project_config.inlined :
         compiled_additional_files = []
         if additional_files:
-            compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir, "helper_smt", project_config.included, project_config.compile_flags)
+            compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir)
         compiled_files = [compiled_file] + compiled_additional_files
-        input_bc_file = inliner.inline_functions(compiled_files, output_dir, f"{c_filename}_inlined")
+        input_bc_file = inliner.inline_functions(compiled_files, output_dir, f"{c_filename}_inlined", func_name)
     else: 
         input_bc_file = compiled_file
     # input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,

@@ -130,7 +130,7 @@ if __name__ == "__main__":
     print(f"  Inlined bitcode: {inlined_bc}")
     print("CFG files generated in the current directory.")
 
-def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str) -> str:
+def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str, analyzed_function: str) -> str:
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     
     combined_bc = "combined.bc"
@@ -148,7 +148,7 @@ def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_na
     disassemble_bitcode(combined_bc, combined_ll)
 
     # Step 4: Modify the LLVM IR file
-    modify_llvm_ir(combined_ll, combined_mod_ll, "test")
+    modify_llvm_ir(combined_ll, combined_mod_ll, analyzed_function)
 
     # Step 5: Assemble the modified LLVM IR back to bitcode
     assemble_bitcode(combined_mod_ll, combined_mod_bc)
