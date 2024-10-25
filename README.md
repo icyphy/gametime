@@ -57,8 +57,6 @@ pip install -e .
 pip install -r requirements.txt
 ```
 
-Make sure the `pycparser` directory is located in the same directory as the Gametime project to ensure compatibility with the stubs.
-
 #### On Linux (Ubuntu/Debian):
 Install additional system libraries:
 
