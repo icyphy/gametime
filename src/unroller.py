@@ -39,9 +39,8 @@ def unroll_llvm_ir(input_ir, output_ir):
 
 def generate_llvm_dag(output_bc):
     """
-    Generate LLVM DAG (.dot file) using llc and opt tools.
+    Generate LLVM DAG (.dot file) using opt.
     """
-    # Use llc to create DAG
     command = f"opt -dot-cfg -S -enable-new-pm=0 -disable-output {output_bc}"
     run_command(command, f"Generating LLVM DAG from bitcode {output_bc}")
 
@@ -104,65 +103,20 @@ def modify_loop_branches_to_next_block(input_file_path, output_file_path):
 def assemble_bitcode(input_file, output_file):
     run_command(f"llvm-as {input_file} -o {output_file}", "Assemble LLVM IR after unrolling")
 
-# Usage example
-# modify_loop_branches_to_next_block("input.ll", "output.ll")
 
+def unroll(bc_filepath: str, output_file_folder: str, output_name: str):
 
-# Usage example
-# modify_loop_branches_to_next_block("input.ll", "output.ll")
+    output_ir = f"{bc_filepath[:-3]}.ll"
+    unrolled_output_ir = f"{bc_filepath[:-3]}_unrolled.ll"
+    unrolled_mod_output_ir = f"{bc_filepath[:-3]}_unrolled_mod.ll"
+    unrolled_mod_output_bc = f"{bc_filepath[:-3]}_unrolled_mod.bc" 
 
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: python convert_to_llvm.py <source_file.c>")
-        sys.exit(1)
-
-    c_file = sys.argv[1]
-
-    if not os.path.isfile(c_file):
-        print(f"Error: {c_file} does not exist.")
-        sys.exit(1)
-
-    base_filename = os.path.splitext(c_file)[0]
-    output_bc = f"{base_filename}.bc"
-    output_ir = f"{base_filename}.ll"
-    unrolled_output_ir = f"{base_filename}_unrolled.ll"
-    unrolled_mod_output_ir = f"{base_filename}_unrolled_mod.ll"
-    output_dag = f"{base_filename}.dot"
-
-    # 1. Compile C file to LLVM Bitcode
-    compile_to_bitcode(c_file, output_bc)
-
-    # 2. Generate LLVM IR from Bitcode
-    generate_llvm_ir(output_bc, output_ir)
+    generate_llvm_ir(bc_filepath, output_ir)
     
     unroll_llvm_ir(output_ir, unrolled_output_ir)
     
     modify_loop_branches_to_next_block(unrolled_output_ir, unrolled_mod_output_ir)
-
-    # 3. Generate LLVM DAG from Bitcode
-    generate_llvm_dag(unrolled_mod_output_ir)
-
-    print(f"Files generated:\n- Bitcode: {output_bc}\n- LLVM IR: {output_ir}\n- LLVM IR: {unrolled_output_ir}\n- LLVM DAG: {output_dag}")
-
-if __name__ == "__main__":
-    main()
-
-def unroll(bc_filepaths: list[str], output_file_folder: str, output_name: str):
-
-    output_ir = f"{output_name}.ll"
-    unrolled_output_ir = f"{output_name}_unrolled.ll"
-    unrolled_mod_output_ir = f"{output_name}_unrolled_mod.ll"
-    unrolled_mod_output_bc = os.path.join(output_file_folder, f"{output_name}_unrolled_mod.bc") 
-
-    generate_llvm_ir(bc_filepaths, output_ir)
     
-    unroll_llvm_ir(output_ir, unrolled_output_ir)
+    assemble_bitcode(unrolled_mod_output_ir, unrolled_mod_output_bc)
     
-    modify_loop_branches_to_next_block(unrolled_output_ir, unrolled_mod_output_ir)
-
-    generate_llvm_dag(unrolled_mod_output_ir)
-    
-    assemble_bitcode(unrolled_mod_output_ir, bc_filepaths)
-    
-    return bc_filepaths
+    return unrolled_mod_output_bc

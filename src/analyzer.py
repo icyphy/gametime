@@ -178,8 +178,6 @@ class Analyzer(object):
         # Preprocessing pass: unroll loops.
         if self.project_config.UNROLL_LOOPS:
             processing = self._run_loop_unroller(compiled_file=processing)
-        print("PROCESSING", processing)
-        print("LOCATION", self.project_config.location_temp_dir)
         self.dag_path: str = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir)
         self.preprocessed_path: str = processing
         # We are done with the preprocessing.
@@ -205,7 +203,7 @@ class Analyzer(object):
 
         # Infer the name of the file that results from the CIL preprocessing.
         unrolled_file: str = unroller.unroll(compiled_file, self.project_config.location_temp_dir,
-                                                       f"{self.project_config.name_orig_no_extension}gt-unrolled")
+                                                       f"{self.project_config.name_orig_no_extension}")
 
         logger.info("Preprocessing the file: unrolling loops in the code...")
 
@@ -245,8 +243,7 @@ class Analyzer(object):
         
         input_files = [input_file] + additional_files
         inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
-                                                     f"{self.project_config.name_orig_no_extension}gt-inlined", self.project_config.func)
-        
+                                                     f"{self.project_config.name_orig_no_extension}", self.project_config.func)
         
         if not inlined_file:
             err_msg = "Error running the inliner."

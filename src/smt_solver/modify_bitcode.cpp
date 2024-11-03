@@ -166,7 +166,7 @@ int main(int argc, char **argv) {
     string labelsFilename(argv[2]);
     string allLabelsFilename(argv[3]);
     string funcName(argv[4]);
-    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 3) + "_mod";
+    string outputFilenameMod = inputFilename.substr(0, inputFilename.size() - 3) + "_gvMod";
     string outputFilename = inputFilename.substr(0, inputFilename.size() - 3);
     LLVMContext context;
     SMDiagnostic error;

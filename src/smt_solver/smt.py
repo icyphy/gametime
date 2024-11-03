@@ -47,18 +47,19 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
         if additional_files:
             compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir)
         compiled_files = [compiled_file] + compiled_additional_files
-        input_bc_file = inliner.inline_functions(compiled_files, output_dir, f"{c_filename}_inlined", func_name)
+        input_bc_file = inliner.inline_functions(compiled_files, output_dir, c_filename, func_name)
     else: 
         input_bc_file = compiled_file
     # input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
                                                        # f"{c_filename}-unrolled", project_config)
     if project_config.UNROLL_LOOPS :
-        input_bc_file = unroller.unroll(compiled_file, output_dir, c_filename)
+        input_bc_file = unroller.unroll(input_bc_file, output_dir, c_filename)
 
     # Run the compiled program
     # TODO: change modify bc to take in bc file, not c file
     run_command = ['./' + modify_bit_code_exec_file, input_bc_file, labels_file, all_labels_file, func_name]
     subprocess.run(run_command, check=True)
+    return f"{input_bc_file[:-3]}_gvMod.bc"
 
 def run_klee(klee_file):
     """
@@ -130,12 +131,7 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
     # TODO: Find a way to not hard code path
     modify_bit_code_cpp_file = '../../src/smt_solver/modify_bitcode.cpp'
     modify_bit_code_exec_file = '../../src/smt_solver/modify_bitcode'
-    compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
-    inline_str = ""
-    if project_config.inlined:
-        inline_str = "_inlined"
-        
-    modified_klee_file_bc = klee_file_path[:-2] + inline_str + "_mod.bc"
+    modified_klee_file_bc = compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
     
     # run klee
     run_klee(modified_klee_file_bc)
