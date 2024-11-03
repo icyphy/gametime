@@ -6,6 +6,7 @@ from defaults import logger
 import clang_helper
 import inliner
 from project_configuration import ProjectConfiguration
+import unroller
 
 def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, additional_files, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config: ProjectConfiguration):
     """
@@ -51,7 +52,8 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
         input_bc_file = compiled_file
     # input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
                                                        # f"{c_filename}-unrolled", project_config)
-    
+    if project_config.UNROLL_LOOPS :
+        input_bc_file = unroller.unroll(compiled_file, output_dir, c_filename)
 
     # Run the compiled program
     # TODO: change modify bc to take in bc file, not c file
@@ -134,7 +136,7 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
         inline_str = "_inlined"
         
     modified_klee_file_bc = klee_file_path[:-2] + inline_str + "_mod.bc"
-
+    
     # run klee
     run_klee(modified_klee_file_bc)
 

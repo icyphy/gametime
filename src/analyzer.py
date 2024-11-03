@@ -11,6 +11,7 @@ import clang_helper
 import nx_helper
 import pulp_helper
 import inliner
+import unroller
 from defaults import config, logger
 from file_helper import remove_all_except
 from gametime_error import GameTimeError
@@ -203,8 +204,8 @@ class Analyzer(object):
         preprocessed_file: str = self.project_config.location_temp_file
 
         # Infer the name of the file that results from the CIL preprocessing.
-        unrolled_file: str = clang_helper.unroll_loops(compiled_file, self.project_config.location_temp_dir,
-                                                       f"{self.project_config.name_orig_no_extension}gt-unrolled", self.project_config)
+        unrolled_file: str = unroller.unroll(compiled_file, self.project_config.location_temp_dir,
+                                                       f"{self.project_config.name_orig_no_extension}gt-unrolled")
 
         logger.info("Preprocessing the file: unrolling loops in the code...")
 
