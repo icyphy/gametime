@@ -3,7 +3,7 @@ gametime-project:
   file:
     location: if_elif_else.c
     analysis-function: test
-    additional-files: helper.c
+    additional-files: [helper.c]
     start-label: null
     end-label: null
 
