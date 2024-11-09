@@ -71,6 +71,8 @@ Install the additional libraries via Homebrew:
 brew install graphviz
 ```
 
+If you are having trouble installing pygraphviz on macOS try the following: [StackOverflow](https://stackoverflow.com/questions/69970147/how-do-i-resolve-the-pygraphviz-error-on-mac-os)
+
 ### 4. Install KLEE
 
 To use KLEE with Gametime, follow the installation instructions on the [KLEE official website](https://klee.github.io/).
