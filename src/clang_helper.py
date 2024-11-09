@@ -81,7 +81,7 @@ def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, outp
     file_to_compile: str = c_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-c", file_to_compile, "-o", output_file] + extra_flags
+    commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-Wno-implicit-function-declaration", "-c", file_to_compile, "-o", output_file] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
     subprocess.run(commands, check=True)

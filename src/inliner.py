@@ -72,7 +72,7 @@ def assemble_bitcode(input_file, output_file):
     run_command(f"llvm-as {input_file} -o {output_file}")
 
 def inline_bitcode(input_file, output_file):
-    run_command(f"opt -always-inline -inline -inline-threshold=10000000 {input_file} -o {output_file}")
+    run_command(f'opt -passes="always-inline,inline" -inline-threshold=10000000 {input_file} -o {output_file}')
 
 def generate_cfg(input_file):
     run_command(f"opt -dot-cfg {input_file}")
