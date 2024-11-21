@@ -33,7 +33,7 @@ def unroll_llvm_ir(input_ir, output_ir):
     """
     Generate LLVM Intermediate Representation (.ll file) from LLVM bitcode.
     """
-    command = f"opt -loop-unroll -S {input_ir} -o {output_ir}"
+    command = f"opt -enable-new-pm=0 -loop-unroll -S {input_ir} -o {output_ir}"
     run_command(command, f"Generating LLVM IR from {input_ir}")
     
 

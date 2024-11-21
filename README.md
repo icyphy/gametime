@@ -16,46 +16,39 @@ cd gametime
 git submodule update --init --recursive
 ```
 
-### 2. Install LLVM and Clang (Version 13)
+### 2. Install LLVM and Clang (Version 16)
 
-Gametime requires LLVM and Clang version 13. The installation instructions differ slightly between Linux and macOS:
+Gametime requires LLVM and Clang version 16. The installation instructions differ slightly between Linux and macOS:
 
 #### On Linux (Ubuntu/Debian):
 Update your package manager and install LLVM and Clang version 13:
 
 ```bash
 sudo apt update
-sudo apt install clang-13 llvm-13
+sudo apt install clang-16 llvm-16
 ```
 
 Ensure that version 13 is used by setting it as the default:
 
 ```bash
-sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-13 100
-sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-13 100
+sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100
+sudo update-alternatives --install /usr/bin/llvm-config llvm-config /usr/bin/llvm-config-16 100
 ```
 
 #### On macOS:
-First, ensure that Homebrew is installed, then install LLVM version 13 using the following commands:
+First, ensure that Homebrew is installed, then install LLVM version 16 using the following commands:
 
 ```bash
-brew install llvm@13
+brew install llvm@16
 ```
 
 After installation, update your `PATH` to include LLVM version 13:
 
 ```bash
-export PATH="/usr/local/opt/llvm@13/bin:$PATH"
+export PATH="/usr/local/opt/llvm@16/bin:$PATH"
 ```
 
 ### 3. Install Extra Dependencies and Local Modules
-
-Install the required Python packages and additional system libraries:
-
-```bash
-pip install -e .
-pip install -r requirements.txt
-```
 
 #### On Linux (Ubuntu/Debian):
 Install additional system libraries:
@@ -69,6 +62,15 @@ Install the additional libraries via Homebrew:
 
 ```bash
 brew install graphviz
+```
+
+#### Install Python dependencies:
+
+Install the required Python packages and additional system libraries:
+
+```bash
+pip install -e .
+pip install -r requirements.txt
 ```
 
 If you are having trouble installing pygraphviz on macOS try the following: [StackOverflow](https://stackoverflow.com/questions/69970147/how-do-i-resolve-the-pygraphviz-error-on-mac-os)
@@ -89,7 +91,7 @@ Each test requires a YAML configuration file. Ensure that your YAML file is corr
 
 ### 2. Create a Test Class
 
-Navigate to the `wcet.py` file and create a new test class based on one of the available backend configurations. Specify the path to your YAML configuration file in the `config_path` attribute.
+Navigate to the `wcet_test.py` file and create a new test class based on one of the available backend configurations. Specify the path to your YAML configuration file in the `config_path` attribute.
 
 #### Example:
 
@@ -100,7 +102,7 @@ class TestBinarysearchARM(TestARMBackend):
 
 ### 3. Add the Test Class to the Main Function
 
-In the `main` function of `wcet.py`, add your newly created test class to the suite for execution.
+In the `main` function of `wcet_test.py`, add your newly created test class to the suite for execution.
 
 #### Example:
 
@@ -113,7 +115,7 @@ suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
 Run the test using the following command:
 
 ```bash
-python wcet.py
+python wcet_test.py
 ```
 
 ---

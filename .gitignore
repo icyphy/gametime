@@ -3,3 +3,5 @@ test/**/*gt/*
 /Dockerfile*
 env
 build
+**/*.bc
+**/*.ll

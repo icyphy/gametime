@@ -1,4 +1,3 @@
-#include "helper.h"
 #include <stdio.h>
 
 int abs(int x) {

@@ -2,7 +2,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
-#include </Users/abdallaeltayeb/Desktop/Gamtime_project/gametime/test/tacle_test/programs/if_elif_else/helper.h>
+
+int abs(int x);
 
 // int test (int x) {
 //    // if (x < 0 && b < 0) {

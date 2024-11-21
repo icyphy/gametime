@@ -204,6 +204,7 @@ def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
     commands: List[str] = ["opt",
+                "-enable-new-pm=0",
                 "-always-inline",
                 "-inline", "-inline-threshold=10000000",
                 "-S", bc_filepath,
@@ -242,6 +243,7 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     
     commands: List[str] = ["opt",
+                "-enable-new-pm=0",
                 # "-mem2reg",
                 "-simplifycfg",
                 "-loops",
