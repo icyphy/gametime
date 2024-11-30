@@ -80,6 +80,8 @@ class TestBitcnt2Flexpret(TestFlexpretBackend):
     config_path = "./programs/bitcount/config.yaml"
 class TestBitcnt2X86(TestX86Backend):
     config_path = "./programs/bitcount/config.yaml"
+class TestBitcnt2ARM(TestARMBackend):
+    config_path = "./programs/bitcount/config.yaml"
 
 
 
@@ -128,6 +130,7 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
     suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2ARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestCountNegativeARM))
 

@@ -33,15 +33,14 @@ def unroll_llvm_ir(input_ir, output_ir):
     """
     Generate LLVM Intermediate Representation (.ll file) from LLVM bitcode.
     """
-    command = f"opt -enable-new-pm=0 -loop-unroll -S {input_ir} -o {output_ir}"
+    command = f"opt -passes=loop-unroll -S {input_ir} -o {output_ir}"
     run_command(command, f"Generating LLVM IR from {input_ir}")
-    
 
 def generate_llvm_dag(output_bc):
     """
     Generate LLVM DAG (.dot file) using opt.
     """
-    command = f"opt -dot-cfg -S -enable-new-pm=0 -disable-output {output_bc}"
+    command = f"opt -passes=dot-cfg -S -disable-output {output_bc}"
     run_command(command, f"Generating LLVM DAG from bitcode {output_bc}")
 
 def modify_loop_branches_to_next_block(input_file_path, output_file_path):
