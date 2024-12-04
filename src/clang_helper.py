@@ -10,6 +10,7 @@ from typing import List
 from defaults import logger
 from file_helper import remove_files
 from project_configuration import ProjectConfiguration
+import command_utils
 
 
 def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = False) -> str:
@@ -40,13 +41,13 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
     commands: List[str] = ["clang", "-emit-llvm", "-O0", "-o", output_file, "-c", file_to_compile] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
-    subprocess.run(commands, check=True)
+    command_utils.run(commands)
 
     if readable:
         # translate for .ll automatically.
         ll_output_file: str = os.path.join(output_file_folder, f"{output_name}.ll")
         commands = ["llvm-dis", output_file, "-o", ll_output_file]
-        subprocess.run(commands, check=True)
+        command_utils.run(commands)
 
     return output_file
 
@@ -81,16 +82,18 @@ def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, outp
     file_to_compile: str = c_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-c", file_to_compile, "-o", output_file] + extra_flags
+    # "-Wno-implicit-function-declaration" is required so that clang
+    # does not report "undeclared function '__assert_fail'"
+    commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-Wno-implicit-function-declaration", "-c", file_to_compile, "-o", output_file] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
-    subprocess.run(commands, check=True)
+    command_utils.run(commands, shell=True)
 
     if readable:
         # translate for .ll automatically. (optional)
         ll_output_file: str = os.path.join(output_file_folder, f"{output_name}.ll")
         commands = ["llvm-dis", output_file, "-o", ll_output_file]
-        subprocess.run(commands, check=True)
+        command_utils.run(commands)
     return output_file
 
 def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
@@ -123,7 +126,7 @@ def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, ext
         clang_commands.extend(["-I", lib])
 
     # Run clang to compile the bitcode into an executable
-    subprocess.run(clang_commands, check=True)
+    command_utils.run(clang_commands)
 
     return executable_file
 
@@ -149,7 +152,7 @@ def dump_object(object_filepath: str, output_folder: str, output_name: str) -> s
     output_file: str = os.path.join(output_folder, f"{output_name}.dmp")
 
     commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", object_filepath, "-c", "-o", output_file]
-    subprocess.check_call(commands)
+    command_utils.run(commands)
     return output_file
 
 def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = "main") -> str:
@@ -172,8 +175,8 @@ def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = 
     output_file: str = f".{output_name}.dot"
     cur_cwd: str = os.getcwd()
     os.chdir(bc_file_folder)  # opt generates .dot in cwd
-    commands: List[str] = ["opt", "-dot-cfg", "-S", "-enable-new-pm=0","-disable-output", bc_filename ]
-    subprocess.check_call(commands)
+    commands: List[str] = ["opt", "-passes=dot-cfg", "-S", "-disable-output", bc_filename]
+    command_utils.run(commands)
     os.chdir(cur_cwd)
     return output_file
 
@@ -204,12 +207,12 @@ def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
     commands: List[str] = ["opt",
-                "-always-inline",
-                "-inline", "-inline-threshold=10000000",
+                "-passes=\"always-inline,inline\""
+                "-inline-threshold=10000000",
                 "-S", bc_filepath,
                 "-o", output_file]
-
-    logger.info(subprocess.run(commands, check=True))
+        
+    command_utils.run(commands)
     return output_file
 
 
@@ -241,27 +244,16 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
     # return bc_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     
+    # Related but unused passes: 
+    # -unroll-threshold=10000000, -unroll-count=4, 
+    # -unroll-allow-partial, -instcombine,
+    # -reassociate, -indvars, -mem2reg
     commands: List[str] = ["opt",
-                # "-mem2reg",
-                "-simplifycfg",
-                "-loops",
-                "-lcssa",
-                "-loop-simplify",
-                "-loop-rotate",
-                "-indvars",
-                "-loop-unroll",
-                "-simplifycfg",
-                # "-unroll-threshold=10000000",
-                # "-unroll-count=4",
-                # "-unroll-allow-partial",
-                # "-instcombine",
-                # "-reassociate",
-                # "-indvars",
+                "-passes='simplifycfg,loops,lcssa,loop-simplify,loop-rotate,indvars,loop-unroll'"
                 "-S", bc_filepath,
-                # "-o", temp_output_file]
                 "-o", output_file]
 
-    logger.info(subprocess.run(commands, check=True))
+    command_utils.run(commands)
 
     return output_file
 
