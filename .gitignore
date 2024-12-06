@@ -5,3 +5,4 @@ env
 build
 **/*.bc
 **/*.ll
+.venv
