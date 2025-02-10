@@ -5,5 +5,6 @@ PuLP==2.9.0
 pycparser==2.22
 pycparser-fake-libc==2.21
 pygraphviz==1.13
-PyYAML==6.0.1
-scipy==1.14.0
+pyyaml==6.0.2
+scipy==1.15.1
+yaml

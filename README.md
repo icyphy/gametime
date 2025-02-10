@@ -28,7 +28,7 @@ sudo apt update
 sudo apt install clang-16 llvm-16
 ```
 
-Ensure that version 13 is used by setting it as the default:
+Ensure that version 16 is used by setting it as the default:
 
 ```bash
 sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-16 100
@@ -42,10 +42,26 @@ First, ensure that Homebrew is installed, then install LLVM version 16 using the
 brew install llvm@16
 ```
 
-After installation, update your `PATH` to include LLVM version 13:
+After installation, find out the installation path for llvm@16:
 
 ```bash
-export PATH="/usr/local/opt/llvm@16/bin:$PATH"
+brew info llvm@16
+```
+
+brew will then return an output along the lines of 
+```
+$ brew info llvm@16
+==> llvm@16: stable 16.0.6 (bottled) [keg-only]
+Next-gen compiler infrastructure
+https://llvm.org/
+Installed
+/usr/local/Cellar/llvm@16/16.0.6_1 (<== copy this)
+```
+
+Update your `PATH` to include LLVM version 16:
+
+```bash
+export PATH="/usr/local/Cellar/llvm@16/16.0.6_1/bin:$PATH"
 ```
 
 ### 3. Install Extra Dependencies and Local Modules
