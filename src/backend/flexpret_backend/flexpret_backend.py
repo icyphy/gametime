@@ -74,6 +74,8 @@ project(driver
 
 set(DEBUG true)
 set(CMAKE_BUILD_TYPE "Debug")
+# Use -O0 to disable compiler optimization
+set(CMAKE_C_FLAGS "-g -O0 -static -march=rv32i_zicsr -mabi=ilp32 -nostartfiles --specs=nosys.specs -ffunction-sections -fdata-sections -Wl,--gc-sections")
 
 add_executable({file_name} {file_name}.c)
 
