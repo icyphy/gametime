@@ -98,6 +98,8 @@ class TestModexpFlexpret(TestFlexpretBackend):
     config_path = "./programs/modexp/config.yaml"
 class TestModexpX86(TestX86Backend):
     config_path = "./programs/modexp/config.yaml"
+class TestModexpARM(TestARMBackend):
+    config_path = "./programs/modexp/config.yaml"
 
 
 class TestBinarysearchFlexpret(TestFlexpretBackend):
@@ -114,6 +116,13 @@ class TestCountNegativeX86(TestX86Backend):
     config_path = "./programs/countnegative/config.yaml"
 class TestCountNegativeARM(TestARMBackend):
     config_path = "./programs/countnegative/config.yaml"
+
+class TestInsertSortFlexpret(TestFlexpretBackend):
+    config_path = "./programs/insertsort/config.yaml"
+class TestInsertSortX86(TestX86Backend):
+    config_path = "./programs/insertsort/config.yaml"
+class TestInsertSortARM(TestARMBackend):
+    config_path = "./programs/insertsort/config.yaml"
     
 
 
@@ -129,10 +138,12 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
-    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2ARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestCountNegativeARM))
+    suite.addTests(loader.loadTestsFromTestCase(TestModexpARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestInsertSortARM))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)

@@ -1,0 +1,24 @@
+---
+gametime-project:
+  file:
+    location: insertsort.c
+    analysis-function: insertsort_main
+    start-label: null
+    end-label: null
+
+
+  preprocess:
+    include: null
+    merge: null
+    inline: null
+    unroll-loops: Yes
+
+  analysis:
+    maximum-error-scale-factor: 1
+    determinant-threshold: 0.0001
+    max-infeasible-paths: 100
+    ilp-solver: glpk
+    gametime-flexpret-path: ../flexpret/ # default path when running locally
+    gametime-path: ../../ # default path when tests locally
+    gametime-file-path: ../../../.. # default path when tests locally
+
