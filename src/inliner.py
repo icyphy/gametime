@@ -26,7 +26,15 @@ def inline_bitcode(input_file, output_file):
     run_command(f"opt -passes=\"always-inline,inline\" -inline-threshold=10000000 {input_file} -o {output_file}")
 
 def modify_llvm_ir(input_file, output_file, skip_function):
-    run_command(f"opt -load-pass-plugin=custom_passes/custom_inline_pass.so -passes=custom-inline -analysed_func={skip_function} {input_file} -o {output_file}")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    plugin_path = os.path.normpath(os.path.join(current_dir, "../src/custom_passes/custom_inline_pass.so"))
+
+    if not os.path.exists(plugin_path):
+        print(plugin_path)
+        print("Plugin Not Found")
+        sys.exit(1)
+
+    run_command(f"opt -load-pass-plugin={plugin_path} -passes=custom-inline -analysed-func={skip_function} {input_file} -o {output_file} -S")
 
 
 
