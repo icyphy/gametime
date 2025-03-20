@@ -11,7 +11,10 @@
 using namespace llvm;
 
 
-static cl::opt<std::string> AnalysedFunction("analysed_func", cl::init(""));
+static cl::opt<std::string> AnalysedFunction("analysed-func", 
+                                            cl::desc("Function to exclude from inlining"),
+                                            cl::value_desc("function name"),
+                                            cl::Required);
 
 struct CustomInlinePass : public PassInfoMixin<CustomInlinePass> {
 
@@ -20,10 +23,12 @@ struct CustomInlinePass : public PassInfoMixin<CustomInlinePass> {
 
         for (Function &F : M) {
             if (F.getName() == AnalysedFunction) {
+                F.removeFnAttr(Attribute::AlwaysInline);
                 F.addFnAttr(Attribute::NoInline);
                 errs() << "Function " << F.getName() << " is not inlined.\n";
-                changed = false;
+                changed = true;
             } else {
+                F.removeFnAttr(Attribute::NoInline);
                 F.addFnAttr(Attribute::AlwaysInline);
                 errs() << "Function " << F.getName() << " is inlined.\n";
                 changed = true;
