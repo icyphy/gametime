@@ -95,6 +95,14 @@ If you are having trouble installing pygraphviz on macOS try the following: [Sta
 
 To use KLEE with Gametime, follow the installation instructions on the [KLEE official website](https://klee.github.io/).
 
+### 4. Compiling Local Passes
+
+From the project root directory run:
+
+```bash
+clang++ -shared -fPIC src/custom_passes/custom_inline_pass.cpp -o src/custom_passes/custom_inline_pass.so `llvm-config --cxxflags --ldflags --libs` -Wl,-rpath,$(llvm-config --libdir)
+```
+
 ---
 
 ## Running Tests
