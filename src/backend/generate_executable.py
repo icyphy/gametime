@@ -428,7 +428,7 @@ def generate_executable(input_file, input_folder, function_name, hex_values_file
 
     # This must be included in we want to run flexpret backend (for printf)
     if include_flexpret:
-        original_c_content = "#include <flexpret.h> \n" +  original_c_content
+        original_c_content = "#include <flexpret/flexpret.h> \n" +  original_c_content
     else:
         original_c_content = "#include <time.h> \n" +  original_c_content
 
@@ -440,7 +440,7 @@ def generate_executable(input_file, input_folder, function_name, hex_values_file
     original_c_content += generator.visit(transformer.new_main)
 
     # Write the modified code to a new file
-    output_file = os.path.join(input_folder + "driver.c") 
+    output_file = os.path.join(input_folder + "/" + "driver.c") 
     with open(output_file, 'w') as f:
         f.write(original_c_content)
 

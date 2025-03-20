@@ -133,7 +133,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
+    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))

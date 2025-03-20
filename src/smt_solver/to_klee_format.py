@@ -17,7 +17,7 @@ def format_for_klee(c_file, c_file_path, c_file_gt_dir, n, total_number_of_label
     c_code = c_code.lstrip('\n')
     
     # Generate KLEE headers
-    klee_headers = "#include </opt/homebrew/opt/klee/include/klee/klee.h>\n#include <stdbool.h>\n"
+    klee_headers = "#include <klee/klee.h>\n#include <stdbool.h>\n"
 
     # Generate global boolean variables and initialize them to false/true
     global_booleans = "\n"

@@ -87,7 +87,7 @@ def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, outp
     commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-Wno-implicit-function-declaration", "-c", file_to_compile, "-o", output_file] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
-    command_utils.run(commands, shell=True)
+    command_utils.run(commands)
 
     if readable:
         # translate for .ll automatically. (optional)
