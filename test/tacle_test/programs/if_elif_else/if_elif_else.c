@@ -8,7 +8,10 @@ int test(int x){
     if (abs(x) == 4) {
         return 0;
     } else {
-        return 1;
+        int a = 1;
+        int b = a * 2;
+        int c = a * b;
+        return c;
     }
 }
 
