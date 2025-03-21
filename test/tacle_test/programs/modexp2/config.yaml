@@ -1,8 +1,8 @@
 ---
 gametime-project:
   file:
-    location: modexp.c
-    analysis-function: modexp
+    location: modexp2.c
+    analysis-function: modexp2
     start-label: null
     end-label: null
 
