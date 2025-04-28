@@ -95,7 +95,23 @@ If you are having trouble installing pygraphviz on macOS try the following: [Sta
 
 To use KLEE with Gametime, follow the installation instructions on the [KLEE official website](https://klee.github.io/).
 
-### 4. Compiling Local Passes
+Add the KLEE header files to yout `C_INCLUDE_PATH`:
+
+```bash
+export C_INCLUDE_PATH="<path_to_klee>/include:$C_INCLUDE_PATH"
+```
+
+### 5. Install the FlexPRET Emulator (Recommended):
+
+To use the FlexPRET emulator with GameTime, follow the installation instructions on the [FlexPRET Github Page](https://github.com/pretis/flexpret).
+
+Add fp-emu to `PATH`:
+
+```bash
+export PATH="$PATH:<path_to_flexpret>/flexpret/build/emulator"
+```
+
+### 6. Compile LLVM Passes
 
 From the project root directory run:
 
