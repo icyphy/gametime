@@ -95,7 +95,7 @@ If you are having trouble installing pygraphviz on macOS try the following: [Sta
 
 To use KLEE with Gametime, follow the installation instructions on the [KLEE official website](https://klee.github.io/).
 
-Add the KLEE header files to yout C_INCLUDE_PATH:
+Add the KLEE header files to yout `C_INCLUDE_PATH`:
 
 ```bash
 export C_INCLUDE_PATH="<path_to_klee>/include:$C_INCLUDE_PATH"
