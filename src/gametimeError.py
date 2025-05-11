@@ -12,8 +12,3 @@ for details on the GameTime license and authors.
 class GameTimeError(Exception):
     """Error that GameTime can throw."""
     pass
-
-
-class GameTimeWarning(Warning):
-    """Warning that GameTime can throw."""
-    pass
