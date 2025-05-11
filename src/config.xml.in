@@ -1,0 +1,226 @@
+<?xml version="1.0" ?>
+
+<!-- This is the XML file that configures GameTime for all projects.
+     You should not have to modify this file. -->
+<gametime-config>
+    <!-- Information about GameTime itself. -->
+    <gametime>
+        <!-- URL of the website for GameTime. -->
+        <website-url>http://verifun.eecs.berkeley.edu/gametime</website-url>
+        <!-- Current version number of GameTime. -->
+        <version>@VERSION@</version>
+        <!-- URL that provides information about
+             the latest version of GameTime. -->
+        <latest-version-info-url>
+            http://verifun.eecs.berkeley.edu/gametime/static/php/version.php?latest
+        </latest-version-info-url>
+    </gametime>
+
+    <!-- Information about the memory layout of the target machine. -->
+    <memory>
+        <!-- Word size on the machine that GameTime is being run on. -->
+        <bitsize>32</bitsize>
+        <!-- Endianness of the target machine. This configuration
+             recognizes two options: "big" for big-endian and
+             "little" for little-endian. -->
+        <endianness>little</endianness>
+    </memory>
+
+    <!-- Annotations that can be added to the code under analysis. -->
+    <annotations>
+        <!-- Annotation that is used when additional conditions need to be
+             provided to GameTime. This is used, for example, to control
+             the values that GameTime assigns certain variables in
+             the test cases that it produces. -->
+        <assume>__gt_assume</assume>
+        <!-- Annotation that is used when a simulation is performed.
+             This is used primarily when the values of different paths
+             are measured. -->
+        <simulate>__gt_simulate</simulate>
+    </annotations>
+
+    <!-- Identifiers that will be appended to different "special"
+         variables that will be sent to the underlying SMT solver. -->
+    <identifiers>
+        <!-- Identifier that gets prepended to the name of either an
+             aggregate type or an aggregate object. -->
+        <aggregate>__gtAGG_</aggregate>
+        <!-- Identifier that gets prepended to the name of a Boolean
+             variable that is true if, and only if, a constraint is true. -->
+        <constraint>__gtCONSTRAINT</constraint>
+        <!-- Identifier that gets prepended to the names of functions
+             that have not been inlined. -->
+        <efc>__gtEFC_</efc>
+        <!-- Identifier that gets prepended to a field reference. -->
+        <field>__gtFIELD_</field>
+        <!-- Identifier that gets prepended to the names of variables that
+             replace indices within array accesses. -->
+        <tempindex>__gtINDEX</tempindex>
+        <!-- Identifier that gets prepended to the names of temporary
+             pointers. -->
+        <tempptr>__gtPTR</tempptr>
+        <!-- Identifier used for temporary variables. -->
+        <tempvar>__gt</tempvar>
+    </identifiers>
+
+    <!-- Names for temporary files and folders that are generated during
+         the GameTime toolflow. -->
+    <temps>
+        <!-- Name for temporary files that store project configuration
+             information. -->
+        <project-config>project-config</project-config>
+        <!-- Name for temporary files that store the locations of
+             other files to be merged with the source file. -->
+        <merged>merged</merged>
+        <!-- Name for temporary loop configuration files, which store
+             the location of loop headers, generated during the process of
+             loop unrolling. -->
+        <loop-config>loop-config</loop-config>
+
+        <!-- Suffix for general purposes, such as to append to the name
+             of the temporary file to be analyzed by GameTime, and to the
+             name of the temporary directory that stores the temporary
+             files generated during the GameTime toolflow. -->
+        <suffix>-gt</suffix>
+
+        <!-- Suffix that is appended to the name of the temporary file
+             that is created when a file undergoes preprocessing through CIL
+             to merge code from other source files. -->
+        <suffix-merged>-merged</suffix-merged>
+        <!-- Suffix that is appended to the name of the temporary file
+             that is created when a file undergoes preprocessing through CIL
+             to unroll the loops present in the file. -->
+        <suffix-unrolled>-unrolled</suffix-unrolled>
+        <!-- Suffix that is appended to the name of the temporary file
+             that is created when a file undergoes preprocessing through CIL
+             to inline functions. -->
+        <suffix-inlined>-inlined</suffix-inlined>
+        <!-- Suffix that is appended to the name of the temporary file
+             that is created when a file undergoes preprocessing through CIL
+             and that contains #line directives. -->
+        <suffix-line-nums>-line-nums</suffix-line-nums>
+
+        <!-- Name for the GameTime mode when the Phoenix section of
+             the toolflow is used to create the DAG containing the basic
+             blocks of a function unit. -->
+        <phx-create-dag>create-dag</phx-create-dag>
+        <!-- Name for temporary files that store a directed acyclic graph
+             (in DOT format). -->
+        <dag>dag</dag>
+        <!-- Name for temporary files that store a mapping between
+             the IDs of the basic blocks in the control-flow graph and
+             their "adjusted" IDs. -->
+        <dag-id-map>dag-id-map</dag-id-map>
+
+        <!-- Name for temporary files that store the Phoenix intermediate
+             representation of the function being analyzed. -->
+        <phx-ir>ir</phx-ir>
+        <!-- Name for the GameTime mode when the Phoenix section of
+             the toolflow is used to find the conditions along paths. -->
+        <phx-find-conditions>find-conditions</phx-find-conditions>
+
+        <!-- Name for temporary files that each store the integer linear
+             programming problem that, when solved, produced a path. -->
+        <path-ilp-problem>path-ilp-problem</path-ilp-problem>
+        <!-- Name for temporary files that each store the IDs of the nodes
+             in a directed acyclic graph along a path. -->
+        <path-nodes>path-nodes</path-nodes>
+        <!-- Name for temporary files that each store the line numbers
+             of the statements along a path. -->
+        <path-line-numbers>path-line-numbers</path-line-numbers>
+        <!-- Name for temporary files that each store the conditions
+             along a path. -->
+        <path-conditions>path-conditions</path-conditions>
+        <!-- Name for temporary files that each store information about
+             the edges that are associated with the conditions and
+             assignments along a path. -->
+        <path-condition-edges>path-condition-edges</path-condition-edges>
+        <!-- Name for temporary files that each store information about
+             the line numbers and truth values of the conditional points
+             along a path. -->
+        <path-condition-truths>path-condition-truths</path-condition-truths>
+        <!-- Name for temporary files that each store information about
+             all the array accesses made in conditions and assignments
+             along a path. -->
+        <path-array-accesses>path-array-accesses</path-array-accesses>
+        <!-- Name for temporary files that each store the expressions
+             associated with the temporary index variables of aggregate
+             accesses along a path. -->
+        <path-agg-index-exprs>path-agg-index-exprs</path-agg-index-exprs>
+        <!-- Name for temporary files that each store the predicted value
+             of a path. -->
+        <path-predicted-value>path-value-predicted</path-predicted-value>
+        <!-- Name for temporary files that each store the measured value
+             of a path. -->
+        <path-measured-value>path-value-measured</path-measured-value>
+        <!-- Name for temporary files that store information about
+             all of the paths traced during analysis. -->
+        <path-all>path-all</path-all>
+
+        <!-- Prefix for temporary files that store the SMT queries
+             corresponding to different paths. -->
+        <path-query>path-query</path-query>
+        <!-- Name for temporary files that contain the models for
+             satisfiable SMT queries. -->
+        <smt-model>smt-model</smt-model>
+        <!-- Name for temporary files that store all of the SMT queries
+             that have been made during analysis. -->
+        <path-query-all>path-query-all</path-query-all>
+
+        <!-- Prefix for temporary files that store information about
+             a case, which is an assignment to variables that would
+             drive an execution of the code along a path. -->
+        <case>case</case>
+
+        <!-- Name for files that store the basis matrix after analysis
+             has been conducted to determine feasible basis paths. -->
+        <basis-matrix>basis-matrix</basis-matrix>
+        <!-- Prefix for temporary folders that store the temporary files
+             generated when a path is measured. -->
+        <measurement>measurement</measurement>
+        <!-- Name for files that store the quantities (for example, execution
+             times) associated with running or simulating the program under
+             analysis on inputs that sensitize its basis paths. -->
+        <basis-values>basis-values</basis-values>
+        <!-- Name for temporary files that store a directed acyclic graph
+             (in DOT format), where the edges are annotated with weights. -->
+        <dag-weights>dag-weights</dag-weights>
+        <!-- Name for temporary files that store the distribution of quantities
+             (for example, execution times) associated with each path in the
+             control-flow graph of the program being analyzed. -->
+        <distribution>distribution</distribution>
+    </temps>
+
+    <!-- Locations of useful tools. -->
+    <tools>
+        <!-- Location of the Phoenix DLL. -->
+        <phoenix>bin/GameTime.dll</phoenix>
+        <!-- Location of the directory that contains the CIL source code. -->
+        <cil>cil</cil>
+    </tools>
+
+    <!-- Locations of SMT solvers. -->
+    <smt-solvers>
+        <!-- Location of the Boolector executable. If the absolute
+             location is not provided, and Boolector is used for a query,
+             the executable is assumed to be present in the PATH
+             environment variable. -->
+        <boolector>@BOOLECTOR_EXE@</boolector>
+        <!-- Location of the Python interface of Z3, the SMT solver
+             from Microsoft. If the absolute location is not provided,
+             and Z3 is used for a query, the interface is assumed to be
+             present in either the PYTHONPATH environment variable or
+             the PATH environment variable. -->
+        <z3>@Z3_PYC@</z3>
+    </smt-solvers>
+
+    <!-- Locations of simulators and useful auxiliary tools. -->
+    <simulators>
+        <!-- Location of the directory that contains
+             the GNU ARM toolchain. -->
+        <gnu-arm>@GNU_ARM@</gnu-arm>
+        <!-- Location of the directory that contains
+             the PTARM simulator. -->
+        <ptarm>@PTARM@</ptarm>
+    </simulators>
+</gametime-config>

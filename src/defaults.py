@@ -10,32 +10,35 @@ at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
 for details on the GameTime license and authors.
 """
 
+
 import logging
-import logging_helper
+import loggingHelper
 import os
+
 
 # Initialize the GameTime logger (as described in
 # http://docs.python.org/2/howto/logging-cookbook.html).
-logger: logging.Logger = logging.getLogger("gametime")
-logging_helper.initialize(logger)
+logger = logging.getLogger("gametime")
+loggingHelper.initialize(logger)
+
 
 # This import is done later, so that the module
 # :module:`~gametime.configuration` can use the GameTime logger.
-import gametime_configuration
+import configuration
+
 
 #: Default directory that contains the source files of GameTime.
-source_dir: str = os.path.dirname(os.path.abspath(__file__))
-#: Default configuration YAML file.
-config_file: str = os.path.join(source_dir, "config.yaml.in")
+sourceDir = os.path.dirname(os.path.abspath(__file__))
+#: Default configuration XML file.
+configFile = os.path.join(sourceDir, "config.xml")
 
 #: Default directory that contains the GameTime GUI.
-gui_dir: str = os.path.join(source_dir, "gui")
+guiDir = os.path.join(sourceDir, "gui")
 
-logger.info("Reading GameTime configuration in %s..." % config_file)
+logger.info("Reading GameTime configuration in %s..." % configFile)
 logger.info("")
-#: Default :class:`~gametime.configuration.GametimeConfiguration` object
+#: Default :class:`~gametime.configuration.Configuration` object
 #: that represents the configuration of GameTime.
-config: gametime_configuration.GametimeConfiguration = gametime_configuration.read_gametime_config_yaml(config_file)
-
+config = configuration.readConfigFile(configFile)
 logger.info("Successfully configured GameTime.")
 logger.info("")

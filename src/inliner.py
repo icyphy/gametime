@@ -1,74 +1,81 @@
+#!/usr/bin/env python
+
+"""Exposes functions to perform a source-to-source transformation that
+inlines user-specified functions in the C file currently being analyzed.
+"""
+
+"""See the LICENSE file, located in the root directory of
+the source distribution and
+at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
+for details on the GameTime license and authors.
+"""
+
+
 import os
-import re
 import subprocess
-import sys
 
-def run_command(command):
-    result = subprocess.run(command, shell=True, capture_output=True, text=True, errors='replace')
-    if result.returncode != 0:
-        print(f"Error running command: {command}")
-        print(result.stdout)
-        print(result.stderr)
-        sys.exit(1)
-    return result.stdout
+from defaults import config, sourceDir
 
 
-def link_bitcode(bitcode_files, output_file):
-    run_command(f"llvm-link {' '.join(bitcode_files)} -o {output_file}")
+def _generateInlinerCommand(projectConfig):
+    """Generates the system call that runs the CIL inliner with
+    appropriate inputs.
 
-def disassemble_bitcode(input_file, output_file):
-    run_command(f"llvm-dis {input_file} -o {output_file}")
+    Arguments:
+        projectConfig:
+            :class:`~gametime.projectConfiguration.ProjectConfiguration`
+            object that represents the configuration of a GameTime project.
 
-def assemble_bitcode(input_file, output_file):
-    run_command(f"llvm-as {input_file} -o {output_file}")
+    Returns:
+        Appropriate system call as a list that contains the program
+        to be run and the proper arguments.
+    """
+    # Set the environment variable that allows the Cilly driver to find
+    # the path to the configuration file for the Findlib OCaml module.
+    os.environ["OCAMLFIND_CONF"] = os.path.join(sourceDir,
+                                                "ocaml/conf/findlib.conf")
 
-def inline_bitcode(input_file, output_file):
-    run_command(f"opt -passes=\"always-inline,inline\" -inline-threshold=10000000 {input_file} -o {output_file}")
+    # Set the environment variable that allows the Cilly driver to find
+    # the path to the folder that contains the compiled OCaml files.
+    os.environ["OCAMLPATH"] = os.path.join(sourceDir, "ocaml/lib")
 
-def modify_llvm_ir(input_file, output_file, skip_function):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    plugin_path = os.path.normpath(os.path.join(current_dir, "../src/custom_passes/custom_inline_pass.so"))
+    # Set the environment variable that configures the Cilly driver to load
+    # the features that will be needed for the inliner.
+    os.environ["CIL_FEATURES"] = "cil.default-features,cil.inliner"
 
-    if not os.path.exists(plugin_path):
-        print(plugin_path)
-        print("Plugin Not Found")
-        sys.exit(1)
+    command = []
 
-    run_command(f"opt -load-pass-plugin={plugin_path} -passes=custom-inline -analysed-func={skip_function} {input_file} -o {output_file} -S")
+    command.append(os.path.join(config.TOOL_CIL, "bin/cilly.bat"))
 
+    inlined = projectConfig.inlined
+    for funcName in inlined:
+        command.append("--inline=%s" % funcName)
 
+    command.append(projectConfig.locationTempFile)
 
-def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str, analyzed_function: str) -> str:
-    output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
-    file_to_analyze = bc_filepaths[0]
-    combined_bc = f"{file_to_analyze[:-3]}_linked.bc"
-    combined_ll = f"{file_to_analyze[:-3]}_linked.ll"
-    combined_mod_ll = f"{file_to_analyze[:-3]}_linked_mod.ll"
-    combined_mod_bc = f"{file_to_analyze[:-3]}_linked_mod.bc"
-    combined_inlined_mod_bc = f"{file_to_analyze[:-3]}_linked_inlined_mod.bc"
-    combined_inlined_mod_ll = f"{file_to_analyze[:-3]}_linked_inlined_mod.ll"
+    command.append("-I'%s'" % projectConfig.locationOrigDir)
+    for includePath in projectConfig.included:
+        command.append("-I'%s'" % includePath)
 
+    command.append("--save-temps='%s'" % projectConfig.locationTempDir)
+    command.append("-c")
+    command.append("-o")
+    command.append("'%s.out'" % projectConfig.locationTempNoExtension)
 
-    
-    if len(bc_filepaths) > 1:
-        # Step 1: Link all bitcode files into a single combined bitcode file
-        link_bitcode(bc_filepaths, combined_bc)
-    else:
-        combined_bc = bc_filepaths[0]
+    return command
 
-    # Step 2: Disassemble the combined bitcode file to LLVM IR
-    disassemble_bitcode(combined_bc, combined_ll)
+def runInliner(projectConfig):
+    """Conducts the sequence of system calls that will perform
+    a source-to-source transformation of the C file currently being
+    analyzed, inlining user-specified functions.
 
-    # Step 3: Modify the LLVM IR file
-    modify_llvm_ir(combined_ll, combined_mod_ll, analyzed_function)
+    Arguments:
+        projectConfig:
+            :class:`~gametime.projectConfiguration.ProjectConfiguration`
+            object that represents the configuration of a GameTime project.
 
-    # Step 4: Assemble the modified LLVM IR back to bitcode
-    assemble_bitcode(combined_mod_ll, combined_mod_bc)
-
-    # Step 5: Inline the functions in the modified bitcode
-    inline_bitcode(combined_mod_bc, combined_inlined_mod_bc)
-    
-    # Step 6: Disassemble the combined bitcode file to LLVM IR for debugging
-    disassemble_bitcode(combined_inlined_mod_bc, combined_inlined_mod_ll)
-        
-    return combined_inlined_mod_bc
+    Returns:
+        Zero if the inlining was successful; a non-zero value otherwise.
+    """
+    command = _generateInlinerCommand(projectConfig)
+    return subprocess.call(command, shell=True)

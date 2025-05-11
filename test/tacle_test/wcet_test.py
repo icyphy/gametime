@@ -36,6 +36,7 @@ class BaseTest(unittest.TestCase):
     #         print(p.get_measured_value())
 
     def test_wcet_analyzer(self):
+        # do all of the preprocessing
         analyzer = self.create_analyzer()
         analyzer.create_dag()
 
@@ -133,17 +134,23 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2ARM))
-    # suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
+    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestCountNegativeARM))
-    suite.addTests(loader.loadTestsFromTestCase(TestModexpARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestInsertSortARM))
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
+# nano ~/.bashrc 
+# sbt test
+# source env.bash                                        
+# cmake -B build && cd build
+# make all install
+# make && ctest 

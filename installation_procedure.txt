@@ -1,9 +1,9 @@
 Reminder: this is for linux setup
 
 1. Install flexpret by following it's instructions. Use branch gametime-support. Can use instructions of master branch.
-        ***Remember to export PATH=$PATH:/Users/abdallaeltayeb/Desktop/Gamtime_project/flexpret/emulator*** USE ABS PATH
+        ***Remember to export PATH=$PATH:/Users/I747530/Desktop/Gametime-project/flexpret/emulator*** USE ABS PATH
                         export PATH=$PATH:/opt/riscv/bin
-                        
+                        /Users/I747530/Desktop/Gametime-project/gametime/installation_procedure.txt
 2. Pull the lastest Gametime.
 git submodule update --init --recursive
 
