@@ -283,7 +283,7 @@ class ExecutableTransformer(object):
         generator = c_generator.CGenerator()
         type_str = generator.visit(type_node)
         # Use __builtin_bswap32 to convert KLEE's little endian value to big endian.
-        return f"{type_str} {name} = __builtin_bswap32({value});"
+        return f"{type_str} {name} = {value};"
 
     def generate_struct_declaration(self, name, struct_type_node, value_dict):
         """
