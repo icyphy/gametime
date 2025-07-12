@@ -123,6 +123,12 @@ class TestInsertSortX86(TestX86Backend):
     config_path = "./programs/insertsort/config.yaml"
 class TestInsertSortARM(TestARMBackend):
     config_path = "./programs/insertsort/config.yaml"
+
+class TestBSortFlexpret(TestFlexpretBackend):
+    config_path = "./programs/bsort/config.yaml"
+
+class TestDeg2RadFlexpret(TestFlexpretBackend):
+    config_path = "./programs/deg2rad/config.yaml"
     
 
 
@@ -133,7 +139,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
+    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
@@ -142,7 +148,7 @@ if __name__ == '__main__':
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2ARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestCountNegativeARM))
-    suite.addTests(loader.loadTestsFromTestCase(TestModexpARM))
+    # suite.addTests(loader.loadTestsFromTestCase(TestModexpARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestInsertSortARM))
 
     runner = unittest.TextTestRunner()
