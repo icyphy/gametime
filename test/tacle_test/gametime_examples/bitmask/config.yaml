@@ -1,0 +1,23 @@
+---
+gametime-project:
+  file:
+    location: bitmask.c
+    analysis-function: bitmask
+    start-label: null
+    end-label: null
+
+
+  preprocess:
+    include: null
+    merge: null
+    inline: yes
+    unroll-loops: Yes
+
+  analysis:
+    maximum-error-scale-factor: 10
+    determinant-threshold: 0.001
+    max-infeasible-paths: 100
+    ilp-solver: glpk
+    gametime-flexpret-path: ../flexpret/
+    gametime-path: ../../ # default path when tests locally
+    gametime-file-path: ../../../.. # default path when tests locally
