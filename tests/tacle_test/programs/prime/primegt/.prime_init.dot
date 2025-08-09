@@ -1,0 +1,5 @@
+digraph "CFG for 'prime_init' function" {
+	label="CFG for 'prime_init' function";
+
+	Node0x1289263e0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  store volatile i32 0, ptr @prime_seed, align 4\l  %1 = load volatile i32, ptr @prime_seed, align 4\l  %2 = mul nsw i32 %1, 133\l  %3 = add nsw i32 %2, 81\l  %4 = srem i32 %3, 8095\l  store volatile i32 %4, ptr @prime_seed, align 4\l  %5 = load volatile i32, ptr @prime_seed, align 4\l  store i32 %5, ptr @prime_x, align 4\l  %6 = load volatile i32, ptr @prime_seed, align 4\l  %7 = mul nsw i32 %6, 133\l  %8 = add nsw i32 %7, 81\l  %9 = srem i32 %8, 8095\l  store volatile i32 %9, ptr @prime_seed, align 4\l  %10 = load volatile i32, ptr @prime_seed, align 4\l  store i32 %10, ptr @prime_y, align 4\l  ret void\l}"];
+}

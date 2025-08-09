@@ -1,0 +1,26 @@
+digraph "CFG for 'prime_prime' function" {
+	label="CFG for 'prime_prime' function";
+
+	Node0x1289280e0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%1:\l  %2 = alloca i32, align 4\l  %3 = alloca i32, align 4\l  %4 = alloca i32, align 4\l  %5 = alloca i32, align 4\l  %6 = alloca i32, align 4\l  %7 = alloca i8, align 1\l  %8 = alloca i32, align 4\l  %9 = alloca i32, align 4\l  store i32 %0, ptr %8, align 4\l  %10 = load i32, ptr %8, align 4\l  call void @llvm.lifetime.start.p0(i64 4, ptr %4)\l  store i32 %10, ptr %4, align 4\l  %11 = load i32, ptr %4, align 4\l  call void @llvm.lifetime.start.p0(i64 4, ptr %2)\l  call void @llvm.lifetime.start.p0(i64 4, ptr %3)\l  store i32 2, ptr %2, align 4\l  store i32 %11, ptr %3, align 4\l  %12 = load i32, ptr %3, align 4\l  %13 = load i32, ptr %2, align 4\l  %14 = urem i32 %12, %13\l  %15 = icmp eq i32 %14, 0\l  %16 = zext i1 %15 to i32\l  %17 = trunc i32 %16 to i8\l  call void @llvm.lifetime.end.p0(i64 4, ptr %2)\l  call void @llvm.lifetime.end.p0(i64 4, ptr %3)\l  call void @llvm.lifetime.end.p0(i64 4, ptr %4)\l  %18 = icmp ne i8 %17, 0\l  br i1 %18, label %19, label %24\l|{<s0>T|<s1>F}}"];
+	Node0x1289280e0:s0 -> Node0x128928a70;
+	Node0x1289280e0:s1 -> Node0x128928ab0;
+	Node0x128928a70 [shape=record,color="#b70d28ff", style=filled, fillcolor="#d8564670",label="{%19:\l19:                                               \l  %20 = load i32, ptr %8, align 4\l  %21 = icmp eq i32 %20, 2\l  %22 = zext i1 %21 to i32\l  %23 = trunc i32 %22 to i8\l  store i8 %23, ptr %7, align 1\l  br label %51\l}"];
+	Node0x128928a70 -> Node0x128928c70;
+	Node0x128928ab0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f08b6e70",label="{%24:\l24:                                               \l  store i32 3, ptr %9, align 4\l  br label %25\l}"];
+	Node0x128928ab0 -> Node0x128928af0;
+	Node0x128928af0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f08b6e70",label="{%25:\l25:                                               \l  %26 = load i32, ptr %9, align 4\l  %27 = load i32, ptr %9, align 4\l  %28 = mul i32 %26, %27\l  %29 = load i32, ptr %8, align 4\l  %30 = icmp ule i32 %28, %29\l  br i1 %30, label %31, label %46\l|{<s0>T|<s1>F}}"];
+	Node0x128928af0:s0 -> Node0x128928b30;
+	Node0x128928af0:s1 -> Node0x128928c30;
+	Node0x128928b30 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f6bfa670",label="{%31:\l31:                                               \l  %32 = load i32, ptr %9, align 4\l  %33 = load i32, ptr %8, align 4\l  call void @llvm.lifetime.start.p0(i64 4, ptr %5)\l  call void @llvm.lifetime.start.p0(i64 4, ptr %6)\l  store i32 %32, ptr %5, align 4\l  store i32 %33, ptr %6, align 4\l  %34 = load i32, ptr %6, align 4\l  %35 = load i32, ptr %5, align 4\l  %36 = urem i32 %34, %35\l  %37 = icmp eq i32 %36, 0\l  %38 = zext i1 %37 to i32\l  %39 = trunc i32 %38 to i8\l  call void @llvm.lifetime.end.p0(i64 4, ptr %5)\l  call void @llvm.lifetime.end.p0(i64 4, ptr %6)\l  %40 = icmp ne i8 %39, 0\l  br i1 %40, label %41, label %42\l|{<s0>T|<s1>F}}"];
+	Node0x128928b30:s0 -> Node0x128928b70;
+	Node0x128928b30:s1 -> Node0x128928bb0;
+	Node0x128928b70 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#e8d6cc70",label="{%41:\l41:                                               \l  store i8 0, ptr %7, align 1\l  br label %51\l}"];
+	Node0x128928b70 -> Node0x128928c70;
+	Node0x128928bb0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#cedaeb70",label="{%42:\l42:                                               \l  br label %43\l}"];
+	Node0x128928bb0 -> Node0x128928bf0;
+	Node0x128928bf0 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#cedaeb70",label="{%43:\l43:                                               \l  %44 = load i32, ptr %9, align 4\l  %45 = add i32 %44, 2\l  store i32 %45, ptr %9, align 4\l  br label %46, !llvm.loop !5\l}"];
+	Node0x128928bf0 -> Node0x128928c30;
+	Node0x128928c30 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f7a88970",label="{%46:\l46:                                               \l  %47 = load i32, ptr %8, align 4\l  %48 = icmp ugt i32 %47, 1\l  %49 = zext i1 %48 to i32\l  %50 = trunc i32 %49 to i8\l  store i8 %50, ptr %7, align 1\l  br label %51\l}"];
+	Node0x128928c30 -> Node0x128928c70;
+	Node0x128928c70 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%51:\l51:                                               \l  %52 = load i8, ptr %7, align 1\l  ret i8 %52\l}"];
+}

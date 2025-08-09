@@ -1,0 +1,3 @@
+Error: ASSERTION FAIL: conditional_var_22
+Stack: 
+	#000000704 in main()

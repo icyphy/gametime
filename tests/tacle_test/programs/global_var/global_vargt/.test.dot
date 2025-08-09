@@ -1,0 +1,10 @@
+digraph "CFG for 'test' function" {
+	label="CFG for 'test' function";
+
+	Node0x147e43000 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  %1 = alloca i32, align 4\l  store i32 0, ptr %1, align 4\l  %2 = load i32, ptr @g, align 4\l  %3 = icmp eq i32 %2, 10\l  br i1 %3, label %4, label %9\l|{<s0>T|<s1>F}}"];
+	Node0x147e43000:s0 -> Node0x147e43040;
+	Node0x147e43000:s1 -> Node0x147e44470;
+	Node0x147e43040 [shape=record,color="#3d50c3ff", style=filled, fillcolor="#f59c7d70",label="{%4:\l4:                                                \l  %5 = load i32, ptr @g, align 4\l  %6 = mul nsw i32 %5, 2\l  %7 = add nsw i32 %6, 5\l  %8 = sub nsw i32 %7, 3\l  store i32 %8, ptr %1, align 4\l  br label %9\l}"];
+	Node0x147e43040 -> Node0x147e44470;
+	Node0x147e44470 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%9:\l9:                                                \l  %10 = load i32, ptr %1, align 4\l  ret i32 %10\l}"];
+}

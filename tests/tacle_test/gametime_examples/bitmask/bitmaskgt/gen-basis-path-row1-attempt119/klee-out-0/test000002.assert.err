@@ -1,0 +1,3 @@
+Error: ASSERTION FAIL: conditional_var_8
+Stack: 
+	#000000578 in main()

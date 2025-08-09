@@ -1,0 +1,3 @@
+ktest file : '/Users/work/Documents/Research/gametime/test/tacle_test/programs/prime/primegt/path1/klee-last/test000001.ktest'
+args       : ['/Users/work/Documents/Research/gametime/test/tacle_test/programs/prime/primegt/path1/prime_klee_format_linked_inlined_mod_unrolled_mod_gvMod.bc']
+num objects: 0

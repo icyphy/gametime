@@ -1,0 +1,3 @@
+Error: invalid klee_assume call (provably false)
+Stack: 
+	#000000086 in main()

@@ -1,0 +1,5 @@
+digraph "CFG for 'prime_initSeed' function" {
+	label="CFG for 'prime_initSeed' function";
+
+	Node0x1289262a0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  store volatile i32 0, ptr @prime_seed, align 4\l  ret void\l}"];
+}

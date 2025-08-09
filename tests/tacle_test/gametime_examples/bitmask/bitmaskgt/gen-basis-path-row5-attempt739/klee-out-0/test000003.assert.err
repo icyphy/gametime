@@ -1,0 +1,3 @@
+Error: ASSERTION FAIL: conditional_var_27
+Stack: 
+	#000000749 in main()

@@ -1,0 +1,24 @@
+---
+gametime-project:
+  file:
+    location: bubblesort.c
+    analysis-function: bubble_sort
+    start-label: null
+    end-label: null
+
+
+  preprocess:
+    include: null
+    merge: null
+    inline: yes
+    unroll-loops: yes
+
+  analysis:
+    maximum-error-scale-factor: 10
+    determinant-threshold: 0.001
+    max-infeasible-paths: 100
+    ilp-solver: glpk
+    gametime-flexpret-path: ../flexpret/ # default path when running locally
+    gametime-path: ../../ # default path when tests locally
+    gametime-file-path: ../../../.. # default path when tests locally
+    backend: ""

@@ -1,0 +1,3 @@
+Error: ASSERTION FAIL: conditional_var_30
+Stack: 
+	#000000776 in main()

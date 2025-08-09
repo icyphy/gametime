@@ -1,0 +1,10 @@
+ktest file : '/Users/work/Documents/Research/gametime/test/tacle_test/programs/if_elif_else/if_elif_elsegt/feasible-path5/klee-last/test000002.ktest'
+args       : ['/Users/work/Documents/Research/gametime/test/tacle_test/programs/if_elif_else/if_elif_elsegt/feasible-path5/if_elif_else_klee_format_linked_inlined_mod_gvMod.bc']
+num objects: 1
+object 0: name: 'x'
+object 0: size: 4
+object 0: data: b'\xfc\xff\xff\xff'
+object 0: hex : 0xfcffffff
+object 0: int : -4
+object 0: uint: 4294967292
+object 0: text: ....

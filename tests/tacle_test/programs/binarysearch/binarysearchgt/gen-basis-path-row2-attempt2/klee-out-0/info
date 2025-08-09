@@ -1,0 +1,23 @@
+klee /Users/work/Documents/Research/gametime/test/tacle_test/programs/binarysearch/binarysearchgt/gen-basis-path-row2-attempt2/binarysearch_klee_format_linked_inlined_mod_unrolled_mod_gvMod.bc
+PID: 82716
+Using monotonic steady clock with 1/1000000000s resolution
+Started: 2025-07-12 09:14:56
+BEGIN searcher description
+<InterleavedSearcher> containing 2 searchers:
+RandomPathSearcher
+WeightedRandomSearcher::CoveringNew
+</InterleavedSearcher>
+END searcher description
+Finished: 2025-07-12 09:14:56
+Elapsed: 00:00:00
+KLEE: done: explored paths = 17
+KLEE: done: avg. constructs per query = 74
+KLEE: done: total queries = 26
+KLEE: done: valid queries = 8
+KLEE: done: invalid queries = 18
+KLEE: done: query cex = 26
+
+KLEE: done: total instructions = 1287
+KLEE: done: completed paths = 1
+KLEE: done: partially completed paths = 16
+KLEE: done: generated tests = 2

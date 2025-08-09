@@ -1,0 +1,5 @@
+digraph "CFG for 'prime_divides' function" {
+	label="CFG for 'prime_divides' function";
+
+	Node0x128927ba0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%2:\l  %3 = alloca i32, align 4\l  %4 = alloca i32, align 4\l  store i32 %0, ptr %3, align 4\l  store i32 %1, ptr %4, align 4\l  %5 = load i32, ptr %4, align 4\l  %6 = load i32, ptr %3, align 4\l  %7 = urem i32 %5, %6\l  %8 = icmp eq i32 %7, 0\l  %9 = zext i1 %8 to i32\l  %10 = trunc i32 %9 to i8\l  ret i8 %10\l}"];
+}

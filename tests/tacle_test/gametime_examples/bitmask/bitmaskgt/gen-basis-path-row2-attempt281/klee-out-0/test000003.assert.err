@@ -1,0 +1,3 @@
+Error: ASSERTION FAIL: conditional_var_13
+Stack: 
+	#000000623 in main()

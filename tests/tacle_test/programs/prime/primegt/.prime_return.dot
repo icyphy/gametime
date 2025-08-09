@@ -1,0 +1,5 @@
+digraph "CFG for 'prime_return' function" {
+	label="CFG for 'prime_return' function";
+
+	Node0x128926cf0 [shape=record,color="#b70d28ff", style=filled, fillcolor="#b70d2870",label="{%0:\l  %1 = load i32, ptr @prime_result, align 4\l  ret i32 %1\l}"];
+}

@@ -1,0 +1,10 @@
+ktest file : '/Users/work/Documents/Research/gametime/test/tacle_test/gametime_examples/bitmask/bitmaskgt/path4/klee-last/test000003.ktest'
+args       : ['/Users/work/Documents/Research/gametime/test/tacle_test/gametime_examples/bitmask/bitmaskgt/path4/bitmask_klee_format_linked_inlined_mod_unrolled_mod_gvMod.bc']
+num objects: 1
+object 0: name: 'x'
+object 0: size: 4
+object 0: data: b'\x03\x00\x00\x00'
+object 0: hex : 0x03000000
+object 0: int : 3
+object 0: uint: 3
+object 0: text: ....

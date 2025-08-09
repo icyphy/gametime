@@ -1,0 +1,10 @@
+ktest file : '/Users/work/Documents/Research/gametime/test/tacle_test/programs/binarysearch/binarysearchgt/feasible-path5/klee-last/test000006.ktest'
+args       : ['/Users/work/Documents/Research/gametime/test/tacle_test/programs/binarysearch/binarysearchgt/feasible-path5/binarysearch_klee_format_linked_inlined_mod_unrolled_mod_gvMod.bc']
+num objects: 1
+object 0: name: 'x'
+object 0: size: 4
+object 0: data: b'\x08\x00\x00\x00'
+object 0: hex : 0x08000000
+object 0: int : 8
+object 0: uint: 8
+object 0: text: ....
