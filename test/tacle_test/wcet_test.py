@@ -9,6 +9,11 @@ from analyzer import Analyzer
 from pulp_helper import generate_and_solve_core_problem
 import os
 
+# Import visualization functions
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
+from nx_helper import write_dag_to_dot_file
+
 class BaseTest(unittest.TestCase):
     config_path = None  
     backend_value = None
@@ -56,6 +61,39 @@ class BaseTest(unittest.TestCase):
             print(f"basis path: {p.name} {p.get_measured_value()}")
 
         print(results)
+        
+        # Visualize the weighted graph
+        print("\n" + "="*60)
+        print("GENERATING WEIGHTED GRAPH DOT FILE")
+        print("="*60)
+        
+        # Estimate edge weights
+        analyzer.estimate_edge_weights()
+        
+        # Create DOT file for external tools
+        output_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'visualizations')
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Generate filename based on test class
+        test_name = self.__class__.__name__.lower()
+        dot_path = os.path.join(output_dir, f'{test_name}_weighted_graph.dot')
+        
+        # Create edge labels with weights
+        edge_labels = {}
+        edge_list = list(analyzer.dag.all_edges)
+        for i in range(len(analyzer.dag.edge_weights)):
+            if i < len(edge_list):
+                edge = edge_list[i]
+                weight = analyzer.dag.edge_weights[i]
+                if abs(weight) > 0.01:  # Only label non-zero weights
+                    edge_labels[edge] = f'{weight:.2f}'
+                else:  # Add zero weights too to avoid KeyError
+                    edge_labels[edge] = '0.00'
+        
+        print(f"\nCreating weighted graph DOT file...")
+        write_dag_to_dot_file(analyzer.dag, dot_path, edges_to_labels=edge_labels)
+        print(f"DOT file saved to: {dot_path}")
+        print("="*60)
 
 ##### Backend classes
 class TestFlexpretBackend(BaseTest):
@@ -139,12 +177,13 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
+    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))
     # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseARM))
+    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2ARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeARM))
     # suite.addTests(loader.loadTestsFromTestCase(TestCountNegativeARM))
