@@ -508,6 +508,7 @@ class Analyzer(object):
         Generates a list of "Path" objects, each of which represents
         a basis path of the code being analyzed. The basis "Path" objects
         are regenerated each time this method is called.
+        There are a maximum of self.path_dimension possible basis paths
 
         Returns:
             List of basis paths of the code being analyzed, each
@@ -520,20 +521,100 @@ class Analyzer(object):
             # logger.warning("No basis paths have been generated.")
             return []
 
-        logger.info("Generating the basis paths...")
-        logger.info("")
         start_time = time.perf_counter()
 
-        logger.info("Initializing the basis matrix...")
         self._init_basis_matrix()
-        logger.info("Basis matrix initialized to")
-        logger.info(self.basis_matrix)
-        logger.info("")
-        logger.info("There are a maximum of %d possible basis paths." %
-                    self.path_dimension)
-        logger.info("")
 
-        def on_exit(start_time, infeasible):
+        if self.path_dimension == 1:
+            warn_msg = ("Basis matrix has dimensions 1x1. "
+                        "There is only one path through the function "
+                        "under analysis, which is the only basis path.")
+            logger.warning(warn_msg)   
+            
+        if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
+            warn_msg = "Single node CFD with no edge. Only one possible path."
+            logger.warning(warn_msg)
+            basis_paths = [Path(nodes=[self.dag.source])]
+            return self.on_exit(start_time, [])
+        
+        i = 0
+
+        # Collects all_temp_files infeasible paths discovered during the computation
+        infeasible = []
+        current_row, num_paths_unsat = 0, 0
+        while current_row < (self.path_dimension - self.num_bad_rows):
+            logger.debug(f"""
+            Currently at row {current_row + 1}..."
+            So far, the bottom {self.num_bad_rows} rows of the basis matrix are `bad'.
+            So far, {num_paths_unsat} candidate paths were found to be unsatisfiable.
+            Basis matrix is {self.basis_matrix}
+            """)
+
+            if num_paths_unsat == 0:
+                # Calculate the subdeterminants only if the replacement of this row has not yet been attempted.
+                self.dag.reset_edge_weights()
+                self.dag.edge_weights = self._calculate_subdets(current_row)
+
+            candidate_path_nodes, ilp_problem = pulp_helper.find_extreme_path(self)
+
+            if ilp_problem.obj_val is None:
+                self.move_bad_row_to_matrix_bottom(current_row)
+                num_paths_unsat = 0
+                
+                continue
+            logger.debug("Candidate path found.")
+
+            candidate_path_edges = Dag.get_edges(candidate_path_nodes)
+            compressed_path = self._compress_path(candidate_path_edges)
+
+            # FIXME: Factor the following into a function.
+            # Temporarily replace the row in the basis matrix to calculate the new determinant.
+            prev_matrix_row = self.basis_matrix[current_row].copy()
+            sign, new_basis_matrix_log_det = self.compute_new_determinant(current_row, compressed_path)
+            new_basis_matrix_det = exp(new_basis_matrix_log_det)
+
+            DETERMINANT_THRESHOLD = self.project_config.DETERMINANT_THRESHOLD
+            MAX_INFEASIBLE_PATHS = self.project_config.MAX_INFEASIBLE_PATHS
+            if ((sign == 0 and new_basis_matrix_log_det == float("-inf")) or
+                    new_basis_matrix_det < DETERMINANT_THRESHOLD or
+                    num_paths_unsat >= MAX_INFEASIBLE_PATHS):  # If row is bad
+                
+                if (new_basis_matrix_det < DETERMINANT_THRESHOLD
+                    and not (sign == 0 and new_basis_matrix_log_det == float("-inf"))):
+                    logger.debug("Determinant is too small.")
+                else:
+                    logger.debug("Unable to find a path that makes the determinant non-zero.")
+
+                self.basis_matrix[current_row] = prev_matrix_row
+                self.move_bad_row_to_matrix_bottom(current_row)
+                num_paths_unsat = 0
+            else:  # Row is good, check feasibility
+                logger.debug("Possible replacement for row found.")
+                logger.debug("Checking if replacement is feasible...")
+                result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+                
+                # Feasibility test
+                value = self.measure_path(result_path, f'gen-basis-path-row{current_row}-attempt{i}')
+                i += 1
+                if value < float('inf'):
+                    self.replace_row_in_basis_matrix(basis_paths, current_row, result_path)
+                    current_row += 1
+                    num_paths_unsat = 0
+                else:
+                    self.exclude_path_and_revert_basis_matrix(current_row, prev_matrix_row, infeasible, candidate_path_edges)
+                    num_paths_unsat += 1
+
+        if self.project_config.PREVENT_BASIS_REFINEMENT:
+            return self.on_exit(start_time, infeasible)
+
+        logger.debug("Refining the basis into a 2-barycentric spanner...")
+        self.make_basis_matrix_two_barycentric(basis_paths, infeasible)
+        return self.on_exit(start_time, infeasible)
+    
+
+    ### TEMPORARY HELPER FUNCTIONS ###
+
+    def on_exit(self, start_time, basis_paths, infeasible):
             """
             Helper function that is called when this method is about to
             return the basis Path objects, and performs the appropriate
@@ -575,121 +656,39 @@ class Analyzer(object):
                 return result
             else:
                 return self.basis_paths
-            
-        if self.path_dimension == 1:
-            warn_msg = ("Basis matrix has dimensions 1x1. "
-                        "There is only one path through the function "
-                        "under analysis, which is the only basis path.")
-            logger.warning(warn_msg)   
-            
-        if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
-            warn_msg = "Single node CFD with no edge. Only one possible path."
-            logger.warning(warn_msg)
-            basis_paths = [Path(nodes=[self.dag.source])]
-            return on_exit(start_time, [])
-        
-        i = 0
 
-        # Collects all_temp_files infeasible paths discovered during the computation
-        infeasible = []
-        current_row, num_paths_unsat = 0, 0
-        while current_row < (self.path_dimension - self.num_bad_rows):
-            logger.info("Currently at row %d..." % (current_row + 1))
-            logger.info("So far, the bottom %d rows of the basis matrix are `bad'." % self.num_bad_rows)
-            logger.info("So far, %d candidate paths were found to be unsatisfiable." % num_paths_unsat)
-            logger.info(f"Basis matrix is {self.basis_matrix}")
-            logger.info("")
+    def move_bad_row_to_matrix_bottom(self, current_row):
+        logger.debug("Unable to find a candidate path to replace row %d." % (current_row + 1))
+        logger.debug("Moving the bad row to the bottom of the basis matrix.")
+        for k in range((current_row + 1), self.path_dimension):
+            self._swap_basis_matrix_rows(k - 1, k)
+        self.num_bad_rows += 1
 
-            logger.info("Calculating subdeterminants...")
-            if num_paths_unsat == 0:
-                # Calculate the subdeterminants only if the replacement of this row has not yet been attempted.
-                self.dag.reset_edge_weights()
-                self.dag.edge_weights = self._calculate_subdets(current_row)
-            logger.info("Calculation complete.")
+    def compute_new_determinant(self, current_row, compressed_path):
+        self.basis_matrix[current_row] = compressed_path
+        sign, new_basis_matrix_log_det = slogdet(self.basis_matrix)
+        new_basis_matrix_det = exp(new_basis_matrix_log_det)
+        logger.debug("Absolute value of the new determinant: %g" % new_basis_matrix_det)
+        return sign, new_basis_matrix_det
 
-            logger.info("Finding a candidate path using an integer linear program...")
-            logger.info("")
-            candidate_path_nodes, ilp_problem = pulp_helper.find_extreme_path(self)
-            logger.info("")
+    def replace_row_in_basis_matrix(basis_paths, current_row, result_path):
+        logger.info("Replacement is feasible.")
+        basis_paths[current_row] = result_path
+        logger.info("Row %d replaced." % (current_row + 1))
 
-            if ilp_problem.obj_val is None:
-                logger.info("Unable to find a candidate path to replace row %d." % (current_row + 1))
-                logger.info("Moving the bad row to the bottom of the basis matrix.")
-                for k in range((current_row + 1), self.path_dimension):
-                    self._swap_basis_matrix_rows(k - 1, k)
-                self.num_bad_rows += 1
-                num_paths_unsat = 0
-                continue
-            logger.info("Candidate path found.")
+    def exclude_path_and_revert_basis_matrix(self, current_row, prev_matrix_row, infeasible, candidate_path_edges):
+        logger.info("Replacement is infeasible.")
+        logger.info("Adding a constraint to exclude these edges...")
+        self.add_path_exclusive_constraint(candidate_path_edges)
+        infeasible.append(candidate_path_edges)
+        logger.info("Constraint added.")
+        self.basis_matrix[current_row] = prev_matrix_row
 
-            candidate_path_edges = Dag.get_edges(candidate_path_nodes)
-            compressed_path = self._compress_path(candidate_path_edges)
-
-            # Temporarily replace the row in the basis matrix to calculate the new determinant.
-            prev_matrix_row = self.basis_matrix[current_row].copy()
-            self.basis_matrix[current_row] = compressed_path
-            sign, new_basis_matrix_log_det = slogdet(self.basis_matrix)
-            new_basis_matrix_det = exp(new_basis_matrix_log_det)
-            logger.info("Absolute value of the new determinant: %g" % new_basis_matrix_det)
-            logger.info("")
-
-            DETERMINANT_THRESHOLD = self.project_config.DETERMINANT_THRESHOLD
-            MAX_INFEASIBLE_PATHS = self.project_config.MAX_INFEASIBLE_PATHS
-            if ((sign == 0 and new_basis_matrix_log_det == float("-inf")) or
-                    new_basis_matrix_det < DETERMINANT_THRESHOLD or
-                    num_paths_unsat >= MAX_INFEASIBLE_PATHS):  # If row is bad
-                
-                if (new_basis_matrix_det < DETERMINANT_THRESHOLD and not (sign == 0 and new_basis_matrix_log_det == float("-inf"))):
-                    logger.info("Determinant is too small.")
-                else:
-                    logger.info("Unable to find a path that makes the determinant non-zero.")
-
-                logger.info("Moving the bad row to the bottom of the basis matrix.")
-
-                self.basis_matrix[current_row] = prev_matrix_row
-                for k in range((current_row + 1), self.path_dimension):
-                    self._swap_basis_matrix_rows(k - 1, k)
-                self.num_bad_rows += 1
-                num_paths_unsat = 0
-            else:  # Row is good, check feasibility
-                logger.info("Possible replacement for row found.")
-                logger.info("Checking if replacement is feasible...")
-                logger.info("")
-                result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-  
-                # feasibility test
-                value = self.measure_path(result_path, f'gen-basis-path-row{current_row}-attempt{i}')
-                i += 1
-                if value < float('inf'):
-                    # Sanity check:
-                    # A row should not be replaced if it replaces a good row and decreases the determinant. However, replacing a bad row and decreasing the determinant is okay. (TODO: Are we actually doing this?)
-                    logger.info("Replacement is feasible.")
-                    logger.info("Row %d replaced." % (current_row + 1))
-                    basis_paths.append(result_path)
-                    current_row += 1
-                    num_paths_unsat = 0
-                else:
-                    logger.info("Replacement is infeasible.")
-                    logger.info("Adding a constraint to exclude these edges...")
-                    self.add_path_exclusive_constraint(candidate_path_edges)
-                    infeasible.append(candidate_path_edges)
-                    logger.info("Constraint added.")
-                    self.basis_matrix[current_row] = prev_matrix_row
-                    num_paths_unsat += 1
-
-            logger.info("")
-            logger.info("")
-
-        if self.project_config.PREVENT_BASIS_REFINEMENT:
-            return on_exit(start_time, infeasible)
-
-        logger.info("Refining the basis into a 2-barycentric spanner...")
-        logger.info("")
+    def make_basis_matrix_two_barycentric(self, basis_paths, infeasible):
         is_two_barycentric = False
         refinement_round = 0
         while not is_two_barycentric:
             logger.info("Currently in round %d of refinement..." % (refinement_round + 1))
-            logger.info("")
 
             is_two_barycentric = True
             current_row, num_paths_unsat = 0, 0
@@ -729,11 +728,9 @@ class Analyzer(object):
                 # Temporarily replace the row in the basis matrix
                 # to calculate the new determinant.
                 prev_matrix_row = self.basis_matrix[current_row].copy()
-                self.basis_matrix[current_row] = compressed_path
-                sign, new_basis_matrix_log_det = slogdet(self.basis_matrix)
+                _, new_basis_matrix_log_det = self.compute_new_determinant(current_row, compressed_path)
                 new_basis_matrix_det = exp(new_basis_matrix_log_det)
-                logger.info("Absolute value of the new determinant: %g" % new_basis_matrix_det)
-
+                
                 if new_basis_matrix_det > 2 * old_basis_matrix_det:
                     logger.info("Possible replacement for row found.")
                     logger.info("Checking if replacement is feasible...")
@@ -743,23 +740,15 @@ class Analyzer(object):
                     current_row += 1
                     num_paths_unsat = 0
                     
-                    #feasibility test
+                    # Feasibility test
                     value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
-
                     if value < float('inf'):
-                        logger.info("Replacement is feasible.")
+                        self.replace_row_in_basis_matrix(basis_paths, current_row, result_path)
                         is_two_barycentric = False
-                        basis_paths[current_row] = result_path
-                        logger.info("Row %d replaced." % (current_row + 1))
                         current_row += 1
                         num_paths_unsat = 0
                     else:
-                        logger.info("Replacement is infeasible.")
-                        self.add_path_exclusive_constraint(candidate_path_edges)
-                        logger.info("Adding a constraint to exclude these edges...")
-                        infeasible.append(candidate_path_edges)
-                        logger.info("Constraint added.")
-                        self.basis_matrix[current_row] = prev_matrix_row
+                        self.exclude_path_and_revert_basis_matrix(self, current_row, prev_matrix_row, infeasible, candidate_path_edges)
                         num_paths_unsat += 1
 
                 else:
@@ -774,8 +763,7 @@ class Analyzer(object):
             refinement_round += 1
             logger.info("")
 
-        logger.info("Basis refined.")
-        return on_exit(start_time, infeasible)
+
 
     ### PATH GENERATION HELPER FUNCTIONS ###
     def _calculate_subdets(self, row: int) -> List[int]:
