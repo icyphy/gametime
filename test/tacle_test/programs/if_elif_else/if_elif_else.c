@@ -5,14 +5,18 @@
 int abs(int x);
 
 int test(int x){
-    if (abs(x) == 4) {
-        return 0;
-    } else {
+    if (x == 4) {
+        int a = 1;
+        int b = a * 2;
+        int c = a * b;
+    }
+    if (x == 4) {
         int a = 1;
         int b = a * 2;
         int c = a * b;
         return c;
     }
+    return 0;
 }
 
 
