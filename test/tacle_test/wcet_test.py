@@ -59,11 +59,11 @@ class BaseTest(unittest.TestCase):
 
 ##### Backend classes
 class TestFlexpretBackend(BaseTest):
-    backend_value = "Flexpret"
+    backend_value = "flexpret"
 class TestX86Backend(BaseTest):
-    backend_value = "X86"
+    backend_value = "x86"
 class TestARMBackend(BaseTest):
-    backend_value = "ARM"
+    backend_value = "arm"
 
 
 #### Benchmarks
@@ -139,7 +139,9 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
 
     #Programs
-    suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
+    suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseFlexpret))
+
+    # suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestBitcnt2Flexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestPrimeFlexpret))
     # suite.addTests(loader.loadTestsFromTestCase(TestIfElifElseX86))

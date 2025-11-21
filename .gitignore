@@ -1,9 +1,10 @@
 test/**/*gt/*
 **/__pycache__
 /Dockerfile*
-env
+env.bash
 build
 **/*.bc
 **/*.ll
 .venv
 *.egg-info/
+src/custom_passes/*.so
