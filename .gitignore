@@ -6,3 +6,4 @@ build
 **/*.bc
 **/*.ll
 .venv
+*.egg-info/
