@@ -57,7 +57,7 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
 
     # Run the compiled program
     # TODO: change modify bc to take in bc file, not c file
-    run_command = ['./' + modify_bit_code_exec_file, input_bc_file, labels_file, all_labels_file, func_name]
+    run_command = [modify_bit_code_exec_file, input_bc_file, labels_file, all_labels_file, func_name]
     subprocess.run(run_command, check=True)
     return f"{input_bc_file[:-3]}_gvMod.bc"
 
@@ -128,9 +128,10 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
     klee_file_path = format_for_klee(c_file, c_file_path, output_dir, number_of_labels, total_number_of_labels, project_config.func)
 
     # insert assignments of global variables
-    # TODO: Find a way to not hard code path
-    modify_bit_code_cpp_file = '../../src/smt_solver/modify_bitcode.cpp'
-    modify_bit_code_exec_file = '../../src/smt_solver/modify_bitcode'
+    # Get the path to the smt_solver directory relative to this file
+    smt_solver_dir = os.path.dirname(os.path.abspath(__file__))
+    modify_bit_code_cpp_file = os.path.join(smt_solver_dir, 'modify_bitcode.cpp')
+    modify_bit_code_exec_file = os.path.join(smt_solver_dir, 'modify_bitcode')
     modified_klee_file_bc = compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
     
     # run klee
