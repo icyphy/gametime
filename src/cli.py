@@ -20,6 +20,7 @@ from project_configuration_parser import YAMLConfigurationParser
 from analyzer import Analyzer
 from defaults import logger
 from gametime_error import GameTimeError
+from nx_helper import write_dag_to_dot_file
 
 
 def find_config_file(path: str) -> Optional[str]:
@@ -51,7 +52,7 @@ def find_config_file(path: str) -> Optional[str]:
     return None
 
 
-def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None) -> int:
+def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None, visualize_weights: bool = False) -> int:
     """
     Run GameTime analysis on the specified configuration.
     
@@ -151,6 +152,49 @@ def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None)
             logger.info(f"WCET Path: {max_path}")
         
         logger.info("="*60)
+        
+        # Visualize weighted graph if requested
+        if visualize_weights:
+            logger.info("\n" + "="*60)
+            logger.info("GENERATING WEIGHTED GRAPH DOT FILE")
+            logger.info("="*60)
+            
+            # Estimate edge weights
+            logger.info("Estimating edge weights...")
+            analyzer.estimate_edge_weights()
+            
+            # Create output directory for visualizations
+            # Use the project root's visualizations directory (similar to test file)
+            config_dir = os.path.dirname(os.path.abspath(config_path))
+            # Go up to project root and use visualizations directory there
+            # This matches the test file's approach: ../../visualizations from test location
+            output_dir = os.path.join(config_dir, '..', '..', 'visualizations')
+            output_dir = os.path.abspath(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Generate filename based on function name and backend
+            func_name = project_config.func.replace(' ', '_').lower()
+            backend_name = project_config.backend if project_config.backend else 'default'
+            dot_filename = f'{func_name}_{backend_name}_weighted_graph.dot'
+            dot_path = os.path.join(output_dir, dot_filename)
+            
+            # Create edge labels with weights
+            edge_labels = {}
+            edge_list = list(analyzer.dag.all_edges)
+            for i in range(len(analyzer.dag.edge_weights)):
+                if i < len(edge_list):
+                    edge = edge_list[i]
+                    weight = analyzer.dag.edge_weights[i]
+                    if abs(weight) > 0.01:  # Only label non-zero weights
+                        edge_labels[edge] = f'{weight:.2f}'
+                    else:  # Add zero weights too to avoid KeyError
+                        edge_labels[edge] = '0.00'
+            
+            logger.info(f"Creating weighted graph DOT file...")
+            write_dag_to_dot_file(analyzer.dag, dot_path, edges_to_labels=edge_labels)
+            logger.info(f"DOT file saved to: {dot_path}")
+            logger.info("="*60)
+        
         logger.info("\nAnalysis completed successfully!")
         
         return 0
@@ -183,6 +227,9 @@ Examples:
 
   # Run analysis without cleaning temporary files
   gametime /path/to/test/folder --no-clean
+
+  # Run analysis and generate weighted graph visualization
+  gametime /path/to/test/folder --visualize-weights
         """
     )
     
@@ -209,6 +256,12 @@ Examples:
         version='GameTime 0.1.0'
     )
     
+    parser.add_argument(
+        '--visualize-weights',
+        action='store_true',
+        help='Generate a DOT file visualizing the weighted graph with estimated edge weights'
+    )
+    
     args = parser.parse_args()
     
     # Validate the path
@@ -227,7 +280,8 @@ Examples:
     exit_code = run_gametime(
         config_path,
         clean_temp=not args.no_clean,
-        backend=args.backend
+        backend=args.backend,
+        visualize_weights=args.visualize_weights
     )
     
     return exit_code
