@@ -2,7 +2,6 @@
 
 Welcome to the setup guide for the Gametime project! This document provides instructions for setting up and running the Gametime project on both Linux and macOS. Follow the steps below to install the required dependencies and configure your environment for development and testing.
 
----
 
 ## Setup Instructions
 
@@ -95,23 +94,41 @@ If you are having trouble installing pygraphviz on macOS try the following: [Sta
 
 To use KLEE with Gametime, follow the installation instructions on the [KLEE official website](https://klee.github.io/).
 
-Add the KLEE header files to yout `C_INCLUDE_PATH`:
-
-```bash
-export C_INCLUDE_PATH="<path_to_klee>/include:$C_INCLUDE_PATH"
-```
-
-### 5. Install the FlexPRET Emulator (Recommended):
+### 5. Install the FlexPRET Emulator (Recommended)
 
 To use the FlexPRET emulator with GameTime, follow the installation instructions on the [FlexPRET Github Page](https://github.com/pretis/flexpret).
 
-Add fp-emu to `PATH`:
+### 6. Configure Environment Variables
+
+After installing KLEE and FlexPRET, you need to set up environment variables so GameTime can find these dependencies. Create or edit the `env.bash` file in the GameTime project root:
 
 ```bash
-export PATH="$PATH:<path_to_flexpret>/flexpret/build/emulator"
+# Add KLEE include path
+export C_INCLUDE_PATH="<path_to_klee>/include:$C_INCLUDE_PATH"
+
+# Source FlexPRET environment (sets up PATH and other variables)
+source <path_to_flexpret>/env.bash
 ```
 
-### 6. Compile LLVM Passes
+**Example `env.bash` file:**
+
+```bash
+# KLEE headers
+export C_INCLUDE_PATH=/opt/homebrew/Cellar/klee/3.1_4/include:$C_INCLUDE_PATH
+
+# FlexPRET environment (includes fp-emu in PATH)
+source /Users/username/Documents/projects/flexpret/env.bash
+```
+
+**Note:** Replace the paths with your actual installation locations. The FlexPRET `env.bash` file typically adds the emulator (`fp-emu`) to your `PATH` automatically.
+
+You'll need to source this file before using GameTime:
+
+```bash
+source env.bash
+```
+
+### 7. Compile LLVM Passes
 
 From the project root directory run:
 
@@ -119,57 +136,201 @@ From the project root directory run:
 clang++ -shared -fPIC src/custom_passes/custom_inline_pass.cpp -o src/custom_passes/custom_inline_pass.so `llvm-config --cxxflags --ldflags --libs` -Wl,-rpath,$(llvm-config --libdir)
 ```
 
----
+## Using GameTime
 
-## Running Tests
+Once the setup is complete, you can use GameTime to analyze the worst-case execution time (WCET) of your C programs.
 
-Once the setup is complete, you can run tests within the Gametime environment. Follow these steps to configure and execute your tests:
+### Command Line Interface
 
-### 1. Configure the YAML File
-
-Each test requires a YAML configuration file. Ensure that your YAML file is correctly set up with all the necessary test configurations.
-
-### 2. Create a Test Class
-
-Navigate to the `wcet_test.py` file and create a new test class based on one of the available backend configurations. Specify the path to your YAML configuration file in the `config_path` attribute.
-
-#### Example:
-
-```python
-class TestBinarysearchARM(TestARMBackend):
-    config_path = "./programs/binarysearch/config.yaml"
-```
-
-### 3. Add the Test Class to the Main Function
-
-In the `main` function of `wcet_test.py`, add your newly created test class to the suite for execution.
-
-#### Example:
-
-```python
-suite.addTests(loader.loadTestsFromTestCase(TestBinarysearchARM))
-```
-
-### 4. Run the Test
-
-Run the test using the following command:
+GameTime provides a command-line interface for easy WCET analysis:
 
 ```bash
-python wcet_test.py
+gametime <path_to_folder_or_config_file> [options]
 ```
 
+**Options:**
+- `-b, --backend {flexpret,x86,arm}` - Choose execution backend (required if not in config)
+- `--no-clean` - Keep temporary files for debugging
+- `-h, --help` - Show help message
+
+**Note:** Make sure to source the environment file before running gametime:
+
+```bash
+source env.bash
+```
+
+### Preparing a Test Case
+
+To analyze a C program with GameTime, you need:
+
+1. **A C source file** containing the function you want to analyze
+2. **A configuration file** (`config.yaml`) in the same directory
+
+#### Configuration File Template
+
+Create a `config.yaml` file in your program's directory:
+
+```yaml
 ---
+gametime-project:
+  file:
+    location: your_program.c              # Your C source file
+    analysis-function: function_to_analyze # Function name to analyze
+    additional-files: [helper.c]          # Optional: additional source files
+    start-label: null                     # Optional: start analysis at label
+    end-label: null                       # Optional: end analysis at label
+
+  preprocess:
+    include: null                         # Optional: directories with headers
+    merge: null                           # Optional: files to merge
+    inline: yes                           # Inline function calls (recommended)
+    unroll-loops: yes                     # Unroll loops (recommended)
+
+  analysis:
+    maximum-error-scale-factor: 10
+    determinant-threshold: 0.001
+    max-infeasible-paths: 100
+    ilp-solver: glpk                      # ILP solver to use
+    backend: flexpret                     # Backend: flexpret, x86, or arm
+```
+
+#### Example: Simple C Program
+
+Create a directory with your program and config:
+
+```
+my_program/
+├── example.c
+└── config.yaml
+```
+
+**example.c:**
+```c
+int compute(int x) {
+    if (x > 10) {
+        return x * 2;
+    } else if (x > 5) {
+        return x + 10;
+    } else {
+        return x;
+    }
+}
+```
+
+**config.yaml:**
+```yaml
+---
+gametime-project:
+  file:
+    location: example.c
+    analysis-function: compute
+    
+  preprocess:
+    inline: yes
+    unroll-loops: yes
+    
+  analysis:
+    ilp-solver: glpk
+    backend: flexpret
+```
+
+### Running Analysis
+
+After preparing your test case, run the analysis:
+
+```bash
+# Make sure to source the environment first
+source env.bash
+
+# Run analysis
+gametime my_program --backend flexpret
+```
+
+### Understanding the Output
+
+GameTime will display:
+
+1. **Preprocessing progress**: Compilation, inlining, loop unrolling
+2. **DAG generation**: Control flow graph construction  
+3. **Basis paths**: Initial set of representative paths
+4. **Path generation**: Additional paths discovered
+5. **Measurements**: Execution time for each path
+6. **Final results**: WCET and the worst-case path
+
+Example output:
+
+```
+============================================================
+GAMETIME ANALYSIS RESULTS
+============================================================
+Function analyzed: compute
+Backend: flexpret
+Number of basis paths: 3
+Number of generated paths: 8
+
+Basis Paths:
+  0: gen-basis-path-row0-attempt0 = 62
+  1: gen-basis-path-row1-attempt1 = 61
+  2: gen-basis-path-row2-attempt2 = 38
+
+Generated Paths:
+  0: path0 = 62 *WCET*
+  1: path1 = 62 *WCET*
+  2: path2 = 61
+  3: path3 = 61
+  4: path4 = 38
+  5: path5 = 38
+  6: path6 = 38
+  7: path7 = 38
+
+Worst-Case Execution Time (WCET): 62
+WCET Path: path0
+============================================================
+
+Analysis completed successfully!
+```
+
+### Available Backends
+
+- **flexpret**: Uses the FlexPRET RISC-V emulator for precise timing measurements (recommended for embedded systems)
+- **x86**: Uses the x86 host machine for timing measurements
+- **arm**: Uses the ARM host machine for timing measurements
+
+### Example Commands
+
+```bash
+# Analyze with FlexPRET backend
+gametime test/tacle_test/programs/if_elif_else --backend flexpret
+
+# Keep temporary files for debugging
+gametime test/tacle_test/programs/if_elif_else --backend flexpret --no-clean
+
+# Specify config file directly
+gametime test/tacle_test/programs/if_elif_else/config.yaml --backend flexpret
+```
+
+### Exploring Example Programs
+
+GameTime includes several example programs in the `test` directory:
+
+```bash
+# List available examples
+ls test/tacle_test/programs/
+ls test/flexpret_test/programs/
+
+# Run an example
+gametime test/tacle_test/programs/if_elif_else --backend flexpret
+```
+
 
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
 
----
 
 ## Contact
 
 If you have any questions or encounter any issues, please open an issue on the GitHub repository or reach out to the project maintainers.
 
----
 
 By following these instructions, you should be able to get Gametime up and running on your machine. Happy coding!

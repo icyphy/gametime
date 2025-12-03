@@ -97,11 +97,11 @@ class BaseTest(unittest.TestCase):
 
 ##### Backend classes
 class TestFlexpretBackend(BaseTest):
-    backend_value = "Flexpret"
+    backend_value = "flexpret"
 class TestX86Backend(BaseTest):
-    backend_value = "X86"
+    backend_value = "x86"
 class TestARMBackend(BaseTest):
-    backend_value = "ARM"
+    backend_value = "arm"
 
 
 #### Benchmarks

@@ -104,7 +104,15 @@ class Analyzer(object):
 
         self.dag_path: str = ""
 
-        backend_dict = {"Flexpret": FlexpretBackend, "X86": X86Backend, "ARM": ArmBackend}
+        backend_dict = {
+            "flexpret": FlexpretBackend, 
+            "x86": X86Backend, 
+            "arm": ArmBackend,
+            # Keep legacy capitalized names for backward compatibility
+            "Flexpret": FlexpretBackend, 
+            "X86": X86Backend, 
+            "ARM": ArmBackend
+        }
         
         if self.project_config.backend not in backend_dict:
             raise GameTimeError("No valid backend specified")
