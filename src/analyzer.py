@@ -297,7 +297,7 @@ class Analyzer(object):
             return
 
         num_edges_reduced = len(self.dag.edges_reduced)
-        # Shaokai: b = n - m + 2 is hardcoded here.
+        # Checking num_basis_paths = num_edges - num_nodes + 2
         self.path_dimension = self.dag.num_edges - self.dag.num_nodes + 2
         if num_edges_reduced != self.path_dimension:
             err_msg = ("The number of non-special edges is different from the dimension of the path.")
