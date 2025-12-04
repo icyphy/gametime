@@ -297,6 +297,7 @@ class Analyzer(object):
             return
 
         num_edges_reduced = len(self.dag.edges_reduced)
+        # Checking num_basis_paths = num_edges - num_nodes + 2
         self.path_dimension = self.dag.num_edges - self.dag.num_nodes + 2
         if num_edges_reduced != self.path_dimension:
             err_msg = ("The number of non-special edges is different from the dimension of the path.")
@@ -631,7 +632,9 @@ class Analyzer(object):
             logger.info("Candidate path found.")
 
             candidate_path_edges = Dag.get_edges(candidate_path_nodes)
+            print("candidate_path_edges: ", candidate_path_edges)
             compressed_path = self._compress_path(candidate_path_edges)
+            print("compressed_path: ", compressed_path)
 
             # Temporarily replace the row in the basis matrix to calculate the new determinant.
             prev_matrix_row = self.basis_matrix[current_row].copy()
