@@ -69,7 +69,11 @@ def remove_back_edges_to_make_dag(G, root):
             stack.pop()
 
     # Remove identified back edges
+    print(f"num_edges pre = {G.number_of_edges()}")
     G.remove_edges_from(back_edges)
+    # Update num_edges after edge removal
+    G.num_edges = G.number_of_edges()
+    print(f"num_edges post = {G.num_edges}")
     return G
 
 
@@ -199,7 +203,8 @@ class Dag(nx.DiGraph):
 
     def _init_special_edges(self):
         """
-        To reduce the dimensionality to b = n-m+2, each node, except for
+        To reduce the dimensionality to b = m-n+2 (b is the number of basis paths,
+        m the number of edges, n the number of nodes), each node, except for
         the source and sink, chooses a 'special' edge. This edge is taken if
         flow enters the node, but no outgoing edge is 'visibly' selected.
         In other words, it is the 'default' edge for the node.
@@ -350,15 +355,15 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
     if len(sink_nodes) != 1:
         raise GameTimeError("The number of sink nodes don't equal to 1.")
 
-    modifed=False
+    modified=False
     if len(list(nx.simple_cycles(graph_from_dot))) > 0:
         logger.warning("The control-flow graph has cycles. Trying to remove them by removing back edges.")
         graph_from_dot = remove_back_edges_to_make_dag(graph_from_dot, root)
-        modifed = True
+        modified = True
 
     dag: Dag = Dag(graph_from_dot)
     dag.load_variables()
-    return dag, modifed
+    return dag, modified
 
 
 def num_paths(dag: Dag, source: str, sink: str) -> int:

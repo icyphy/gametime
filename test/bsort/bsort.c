@@ -28,17 +28,14 @@
   Declaration of global variables
 */
 
-#define bsort_SIZE 3
-
-
-
+#define bsort_SIZE 2
 
 int bsort_return( int Array[]  )
 {
   int Sorted = 1;
   int Index;
 
-  #pragma unroll 3
+  #pragma unroll bsort_SIZE
   for ( Index = 0; Index < bsort_SIZE - 1; Index ++ )
     Sorted = Sorted && ( Array[ Index ] < Array[ Index + 1 ] );
 
@@ -57,13 +54,13 @@ int bsort_BubbleSort( int Array[] )
   int Sorted = 0;
   int Temp, Index, i;
 
-  #pragma unroll 3
+  #pragma unroll bsort_SIZE
   for ( i = 0; i < bsort_SIZE - 1; i ++ ) {
     Sorted = 1;
-    #pragma unroll 3
+    #pragma unroll bsort_SIZE
     for ( Index = 0; Index < bsort_SIZE - 1; Index ++ ) {
-      if ( Index > bsort_SIZE - i )
-        break;
+      // if ( Index > bsort_SIZE - i ) // This does not seem necessary with the for loop.
+      //   break;
       if ( Array[ Index ] > Array[Index + 1] ) {
         Temp = Array[ Index ];
         Array[ Index ] = Array[ Index + 1 ];

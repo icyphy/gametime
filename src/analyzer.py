@@ -297,8 +297,10 @@ class Analyzer(object):
             return
 
         num_edges_reduced = len(self.dag.edges_reduced)
-        # Shaokai: b = n - m + 2 is hardcoded here.
+        # Note: The number of feasible basis paths is bounded by (num_edges - num_nodes + 2)
+        # (Page 8 of "The Internals of GameTime" by Jonathan Kotker).
         self.path_dimension = self.dag.num_edges - self.dag.num_nodes + 2
+        print(f"num_edges_reduced = {num_edges_reduced}, self.path_dimension = {self.path_dimension}")
         if num_edges_reduced != self.path_dimension:
             err_msg = ("The number of non-special edges is different from the dimension of the path.")
             raise GameTimeError(err_msg)
@@ -320,11 +322,12 @@ class Analyzer(object):
 
         """
         self.dag, modified = nx_helper.construct_dag(location)
+        print(f"num_edges in load_dag_from_dot_file = {self.dag.num_edges}")
         if modified:
             modified_dag_location = os.path.join(self.project_config.location_temp_dir,
                             f".{self.project_config.func}_modified.dot")
             write_dag_to_dot_file(self.dag, modified_dag_location)
-            logger.info("New CFG outputed to folder.")
+            logger.info("Cycles detected in the DAG. Removed cycles and output modified CFG outputed to folder.")
 
         # Reset variables of this "Analyzer" object.
         self.reset_path_exclusive_constraints()
