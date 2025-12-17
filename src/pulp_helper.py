@@ -39,7 +39,7 @@ class Extremum(object):
 
 
 #: Name of the integer linear program constructed.
-_LP_NAME = "gt-FindExtremePath"
+_LP_NAME = "FindExtremePath"
 
 #: Dictionary that maps the name of an integer linear programming solver to
 #: a list of the PuLP solver classes that can interface with the solver.

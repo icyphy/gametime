@@ -181,33 +181,28 @@ class ProjectConfiguration(object):
         self.debug_config = debug_config or DebugConfiguration()
 
         ### INITIALIZATION ###
-        # Infer the file path without the file extension.
-        location_orig_with_extension = self.location_orig_file
-        location_orig_no_extension, extension = \
-            os.path.splitext(location_orig_with_extension)
+        _, extension = \
+            os.path.splitext(self.location_orig_file)
 
-        if extension.lower() == ".c":
-            self.location_orig_no_extension = location_orig_no_extension
-        else:
+        if extension.lower() != ".c":
             err_msg = ("Error running the project configuration "
                       "reader: the name of the file to analyze "
                       "does not end with a `.c` extension.")
             raise GameTimeError(err_msg)
 
         # Infer the directory that contains the file to analyze.
-        location_orig_dir = os.path.dirname(location_orig_with_extension)
+        location_orig_dir = os.path.dirname(self.location_orig_file)
         self.location_orig_dir = location_orig_dir
 
         # Infer the name of the file, both with
         # and without the extension.
-        name_orig_file = os.path.basename(location_orig_with_extension)
+        name_orig_file = os.path.basename(self.location_orig_file)
         self.name_orig_file = name_orig_file
         self.name_orig_no_extension = os.path.splitext(name_orig_file)[0]
 
         # Infer the name of the temporary directory where
         # GameTime stores its temporary files during its toolflow.
-        self.location_temp_dir = ("%s%s" %
-                                (location_orig_no_extension, config.TEMP_SUFFIX))
+        self.location_temp_dir = f"{self.location_orig_dir}/{config.TEMP_FOLDER}"
 
         # Create the temporary directory, if not already present.
         location_temp_dir = self.location_temp_dir

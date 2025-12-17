@@ -33,7 +33,6 @@ class PathAnalyzer(object):
         self.path: Path = path
         self.output_folder: str = os.path.join(self.project_config.location_temp_dir, path_name)
         self.path_name: str = path_name
-        self.output_name: str =  f'{path_name}-gt'
         file_helper.create_dir(self.output_folder)
         self.measure_folders: dict[str, str] = {}
         bitcode = []

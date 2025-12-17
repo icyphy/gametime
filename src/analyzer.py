@@ -173,7 +173,8 @@ class Analyzer(object):
         processing: str = ""
 
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
+                                                          f"{self.project_config.name_orig_no_extension}_{config.TEMP_SUFFIX}", self.project_config.included, self.project_config.compile_flags)
+
         additional_files_processing = []
         if additional_files:
             additional_files_processing = clang_helper.compile_list_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
@@ -186,6 +187,8 @@ class Analyzer(object):
         # Preprocessing pass: unroll loops.
         if self.project_config.UNROLL_LOOPS:
             processing = self._run_loop_unroller(compiled_file=processing)
+        
+        # Generate control-flow diagrams (CFGs), which are directed acyclic graphs (DAGs).
         self.dag_path: str = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir)
         self.preprocessed_path: str = processing
         # We are done with the preprocessing.
@@ -246,9 +249,6 @@ class Analyzer(object):
 
         logger.info("Preprocessing the file: inlining...")
 
-        # inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
-        #                                              f"{self.project_config.name_orig_no_extension}gt-inlined")
-        
         input_files = [input_file] + additional_files
         inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
                                                      f"{self.project_config.name_orig_no_extension}", self.project_config.func)

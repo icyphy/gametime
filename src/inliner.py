@@ -41,6 +41,7 @@ def modify_llvm_ir(input_file, output_file, skip_function):
 def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str, analyzed_function: str) -> str:
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     file_to_analyze = bc_filepaths[0]
+    # FIXME: Use config.yaml.in to configure filenames.
     combined_bc = f"{file_to_analyze[:-3]}_linked.bc"
     combined_ll = f"{file_to_analyze[:-3]}_linked.ll"
     combined_mod_ll = f"{file_to_analyze[:-3]}_linked_mod.ll"
@@ -48,8 +49,6 @@ def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_na
     combined_inlined_mod_bc = f"{file_to_analyze[:-3]}_linked_inlined_mod.bc"
     combined_inlined_mod_ll = f"{file_to_analyze[:-3]}_linked_inlined_mod.ll"
 
-
-    
     if len(bc_filepaths) > 1:
         # Step 1: Link all bitcode files into a single combined bitcode file
         link_bitcode(bc_filepaths, combined_bc)

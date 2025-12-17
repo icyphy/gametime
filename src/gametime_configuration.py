@@ -77,6 +77,7 @@ class GametimeConfiguration(object):
         self.IDENT_TEMPVAR: str = ""
 
         self.TEMP_PROJECT_CONFIG: str = ""
+        self.TEMP_FOLDER: str = ""
         self.TEMP_MERGED: str = ""
         self.TEMP_LOOP_CONFIG: str = ""
 

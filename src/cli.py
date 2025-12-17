@@ -79,6 +79,7 @@ def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None,
         
         # Check if backend is specified
         if not project_config.backend:
+            # FIXME: Why does logger.error produce duplicate messages.
             logger.error("Error: No backend specified!")
             logger.error("Please specify a backend in the config file or use --backend option")
             logger.error("Available backends: flexpret, x86, arm")
