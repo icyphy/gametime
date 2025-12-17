@@ -217,7 +217,7 @@ class ExecutableTransformer(object):
         )
 
         body_items.append(FuncCall(name=ID(name="printf"), args=ExprList(exprs=[
-            Constant(type="string", value='"%i\\n"'),  
+            Constant(type="string", value='"%li\\n"'),  
             cast_expr,
         ])))  
 
