@@ -173,7 +173,7 @@ class Analyzer(object):
         processing: str = ""
 
         processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}_{config.TEMP_SUFFIX}", self.project_config.included, self.project_config.compile_flags)
+                                                          f"{self.project_config.name_orig_no_extension}{config.TEMP_SUFFIX}", self.project_config.included, self.project_config.compile_flags)
 
         additional_files_processing = []
         if additional_files:

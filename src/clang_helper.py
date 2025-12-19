@@ -8,6 +8,7 @@ import subprocess
 from typing import List
 
 from defaults import logger
+from defaults import config
 from file_helper import remove_files
 from project_configuration import ProjectConfiguration
 import command_utils
@@ -54,7 +55,9 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
 def compile_list_to_llvm_for_analysis(c_filepaths: List[str] , output_file_folder: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> List[str]:
     compiled_files = []
     for c_filepath in c_filepaths:
-        compiled_files.append(compile_to_llvm_for_analysis(c_filepath, output_file_folder, f"{c_filepath[:-2]}gt", extra_libs, extra_flags, readable))
+        _, extension = os.path.splitext(c_filepath)
+        basename = os.path.basename(c_filepath)[:(-len(extension))] # Base filename after removing the extension
+        compiled_files.append(compile_to_llvm_for_analysis(c_filepath, output_file_folder, f"{basename}{config.TEMP_SUFFIX}", extra_libs, extra_flags, readable))
     return compiled_files
 
 def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> str:
@@ -285,6 +288,6 @@ def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=F
     # By this point, we have files that are named the same as the
     # temporary file for GameTime, but that have different extensions.
     # Remove these files.
-    other_temp_files = r".*-gt\.[^c]+"
+    other_temp_files = rf".*{config.TEMP_SUFFIX}\.[^c]+"
     remove_files([other_temp_files], project_config.location_temp_dir)
 

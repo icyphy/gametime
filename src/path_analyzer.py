@@ -24,7 +24,7 @@ class PathAnalyzer(object):
             path :
                 Path object corresponding to the path to drive
             path_name :
-                all output files will be in folder with path_name; all generated files will have name path_name + "-gt"
+                all output files will be in folder with path_name; all generated files will have name path_name + config.TEMP_SUFFIX
         """
        
         self.preprocessed_path: str = preprocessed_path
