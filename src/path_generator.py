@@ -20,6 +20,7 @@ from defaults import logger
 from gametime_error import GameTimeError
 from nx_helper import Dag
 from path import Path
+from path_analyzer import PathAnalyzer
 
 
 class PathType(object):
@@ -88,7 +89,7 @@ class PathGenerator(object):
         the ``PathType`` class.
         
         The ``num_paths`` argument is an upper bound on how many paths should
-        be generated, which is 5 by default. This argument is ignored if
+        be generated, which is 10 by default. This argument is ignored if
         this method is used to generate all of the feasible paths of the code
         being analyzed.
         
@@ -185,7 +186,7 @@ class PathGenerator(object):
                        extremum=pulp_helper.Extremum.LONGEST,
                        interval=None, use_ob_extraction=False):
         """
-        Helper static method for the ``generatePaths`` static method.
+        Helper static method for the ``generate_paths`` static method.
         Generates a list of feasible paths of the code being analyzed,
         each represented by an object of the ``Path`` class.
 
@@ -296,33 +297,36 @@ class PathGenerator(object):
                     continue
 
             logger.info("Candidate path found.")
-            logger.info("Running the candidate path to check feasibility and measure run time")
             candidate_path_edges = Dag.get_edges(candidate_path_nodes)
             candidate_path_value = ilp_problem.obj_val
+            
             result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-
-            logger.info("Candidate path is feasible.")
-            result_path.set_measured_value(0)
             result_path.set_predicted_value(candidate_path_value)
-            result_paths.append(result_path)
-            logger.info("Path %d generated." % (current_path_num+1))
-            analyzer.add_path_exclusive_constraint(candidate_path_edges)
-            current_path_num += 1
-            num_paths_unsat = 0
-
-            value = analyzer.measure_path(result_path, f'feasible-path{current_path_num}')
-
-            if value < float('inf'):
+            
+            # Check path feasibility using KLEE/SMT solver
+            logger.info("Checking feasibility...")
+            path_name = f'feasible-path{current_path_num}'
+            path_analyzer = PathAnalyzer(analyzer.preprocessed_path, analyzer.project_config, analyzer.dag, result_path, path_name)
+            is_feasible = path_analyzer.check_feasibility()
+            
+            if is_feasible:
                 logger.info("Candidate path is feasible.")
+                
+                # Measure the path (now that we know it's feasible)
+                logger.info("Measuring run time...")
+                result_path.path_analyzer = path_analyzer
+                result_path.name = path_name
+                value = path_analyzer.measure_path(analyzer.backend)
                 result_path.set_measured_value(value)
-                result_path.set_predicted_value(candidate_path_value)
                 result_paths.append(result_path)
+                
                 logger.info("Path %d generated." % (current_path_num+1))
                 analyzer.add_path_exclusive_constraint(candidate_path_edges)
                 current_path_num += 1
                 num_paths_unsat = 0
             else:
                 logger.info("Candidate path is infeasible.")
+                result_path.set_measured_value(float('inf'))
                 analyzer.add_path_exclusive_constraint(candidate_path_edges)
                 logger.info("Constraint added.")
                 num_paths_unsat += 1
@@ -330,8 +334,6 @@ class PathGenerator(object):
             num_candidate_paths += 1
             if extremum is None:
                 analyzer.reset_path_bundled_constraints()
-            logger.info("")
-            logger.info("")
 
         analyzer.reset_path_exclusive_constraints()
 

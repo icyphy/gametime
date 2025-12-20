@@ -897,7 +897,7 @@ class Analyzer(object):
             path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
             path.path_analyzer = path_analyzer
             
-            path_analyzer = path.path_analyzer
+            # Measure the path (feasibility should have been checked already)
             value: int = path.measured_value
             value = max(value, path_analyzer.measure_path(self.backend))
             path.set_measured_value(value)

@@ -117,15 +117,15 @@ def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None,
         # Generate additional paths for analysis
         logger.info("Generating additional paths for analysis...")
         generated_paths = analyzer.generate_paths()
-        logger.info(f"Generated {len(generated_paths)} path(s) for measurement")
+        logger.info(f"Generated {len(generated_paths)} path(s)")
         
-        # Measure generated paths
-        logger.info("Measuring generated paths...")
+        # Collect results from already-measured paths
+        logger.info("Collecting measurement results...")
         results = []
         for i, path in enumerate(generated_paths):
-            output_name: str = f'path{i}'
-            value = analyzer.measure_path(path, output_name)
-            results.append((path.name, value))
+            measured_value = path.measured_value
+            predicted_value = path.predicted_value
+            results.append((path.name, predicted_value, measured_value))
         
         # Display results
         logger.info("\n" + "="*60)
@@ -142,12 +142,12 @@ def run_gametime(config_path: str, clean_temp: bool = True, backend: str = None,
         
         if results:
             logger.info("\nGenerated Paths:")
-            max_value = max(value for _, value in results)
-            max_path = [name for name, value in results if value == max_value][0]
+            max_value = max(measured_value for _, _, measured_value in results)
+            max_path = [name for name, _, measured_value in results if measured_value == max_value][0]
             
-            for i, (name, value) in enumerate(results):
-                marker = " *WCET*" if value == max_value else ""
-                logger.info(f"  {i}: {name} = {value}{marker}")
+            for i, (name, predicted_value, measured_value) in enumerate(results):
+                marker = " *WCET*" if measured_value == max_value else ""
+                logger.info(f"  {i}: {name} = predicted: {predicted_value}, measured: {measured_value}{marker}")
             
             logger.info(f"\nWorst-Case Execution Time (WCET): {max_value}")
             logger.info(f"WCET Path: {max_path}")

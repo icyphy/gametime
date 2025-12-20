@@ -56,10 +56,28 @@ class PathAnalyzer(object):
                 else:
                     raise ValueError(f"Error on line {line_number}: '{line.strip()}' is not a valid line with exactly one number.")
 
-
-        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder, total_num_labels)
+        # Store data needed for feasibility checking
+        self.labels_file = labels_file
+        self.total_num_labels = total_num_labels
+        self.is_valid = None  # Will be set by check_feasibility()
         self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
         self.repeat = repeat
+
+    def check_feasibility(self) -> bool:
+        """
+        Check if the path is feasible using KLEE/SMT solver.
+        
+        Returns:
+            bool: True if the path is feasible, False otherwise.
+        """
+        if self.is_valid is None:
+            self.is_valid = run_smt(
+                self.project_config,
+                self.labels_file,
+                self.output_folder,
+                self.total_num_labels
+            )
+        return self.is_valid
 
     def measure_path(self, backend: Backend) -> int:
         """
@@ -72,7 +90,11 @@ class PathAnalyzer(object):
         Returns:
             the total measurement of path given by backend
         """
-        if not self.is_valid:
+        # Ensure feasibility has been checked
+        if self.is_valid is None:
+            self.check_feasibility()
+        
+        if self.is_valid is False:
             return float('inf')
         temp_folder_backend: str = os.path.join(self.output_folder, backend.name)
 
