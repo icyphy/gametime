@@ -194,26 +194,35 @@ gametime-project:
     backend: flexpret                     # Backend: flexpret, x86, or arm
 ```
 
-#### Example: Simple C Program
+#### Example: test/if_statements
 
-Create a directory with your program and config:
+GameTime includes example programs in the `test` directory. Here's the structure of `test/if_statements`:
 
 ```
-my_program/
-├── example.c
+test/if_statements/
+├── test.c
+├── helper.c
 └── config.yaml
 ```
 
-**example.c:**
+**test.c:**
 ```c
-int compute(int x) {
-    if (x > 10) {
-        return x * 2;
-    } else if (x > 5) {
-        return x + 10;
-    } else {
-        return x;
+int abs(int x); // Defined in helper.c
+
+// Function under analysis
+int test(int x){
+    if (abs(x) == 42) {
+        int a = 1;
+        int b = a * 2;
+        int c = a * b;
+        return c;
     }
+    else if (abs(x) == 128) {
+        int a = 1;
+        int b = a * 2;
+        return b;
+    }
+    return 0;
 }
 ```
 
@@ -222,16 +231,23 @@ int compute(int x) {
 ---
 gametime-project:
   file:
-    location: example.c
-    analysis-function: compute
-    
+    location: test.c
+    analysis-function: test
+    additional-files: [helper.c]
+    start-label: null
+    end-label: null
+
   preprocess:
+    include: null
+    merge: null
     inline: yes
     unroll-loops: yes
-    
+
   analysis:
+    maximum-error-scale-factor: 10
+    determinant-threshold: 0.001
+    max-infeasible-paths: 100
     ilp-solver: glpk
-    backend: flexpret
 ```
 
 ### Running Analysis
@@ -243,7 +259,7 @@ After preparing your test case, run the analysis:
 source env.bash
 
 # Run analysis
-gametime my_program --backend flexpret
+gametime test/if_statements --backend flexpret
 ```
 
 ### Understanding the Output
