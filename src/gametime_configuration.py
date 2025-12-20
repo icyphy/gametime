@@ -12,6 +12,7 @@ from gametime_error import GameTimeError
 
 class Endianness(object):
     """This class represents the endianness of the target machine."""
+
     # Big-endian.
     BIG = 0
     # Little-endian.
@@ -77,6 +78,7 @@ class GametimeConfiguration(object):
         self.IDENT_TEMPVAR: str = ""
 
         self.TEMP_PROJECT_CONFIG: str = ""
+        self.TEMP_FOLDER: str = ""
         self.TEMP_MERGED: str = ""
         self.TEMP_LOOP_CONFIG: str = ""
 

@@ -6,6 +6,7 @@ that correspond to different paths in the code that is being analyzed.
 """
 from project_configuration import ProjectConfiguration
 from typing import List
+
 """See the LICENSE file, located in the root directory of
 the source distribution and
 at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
@@ -19,7 +20,7 @@ class Backend(object):
     that is being analyzed.
     """
 
-    def __init__(self, project_config: ProjectConfiguration, name: str=""):
+    def __init__(self, project_config: ProjectConfiguration, name: str = ""):
         """
         Parameters:
             project_config: ProjectConfiguration:
@@ -32,7 +33,7 @@ class Backend(object):
 
         #: GameTime project configuration for the code that is being analyzed.
         self.project_config: ProjectConfiguration = project_config
-    
+
     def measure(self, inputs: str, measure_folder: str) -> int:
         """
         Perform measurement using the backend.

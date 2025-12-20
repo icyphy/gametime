@@ -12,7 +12,11 @@ from ast import literal_eval
 from pulp import PulpError
 
 from gametime_error import GameTimeError
-from index_expression import VariableIndexExpression, ArrayIndexExpression, IndexExpression
+from index_expression import (
+    VariableIndexExpression,
+    ArrayIndexExpression,
+    IndexExpression,
+)
 from pulp_helper import IlpProblem
 
 """See the LICENSE file, located in the root directory of
@@ -28,13 +32,20 @@ class Path(object):
     a single path in the code that is being analyzed.
     """
 
-    def __init__(self, ilp_problem: IlpProblem = None, nodes: List[str] = None,
-                 line_numbers: List[str] = None,
-                 conditions: List[str] = None, condition_edges: Dict[int, Tuple[str]] = None,
-                 condition_truths: Dict[str, bool] = None,
-                 array_accesses: Dict[str, List[Tuple[int]]] = None,
-                 agg_index_exprs: IndexExpression = None, assignments: Dict[str, str] = None,
-                 predicted_value: float = 0, measured_value: float = 0):
+    def __init__(
+        self,
+        ilp_problem: IlpProblem = None,
+        nodes: List[str] = None,
+        line_numbers: List[str] = None,
+        conditions: List[str] = None,
+        condition_edges: Dict[int, Tuple[str]] = None,
+        condition_truths: Dict[str, bool] = None,
+        array_accesses: Dict[str, List[Tuple[int]]] = None,
+        agg_index_exprs: IndexExpression = None,
+        assignments: Dict[str, str] = None,
+        predicted_value: float = 0,
+        measured_value: float = 0,
+    ):
         #: Integer linear programming problem that, when solved, produced
         #: this path, represented as an ``IlpProblem`` object.
         self.ilp_problem = ilp_problem
@@ -106,12 +117,16 @@ class Path(object):
             try:
                 self.ilp_problem.writeLP(location)
             except (PulpError, EnvironmentError) as e:
-                err_msg = ("Error writing the integer linear programming "
-                           "problem to an LP file: %s") % e
+                err_msg = (
+                    "Error writing the integer linear programming "
+                    "problem to an LP file: %s"
+                ) % e
                 raise GameTimeError(err_msg)
         else:
-            err_msg = ("This path is not associated with an integer linear "
-                       "programming problem.")
+            err_msg = (
+                "This path is not associated with an integer linear "
+                "programming problem."
+            )
             raise GameTimeError(err_msg)
 
     def get_nodes(self) -> str:
@@ -132,13 +147,15 @@ class Path(object):
         Parameters:
             location: str :
                 Location of the file
-            
+
         """
         try:
             nodes_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing the IDs of the nodes in "
-                       "a directed acyclic graph along the path: %s") % e
+            err_msg = (
+                "Error writing the IDs of the nodes in "
+                "a directed acyclic graph along the path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with nodes_file_handler:
@@ -153,7 +170,7 @@ class Path(object):
         Parameters:
             location: str :
                 Location of the file
-            
+
 
         Returns:
             List[str]
@@ -164,8 +181,10 @@ class Path(object):
         try:
             nodes_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading the IDs of the nodes in "
-                       "a directed acyclic graph along a path: %s") % e
+            err_msg = (
+                "Error reading the IDs of the nodes in "
+                "a directed acyclic graph along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with nodes_file_handler:
@@ -196,8 +215,10 @@ class Path(object):
         try:
             line_numbers_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing line numbers of the source-level "
-                       "statements along the path: %s") % e
+            err_msg = (
+                "Error writing line numbers of the source-level "
+                "statements along the path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with line_numbers_file_handler:
@@ -222,8 +243,10 @@ class Path(object):
         try:
             line_numbers_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading line numbers of the source-level "
-                       "statements along a path: %s") % e
+            err_msg = (
+                "Error reading line numbers of the source-level "
+                "statements along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with line_numbers_file_handler:
@@ -281,8 +304,7 @@ class Path(object):
             with conditions_file_handler:
                 conditions = conditions_file_handler.readlines()
                 conditions = [condition.strip() for condition in conditions]
-                conditions = [condition for condition in conditions
-                              if condition != ""]
+                conditions = [condition for condition in conditions if condition != ""]
                 return conditions
 
     def get_condition_edges(self) -> str:
@@ -314,9 +336,11 @@ class Path(object):
         try:
             condition_edges_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing the numbers of the conditions along "
-                       "the path, and the edges that are associated with "
-                       "the conditions: %s") % e
+            err_msg = (
+                "Error writing the numbers of the conditions along "
+                "the path, and the edges that are associated with "
+                "the conditions: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with condition_edges_file_handler:
@@ -342,9 +366,11 @@ class Path(object):
         try:
             condition_edges_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading the numbers of the conditions along "
-                       "a path, and the edges that are associated with "
-                       "the conditions: %s") % e
+            err_msg = (
+                "Error reading the numbers of the conditions along "
+                "a path, and the edges that are associated with "
+                "the conditions: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             condition_edges = {}
@@ -370,8 +396,9 @@ class Path(object):
                 represented as a tuple, and appears only once in the list.
 
         """
-        return list(set([self.condition_edges[conditionNum]
-                         for conditionNum in condition_nums]))
+        return list(
+            set([self.condition_edges[conditionNum] for conditionNum in condition_nums])
+        )
 
     def get_condition_truths(self) -> str:
         """
@@ -401,9 +428,11 @@ class Path(object):
         try:
             condition_truths_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing line numbers of the conditional "
-                       "points in the code being analyzed, along with "
-                       "their truth values: %s") % e
+            err_msg = (
+                "Error writing line numbers of the conditional "
+                "points in the code being analyzed, along with "
+                "their truth values: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with condition_truths_file_handler:
@@ -419,7 +448,7 @@ class Path(object):
         Parameters:
             location: str :
                 Location of the file
-            
+
         Returns:
             Dict[int, bool]:
                 Dictionary that associates the line numbers of
@@ -430,15 +459,16 @@ class Path(object):
         try:
             condition_truths_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading line numbers of the conditional "
-                       "points in the code being analyzed, along with "
-                       "their truth values along a path: %s") % e
+            err_msg = (
+                "Error reading line numbers of the conditional "
+                "points in the code being analyzed, along with "
+                "their truth values along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             condition_truths = {}
             with condition_truths_file_handler:
-                condition_truths_file_lines = \
-                    condition_truths_file_handler.readlines()
+                condition_truths_file_lines = condition_truths_file_handler.readlines()
                 for line in condition_truths_file_lines:
                     (lineNumber, conditionTruth) = line.strip().split(": ")
                     condition_truths[lineNumber] = conditionTruth == "True"
@@ -471,15 +501,19 @@ class Path(object):
         try:
             array_accesses_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing information about the array accesses "
-                       "made in conditions along the path: %s") % e
+            err_msg = (
+                "Error writing information about the array accesses "
+                "made in conditions along the path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with array_accesses_file_handler:
                 array_accesses_file_handler.write(self.get_array_accesses())
 
     @staticmethod
-    def read_array_accesses_from_file(location: str) -> Dict[str, List[Tuple[int, int]]]:
+    def read_array_accesses_from_file(
+        location: str,
+    ) -> Dict[str, List[Tuple[int, int]]]:
         """
         Reads information about the array accesses made in conditions
         along a path from a file.
@@ -487,7 +521,7 @@ class Path(object):
         Parameters:
             location: str :
                 Location of the file
-                
+
 
         Returns:
             Dict[str, List[Tuple[int, int]]]:
@@ -499,8 +533,10 @@ class Path(object):
         try:
             array_accesses_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading information about the array accesses "
-                       "made in conditions along a path: %s") % e
+            err_msg = (
+                "Error reading information about the array accesses "
+                "made in conditions along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             array_accesses = {}
@@ -547,9 +583,11 @@ class Path(object):
         try:
             agg_index_exprs_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing information about the expressions "
-                       "associated with the temporary index variables of "
-                       "aggregate accesses along this path: %s") % e
+            err_msg = (
+                "Error writing information about the expressions "
+                "associated with the temporary index variables of "
+                "aggregate accesses along this path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with agg_index_exprs_file_handler:
@@ -564,7 +602,7 @@ class Path(object):
         Parameters:
             location: str :
                 Location of the file
-            
+
 
         Returns:
             Dict[int, IndexExpression]:
@@ -575,9 +613,11 @@ class Path(object):
         try:
             agg_index_exprs_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading information about the expressions "
-                       "associated with the temporary index variables of "
-                       "aggregate accesses along a path: %s") % e
+            err_msg = (
+                "Error reading information about the expressions "
+                "associated with the temporary index variables of "
+                "aggregate accesses along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             agg_index_exprs = {}
@@ -590,13 +630,15 @@ class Path(object):
                     line_tokens = line_tokens[1].split()
                     if len(line_tokens) == 1:
                         var_name = line_tokens[0]
-                        agg_index_exprs[temp_index_number] = \
-                            VariableIndexExpression(var_name)
+                        agg_index_exprs[temp_index_number] = VariableIndexExpression(
+                            var_name
+                        )
                     else:
                         array_var_name = line_tokens[0]
                         indices = tuple(int(index) for index in line_tokens[1:])
-                        agg_index_exprs[temp_index_number] = \
-                            ArrayIndexExpression(array_var_name, indices)
+                        agg_index_exprs[temp_index_number] = ArrayIndexExpression(
+                            array_var_name, indices
+                        )
                 return agg_index_exprs
 
     def get_assignments(self) -> str:
@@ -626,9 +668,11 @@ class Path(object):
         try:
             assignment_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing the assignments to variables "
-                       "that would drive an execution of the code "
-                       "along the path: %s") % e
+            err_msg = (
+                "Error writing the assignments to variables "
+                "that would drive an execution of the code "
+                "along the path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             with assignment_file_handler:
@@ -652,17 +696,18 @@ class Path(object):
         try:
             assignment_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading the assignments to variables "
-                       "that would drive an execution of the code "
-                       "along a path: %s") % e
+            err_msg = (
+                "Error reading the assignments to variables "
+                "that would drive an execution of the code "
+                "along a path: %s"
+            ) % e
             raise GameTimeError(err_msg)
         else:
             assignments = {}
             with assignment_file_handler:
                 assignment_file_lines = assignment_file_handler.readlines()
                 for line in assignment_file_lines:
-                    (variable, assignment) = \
-                        line.strip().replace(";", "").split(" = ")
+                    (variable, assignment) = line.strip().replace(";", "").split(" = ")
                     assignments[variable] = assignment
                 return assignments
 
@@ -690,8 +735,8 @@ class Path(object):
 
     def write_predicted_value_to_file(self, location: str) -> None:
         """
-        Writes the predicted value of this path to a file.   
-        
+        Writes the predicted value of this path to a file.
+
         Parameters:
             location: str :
                 Location of the file
@@ -699,8 +744,10 @@ class Path(object):
         try:
             predicted_value_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing the predicted value of the path "
-                       "to the file located at %s: %s" % (location, e))
+            err_msg = (
+                "Error writing the predicted value of the path "
+                "to the file located at %s: %s" % (location, e)
+            )
             raise GameTimeError(err_msg)
         else:
             with predicted_value_file_handler:
@@ -724,8 +771,10 @@ class Path(object):
         try:
             predicted_value_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading the predicted value of a path from "
-                       "the file located at %s: %s" % (location, e))
+            err_msg = (
+                "Error reading the predicted value of a path from "
+                "the file located at %s: %s" % (location, e)
+            )
             raise GameTimeError(err_msg)
         else:
             with predicted_value_file_handler:
@@ -736,10 +785,11 @@ class Path(object):
                     try:
                         result = float(line)
                     except ValueError:
-                        err_msg = ("The following line, in the file located "
-                                   "at %s, does not represent a valid "
-                                   "predicted value of a path: %s" %
-                                   (location, line))
+                        err_msg = (
+                            "The following line, in the file located "
+                            "at %s, does not represent a valid "
+                            "predicted value of a path: %s" % (location, line)
+                        )
                         raise GameTimeError(err_msg)
                 return result
 
@@ -777,8 +827,10 @@ class Path(object):
         try:
             measured_value_file_handler = open(location, "w")
         except EnvironmentError as e:
-            err_msg = ("Error writing the measured value of the path "
-                       "to the file located at %s: %s" % (location, e))
+            err_msg = (
+                "Error writing the measured value of the path "
+                "to the file located at %s: %s" % (location, e)
+            )
             raise GameTimeError(err_msg)
         else:
             with measured_value_file_handler:
@@ -802,8 +854,10 @@ class Path(object):
         try:
             measured_value_file_handler = open(location, "r")
         except EnvironmentError as e:
-            err_msg = ("Error reading the measured value of a path from "
-                       "the file located at %s: %s" % (location, e))
+            err_msg = (
+                "Error reading the measured value of a path from "
+                "the file located at %s: %s" % (location, e)
+            )
             raise GameTimeError(err_msg)
         else:
             with measured_value_file_handler:
@@ -814,10 +868,11 @@ class Path(object):
                     try:
                         result = float(line)
                     except ValueError:
-                        err_msg = ("The following line, in the file located "
-                                   "at %s, does not represent a valid "
-                                   "measured value of a path: %s" %
-                                   (location, line))
+                        err_msg = (
+                            "The following line, in the file located "
+                            "at %s, does not represent a valid "
+                            "measured value of a path: %s" % (location, line)
+                        )
                         raise GameTimeError(err_msg)
                 return result
 

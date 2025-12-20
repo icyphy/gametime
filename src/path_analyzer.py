@@ -8,9 +8,18 @@ from backend.backend import Backend
 from smt_solver.extract_labels import find_labels
 from smt_solver.smt import run_smt
 
+
 class PathAnalyzer(object):
 
-    def __init__(self, preprocessed_path: str, project_config: ProjectConfiguration, dag: Dag, path: Path, path_name: str, repeat: int = 1):
+    def __init__(
+        self,
+        preprocessed_path: str,
+        project_config: ProjectConfiguration,
+        dag: Dag,
+        path: Path,
+        path_name: str,
+        repeat: int = 1,
+    ):
         """
         used to run the entire simulation on the given path.
 
@@ -24,16 +33,17 @@ class PathAnalyzer(object):
             path :
                 Path object corresponding to the path to drive
             path_name :
-                all output files will be in folder with path_name; all generated files will have name path_name + "-gt"
+                all output files will be in folder with path_name; all generated files will have name path_name + config.TEMP_SUFFIX
         """
-       
+
         self.preprocessed_path: str = preprocessed_path
         self.project_config: ProjectConfiguration = project_config
         self.dag = dag
         self.path: Path = path
-        self.output_folder: str = os.path.join(self.project_config.location_temp_dir, path_name)
+        self.output_folder: str = os.path.join(
+            self.project_config.location_temp_dir, path_name
+        )
         self.path_name: str = path_name
-        self.output_name: str =  f'{path_name}-gt'
         file_helper.create_dir(self.output_folder)
         self.measure_folders: dict[str, str] = {}
         bitcode = []
@@ -45,22 +55,45 @@ class PathAnalyzer(object):
         with open(all_labels_file, "r") as out_file:
             lines = out_file.readlines()
 
-
         all_labels_file = os.path.join(project_config.location_temp_dir, "labels_0.txt")
         total_num_labels = 0
-        number_line_pattern = re.compile(r'^\s*\d+\s*$')
+        number_line_pattern = re.compile(r"^\s*\d+\s*$")
 
         with open(all_labels_file, "r") as out_file:
-            for line_number, line in enumerate(out_file, 1):  # Using enumerate to get line number
-                if number_line_pattern.match(line):  # Check if the line matches the pattern
+            for line_number, line in enumerate(
+                out_file, 1
+            ):  # Using enumerate to get line number
+                if number_line_pattern.match(
+                    line
+                ):  # Check if the line matches the pattern
                     total_num_labels += 1
                 else:
-                    raise ValueError(f"Error on line {line_number}: '{line.strip()}' is not a valid line with exactly one number.")
+                    raise ValueError(
+                        f"Error on line {line_number}: '{line.strip()}' is not a valid line with exactly one number."
+                    )
 
-
-        self.is_valid = run_smt(self.project_config, labels_file, self.output_folder, total_num_labels)
+        # Store data needed for feasibility checking
+        self.labels_file = labels_file
+        self.total_num_labels = total_num_labels
+        self.is_valid = None  # Will be set by check_feasibility()
         self.values_filepath = f"{self.output_folder}/klee_input_0_values.txt"
         self.repeat = repeat
+
+    def check_feasibility(self) -> bool:
+        """
+        Check if the path is feasible using KLEE/SMT solver.
+
+        Returns:
+            bool: True if the path is feasible, False otherwise.
+        """
+        if self.is_valid is None:
+            self.is_valid = run_smt(
+                self.project_config,
+                self.labels_file,
+                self.output_folder,
+                self.total_num_labels,
+            )
+        return self.is_valid
 
     def measure_path(self, backend: Backend) -> int:
         """
@@ -73,8 +106,12 @@ class PathAnalyzer(object):
         Returns:
             the total measurement of path given by backend
         """
-        if not self.is_valid:
-            return float('inf')
+        # Ensure feasibility has been checked
+        if self.is_valid is None:
+            self.check_feasibility()
+
+        if self.is_valid is False:
+            return float("inf")
         temp_folder_backend: str = os.path.join(self.output_folder, backend.name)
 
         if backend.name not in self.measure_folders.keys():
@@ -83,6 +120,7 @@ class PathAnalyzer(object):
         file_helper.create_dir(temp_folder_backend)
         measured_values = []
         for _ in range(self.repeat):
-            measured_values.append(backend.measure(self.values_filepath, temp_folder_backend))
+            measured_values.append(
+                backend.measure(self.values_filepath, temp_folder_backend)
+            )
         return max(measured_values)
-

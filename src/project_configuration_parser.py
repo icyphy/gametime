@@ -55,7 +55,9 @@ class YAMLConfigurationParser(ConfigurationParser):
         """
         # Check configuration_file_path exits on the OS
         if not os.path.exists(configuration_file_path):
-            err_msg = "Cannot find project configuration file: %s" % configuration_file_path
+            err_msg = (
+                "Cannot find project configuration file: %s" % configuration_file_path
+            )
             raise GameTimeError(err_msg)
 
         # Read from configuration_file_path into a dict
@@ -64,11 +66,14 @@ class YAMLConfigurationParser(ConfigurationParser):
             raw_config = load(raw_file, Loader=Loader)
 
         # Check if yaml file contains gametime-project
-        if 'gametime-project' not in raw_config.keys():
-            err_msg = "Cannot find project configuration in file: %s" % configuration_file_path
+        if "gametime-project" not in raw_config.keys():
+            err_msg = (
+                "Cannot find project configuration in file: %s"
+                % configuration_file_path
+            )
             raise GameTimeError(err_msg)
 
-        raw_config = raw_config['gametime-project']
+        raw_config = raw_config["gametime-project"]
 
         # Find the directory that contains the project configuration YAML file.
         project_config_dir = os.path.dirname(os.path.abspath(configuration_file_path))
@@ -84,19 +89,29 @@ class YAMLConfigurationParser(ConfigurationParser):
         determinant_threshold, max_infeasible_paths = 0.001, 100
         model_as_nested_arrays, prevent_basis_refinement = False, False
         ilp_solver_name = ""
-        gametime_flexpret_path, gametime_path, gametime_file_path = "","",""
+        gametime_flexpret_path, gametime_path, gametime_file_path = "", "", ""
         compile_flags = []
         backend = ""
-        
 
         # Process information about the file to be analyzed.
         file_configs: dict[str, Any] = raw_config.get("file", {})
         for key in file_configs.keys():
             match key:
                 case "location":
-                    location_file = os.path.normpath(os.path.join(project_config_dir, file_configs[key]))
+                    location_file = os.path.normpath(
+                        os.path.join(project_config_dir, file_configs[key])
+                    )
                 case "additional-files":
-                    location_additional_files = [os.path.normpath(os.path.join(project_config_dir, additional_file)) for additional_file in file_configs[key]] if file_configs[key] else [] 
+                    location_additional_files = (
+                        [
+                            os.path.normpath(
+                                os.path.join(project_config_dir, additional_file)
+                            )
+                            for additional_file in file_configs[key]
+                        ]
+                        if file_configs[key]
+                        else []
+                    )
                 case "analysis-function":
                     func = file_configs[key]
                 case "start-label":
@@ -114,10 +129,14 @@ class YAMLConfigurationParser(ConfigurationParser):
                     unroll_loops = bool(preprocess_configs[key])
                 case "include":
                     if preprocess_configs[key]:
-                        included = get_dir_paths(preprocess_configs[key], project_config_dir)
+                        included = get_dir_paths(
+                            preprocess_configs[key], project_config_dir
+                        )
                 case "merge":
                     if preprocess_configs[key]:
-                        merged = get_file_paths(preprocess_configs[key], project_config_dir)
+                        merged = get_file_paths(
+                            preprocess_configs[key], project_config_dir
+                        )
                 case "inline":
                     inlined = preprocess_configs[key]
                 case "compile_flags":
@@ -186,22 +205,42 @@ class YAMLConfigurationParser(ConfigurationParser):
                 case _:
                     warnings.warn("Unrecognized tag : %s" % key, GameTimeWarning)
 
-        debug_configuration: DebugConfiguration = DebugConfiguration(keep_cil_temps, dump_ir,
-                                                                     keep_ilp_solver_output, dump_instruction_trace,
-                                                                     dump_path, dump_all_paths,
-                                                                     dump_all_queries, keep_parser_output,
-                                                                     keep_simulator_output)
+        debug_configuration: DebugConfiguration = DebugConfiguration(
+            keep_cil_temps,
+            dump_ir,
+            keep_ilp_solver_output,
+            dump_instruction_trace,
+            dump_path,
+            dump_all_paths,
+            dump_all_queries,
+            keep_parser_output,
+            keep_simulator_output,
+        )
 
-        project_config: ProjectConfiguration = ProjectConfiguration(location_file, func, location_additional_files,
-                                                                    start_label, end_label, included,
-                                                                    merged, inlined, unroll_loops,
-                                                                    randomize_initial_basis,
-                                                                    maximum_error_scale_factor,
-                                                                    determinant_threshold, max_infeasible_paths,
-                                                                    model_as_nested_arrays, prevent_basis_refinement,
-                                                                    ilp_solver_name, debug_configuration,
-                                                                    gametime_flexpret_path, gametime_path,
-                                                                    gametime_file_path, compile_flags, backend)
+        project_config: ProjectConfiguration = ProjectConfiguration(
+            location_file,
+            func,
+            location_additional_files,
+            start_label,
+            end_label,
+            included,
+            merged,
+            inlined,
+            unroll_loops,
+            randomize_initial_basis,
+            maximum_error_scale_factor,
+            determinant_threshold,
+            max_infeasible_paths,
+            model_as_nested_arrays,
+            prevent_basis_refinement,
+            ilp_solver_name,
+            debug_configuration,
+            gametime_flexpret_path,
+            gametime_path,
+            gametime_file_path,
+            compile_flags,
+            backend,
+        )
         logger.info("Successfully loaded project.")
         logger.info("")
         return project_config
@@ -261,4 +300,6 @@ def get_file_paths(file_paths_str: str, dir_location: str = None) -> List[str]:
     return result
 
 
-extension_parser_map: dict[str, Type[ConfigurationParser]] = {".yaml": YAMLConfigurationParser}
+extension_parser_map: dict[str, Type[ConfigurationParser]] = {
+    ".yaml": YAMLConfigurationParser
+}

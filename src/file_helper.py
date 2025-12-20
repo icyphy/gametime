@@ -38,8 +38,10 @@ def create_dir(location: str) -> None:
             os.makedirs(location)
     except EnvironmentError as e:
         if e.errno != errno.EEXIST:
-            raise GameTimeError("Cannot create directory located at %s: %s" %
-                                (location, e))
+            raise GameTimeError(
+                "Cannot create directory located at %s: %s" % (location, e)
+            )
+
 
 def remove_file(location: str) -> None:
     """
@@ -55,8 +57,8 @@ def remove_file(location: str) -> None:
         if os.path.exists(location):
             os.remove(location)
     except EnvironmentError as e:
-        raise GameTimeError("Cannot remove file located at %s: %s" %
-                            (location, e))
+        raise GameTimeError("Cannot remove file located at %s: %s" % (location, e))
+
 
 def remove_files(patterns: List[str], dir_location: str) -> None:
     """
@@ -74,6 +76,7 @@ def remove_files(patterns: List[str], dir_location: str) -> None:
         for pattern in patterns:
             if re.search(pattern, filename):
                 os.remove(os.path.join(dir_location, filename))
+
 
 def remove_all_except(patterns: List[str], dir_location: str) -> None:
     """
@@ -100,7 +103,10 @@ def remove_all_except(patterns: List[str], dir_location: str) -> None:
         for dirname in dirs:
             shutil.rmtree(os.path.join(root, dirname))
 
-def move_files(patterns: List[str], source_dir: str, dest_dir: str, overwrite: bool = True) -> None:
+
+def move_files(
+    patterns: List[str], source_dir: str, dest_dir: str, overwrite: bool = True
+) -> None:
     """
     Moves the files, whose names match any of the patterns in the list
     provided, from the source directory whose location is provided to

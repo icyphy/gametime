@@ -20,6 +20,7 @@ import networkx as nx
 from defaults import logger
 from gametime_error import GameTimeError
 
+
 def find_root_node(G):
     """
     Parameters:
@@ -35,10 +36,11 @@ def find_root_node(G):
             return node
     return None
 
-def remove_back_edges_to_make_dag(G, root):     
+
+def remove_back_edges_to_make_dag(G, root):
     """
     Remove all back edges from G to make it a DAG. Assuming G is connected and rooted at ROOT.
-    
+
     Parameters:
         G :
             The graph to remove root edges
@@ -54,7 +56,7 @@ def remove_back_edges_to_make_dag(G, root):
     # Iteratively perform DFS on unvisited nodes
     stack = [(start_node, iter(G.neighbors(start_node)))]
     visited[start_node] = True
-    
+
     while stack:
         parent, children = stack[-1]
         try:
@@ -69,7 +71,11 @@ def remove_back_edges_to_make_dag(G, root):
             stack.pop()
 
     # Remove identified back edges
+    print(f"num_edges pre = {G.number_of_edges()}")
     G.remove_edges_from(back_edges)
+    # Update num_edges after edge removal
+    G.num_edges = G.number_of_edges()
+    print(f"num_edges post = {G.num_edges}")
     return G
 
 
@@ -134,7 +140,7 @@ class Dag(nx.DiGraph):
 
         #: Dictionary that maps edges to their indices in the list of all_temp_files edges.
         #: This is maintained for efficiency purposes.
-        self.edges_indices: Dict[Tuple[str, str]: int] = {}
+        self.edges_indices: Dict[Tuple[str, str] : int] = {}
 
         #: List of non-special edges in the DAG.
         self.edges_reduced: List[Tuple[str, str]] = []
@@ -161,13 +167,16 @@ class Dag(nx.DiGraph):
         # We assume there is only one source and one sink.
         self.source = [node for node in nodes if (self.in_degree(node) == 0)][0]
         self.sink = [node for node in nodes if (self.out_degree(node) == 0)][0]
-        self.nodes_except_sink = [node for node in self.all_nodes
-                                if node != self.sink]
-        self.nodes_except_source_sink = [node for node in self.all_nodes
-                                      if (node != self.source and node != self.sink)]
+        self.nodes_except_sink = [node for node in self.all_nodes if node != self.sink]
+        self.nodes_except_source_sink = [
+            node
+            for node in self.all_nodes
+            if (node != self.source and node != self.sink)
+        ]
 
-        self.num_paths = (0 if has_cycles(self) else
-                         num_paths(self, self.source, self.sink))
+        self.num_paths = (
+            0 if has_cycles(self) else num_paths(self, self.source, self.sink)
+        )
 
         # Initialize dictionaries that map nodes and edges to their indices
         # in the node list and edge list, respectively.
@@ -199,11 +208,12 @@ class Dag(nx.DiGraph):
 
     def _init_special_edges(self):
         """
-        To reduce the dimensionality to b = n-m+2, each node, except for
+        To reduce the dimensionality to b = m-n+2 (b is the number of basis paths,
+        m the number of edges, n the number of nodes), each node, except for
         the source and sink, chooses a 'special' edge. This edge is taken if
         flow enters the node, but no outgoing edge is 'visibly' selected.
         In other words, it is the 'default' edge for the node.
-        
+
         This method initializes all_temp_files of the data structures necessary
         to keep track of these special edges.
 
@@ -247,10 +257,14 @@ class Dag(nx.DiGraph):
         return self.all_nodes_with_description[node][1]["label"]
 
 
-def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
-                          edges_to_labels: Dict[Tuple[str, str], str] = None,
-                          highlighted_edges: List[Tuple[str, str]] = None,
-                          highlight_color: str = "red"):
+def write_dag_to_dot_file(
+    dag: Dag,
+    location: str,
+    dag_name: str = "",
+    edges_to_labels: Dict[Tuple[str, str], str] = None,
+    highlighted_edges: List[Tuple[str, str]] = None,
+    highlight_color: str = "red",
+):
     """
     Writes the directed acyclic graph provided to a file in DOT format.
 
@@ -297,9 +311,9 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
         line = "  %s -> %s" % edge
         attributes = []
         if edges_to_labels:
-            attributes.append("label = \"%s\"" % edges_to_labels[edge])
+            attributes.append('label = "%s"' % edges_to_labels[edge])
         if highlighted_edges and edge in highlighted_edges:
-            attributes.append("color = \"%s\"" % highlight_color)
+            attributes.append('color = "%s"' % highlight_color)
         if len(attributes) > 0:
             line += " [%s]" % ", ".join(attributes)
         contents.append("%s;" % line)
@@ -308,8 +322,7 @@ def write_dag_to_dot_file(dag: Dag, location: str, dag_name: str = "",
     try:
         dag_dot_file_handler = open(location, "w")
     except EnvironmentError as e:
-        err_msg = ("Error writing the DAG to a file located at %s: %s" %
-                   (location, e))
+        err_msg = "Error writing the DAG to a file located at %s: %s" % (location, e)
         raise GameTimeError(err_msg)
     else:
         with dag_dot_file_handler:
@@ -326,7 +339,7 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
             Path to the file describing a directed acyclic graph in DOT format
 
     Returns:
-        `~gametime.src.nx_helper.Dag`: 
+        `~gametime.src.nx_helper.Dag`:
             Object that represents the directed acyclic graph.
 
     """
@@ -335,30 +348,36 @@ def construct_dag(location: str) -> tuple[Dag, bool]:
             graph_from_dot: nx.Graph = nx.nx_agraph.read_dot(f)
 
     except EnvironmentError as e:
-        err_msg: str = ("Error opening the DOT file, located at %s, that contains "
-                        "the directed acyclic graph to analyze: %s") % (location, e)
+        err_msg: str = (
+            "Error opening the DOT file, located at %s, that contains "
+            "the directed acyclic graph to analyze: %s"
+        ) % (location, e)
         raise GameTimeError(err_msg)
 
     if not graph_from_dot.is_directed():
         raise GameTimeError("CFG isn't directed")
-        
+
     root = find_root_node(graph_from_dot)
     if root is None:
         raise GameTimeError("There is no node without incoming edge in CFG.")
-    
-    sink_nodes = [node for node, out_degree in graph_from_dot.out_degree() if out_degree == 0]
+
+    sink_nodes = [
+        node for node, out_degree in graph_from_dot.out_degree() if out_degree == 0
+    ]
     if len(sink_nodes) != 1:
         raise GameTimeError("The number of sink nodes don't equal to 1.")
 
-    modifed=False
+    modified = False
     if len(list(nx.simple_cycles(graph_from_dot))) > 0:
-        logger.warning("The control-flow graph has cycles. Trying to remove them by removing back edges.")
+        logger.warning(
+            "The control-flow graph has cycles. Trying to remove them by removing back edges."
+        )
         graph_from_dot = remove_back_edges_to_make_dag(graph_from_dot, root)
-        modifed = True
+        modified = True
 
     dag: Dag = Dag(graph_from_dot)
     dag.load_variables()
-    return dag, modifed
+    return dag, modified
 
 
 def num_paths(dag: Dag, source: str, sink: str) -> int:
@@ -378,7 +397,7 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     """
 
     if has_cycles(dag):
-        err_msg = ("The dag has cycles, so number of path is infinite. Get rid of cycles before analyzing")
+        err_msg = "The dag has cycles, so number of path is infinite. Get rid of cycles before analyzing"
         raise GameTimeError(err_msg)
     # Dictionary that maps each node to the number of paths in the
     # DAG provided from the input source node to that node.
@@ -387,8 +406,10 @@ def num_paths(dag: Dag, source: str, sink: str) -> int:
     # Topologically sort the nodes in the graph.
     nodes_to_visit: List[str] = list(nx.topological_sort(dag))
     if nodes_to_visit.pop(0) != source:
-        err_msg = ("The source node should be the first node in "
-                   "a topological sort of the control-flow graph.")
+        err_msg = (
+            "The source node should be the first node in "
+            "a topological sort of the control-flow graph."
+        )
         raise GameTimeError(err_msg)
 
     while len(nodes_to_visit) > 0:
@@ -410,13 +431,13 @@ def get_random_path(dag: Dag, source: str, sink: str) -> List[str]:
         source: str :
             source to start path with
         sink: str :
-            sink to end path with           
+            sink to end path with
     Returns:
         List[str]:
             Random path in the DAG provided from the input source node to
             the input sink node, represented as a list of nodes arranged in
             order of traversal from source to sink.
-        
+
     """
     result_path = [source]
 

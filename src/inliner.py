@@ -3,8 +3,11 @@ import re
 import subprocess
 import sys
 
+
 def run_command(command):
-    result = subprocess.run(command, shell=True, capture_output=True, text=True, errors='replace')
+    result = subprocess.run(
+        command, shell=True, capture_output=True, text=True, errors="replace"
+    )
     if result.returncode != 0:
         print(f"Error running command: {command}")
         print(result.stdout)
@@ -16,31 +19,46 @@ def run_command(command):
 def link_bitcode(bitcode_files, output_file):
     run_command(f"llvm-link {' '.join(bitcode_files)} -o {output_file}")
 
+
 def disassemble_bitcode(input_file, output_file):
     run_command(f"llvm-dis {input_file} -o {output_file}")
+
 
 def assemble_bitcode(input_file, output_file):
     run_command(f"llvm-as {input_file} -o {output_file}")
 
+
 def inline_bitcode(input_file, output_file):
-    run_command(f"opt -passes=\"always-inline,inline\" -inline-threshold=10000000 {input_file} -o {output_file}")
+    run_command(
+        f'opt -passes="always-inline,inline" -inline-threshold=10000000 {input_file} -o {output_file}'
+    )
+
 
 def modify_llvm_ir(input_file, output_file, skip_function):
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    plugin_path = os.path.normpath(os.path.join(current_dir, "../src/custom_passes/custom_inline_pass.so"))
+    plugin_path = os.path.normpath(
+        os.path.join(current_dir, "../src/custom_passes/custom_inline_pass.so")
+    )
 
     if not os.path.exists(plugin_path):
         print(plugin_path)
         print("Plugin Not Found")
         sys.exit(1)
 
-    run_command(f"opt -load-pass-plugin={plugin_path} -passes=custom-inline -analysed-func={skip_function} {input_file} -o {output_file} -S")
+    run_command(
+        f"opt -load-pass-plugin={plugin_path} -passes=custom-inline -analysed-func={skip_function} {input_file} -o {output_file} -S"
+    )
 
 
-
-def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_name: str, analyzed_function: str) -> str:
+def inline_functions(
+    bc_filepaths: list[str],
+    output_file_folder: str,
+    output_name: str,
+    analyzed_function: str,
+) -> str:
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
     file_to_analyze = bc_filepaths[0]
+    # FIXME: Use config.yaml.in to configure filenames.
     combined_bc = f"{file_to_analyze[:-3]}_linked.bc"
     combined_ll = f"{file_to_analyze[:-3]}_linked.ll"
     combined_mod_ll = f"{file_to_analyze[:-3]}_linked_mod.ll"
@@ -48,8 +66,6 @@ def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_na
     combined_inlined_mod_bc = f"{file_to_analyze[:-3]}_linked_inlined_mod.bc"
     combined_inlined_mod_ll = f"{file_to_analyze[:-3]}_linked_inlined_mod.ll"
 
-
-    
     if len(bc_filepaths) > 1:
         # Step 1: Link all bitcode files into a single combined bitcode file
         link_bitcode(bc_filepaths, combined_bc)
@@ -67,8 +83,8 @@ def inline_functions(bc_filepaths: list[str], output_file_folder: str, output_na
 
     # Step 5: Inline the functions in the modified bitcode
     inline_bitcode(combined_mod_bc, combined_inlined_mod_bc)
-    
+
     # Step 6: Disassemble the combined bitcode file to LLVM IR for debugging
     disassemble_bitcode(combined_inlined_mod_bc, combined_inlined_mod_ll)
-        
+
     return combined_inlined_mod_bc

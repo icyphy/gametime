@@ -1,12 +1,11 @@
 ---
 gametime-project:
   file:
-    location: if_elif_else.c
+    location: test.c
     analysis-function: test
     additional-files: [helper.c]
     start-label: null
     end-label: null
-
 
   preprocess:
     include: null

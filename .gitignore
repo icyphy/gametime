@@ -1,4 +1,4 @@
-test/**/*gt/*
+test/**/*generated/*
 **/__pycache__
 /Dockerfile*
 env.bash

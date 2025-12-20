@@ -41,6 +41,7 @@ at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,
 for details on the GameTime license and authors.
 """
 
+
 class Analyzer(object):
     """
     Maintains information about the code being analyzed, such as
@@ -105,19 +106,21 @@ class Analyzer(object):
         self.dag_path: str = ""
 
         backend_dict = {
-            "flexpret": FlexpretBackend, 
-            "x86": X86Backend, 
+            "flexpret": FlexpretBackend,
+            "x86": X86Backend,
             "arm": ArmBackend,
             # Keep legacy capitalized names for backward compatibility
-            "Flexpret": FlexpretBackend, 
-            "X86": X86Backend, 
-            "ARM": ArmBackend
+            "Flexpret": FlexpretBackend,
+            "X86": X86Backend,
+            "ARM": ArmBackend,
         }
-        
+
         if self.project_config.backend not in backend_dict:
             raise GameTimeError("No valid backend specified")
-        
-        self.backend: Backend = backend_dict[self.project_config.backend](self.project_config)
+
+        self.backend: Backend = backend_dict[self.project_config.backend](
+            self.project_config
+        )
 
         # Finally, preprocess the file before analysis.
         self._preprocess()
@@ -138,7 +141,7 @@ class Analyzer(object):
             shutil.rmtree(project_temp_dir)
             err_msg = "File to analyze not found: %s" % orig_file
             raise GameTimeError(err_msg)
-        
+
         # Check if the additional files to be analyzed exists.
         additional_files = self.project_config.location_additional_files
         if additional_files:
@@ -164,7 +167,7 @@ class Analyzer(object):
         else:
             os.mkdir(project_temp_dir)
 
-        os.chmod(project_temp_dir, 0o777) # make dir read and write by everyone
+        os.chmod(project_temp_dir, 0o777)  # make dir read and write by everyone
 
         # Make a temporary copy of the original file to preprocess.
         preprocessed_file = self.project_config.location_temp_file
@@ -172,21 +175,41 @@ class Analyzer(object):
 
         processing: str = ""
 
-        processing = clang_helper.compile_to_llvm_for_analysis(self.project_config.location_orig_file, self.project_config.location_temp_dir,
-                                                          f"{self.project_config.name_orig_no_extension}gt", self.project_config.included, self.project_config.compile_flags)
+        processing = clang_helper.compile_to_llvm_for_analysis(
+            self.project_config.location_orig_file,
+            self.project_config.location_temp_dir,
+            f"{self.project_config.name_orig_no_extension}{config.TEMP_SUFFIX}",
+            self.project_config.included,
+            self.project_config.compile_flags,
+        )
+
         additional_files_processing = []
         if additional_files:
-            additional_files_processing = clang_helper.compile_list_to_llvm_for_analysis(self.project_config.location_additional_files, self.project_config.location_temp_dir,
-                                                        self.project_config.included, self.project_config.compile_flags)
-        
+            additional_files_processing = (
+                clang_helper.compile_list_to_llvm_for_analysis(
+                    self.project_config.location_additional_files,
+                    self.project_config.location_temp_dir,
+                    self.project_config.included,
+                    self.project_config.compile_flags,
+                )
+            )
+
         # Preprocessing pass: inline functions.
-        if self.project_config.inlined:  # Note: This is made into a bool rather than a list
-            processing = self._run_inliner(input_file=processing, additional_files=additional_files_processing)
+        if (
+            self.project_config.inlined
+        ):  # Note: This is made into a bool rather than a list
+            processing = self._run_inliner(
+                input_file=processing, additional_files=additional_files_processing
+            )
 
         # Preprocessing pass: unroll loops.
         if self.project_config.UNROLL_LOOPS:
             processing = self._run_loop_unroller(compiled_file=processing)
-        self.dag_path: str = clang_helper.generate_dot_file(processing, self.project_config.location_temp_dir)
+
+        # Generate control-flow diagrams (CFGs), which are directed acyclic graphs (DAGs).
+        self.dag_path: str = clang_helper.generate_dot_file(
+            processing, self.project_config.location_temp_dir
+        )
         self.preprocessed_path: str = processing
         # We are done with the preprocessing.
         logger.info("Preprocessing complete.")
@@ -210,8 +233,11 @@ class Analyzer(object):
         preprocessed_file: str = self.project_config.location_temp_file
 
         # Infer the name of the file that results from the CIL preprocessing.
-        unrolled_file: str = unroller.unroll(compiled_file, self.project_config.location_temp_dir,
-                                                       f"{self.project_config.name_orig_no_extension}")
+        unrolled_file: str = unroller.unroll(
+            compiled_file,
+            self.project_config.location_temp_dir,
+            f"{self.project_config.name_orig_no_extension}",
+        )
 
         logger.info("Preprocessing the file: unrolling loops in the code...")
 
@@ -220,7 +246,7 @@ class Analyzer(object):
             raise GameTimeError(err_msg)
         else:
             shutil.copyfile(unrolled_file, preprocessed_file)
-    
+
             logger.info("")
             logger.info("Loops in the code have been unrolled.")
 
@@ -246,13 +272,14 @@ class Analyzer(object):
 
         logger.info("Preprocessing the file: inlining...")
 
-        # inlined_file = clang_helper.inline_functions(input_file, self.project_config.location_temp_dir,
-        #                                              f"{self.project_config.name_orig_no_extension}gt-inlined")
-        
         input_files = [input_file] + additional_files
-        inlined_file = inliner.inline_functions(input_files, self.project_config.location_temp_dir,
-                                                     f"{self.project_config.name_orig_no_extension}", self.project_config.func)
-        
+        inlined_file = inliner.inline_functions(
+            input_files,
+            self.project_config.location_temp_dir,
+            f"{self.project_config.name_orig_no_extension}",
+            self.project_config.func,
+        )
+
         if not inlined_file:
             err_msg = "Error running the inliner."
             raise GameTimeError(err_msg)
@@ -263,7 +290,7 @@ class Analyzer(object):
             logger.info("Inlining complete.")
 
             return inlined_file
-        
+
     ### GRAPH FUNCTIONS ###
     def create_dag(self):
         """
@@ -274,15 +301,15 @@ class Analyzer(object):
         """
         logger.info("Generating the DAG and associated information...")
 
-        #TODO: add back construction dag from filepath
+        # TODO: add back construction dag from filepath
         # if nx_helper.construct_dag(self.dag_path):
         #     err_msg = "Error running the Phoenix program analyzer."
         #     raise GameTimeError(err_msg)
 
-        location = os.path.join(self.project_config.location_temp_dir,
-                                f".{self.project_config.func}.dot")
+        location = os.path.join(
+            self.project_config.location_temp_dir, f".{self.project_config.func}.dot"
+        )
         self.load_dag_from_dot_file(location)
-
 
         bitcode = []
         for node in self.dag.nodes:
@@ -290,23 +317,28 @@ class Analyzer(object):
         find_labels("".join(bitcode), self.project_config.location_temp_dir)
         logger.info("All possible labels extracted.")
 
-
         # special case for single node dag
         if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
             self.path_dimension = 1
             return
 
         num_edges_reduced = len(self.dag.edges_reduced)
-        # Checking num_basis_paths = num_edges - num_nodes + 2
+        # Note: The number of feasible basis paths is bounded by (num_edges - num_nodes + 2)
+        # (Page 8 of "The Internals of GameTime" by Jonathan Kotker).
         self.path_dimension = self.dag.num_edges - self.dag.num_nodes + 2
+        print(
+            f"num_edges_reduced = {num_edges_reduced}, self.path_dimension = {self.path_dimension}"
+        )
         if num_edges_reduced != self.path_dimension:
-            err_msg = ("The number of non-special edges is different from the dimension of the path.")
+            err_msg = "The number of non-special edges is different from the dimension of the path."
             raise GameTimeError(err_msg)
 
         logger.info("DAG generated.")
-        
-        logger.info("The control-flow graph has %d nodes and %d edges, with at most %d possible paths." %
-                    (self.dag.num_nodes, self.dag.num_edges, self.dag.num_paths))
+
+        logger.info(
+            "The control-flow graph has %d nodes and %d edges, with at most %d possible paths."
+            % (self.dag.num_nodes, self.dag.num_edges, self.dag.num_paths)
+        )
         logger.info("There are at most %d possible basis paths." % self.path_dimension)
         logger.info("")
 
@@ -320,16 +352,20 @@ class Analyzer(object):
 
         """
         self.dag, modified = nx_helper.construct_dag(location)
+        print(f"num_edges in load_dag_from_dot_file = {self.dag.num_edges}")
         if modified:
-            modified_dag_location = os.path.join(self.project_config.location_temp_dir,
-                            f".{self.project_config.func}_modified.dot")
+            modified_dag_location = os.path.join(
+                self.project_config.location_temp_dir,
+                f".{self.project_config.func}_modified.dot",
+            )
             write_dag_to_dot_file(self.dag, modified_dag_location)
-            logger.info("New CFG outputed to folder.")
+            logger.info(
+                "Cycles detected in the DAG. Removed cycles and output modified CFG outputed to folder."
+            )
 
         # Reset variables of this "Analyzer" object.
         self.reset_path_exclusive_constraints()
         self.reset_path_bundled_constraints()
-
 
     ### BASIS MATRIX FUNCTIONS ###
     def _init_basis_matrix(self):
@@ -342,7 +378,7 @@ class Analyzer(object):
         """
         Randomizes the rows of the basis matrix using
         a Fisher-Yates shuffle.
-        
+
         Precondition: The basis matrix has been initialized.
         """
         for i in range(self.path_dimension, 0, -1):
@@ -354,7 +390,7 @@ class Analyzer(object):
         Swaps two rows of the basis matrix.
 
         Parameters:
-            i: 
+            i:
                 Index of one row to swap.
             j:
                 Index of other row to swap.
@@ -369,7 +405,6 @@ class Analyzer(object):
         for k in range(row_len):
             row_to_swap_out[k] = row_to_swap_in[k]
             row_to_swap_in[k] = temp_row_to_swap_out[k]
-
 
     ### PATH GENERATION FUNCTIONS ###
     def add_path_exclusive_constraint(self, edges: List[Tuple[str, str]]):
@@ -392,7 +427,7 @@ class Analyzer(object):
         constraints, if not already present. These edges must
         be taken together if at least one of them is taken along
         a path through the DAG.
-        
+
         Parameters:
             edges: List[Tuple[str, str]] :
                 List of edges to add to the list of path-bundled constraints.
@@ -422,8 +457,7 @@ class Analyzer(object):
         Returns:
             0-1 vector that is 1 if a `non-special' edge is along the path, and 0 otherwise.
         """
-        return [(1.0 if edge in path_edges else 0.0)
-                for edge in self.dag.edges_reduced]
+        return [(1.0 if edge in path_edges else 0.0) for edge in self.dag.edges_reduced]
 
     ####### Fuctions to FIX
     def generate_overcomplete_basis(self, k: int):
@@ -445,8 +479,9 @@ class Analyzer(object):
         logger.info("Find minimal overcomplete basis")
         pulp_helper.find_minimal_overcomplete_basis(self, feasible, k)
 
-
-    def iteratively_find_overcomplete_basis(self, initial_paths: List[List[Tuple[str, str]]], k: int):
+    def iteratively_find_overcomplete_basis(
+        self, initial_paths: List[List[Tuple[str, str]]], k: int
+    ):
         """
         Generates overcomplete basis such the lenth of the longest
         feasible path is at most 'k'. The basis is computed by iteratively
@@ -458,7 +493,7 @@ class Analyzer(object):
         Parameters:
             initial_paths: List[List[Tuple[str, str]]] :
                 A list of initial paths to begin with.
-                
+
             k: int :
                 Maximum value of L1 norm.
 
@@ -471,15 +506,19 @@ class Analyzer(object):
         start_time = time.perf_counter()
         while True:
             before_time = time.perf_counter()
-            length, path, ilp_problem = \
-                pulp_helper.find_worst_expressible_path(self, self.basis_paths, 0)
+            length, path, ilp_problem = pulp_helper.find_worst_expressible_path(
+                self, self.basis_paths, 0
+            )
             after_time = time.perf_counter()
-            logger.info("Found a candidate path of length %.2f in %d seconds" %
-                        (length, after_time - before_time))
+            logger.info(
+                "Found a candidate path of length %.2f in %d seconds"
+                % (length, after_time - before_time)
+            )
 
             optimal_bound = length
             # if the length of the longest path is within the given bound, stop
-            if length <= k: break
+            if length <= k:
+                break
 
             candidate_path_nodes = path
             candidate_path_edges = Dag.get_edges(candidate_path_nodes)
@@ -487,7 +526,7 @@ class Analyzer(object):
             logger.info("Checking if the found path is feasible...")
             result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
             value = self.measure_path(result_path)
-            if value < float('inf'):
+            if value < float("inf"):
                 logger.info("Path is feasible.")
                 self.basis_paths.append(result_path)
                 edge_node_paths.append(candidate_path_edges)
@@ -498,21 +537,22 @@ class Analyzer(object):
                 unsat_core = result_path.smtQuery.unsatCore
                 exclude_edges = result_path.get_edges_for_conditions(unsat_core)
                 logger.info("Edges to be excluded found.")
-                logger.info("Adding a constraint to exclude "
-                            "these edges...")
+                logger.info("Adding a constraint to exclude " "these edges...")
                 if len(exclude_edges) > 0:
                     self.add_path_exclusive_constraint(exclude_edges)
                 else:
                     self.add_path_exclusive_constraint(candidate_path_edges)
                 logger.info("Constraint added.")
 
-        logger.info("Found overcomplete basis of size %d, yielding bound %.2f" %
-                    (len(edge_node_paths), optimal_bound))
+        logger.info(
+            "Found overcomplete basis of size %d, yielding bound %.2f"
+            % (len(edge_node_paths), optimal_bound)
+        )
 
         self.basis_paths_nodes = [path.nodes for path in self.basis_paths]
         return self.basis_paths
 
-    def  generate_basis_paths(self):
+    def generate_basis_paths(self):
         """
         Generates a list of "Path" objects, each of which represents
         a basis path of the code being analyzed. The basis "Path" objects
@@ -538,8 +578,9 @@ class Analyzer(object):
         logger.info("Basis matrix initialized to")
         logger.info(self.basis_matrix)
         logger.info("")
-        logger.info("There are a maximum of %d possible basis paths." %
-                    self.path_dimension)
+        logger.info(
+            "There are a maximum of %d possible basis paths." % self.path_dimension
+        )
         logger.info("")
 
         def on_exit(start_time, infeasible):
@@ -556,15 +597,17 @@ class Analyzer(object):
                 infeasible :
                     Set of infeasible paths.
 
-            Returns:            
+            Returns:
                 List of basis paths of the code being analyzed, each represented by an object of the Path class.
             """
             self.basis_paths = basis_paths
             self.basis_paths_nodes = [path.nodes for path in basis_paths]
             # self.resetPathExclusiveConstraints()
 
-            logger.info("Time taken to generate paths: %.2f seconds." %
-                        (time.perf_counter() - start_time))
+            logger.info(
+                "Time taken to generate paths: %.2f seconds."
+                % (time.perf_counter() - start_time)
+            )
 
             logger.info("Basis paths generated.")
 
@@ -574,29 +617,33 @@ class Analyzer(object):
                 logger.info("Iteratively improving the basis")
                 for path in infeasible:
                     self.add_path_exclusive_constraint(path)
-                edge_paths = \
-                    [Dag.get_edges(path.nodes) for path in self.basis_paths]
+                edge_paths = [Dag.get_edges(path.nodes) for path in self.basis_paths]
                 result = self.iteratively_find_overcomplete_basis(
-                    edge_paths, self.project_config.MAXIMUM_ERROR_SCALE_FACTOR)
+                    edge_paths, self.project_config.MAXIMUM_ERROR_SCALE_FACTOR
+                )
                 logger.info("Number of paths generated: %d" % len(result))
-                logger.info("Time taken to generate paths: %.2f seconds." %
-                            (time.perf_counter() - start_time))
+                logger.info(
+                    "Time taken to generate paths: %.2f seconds."
+                    % (time.perf_counter() - start_time)
+                )
                 return result
             else:
                 return self.basis_paths
-            
+
         if self.path_dimension == 1:
-            warn_msg = ("Basis matrix has dimensions 1x1. "
-                        "There is only one path through the function "
-                        "under analysis, which is the only basis path.")
-            logger.warning(warn_msg)   
-            
+            warn_msg = (
+                "Basis matrix has dimensions 1x1. "
+                "There is only one path through the function "
+                "under analysis, which is the only basis path."
+            )
+            logger.warning(warn_msg)
+
         if self.dag.num_nodes == 1 and self.dag.num_edges == 0:
             warn_msg = "Single node CFD with no edge. Only one possible path."
             logger.warning(warn_msg)
             basis_paths = [Path(nodes=[self.dag.source])]
             return on_exit(start_time, [])
-        
+
         i = 0
 
         # Collects all_temp_files infeasible paths discovered during the computation
@@ -604,8 +651,14 @@ class Analyzer(object):
         current_row, num_paths_unsat = 0, 0
         while current_row < (self.path_dimension - self.num_bad_rows):
             logger.info("Currently at row %d..." % (current_row + 1))
-            logger.info("So far, the bottom %d rows of the basis matrix are `bad'." % self.num_bad_rows)
-            logger.info("So far, %d candidate paths were found to be unsatisfiable." % num_paths_unsat)
+            logger.info(
+                "So far, the bottom %d rows of the basis matrix are `bad'."
+                % self.num_bad_rows
+            )
+            logger.info(
+                "So far, %d candidate paths were found to be unsatisfiable."
+                % num_paths_unsat
+            )
             logger.info(f"Basis matrix is {self.basis_matrix}")
             logger.info("")
 
@@ -622,7 +675,10 @@ class Analyzer(object):
             logger.info("")
 
             if ilp_problem.obj_val is None:
-                logger.info("Unable to find a candidate path to replace row %d." % (current_row + 1))
+                logger.info(
+                    "Unable to find a candidate path to replace row %d."
+                    % (current_row + 1)
+                )
                 logger.info("Moving the bad row to the bottom of the basis matrix.")
                 for k in range((current_row + 1), self.path_dimension):
                     self._swap_basis_matrix_rows(k - 1, k)
@@ -641,19 +697,27 @@ class Analyzer(object):
             self.basis_matrix[current_row] = compressed_path
             sign, new_basis_matrix_log_det = slogdet(self.basis_matrix)
             new_basis_matrix_det = exp(new_basis_matrix_log_det)
-            logger.info("Absolute value of the new determinant: %g" % new_basis_matrix_det)
+            logger.info(
+                "Absolute value of the new determinant: %g" % new_basis_matrix_det
+            )
             logger.info("")
 
             DETERMINANT_THRESHOLD = self.project_config.DETERMINANT_THRESHOLD
             MAX_INFEASIBLE_PATHS = self.project_config.MAX_INFEASIBLE_PATHS
-            if ((sign == 0 and new_basis_matrix_log_det == float("-inf")) or
-                    new_basis_matrix_det < DETERMINANT_THRESHOLD or
-                    num_paths_unsat >= MAX_INFEASIBLE_PATHS):  # If row is bad
-                
-                if (new_basis_matrix_det < DETERMINANT_THRESHOLD and not (sign == 0 and new_basis_matrix_log_det == float("-inf"))):
+            if (
+                (sign == 0 and new_basis_matrix_log_det == float("-inf"))
+                or new_basis_matrix_det < DETERMINANT_THRESHOLD
+                or num_paths_unsat >= MAX_INFEASIBLE_PATHS
+            ):  # If row is bad
+
+                if new_basis_matrix_det < DETERMINANT_THRESHOLD and not (
+                    sign == 0 and new_basis_matrix_log_det == float("-inf")
+                ):
                     logger.info("Determinant is too small.")
                 else:
-                    logger.info("Unable to find a path that makes the determinant non-zero.")
+                    logger.info(
+                        "Unable to find a path that makes the determinant non-zero."
+                    )
 
                 logger.info("Moving the bad row to the bottom of the basis matrix.")
 
@@ -667,11 +731,13 @@ class Analyzer(object):
                 logger.info("Checking if replacement is feasible...")
                 logger.info("")
                 result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
-  
+
                 # feasibility test
-                value = self.measure_path(result_path, f'gen-basis-path-row{current_row}-attempt{i}')
+                value = self.measure_path(
+                    result_path, f"gen-basis-path-row{current_row}-attempt{i}"
+                )
                 i += 1
-                if value < float('inf'):
+                if value < float("inf"):
                     # Sanity check:
                     # A row should not be replaced if it replaces a good row and decreases the determinant. However, replacing a bad row and decreasing the determinant is okay. (TODO: Are we actually doing this?)
                     logger.info("Replacement is feasible.")
@@ -699,15 +765,22 @@ class Analyzer(object):
         is_two_barycentric = False
         refinement_round = 0
         while not is_two_barycentric:
-            logger.info("Currently in round %d of refinement..." % (refinement_round + 1))
+            logger.info(
+                "Currently in round %d of refinement..." % (refinement_round + 1)
+            )
             logger.info("")
 
             is_two_barycentric = True
             current_row, num_paths_unsat = 0, 0
-            good_rows = (self.path_dimension - self.num_bad_rows)
+            good_rows = self.path_dimension - self.num_bad_rows
             while current_row < good_rows:
-                logger.info("Currently at row %d out of %d..." % (current_row + 1, good_rows))
-                logger.info("So far, %d candidate paths were found to be unsatisfiable." % num_paths_unsat)
+                logger.info(
+                    "Currently at row %d out of %d..." % (current_row + 1, good_rows)
+                )
+                logger.info(
+                    "So far, %d candidate paths were found to be unsatisfiable."
+                    % num_paths_unsat
+                )
                 logger.info(f"Basis matrix is {self.basis_matrix}")
                 logger.info("")
 
@@ -718,13 +791,18 @@ class Analyzer(object):
                     self.dag.edge_weights = self._calculate_subdets(current_row)
                 logger.info("Calculation complete.")
 
-                logger.info("Finding a candidate path using an integer linear program...")
+                logger.info(
+                    "Finding a candidate path using an integer linear program..."
+                )
                 logger.info("")
                 candidate_path_nodes, ilp_problem = pulp_helper.find_extreme_path(self)
                 logger.info("")
 
                 if ilp_problem.obj_val is None:
-                    logger.info("Unable to find a candidate path to replace row %d." % (current_row + 1))
+                    logger.info(
+                        "Unable to find a candidate path to replace row %d."
+                        % (current_row + 1)
+                    )
                     current_row += 1
                     num_paths_unsat = 0
                     continue
@@ -735,7 +813,9 @@ class Analyzer(object):
 
                 sign, old_basis_matrix_log_det = slogdet(self.basis_matrix)
                 old_basis_matrix_det = exp(old_basis_matrix_log_det)
-                logger.info("Absolute value of the old determinant: %g" % old_basis_matrix_det)
+                logger.info(
+                    "Absolute value of the old determinant: %g" % old_basis_matrix_det
+                )
 
                 # Temporarily replace the row in the basis matrix
                 # to calculate the new determinant.
@@ -743,21 +823,28 @@ class Analyzer(object):
                 self.basis_matrix[current_row] = compressed_path
                 sign, new_basis_matrix_log_det = slogdet(self.basis_matrix)
                 new_basis_matrix_det = exp(new_basis_matrix_log_det)
-                logger.info("Absolute value of the new determinant: %g" % new_basis_matrix_det)
+                logger.info(
+                    "Absolute value of the new determinant: %g" % new_basis_matrix_det
+                )
 
                 if new_basis_matrix_det > 2 * old_basis_matrix_det:
                     logger.info("Possible replacement for row found.")
                     logger.info("Checking if replacement is feasible...")
                     logger.info("")
-                    result_path = Path(ilp_problem=ilp_problem, nodes=candidate_path_nodes)
+                    result_path = Path(
+                        ilp_problem=ilp_problem, nodes=candidate_path_nodes
+                    )
                     basis_paths[current_row] = result_path
                     current_row += 1
                     num_paths_unsat = 0
-                    
-                    #feasibility test
-                    value = self.measure_path(result_path, f'gen-basis-path-replace-candid-{current_row+1}-{good_rows}')
 
-                    if value < float('inf'):
+                    # feasibility test
+                    value = self.measure_path(
+                        result_path,
+                        f"gen-basis-path-replace-candid-{current_row+1}-{good_rows}",
+                    )
+
+                    if value < float("inf"):
                         logger.info("Replacement is feasible.")
                         is_two_barycentric = False
                         basis_paths[current_row] = result_path
@@ -833,19 +920,17 @@ class Analyzer(object):
 
         return edge_weight_list
 
-
     def estimate_edge_weights(self):
         """
         Estimates the weights on the edges of the DAG, using the values
         of the basis "Path" objects. The result is stored in the instance
         variable "edgeWeights".
-        
+
         Precondition: The basis paths have been generated and have values.
         """
         self.dag.reset_edge_weights()
 
-        basis_values = [basis_path.measured_value for basis_path
-                        in self.basis_paths]
+        basis_values = [basis_path.measured_value for basis_path in self.basis_paths]
         # By default, we assume a value of 0 for each of the rows in
         # the basis matrix that no replacement could be found for
         # (the `bad' rows in the basis matrix).
@@ -860,8 +945,9 @@ class Analyzer(object):
         # programming problem will use.
         logger.info("Generating the list of weights on all_temp_files edges...")
         for reduced_edge_index, reduced_edge in enumerate(self.dag.edges_reduced):
-            self.dag.edge_weights[self.dag.edges_reduced_indices[reduced_edge]] = \
+            self.dag.edge_weights[self.dag.edges_reduced_indices[reduced_edge]] = (
                 reduced_edge_weights[reduced_edge_index]
+            )
         logger.info("List generated.")
 
     def generate_paths(self, *args, **kwargs):
@@ -869,15 +955,14 @@ class Analyzer(object):
 
     ### MEASUREMENT FUNCTIONS ####
     def measure_basis_paths(self):
-        """Measure all generated BASIS_PATHS again
-        """
+        """Measure all generated BASIS_PATHS again"""
         for i in range(len(self.basis_paths)):
             p: Path = self.basis_paths[i]
             self.measure_path(p, f"basis_path{i}")
 
     def measure_path(self, path: Path, output_name: str) -> int:
         """
-        Measure the Path if never measured before. If no name was set, the parameter output_name is used. 
+        Measure the Path if never measured before. If no name was set, the parameter output_name is used.
 
         Parameters:
             path: Path :
@@ -891,10 +976,12 @@ class Analyzer(object):
 
         if path.path_analyzer == None or path.name != output_name:
             path.name = output_name
-            path_analyzer: PathAnalyzer = PathAnalyzer(self.preprocessed_path, self.project_config, self.dag, path, output_name)
+            path_analyzer: PathAnalyzer = PathAnalyzer(
+                self.preprocessed_path, self.project_config, self.dag, path, output_name
+            )
             path.path_analyzer = path_analyzer
-            
-            path_analyzer = path.path_analyzer
+
+            # Measure the path (feasibility should have been checked already)
             value: int = path.measured_value
             value = max(value, path_analyzer.measure_path(self.backend))
             path.set_measured_value(value)
@@ -903,7 +990,7 @@ class Analyzer(object):
     def measure_paths(self, paths: list[Path], output_name_prefix: str) -> int:
         """
         Measure the list of PATHS. Using prefix and index as name if none is given.
-        
+
         Parameters:
             paths: list[Path] :
                 List of paths to measure.
@@ -915,7 +1002,6 @@ class Analyzer(object):
         """
         result = []
         for i in range(len(paths)):
-            output_name: str = f'{output_name_prefix}{i}'
+            output_name: str = f"{output_name_prefix}{i}"
             result.append(self.measure_path(paths[i], output_name))
         return result
-

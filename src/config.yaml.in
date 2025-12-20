@@ -25,9 +25,10 @@ IDENT_TEMPVAR: __gt
 
 ## temps
 TEMP_PROJECT_CONFIG: project-config
+TEMP_FOLDER: generated
 TEMP_MERGED: merged
 TEMP_LOOP_CONFIG: loop-config
-TEMP_SUFFIX: gt
+TEMP_SUFFIX: _generated
 TEMP_SUFFIX_MERGED: merged
 TEMP_SUFFIX_UNROLLED: unrolled
 TEMP_SUFFIX_INLINED: inlined
