@@ -1,6 +1,7 @@
 import subprocess
 import sys
 
+
 def run(command, shell=False):
     print(f"==> Executing command: {' '.join(command)}")
     result = subprocess.run(command, shell=shell, check=True)

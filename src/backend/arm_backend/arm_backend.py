@@ -10,6 +10,7 @@ from project_configuration import ProjectConfiguration
 from defaults import logger
 from gametime_error import GameTimeError
 
+
 class ArmBackend(Backend):
     timing_func = """
 static inline unsigned long long read_cycle_count() {
@@ -18,12 +19,14 @@ static inline unsigned long long read_cycle_count() {
     unsigned long long nanoTime = time.tv_sec * 1000000000L + time.tv_nsec;
     return nanoTime;
 }
-"""    
+"""
 
     def __init__(self, project_config: ProjectConfiguration):
         super(ArmBackend, self).__init__(project_config, "Arm")
 
-    def generate_executable(self, filepath: str, func_name: str, inputs: str, measure_folder: str) -> str:
+    def generate_executable(
+        self, filepath: str, func_name: str, inputs: str, measure_folder: str
+    ) -> str:
         """
         Modifies the input program to use INPUTS and generates the executable code. Stored at MEASURE_FOLDER/driver
 
@@ -38,14 +41,30 @@ static inline unsigned long long read_cycle_count() {
                 The folder to store generated executable.
 
         Returns:
-            str: 
+            str:
                 Path to the executable code.
         """
-        exec_file = generate_executable(filepath, measure_folder, func_name, inputs, self.timing_func)
-        modified_bitcode_file_path = clang_helper.compile_to_llvm_for_exec(exec_file, measure_folder, "modified_output", self.project_config.included, self.project_config.compile_flags)
-        return clang_helper.bc_to_executable(modified_bitcode_file_path, measure_folder, "driver", self.project_config.included, self.project_config.compile_flags)
+        exec_file = generate_executable(
+            filepath, measure_folder, func_name, inputs, self.timing_func
+        )
+        modified_bitcode_file_path = clang_helper.compile_to_llvm_for_exec(
+            exec_file,
+            measure_folder,
+            "modified_output",
+            self.project_config.included,
+            self.project_config.compile_flags,
+        )
+        return clang_helper.bc_to_executable(
+            modified_bitcode_file_path,
+            measure_folder,
+            "driver",
+            self.project_config.included,
+            self.project_config.compile_flags,
+        )
 
-    def run_backend_and_parse_output(self, stored_folder: str, executable_path: str) -> int:
+    def run_backend_and_parse_output(
+        self, stored_folder: str, executable_path: str
+    ) -> int:
         """
         Runs the executable in EXECUTABLE_PATH in host machine and extracts the outputs from program.
         Temperaries are stored in STORED_FOLDER.
@@ -65,21 +84,21 @@ static inline unsigned long long read_cycle_count() {
 
         out_file_path = os.path.join(stored_folder, "measure.out")
         while not os.path.exists(out_file_path):
-            print('Waiting for measure.out file')
+            print("Waiting for measure.out file")
             time.sleep(5)
 
         out_filepath = os.path.join(stored_folder, "measure.out")
         while not os.path.exists(out_filepath):
-            print('Waiting for measure.out file')
+            print("Waiting for measure.out file")
             time.sleep(5)
 
         with open(out_filepath, "r") as out_file:
             lines = out_file.readlines()
-        
-        last_line = lines[-1] if lines else ''
 
-        match = re.search(r'\d+$', last_line)
-        
+        last_line = lines[-1] if lines else ""
+
+        match = re.search(r"\d+$", last_line)
+
         if match:
             extracted_integer = int(match.group())
             return extracted_integer
@@ -103,11 +122,15 @@ static inline unsigned long long read_cycle_count() {
         stored_folder: str = measure_folder
         filepath: str = self.project_config.location_orig_file
         func_name: str = self.project_config.func
-        executable_path: str = self.generate_executable(filepath, func_name, inputs, measure_folder)
+        executable_path: str = self.generate_executable(
+            filepath, func_name, inputs, measure_folder
+        )
         cycle_count: int = -1
         try:
-            cycle_count: int = self.run_backend_and_parse_output(stored_folder, executable_path)
+            cycle_count: int = self.run_backend_and_parse_output(
+                stored_folder, executable_path
+            )
         except EnvironmentError as e:
-            err_msg: str = ("Error in measuring the cycle count of a path in Arm: %s" % e)
+            err_msg: str = "Error in measuring the cycle count of a path in Arm: %s" % e
             logger.info(err_msg)
         return cycle_count

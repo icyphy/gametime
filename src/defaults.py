@@ -35,7 +35,9 @@ logger.info("Reading GameTime configuration in %s..." % config_file)
 logger.info("")
 #: Default :class:`~gametime.configuration.GametimeConfiguration` object
 #: that represents the configuration of GameTime.
-config: gametime_configuration.GametimeConfiguration = gametime_configuration.read_gametime_config_yaml(config_file)
+config: gametime_configuration.GametimeConfiguration = (
+    gametime_configuration.read_gametime_config_yaml(config_file)
+)
 
 logger.info("Successfully configured GameTime.")
 logger.info("")

@@ -16,18 +16,19 @@ class Interval(object):
     an interval of values.
     """
 
-    def __init__(self, lower: int=None, upper: int=None):
+    def __init__(self, lower: int = None, upper: int = None):
         if lower is not None and upper is not None:
             lower, upper = sorted((lower, upper))
         self.lower: int = lower
         self.upper: int = upper
 
     def __str__(self):
-        return ("%s%s, %s%s" %
-                ("(" if self.lower is None else "[",
-                 (self.lower or "-Infinity"),
-                 (self.upper or "Infinity"),
-                 ")" if self.upper is None else "]"))
+        return "%s%s, %s%s" % (
+            "(" if self.lower is None else "[",
+            (self.lower or "-Infinity"),
+            (self.upper or "Infinity"),
+            ")" if self.upper is None else "]",
+        )
 
     @property
     def lower_bound(self) -> int:

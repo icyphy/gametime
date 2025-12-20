@@ -9,6 +9,7 @@ class GameTime(object):
     """Contains methods and variables that allow a user to import
     GameTime as a module.
     """
+
     @staticmethod
     def analyze(project_config: ProjectConfiguration) -> Analyzer:
         """

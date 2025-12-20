@@ -8,7 +8,19 @@ import inliner
 from project_configuration import ProjectConfiguration
 import unroller
 
-def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, input_c_file, additional_files, c_filename, labels_file, all_labels_file, func_name, output_dir, project_config: ProjectConfiguration):
+
+def compile_and_run_cplusplus(
+    modify_bit_code_cpp_file,
+    modify_bit_code_exec_file,
+    input_c_file,
+    additional_files,
+    c_filename,
+    labels_file,
+    all_labels_file,
+    func_name,
+    output_dir,
+    project_config: ProjectConfiguration,
+):
     """
     Compile and run a C++ file that modifies LLVM bitcode, then process the C file through several steps.
 
@@ -33,33 +45,69 @@ def compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_fil
             Configuration object containing project settings, such as included files and compilation flags.
     """
     # Get llvm-config flags
-    llvm_config_command = ['llvm-config', '--cxxflags', '--ldflags', '--libs', 'core', 'support', 'bitreader', 'bitwriter', 'irreader']
-    llvm_config_output = subprocess.run(llvm_config_command, capture_output=True, text=True, check=True).stdout.strip().split()
+    llvm_config_command = [
+        "llvm-config",
+        "--cxxflags",
+        "--ldflags",
+        "--libs",
+        "core",
+        "support",
+        "bitreader",
+        "bitwriter",
+        "irreader",
+    ]
+    llvm_config_output = (
+        subprocess.run(llvm_config_command, capture_output=True, text=True, check=True)
+        .stdout.strip()
+        .split()
+    )
 
     # Compile C++ file
-    compile_command = ['clang++', '-o', modify_bit_code_exec_file, modify_bit_code_cpp_file] + llvm_config_output
+    compile_command = [
+        "clang++",
+        "-o",
+        modify_bit_code_exec_file,
+        modify_bit_code_cpp_file,
+    ] + llvm_config_output
     subprocess.run(compile_command, check=True)
 
-    #TODO: add extra flag and includes through project configuration
-    compiled_file = clang_helper.compile_to_llvm_for_analysis(input_c_file, output_dir, c_filename, project_config.included, project_config.compile_flags)
-    if project_config.inlined :
+    # TODO: add extra flag and includes through project configuration
+    compiled_file = clang_helper.compile_to_llvm_for_analysis(
+        input_c_file,
+        output_dir,
+        c_filename,
+        project_config.included,
+        project_config.compile_flags,
+    )
+    if project_config.inlined:
         compiled_additional_files = []
         if additional_files:
-            compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(additional_files, output_dir)
+            compiled_additional_files = clang_helper.compile_list_to_llvm_for_analysis(
+                additional_files, output_dir
+            )
         compiled_files = [compiled_file] + compiled_additional_files
-        input_bc_file = inliner.inline_functions(compiled_files, output_dir, c_filename, func_name)
-    else: 
+        input_bc_file = inliner.inline_functions(
+            compiled_files, output_dir, c_filename, func_name
+        )
+    else:
         input_bc_file = compiled_file
     # input_bc_file = clang_helper.unroll_loops(inlined_file, output_dir,
-                                                       # f"{c_filename}-unrolled", project_config)
-    if project_config.UNROLL_LOOPS :
+    # f"{c_filename}-unrolled", project_config)
+    if project_config.UNROLL_LOOPS:
         input_bc_file = unroller.unroll(input_bc_file, output_dir, c_filename)
 
     # Run the compiled program
     # TODO: change modify bc to take in bc file, not c file
-    run_command = [modify_bit_code_exec_file, input_bc_file, labels_file, all_labels_file, func_name]
+    run_command = [
+        modify_bit_code_exec_file,
+        input_bc_file,
+        labels_file,
+        all_labels_file,
+        func_name,
+    ]
     subprocess.run(run_command, check=True)
     return f"{input_bc_file[:-3]}_gvMod.bc"
+
 
 def run_klee(klee_file):
     """
@@ -69,8 +117,9 @@ def run_klee(klee_file):
         klee_file : str
             Path to the file modified for KLEE execution.
     """
-    run_klee_command = ['klee', klee_file]
+    run_klee_command = ["klee", klee_file]
     subprocess.run(run_klee_command, check=True)
+
 
 def extract_labels_from_file(filename):
     """
@@ -85,7 +134,7 @@ def extract_labels_from_file(filename):
             A List of basic block labels
     """
     labels = []
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         for line in file:
             try:
                 label = float(line.strip())
@@ -94,14 +143,20 @@ def extract_labels_from_file(filename):
                 print(f"Ignoring non-numeric value: {line.strip()}")
     return labels
 
-def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: str, total_number_of_labels: int):
+
+def run_smt(
+    project_config: ProjectConfiguration,
+    labels_file: str,
+    output_dir: str,
+    total_number_of_labels: int,
+):
     """
     This function generates the input for the program to be analzed to drive down the given path.
     The input is generated by utilizing the symbolic execution engine KLEE, which uses SMT-Solvers like Z3
     unde the hood. Before inputting the file into KLEE we need preprocess the file, which involves
     modifiying the source code, to add the KLEE specific function calls and guide KLEE to only return
     the input for the path given.
-    
+
     Parameters:
         project_config
                 :class:`~gametime.projectConfiguration.ProjectConfiguration`
@@ -124,20 +179,36 @@ def run_smt(project_config: ProjectConfiguration, labels_file: str, output_dir: 
     labels = extract_labels_from_file(labels_file)
     number_of_labels = len(labels)
 
-    # format c file to klee 
-    klee_file_path = format_for_klee(c_file, c_file_path, output_dir, number_of_labels, total_number_of_labels, project_config.func)
+    # format c file to klee
+    klee_file_path = format_for_klee(
+        c_file,
+        c_file_path,
+        output_dir,
+        number_of_labels,
+        total_number_of_labels,
+        project_config.func,
+    )
 
     # insert assignments of global variables
     # Get the path to the smt_solver directory relative to this file
     smt_solver_dir = os.path.dirname(os.path.abspath(__file__))
-    modify_bit_code_cpp_file = os.path.join(smt_solver_dir, 'modify_bitcode.cpp')
-    modify_bit_code_exec_file = os.path.join(smt_solver_dir, 'modify_bitcode')
-    modified_klee_file_bc = compile_and_run_cplusplus(modify_bit_code_cpp_file, modify_bit_code_exec_file, klee_file_path, additional_files_path, c_file + "_klee_format", labels_file, os.path.join(project_config.location_temp_dir, "labels_0.txt"), project_config.func, output_dir, project_config)
-    
+    modify_bit_code_cpp_file = os.path.join(smt_solver_dir, "modify_bitcode.cpp")
+    modify_bit_code_exec_file = os.path.join(smt_solver_dir, "modify_bitcode")
+    modified_klee_file_bc = compile_and_run_cplusplus(
+        modify_bit_code_cpp_file,
+        modify_bit_code_exec_file,
+        klee_file_path,
+        additional_files_path,
+        c_file + "_klee_format",
+        labels_file,
+        os.path.join(project_config.location_temp_dir, "labels_0.txt"),
+        project_config.func,
+        output_dir,
+        project_config,
+    )
+
     # run klee
     run_klee(modified_klee_file_bc)
 
     # extract klee input
     return find_and_run_test(output_dir, output_dir)
-
-

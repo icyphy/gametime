@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Functions to help interacting with clang on the command
+"""Functions to help interacting with clang on the command
 line. Allows creation of dags
 """
 import os
@@ -14,7 +14,14 @@ from project_configuration import ProjectConfiguration
 import command_utils
 
 
-def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = False) -> str:
+def compile_to_llvm_for_exec(
+    c_filepath: str,
+    output_file_folder: str,
+    output_name: str,
+    extra_libs: List[str] = [],
+    extra_flags: List[str] = [],
+    readable: bool = False,
+) -> str:
     """
     Compile the C program into bitcode in OUTPUT_FILE_FOLDER.
 
@@ -39,7 +46,15 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
     file_to_compile: str = c_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands: List[str] = ["clang", "-emit-llvm", "-O0", "-o", output_file, "-c", file_to_compile] + extra_flags
+    commands: List[str] = [
+        "clang",
+        "-emit-llvm",
+        "-O0",
+        "-o",
+        output_file,
+        "-c",
+        file_to_compile,
+    ] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
     command_utils.run(commands)
@@ -52,15 +67,41 @@ def compile_to_llvm_for_exec(c_filepath: str, output_file_folder: str, output_na
 
     return output_file
 
-def compile_list_to_llvm_for_analysis(c_filepaths: List[str] , output_file_folder: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> List[str]:
+
+def compile_list_to_llvm_for_analysis(
+    c_filepaths: List[str],
+    output_file_folder: str,
+    extra_libs: List[str] = [],
+    extra_flags: List[str] = [],
+    readable: bool = True,
+) -> List[str]:
     compiled_files = []
     for c_filepath in c_filepaths:
         _, extension = os.path.splitext(c_filepath)
-        basename = os.path.basename(c_filepath)[:(-len(extension))] # Base filename after removing the extension
-        compiled_files.append(compile_to_llvm_for_analysis(c_filepath, output_file_folder, f"{basename}{config.TEMP_SUFFIX}", extra_libs, extra_flags, readable))
+        basename = os.path.basename(c_filepath)[
+            : (-len(extension))
+        ]  # Base filename after removing the extension
+        compiled_files.append(
+            compile_to_llvm_for_analysis(
+                c_filepath,
+                output_file_folder,
+                f"{basename}{config.TEMP_SUFFIX}",
+                extra_libs,
+                extra_flags,
+                readable,
+            )
+        )
     return compiled_files
 
-def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[], readable: bool = True) -> str:
+
+def compile_to_llvm_for_analysis(
+    c_filepath: str,
+    output_file_folder: str,
+    output_name: str,
+    extra_libs: List[str] = [],
+    extra_flags: List[str] = [],
+    readable: bool = True,
+) -> str:
     """
     Compile the C program into bitcode in OUTPUT_FILE_FOLDER using -O0 option to preserve maximum structure.
 
@@ -87,7 +128,17 @@ def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, outp
 
     # "-Wno-implicit-function-declaration" is required so that clang
     # does not report "undeclared function '__assert_fail'"
-    commands: List[str] = ["clang", "-emit-llvm", "-Xclang","-disable-O0-optnone", "-Wno-implicit-function-declaration", "-c", file_to_compile, "-o", output_file] + extra_flags
+    commands: List[str] = [
+        "clang",
+        "-emit-llvm",
+        "-Xclang",
+        "-disable-O0-optnone",
+        "-Wno-implicit-function-declaration",
+        "-c",
+        file_to_compile,
+        "-o",
+        output_file,
+    ] + extra_flags
     for lib in extra_libs:
         commands.append(f"-I{lib}")
     command_utils.run(commands)
@@ -99,7 +150,14 @@ def compile_to_llvm_for_analysis(c_filepath: str , output_file_folder: str, outp
         command_utils.run(commands)
     return output_file
 
-def bc_to_executable(bc_filepath: str, output_folder: str, output_name: str, extra_libs: List[str]=[], extra_flags: List[str]=[]) -> str:
+
+def bc_to_executable(
+    bc_filepath: str,
+    output_folder: str,
+    output_name: str,
+    extra_libs: List[str] = [],
+    extra_flags: List[str] = [],
+) -> str:
     """
     Compile the LLVM bitcode program into executable in OUTPUT_FILE_FOLDER.
 
@@ -154,11 +212,22 @@ def dump_object(object_filepath: str, output_folder: str, output_name: str) -> s
 
     output_file: str = os.path.join(output_folder, f"{output_name}.dmp")
 
-    commands: List[str] = ["riscv32-unknown-elf-objdump", "--target=riscv32", "-march=rv32i", object_filepath, "-c", "-o", output_file]
+    commands: List[str] = [
+        "riscv32-unknown-elf-objdump",
+        "--target=riscv32",
+        "-march=rv32i",
+        object_filepath,
+        "-c",
+        "-o",
+        output_file,
+    ]
     command_utils.run(commands)
     return output_file
 
-def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = "main") -> str:
+
+def generate_dot_file(
+    bc_filename: str, bc_file_folder: str, output_name: str = "main"
+) -> str:
     """
     Create dag from .bc file using opt through executing shell commands
 
@@ -178,13 +247,21 @@ def generate_dot_file(bc_filename: str, bc_file_folder: str, output_name: str = 
     output_file: str = f".{output_name}.dot"
     cur_cwd: str = os.getcwd()
     os.chdir(bc_file_folder)  # opt generates .dot in cwd
-    commands: List[str] = ["opt", "-passes=dot-cfg", "-S", "-disable-output", bc_filename]
+    commands: List[str] = [
+        "opt",
+        "-passes=dot-cfg",
+        "-S",
+        "-disable-output",
+        bc_filename,
+    ]
     command_utils.run(commands)
     os.chdir(cur_cwd)
     return output_file
 
 
-def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str) -> str:
+def inline_functions(
+    bc_filepath: str, output_file_folder: str, output_name: str
+) -> str:
     """
     Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
@@ -201,7 +278,7 @@ def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str
         output_name: str :
             file to write unrolled .bc file. Outputs in a
             human-readable form already.
-        
+
     Returns:
         str:
             Path of the output .bc file
@@ -209,17 +286,25 @@ def inline_functions(bc_filepath: str, output_file_folder: str, output_name: str
     """
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
 
-    commands: List[str] = ["opt",
-                "-passes=\"always-inline,inline\""
-                "-inline-threshold=10000000",
-                "-S", bc_filepath,
-                "-o", output_file]
-        
+    commands: List[str] = [
+        "opt",
+        '-passes="always-inline,inline"' "-inline-threshold=10000000",
+        "-S",
+        bc_filepath,
+        "-o",
+        output_file,
+    ]
+
     command_utils.run(commands)
     return output_file
 
 
-def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, project_config: ProjectConfiguration) -> str:
+def unroll_loops(
+    bc_filepath: str,
+    output_file_folder: str,
+    output_name: str,
+    project_config: ProjectConfiguration,
+) -> str:
     """
     Unrolls the provided input file and output the unrolled version in
     the output file using llvm's opt utility. Could be unreliable if input_file
@@ -246,21 +331,28 @@ def unroll_loops(bc_filepath: str, output_file_folder: str, output_name: str, pr
     """
     # return bc_filepath
     output_file: str = os.path.join(output_file_folder, f"{output_name}.bc")
-    
-    # Related but unused passes: 
-    # -unroll-threshold=10000000, -unroll-count=4, 
+
+    # Related but unused passes:
+    # -unroll-threshold=10000000, -unroll-count=4,
     # -unroll-allow-partial, -instcombine,
     # -reassociate, -indvars, -mem2reg
-    commands: List[str] = ["opt",
-                "-passes='simplifycfg,loops,lcssa,loop-simplify,loop-rotate,indvars,loop-unroll'"
-                "-S", bc_filepath,
-                "-o", output_file]
+    commands: List[str] = [
+        "opt",
+        "-passes='simplifycfg,loops,lcssa,loop-simplify,loop-rotate,indvars,loop-unroll'"
+        "-S",
+        bc_filepath,
+        "-o",
+        output_file,
+    ]
 
     command_utils.run(commands)
 
     return output_file
 
-def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=False) -> None:
+
+def remove_temp_cil_files(
+    project_config: ProjectConfiguration, all_temp_files=False
+) -> None:
     """
     Removes the temporary files created by CIL during its analysis.
 
@@ -290,4 +382,3 @@ def remove_temp_cil_files(project_config: ProjectConfiguration, all_temp_files=F
     # Remove these files.
     other_temp_files = rf".*{config.TEMP_SUFFIX}\.[^c]+"
     remove_files([other_temp_files], project_config.location_temp_dir)
-

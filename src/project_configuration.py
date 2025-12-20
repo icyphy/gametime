@@ -14,11 +14,19 @@ class DebugConfiguration(object):
 
     """
 
-    def __init__(self, keep_cil_temps=False, dump_ir=False,
-                 keep_ilp_solver_output=False, dump_instruction_trace=False,
-                 dump_path=False, dump_all_paths=False, dump_smt_trace=False,
-                 dump_all_queries=False, keep_parser_output=False,
-                 keep_simulator_output=False):
+    def __init__(
+        self,
+        keep_cil_temps=False,
+        dump_ir=False,
+        keep_ilp_solver_output=False,
+        dump_instruction_trace=False,
+        dump_path=False,
+        dump_all_paths=False,
+        dump_smt_trace=False,
+        dump_all_queries=False,
+        keep_parser_output=False,
+        keep_simulator_output=False,
+    ):
         #: Keep the temporary files that CIL generates during its analysis.
         self.KEEP_CIL_TEMPS = keep_cil_temps
 
@@ -62,21 +70,38 @@ class ProjectConfiguration(object):
     Stores information necessary to configure a GameTime project.
     """
 
-    def __init__(self, location_file,  func, location_additional_files=None,
-                 start_label="", end_label="", included=None, merged=None,
-                 inlined=None, unroll_loops=False, randomize_initial_basis=False,
-                 maximum_error_scale_factor=10,
-                 determinant_threshold=0.001, max_infeasible_paths=100,
-                 model_as_nested_arrays=False, prevent_basis_refinement=False,
-                 ilp_solver_name="", debug_config=None, gametime_flexpret_path="", 
-                 gametime_path="", gametime_file_path="", compile_flags=[], backend=""):
+    def __init__(
+        self,
+        location_file,
+        func,
+        location_additional_files=None,
+        start_label="",
+        end_label="",
+        included=None,
+        merged=None,
+        inlined=None,
+        unroll_loops=False,
+        randomize_initial_basis=False,
+        maximum_error_scale_factor=10,
+        determinant_threshold=0.001,
+        max_infeasible_paths=100,
+        model_as_nested_arrays=False,
+        prevent_basis_refinement=False,
+        ilp_solver_name="",
+        debug_config=None,
+        gametime_flexpret_path="",
+        gametime_path="",
+        gametime_file_path="",
+        compile_flags=[],
+        backend="",
+    ):
         ### FILE INFORMATION ###
         # Location of the directory that contains the file to be analyzed.
         self.location_orig_dir = ""
 
         # Location of the file to be analyzed.
         self.location_orig_file = location_file
-        
+
         # Location of the additional files to be analyzed.
         self.location_additional_files = location_additional_files or []
 
@@ -181,13 +206,14 @@ class ProjectConfiguration(object):
         self.debug_config = debug_config or DebugConfiguration()
 
         ### INITIALIZATION ###
-        _, extension = \
-            os.path.splitext(self.location_orig_file)
+        _, extension = os.path.splitext(self.location_orig_file)
 
         if extension.lower() != ".c":
-            err_msg = ("Error running the project configuration "
-                      "reader: the name of the file to analyze "
-                      "does not end with a `.c` extension.")
+            err_msg = (
+                "Error running the project configuration "
+                "reader: the name of the file to analyze "
+                "does not end with a `.c` extension."
+            )
             raise GameTimeError(err_msg)
 
         # Infer the directory that contains the file to analyze.
@@ -212,14 +238,14 @@ class ProjectConfiguration(object):
         # Infer the name and location of the temporary file to be analyzed
         # by GameTime, both with and without the extension.
         name_orig_no_extension = self.name_orig_no_extension
-        name_temp_no_extension = ("%s%s" %
-                                  (name_orig_no_extension, config.TEMP_SUFFIX))
+        name_temp_no_extension = "%s%s" % (name_orig_no_extension, config.TEMP_SUFFIX)
         self.name_temp_no_extension = name_temp_no_extension
         name_temp_file = "%s.c" % name_temp_no_extension
         self.name_temp_file = name_temp_file
 
-        location_temp_file = \
-            os.path.normpath(os.path.join(location_temp_dir, name_temp_file))
+        location_temp_file = os.path.normpath(
+            os.path.join(location_temp_dir, name_temp_file)
+        )
         self.location_temp_file = location_temp_file
         self.location_temp_no_extension = os.path.splitext(location_temp_file)[0]
 
@@ -227,8 +253,9 @@ class ProjectConfiguration(object):
         # stores the project configuration information.
         name_xml_file = "%s.xml" % config.TEMP_PROJECT_CONFIG
         self.name_xml_file = name_xml_file
-        self.location_xml_file = \
-            os.path.normpath(os.path.join(location_temp_dir, name_xml_file))
+        self.location_xml_file = os.path.normpath(
+            os.path.join(location_temp_dir, name_xml_file)
+        )
 
         # Initialize the PuLP solver object that interfaces with
         # the ILP solver whose name is provided.
@@ -304,4 +331,3 @@ class ProjectConfiguration(object):
         filename: str = name + extension
         orig_filename: str = os.path.join(self.location_orig_dir, filename)
         return orig_filename
-

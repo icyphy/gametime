@@ -13,10 +13,10 @@ def write_klee_input_to_file(filename):
             Path to the KLEE test input file.
     """
     # Define a regular expression pattern to extract hex values
-    pattern = re.compile(r'object \d+: hex : (0x[0-9a-fA-F]+)')
+    pattern = re.compile(r"object \d+: hex : (0x[0-9a-fA-F]+)")
 
     # Open the input file
-    with open(filename, 'r') as infile:
+    with open(filename, "r") as infile:
         data = infile.read()
 
     # Find all hex values using regex
@@ -27,16 +27,16 @@ def write_klee_input_to_file(filename):
     for value in hex_values:
         hex_str = value[2:]  # remove '0x'
         if len(hex_str) % 2 != 0:
-            hex_str = '0' + hex_str  # pad to even length
-        bytes_list = [hex_str[i:i+2] for i in range(0, len(hex_str), 2)]
+            hex_str = "0" + hex_str  # pad to even length
+        bytes_list = [hex_str[i : i + 2] for i in range(0, len(hex_str), 2)]
         bytes_list.reverse()
-        big_endian = ''.join(bytes_list)
-        big_endian_values.append('0x' + big_endian)
+        big_endian = "".join(bytes_list)
+        big_endian_values.append("0x" + big_endian)
     # Write big endian hex values to a new text file
     values_filename = filename[:-4] + "_values.txt"
-    with open(values_filename, 'w') as outfile:
+    with open(values_filename, "w") as outfile:
         for value in big_endian_values:
-            outfile.write(value + '\n')
+            outfile.write(value + "\n")
 
     print(f"Big endian hex values extracted and written to {values_filename}")
 
@@ -57,10 +57,9 @@ def find_test_file(klee_last_dir):
     for root, dirs, files in os.walk(klee_last_dir):
         for file in files:
             # Check if the file is a KLEE test case input file
-            if file.endswith('.ktest'):
+            if file.endswith(".ktest"):
                 ktest_file = os.path.join(root, file)
-                assert_err_file = os.path.splitext(
-                    ktest_file)[0] + '.assert.err'
+                assert_err_file = os.path.splitext(ktest_file)[0] + ".assert.err"
                 # Check if the assert.err file exists
                 if not os.path.exists(assert_err_file):
                     return ktest_file
@@ -78,8 +77,8 @@ def run_ktest_tool(ktest_file, output_file):
             Path to the file where the output will be saved.
     """
     # Run ktest-tool on the ktest file and save the output to the output file
-    with open(output_file, 'w') as f:
-        subprocess.run(['ktest-tool', ktest_file], stdout=f, text=True)
+    with open(output_file, "w") as f:
+        subprocess.run(["ktest-tool", ktest_file], stdout=f, text=True)
 
 
 def find_and_run_test(c_file_gt_dir, output_dir):

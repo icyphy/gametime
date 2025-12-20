@@ -22,13 +22,11 @@ class IndexExpression(object):
         self.indices: Tuple[int] = indices
 
     def get_name(self) -> str:
-        """Name of the variable in the expression whose information is stored in this object.
-        """
+        """Name of the variable in the expression whose information is stored in this object."""
         return self.name
 
     def get_indices(self) -> Tuple[int]:
-        """Tuple of the temporary index numbers used as indices in the expression.
-        """
+        """Tuple of the temporary index numbers used as indices in the expression."""
         return self.indices
 
     def __eq__(self, other):
@@ -48,6 +46,7 @@ class VariableIndexExpression(IndexExpression):
     a temporary index variable, where the expression represents a
     variable.
     """
+
     def __init__(self, name):
         IndexExpression.__init__(self, name, [])
 
@@ -57,4 +56,5 @@ class ArrayIndexExpression(IndexExpression):
     a temporary index variable, where the expression represents an
     array (or aggregate) access.
     """
+
     pass
