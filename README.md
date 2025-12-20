@@ -263,28 +263,28 @@ Example output:
 ============================================================
 GAMETIME ANALYSIS RESULTS
 ============================================================
-Function analyzed: compute
+Function analyzed: test
 Backend: flexpret
-Number of basis paths: 3
-Number of generated paths: 8
+Number of basis paths: 5
+Number of generated paths: 6
 
 Basis Paths:
   0: gen-basis-path-row0-attempt0 = 62
-  1: gen-basis-path-row1-attempt1 = 61
-  2: gen-basis-path-row2-attempt2 = 38
+  1: gen-basis-path-row1-attempt1 = 62
+  2: gen-basis-path-row2-attempt2 = 50
+  3: gen-basis-path-row3-attempt4 = 50
+  4: gen-basis-path-row4-attempt6 = 44
 
 Generated Paths:
-  0: path0 = 62 *WCET*
-  1: path1 = 62 *WCET*
-  2: path2 = 61
-  3: path3 = 61
-  4: path4 = 38
-  5: path5 = 38
-  6: path6 = 38
-  7: path7 = 38
+  0: feasible-path0 = predicted: 62.0, measured: 62 *WCET*
+  1: feasible-path1 = predicted: 62.0, measured: 62 *WCET*
+  2: feasible-path2 = predicted: 50.0, measured: 50
+  3: feasible-path3 = predicted: 50.0, measured: 50
+  4: feasible-path4 = predicted: 44.0, measured: 45
+  5: feasible-path5 = predicted: 44.0, measured: 44
 
 Worst-Case Execution Time (WCET): 62
-WCET Path: path0
+WCET Path: feasible-path0
 ============================================================
 
 Analysis completed successfully!
@@ -300,13 +300,13 @@ Analysis completed successfully!
 
 ```bash
 # Analyze with FlexPRET backend
-gametime test/tacle_test/programs/if_elif_else --backend flexpret
+gametime test/if_statements --backend flexpret
 
 # Keep temporary files for debugging
-gametime test/tacle_test/programs/if_elif_else --backend flexpret --no-clean
+gametime test/if_statements --backend flexpret --no-clean
 
 # Specify config file directly
-gametime test/tacle_test/programs/if_elif_else/config.yaml --backend flexpret
+gametime test/if_statements/config.yaml --backend flexpret
 ```
 
 ### Exploring Example Programs
@@ -315,11 +315,10 @@ GameTime includes several example programs in the `test` directory:
 
 ```bash
 # List available examples
-ls test/tacle_test/programs/
-ls test/flexpret_test/programs/
+ls test/
 
 # Run an example
-gametime test/tacle_test/programs/if_elif_else --backend flexpret
+gametime test/if_statements --backend flexpret
 ```
 
 
@@ -330,7 +329,5 @@ This project is licensed under the terms of the [MIT License](LICENSE).
 
 ## Contact
 
-If you have any questions or encounter any issues, please open an issue on the GitHub repository or reach out to the project maintainers.
+If you have any questions or encounter any issues, please open an issue on the GitHub repository.
 
-
-By following these instructions, you should be able to get Gametime up and running on your machine. Happy coding!
