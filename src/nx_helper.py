@@ -70,9 +70,23 @@ def remove_back_edges_to_make_dag(G, root):
         except StopIteration:
             stack.pop()
 
+    # Find original sink before removing back edges.
+    original_sink = [node for node in G.nodes() if G.out_degree(node) == 0][0]
+
     # Remove identified back edges
     print(f"num_edges pre = {G.number_of_edges()}")
     G.remove_edges_from(back_edges)
+
+    # Removing back edges can create new sink nodes (nodes with no outgoing edges).
+    # Connect these to the original sink to maintain the single-sink property
+    # required by the basis path analysis.
+    new_sinks = [
+        node for node in G.nodes()
+        if G.out_degree(node) == 0 and node != original_sink
+    ]
+    for node in new_sinks:
+        G.add_edge(node, original_sink)
+
     # Update num_edges after edge removal
     G.num_edges = G.number_of_edges()
     print(f"num_edges post = {G.num_edges}")
