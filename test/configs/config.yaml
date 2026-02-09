@@ -43,7 +43,7 @@ gametime-project:
     inline: yes
     #Bool for whether or not to unroll loops
     #uncomment to unroll loops
-    unroll-loops: Yes
+    unroll-loops: yes
 
   analysis:
     maximum-error-scale-factor: 10

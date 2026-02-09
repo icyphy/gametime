@@ -30,7 +30,7 @@
 
 #define bsort_SIZE 2
 
-int bsort_return( int Array[]  )
+int bsort_return( int Array[bsort_SIZE]  )
 {
   int Sorted = 1;
   int Index;
@@ -49,7 +49,7 @@ int bsort_return( int Array[]  )
 
 /* Sorts an array of integers of size bsort_SIZE in ascending
    order with bubble sort. */
-int bsort_BubbleSort( int Array[] )
+int bsort_BubbleSort( int Array[bsort_SIZE] )
 {
   int Sorted = 0;
   int Temp, Index, i;

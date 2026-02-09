@@ -1,8 +1,8 @@
 ---
 gametime-project:
   file:
-    location: bitmask.c
-    analysis-function: bitmask
+    location: loop.c
+    analysis-function: test
     start-label: null
     end-label: null
 

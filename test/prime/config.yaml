@@ -11,7 +11,7 @@ gametime-project:
     include: null
     merge: null
     inline: yes
-    unroll-loops: Yes
+    unroll-loops: yes
 
   analysis:
     maximum-error-scale-factor: 10
