@@ -99,6 +99,8 @@ class ExecutableTransformer(object):
             (argument types of function being analyzed, argument names of function being analyzed)
         """
         if isinstance(node, FuncDef) and node.decl.name == self.function_name:
+            if node.decl.type.args is None:
+                return [], []
             params = node.decl.type.args.params
             arg_types = [param.type for param in params]
             arg_names = [param.name for param in params]
