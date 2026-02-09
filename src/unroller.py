@@ -53,7 +53,27 @@ def modify_loop_branches_to_next_block(input_file_path, output_file_path):
     """
     Modifies an LLVM IR file to replace branches with `!llvm.loop` annotations
     to point to the block that appears immediately after the block containing
-    the `!llvm.loop` expression.
+    the `!llvm.loop` expression. This breaks loop back edges so the IR becomes
+    a DAG suitable for WCET path analysis.
+
+    Handles both numbered blocks (e.g., "243:") and named blocks
+    (e.g., "bsort_return.exit:", ".loopexit:").
+
+    Example:
+        Given this IR where block 243 branches back to the loop header %201:
+
+            243:
+              store i32 %247, ptr %4, align 4
+              br label %201, !llvm.loop !10    <-- back edge
+
+            bsort_return.exit:                 <-- next sequential block
+              %248 = load i32, ptr %3, align 4
+
+        The back edge is redirected to the next sequential block:
+
+            243:
+              store i32 %247, ptr %4, align 4
+              br label %bsort_return.exit, !llvm.loop !10   <-- redirected
 
     Args:
         input_file_path (str): Path to the input LLVM IR file.
@@ -62,14 +82,14 @@ def modify_loop_branches_to_next_block(input_file_path, output_file_path):
     with open(input_file_path, "r") as file:
         llvm_ir_code = file.read()
 
-    # Define regex patterns for identifying branch instructions with !llvm.loop and block labels
+    # Match both numbered blocks (e.g., "243:") and named blocks (e.g., "bsort_return.exit:", ".loopexit:")
     block_pattern = re.compile(
-        r"^(\d+):", re.MULTILINE
-    )  # Matches lines with block labels (e.g., "3:")
-    branch_with_loop_pattern = re.compile(r"br label %(\d+), !llvm.loop")
+        r"^(\d+|[a-zA-Z_.]\S*)\s*:", re.MULTILINE
+    )
+    branch_with_loop_pattern = re.compile(r"br label %(\S+), !llvm.loop")
 
-    # Find all blocks in the order they appear
-    blocks = [int(match.group(1)) for match in block_pattern.finditer(llvm_ir_code)]
+    # Find all blocks in the order they appear (as strings)
+    blocks = [match.group(1) for match in block_pattern.finditer(llvm_ir_code)]
 
     # Split the code into lines for processing
     lines = llvm_ir_code.splitlines()
@@ -81,22 +101,22 @@ def modify_loop_branches_to_next_block(input_file_path, output_file_path):
         # Check if the line starts a new block
         block_match = block_pattern.match(line)
         if block_match:
-            current_block = int(block_match.group(1))
+            current_block = block_match.group(1)
 
         # If a `!llvm.loop` branch is found, modify it to point to the next block
         loop_branch_match = branch_with_loop_pattern.search(line)
         if loop_branch_match and current_block is not None:
             # Find the index of the current block in the blocks list
-            current_block_index = blocks.index(current_block)
-            # Ensure there is a next block after the current one
-            if current_block_index + 1 < len(blocks):
-                # Get the label of the next block
-                next_block_num = blocks[current_block_index + 1]
-                # Replace the branch target to point to this next block
-                line = line.replace(
-                    f"br label %{loop_branch_match.group(1)}",
-                    f"br label %{next_block_num}",
-                )
+            if current_block in blocks:
+                current_block_index = blocks.index(current_block)
+                # Ensure there is a next block after the current one
+                if current_block_index + 1 < len(blocks):
+                    next_block_label = blocks[current_block_index + 1]
+                    old_target = loop_branch_match.group(1)
+                    line = line.replace(
+                        f"br label %{old_target}",
+                        f"br label %{next_block_label}",
+                    )
 
         # Append the modified or unmodified line to the result
         new_lines.append(line)

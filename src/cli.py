@@ -173,6 +173,46 @@ def run_gametime(
 
         logger.info("=" * 60)
 
+        # Save results to result.txt in the temp (output) directory
+        result_file_path = os.path.join(
+            project_config.location_temp_dir, "result.txt"
+        )
+        os.makedirs(project_config.location_temp_dir, exist_ok=True)
+        with open(result_file_path, "w") as result_file:
+            result_file.write("=" * 60 + "\n")
+            result_file.write("GAMETIME ANALYSIS RESULTS\n")
+            result_file.write("=" * 60 + "\n")
+            backend_name = (
+                project_config.backend if project_config.backend else "default"
+            )
+            result_file.write(f"Function analyzed: {project_config.func}\n")
+            result_file.write(f"Backend: {backend_name}\n")
+            result_file.write(f"Number of basis paths: {len(basis_paths)}\n")
+            result_file.write(
+                f"Number of generated paths: {len(generated_paths)}\n"
+            )
+            result_file.write("\nBasis Paths:\n")
+            for i, path in enumerate(basis_paths):
+                result_file.write(
+                    f"  {i}: {path.name} = {path.get_measured_value()}\n"
+                )
+            if results:
+                result_file.write("\nGenerated Paths:\n")
+                for i, (name, predicted_value, measured_value) in enumerate(
+                    results
+                ):
+                    marker = " *WCET*" if measured_value == max_value else ""
+                    result_file.write(
+                        f"  {i}: {name} = predicted: {predicted_value}, "
+                        f"measured: {measured_value}{marker}\n"
+                    )
+                result_file.write(
+                    f"\nWorst-Case Execution Time (WCET): {max_value}\n"
+                )
+                result_file.write(f"WCET Path: {max_path}\n")
+            result_file.write("=" * 60 + "\n")
+        logger.info(f"Results saved to: {result_file_path}")
+
         # Visualize weighted graph if requested
         if visualize_weights:
             logger.info("\n" + "=" * 60)
