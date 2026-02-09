@@ -6,7 +6,10 @@ import re
 
 def write_klee_input_to_file(filename):
     """
-    Extract hexadecimal values from a KLEE test input file, convert them from little endian to big endian, and write them to a new file.
+    Extract raw hexadecimal values from a KLEE test input file and write them
+    to a new file. The hex values are in memory byte order of the host machine
+    where KLEE runs; per-element byte reversal is handled downstream in
+    generate_executable.py where the element type size is known.
 
     Parameters:
         filename : str
@@ -22,23 +25,14 @@ def write_klee_input_to_file(filename):
     # Find all hex values using regex
     hex_values = pattern.findall(data)
     print(hex_values)
-    # Convert each value from little endian to big endian
-    big_endian_values = []
-    for value in hex_values:
-        hex_str = value[2:]  # remove '0x'
-        if len(hex_str) % 2 != 0:
-            hex_str = "0" + hex_str  # pad to even length
-        bytes_list = [hex_str[i : i + 2] for i in range(0, len(hex_str), 2)]
-        bytes_list.reverse()
-        big_endian = "".join(bytes_list)
-        big_endian_values.append("0x" + big_endian)
-    # Write big endian hex values to a new text file
+
+    # Write raw hex values to a new text file (no byte reordering here)
     values_filename = filename[:-4] + "_values.txt"
     with open(values_filename, "w") as outfile:
-        for value in big_endian_values:
+        for value in hex_values:
             outfile.write(value + "\n")
 
-    print(f"Big endian hex values extracted and written to {values_filename}")
+    print(f"Hex values extracted and written to {values_filename}")
 
 
 def find_test_file(klee_last_dir):

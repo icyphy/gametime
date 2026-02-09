@@ -22,9 +22,40 @@ from pycparser.c_ast import (
     Typename,
 )
 import os
+import sys
 import pycparser_fake_libc
 
 pycparser_utils_path = pycparser_fake_libc.directory
+
+# Map C type names to their sizes in bytes (for little-endian byte reordering)
+TYPE_SIZES = {
+    "int": 4, "unsigned int": 4, "int32_t": 4, "uint32_t": 4,
+    "short": 2, "unsigned short": 2, "int16_t": 2, "uint16_t": 2,
+    "char": 1, "unsigned char": 1, "int8_t": 1, "uint8_t": 1,
+    "long": 8, "unsigned long": 8, "long long": 8, "unsigned long long": 8,
+    "int64_t": 8, "uint64_t": 8,
+}
+
+
+def _mem_bytes_to_literal_hex(hex_str):
+    """Convert raw memory-order hex bytes to C integer literal hex (no 0x prefix).
+
+    KLEE outputs bytes in host memory order. On little-endian machines, bytes
+    need to be reversed to produce the correct C integer literal. On big-endian
+    machines, bytes are already in the right order.
+
+    Note: The endianness that matters here is that of the machine running KLEE,
+    not the target machine that runs the WCET tests. KLEE's byte output reflects
+    the host it ran on; C integer literals are endianness-agnostic.
+
+    Example (little-endian): "01000000" (LE bytes for 1) -> "00000001" (0x00000001 = 1)
+    Example (big-endian):    "00000001" -> "00000001" (no change needed)
+    """
+    if sys.byteorder == "little":
+        byte_pairs = [hex_str[i:i+2] for i in range(0, len(hex_str), 2)]
+        byte_pairs.reverse()
+        return "".join(byte_pairs)
+    return hex_str
 
 
 class ExecutableTransformer(object):
@@ -309,7 +340,14 @@ class ExecutableTransformer(object):
         """
         generator = c_generator.CGenerator()
         type_str = generator.visit(type_node)
-        # Use __builtin_bswap32 to convert KLEE's little endian value to big endian.
+        # Reverse bytes from KLEE's little-endian memory order to correct integer literal
+        hex_str = value.strip()
+        if hex_str.startswith("0x"):
+            raw = hex_str[2:]
+            type_name = " ".join(type_node.type.names) if hasattr(type_node, 'type') and hasattr(type_node.type, 'names') else "int"
+            elem_size = TYPE_SIZES.get(type_name, len(raw) // 2)
+            raw = raw[:elem_size * 2]
+            value = "0x" + _mem_bytes_to_literal_hex(raw)
         return f"{type_str} {name} = {value};"
 
     def generate_struct_declaration(self, name, struct_type_node, value_dict):
@@ -348,12 +386,17 @@ class ExecutableTransformer(object):
         """
         # TODO: see how KLEE output nested array
         element_type_str = self.get_element_type_str(array_type_node)
-        # -2 to skip 0x and -1 to remove the trailing space
-        values_hex = values[2:-1]
-        # 8 here because integer 32bit are 8 heximal degits
+        elem_size = TYPE_SIZES.get(element_type_str, 4)
+        hex_digits_per_elem = elem_size * 2
+        # Strip 0x prefix and trailing whitespace
+        values_hex = values.strip()
+        if values_hex.startswith("0x"):
+            values_hex = values_hex[2:]
+        # Chunk by element size and reverse bytes within each element
         values_chunk = []
-        for i in range(0, len(values_hex), 8):
-            values_chunk.append("0x" + values_hex[i : i + 8])
+        for i in range(0, len(values_hex), hex_digits_per_elem):
+            chunk = values_hex[i : i + hex_digits_per_elem]
+            values_chunk.append("0x" + _mem_bytes_to_literal_hex(chunk))
 
         values_str = ", ".join(values_chunk)
         return f"{element_type_str} {name}[] = {{ {values_str} }};"
