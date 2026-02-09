@@ -1,0 +1,39 @@
+gametime.src.backend package
+============================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gametime.src.backend.arm_backend
+   gametime.src.backend.flexpret_backend
+   gametime.src.backend.x86_backend
+
+Submodules
+----------
+
+gametime.src.backend.backend module
+-----------------------------------
+
+.. automodule:: gametime.src.backend.backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gametime.src.backend.generate\_executable module
+------------------------------------------------
+
+.. automodule:: gametime.src.backend.generate_executable
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gametime.src.backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
