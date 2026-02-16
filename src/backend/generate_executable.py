@@ -490,7 +490,9 @@ class ExecutableTransformer(object):
 
         for type_node, name, value in zip(arg_types, arg_names, hex_values):
             resolved = self._resolve_typedef(type_node)
-            if self.is_array(resolved):
+            if self.is_array(type_node):
+                decl = self.generate_array_declaration(name, type_node, value)
+            elif self.is_array(resolved):
                 decl = self.generate_typedef_array_declaration(
                     name, type_node, resolved, value
                 )
@@ -498,8 +500,6 @@ class ExecutableTransformer(object):
                 decl = self.generate_primitive_declaration(name, type_node, value)
             elif self.is_struct(type_node):
                 decl = self.generate_struct_declaration(name, type_node, value)
-            elif self.is_array(type_node):
-                decl = self.generate_array_declaration(name, type_node, value)
             else:
                 raise NotImplementedError(
                     f"Type handling not implemented for {type(type_node)}"
