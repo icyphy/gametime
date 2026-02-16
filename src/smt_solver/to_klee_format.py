@@ -20,9 +20,15 @@ def format_for_klee(
     c_code = c_code.lstrip("\n")
 
     # Generate KLEE headers
-    klee_headers = (
-        "#include </opt/homebrew/include/klee/klee.h>\n#include <stdbool.h>\n"
-    )
+    klee_include_path = os.environ.get("KLEE_INCLUDE_PATH", "")
+    if klee_include_path:
+        klee_headers = (
+            f"#include <{klee_include_path}/klee/klee.h>\n#include <stdbool.h>\n"
+        )
+    else:
+        klee_headers = (
+            "#include <klee/klee.h>\n#include <stdbool.h>\n"
+        )
 
     # Generate global boolean variables and initialize them to false/true
     global_booleans = "\n"
@@ -31,6 +37,31 @@ def format_for_klee(
 
     for i in range(total_number_of_labels - n):
         global_booleans += f"bool conditional_var_{i + n} = true;\n"
+
+    # Remove any existing main function definition (with its body) from c_code
+    # This handles cases where the source file already has a main()
+    main_def_pattern = r'(?:^[^\n\S]*(?:int|void)\s+main\s*\([^)]*\)\s*\{)'
+    main_match = re.search(main_def_pattern, c_code, flags=re.MULTILINE)
+    if main_match and func_name != "main":
+        # Find the matching closing brace by counting braces
+        start = main_match.start()
+        brace_start = c_code.index('{', main_match.start())
+        depth = 0
+        i = brace_start
+        while i < len(c_code):
+            if c_code[i] == '{':
+                depth += 1
+            elif c_code[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    # Remove the main function (and any trailing newlines)
+                    end = i + 1
+                    c_code = c_code[:start] + c_code[end:]
+                    break
+            i += 1
+
+    # Also remove forward declarations of main
+    c_code = re.sub(r'^[^\n\S]*int\s+main\s*\([^)]*\)\s*;\s*\n?', '', c_code, flags=re.MULTILINE)
 
     # Generate main function
     main_function = "int main() {\n"

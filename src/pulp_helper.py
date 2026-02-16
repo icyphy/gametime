@@ -47,7 +47,7 @@ _name_ilp_solver_map = {
     # Default integer linear programming solver of the PuLP package.
     "": ([pulp.LpSolverDefault.__class__] if pulp.LpSolverDefault is not None else []),
     # CBC mixed integer linear programming solver.
-    "cbc": [pulp.COIN],
+    "cbc": [pulp.COIN_CMD],
     # Version of CBC provided with the PuLP package.
     "cbc-pulp": [pulp.PULP_CBC_CMD],
     # IBM ILOG CPLEX Optimizer.

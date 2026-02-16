@@ -117,8 +117,14 @@ def run_klee(klee_file):
         klee_file : str
             Path to the file modified for KLEE execution.
     """
-    run_klee_command = ["klee", klee_file]
-    subprocess.run(run_klee_command, check=True)
+    run_klee_command = ["klee", "--max-time=30", klee_file]
+    try:
+        subprocess.run(run_klee_command, check=True, timeout=60)
+    except subprocess.TimeoutExpired:
+        logger.warning("KLEE timed out after 60 seconds")
+    except subprocess.CalledProcessError:
+        # KLEE may exit non-zero when it times out via --max-time
+        pass
 
 
 def extract_labels_from_file(filename):
@@ -193,7 +199,7 @@ def run_smt(
     # Get the path to the smt_solver directory relative to this file
     smt_solver_dir = os.path.dirname(os.path.abspath(__file__))
     modify_bit_code_cpp_file = os.path.join(smt_solver_dir, "modify_bitcode.cpp")
-    modify_bit_code_exec_file = os.path.join(smt_solver_dir, "modify_bitcode")
+    modify_bit_code_exec_file = os.path.join(output_dir, "modify_bitcode")
     modified_klee_file_bc = compile_and_run_cplusplus(
         modify_bit_code_cpp_file,
         modify_bit_code_exec_file,

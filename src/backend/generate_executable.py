@@ -20,6 +20,7 @@ from pycparser.c_ast import (
     ArrayDecl,
     Cast,
     Typename,
+    Typedef,
 )
 import os
 import sys
@@ -72,6 +73,24 @@ class ExecutableTransformer(object):
         self.new_main = None
         self.arguments = []
         self.hexvalues = hexvalues
+        self.typedef_map = self._build_typedef_map(ast)
+
+    def _build_typedef_map(self, ast):
+        """Build a map from typedef names to their resolved type nodes."""
+        typedef_map = {}
+        for node in ast.ext:
+            if isinstance(node, Typedef):
+                typedef_map[node.name] = node.type
+        return typedef_map
+
+    def _resolve_typedef(self, type_node):
+        """If type_node is a typedef'd IdentifierType, resolve it to the underlying type."""
+        if (isinstance(type_node, TypeDecl) and
+                isinstance(type_node.type, IdentifierType)):
+            type_name = " ".join(type_node.type.names)
+            if type_name in self.typedef_map:
+                return self.typedef_map[type_name]
+        return type_node
 
     def visit_func(self, node):
         """
@@ -403,6 +422,35 @@ class ExecutableTransformer(object):
         values_str = ", ".join(values_chunk)
         return f"{element_type_str} {name}[] = {{ {values_str} }};"
 
+    def generate_typedef_array_declaration(self, name, orig_type_node, resolved_array_node, value):
+        """
+        Generates the variable declaration for a typedef'd array type.
+
+        Uses the typedef name for the declaration but generates a flat initializer
+        list based on the resolved array element type and size.
+        """
+        # Get the typedef name from the original type node
+        typedef_name = " ".join(orig_type_node.type.names)
+        # Get the base element type from the resolved array
+        element_type_str = self.get_element_type_str(resolved_array_node)
+        elem_size = TYPE_SIZES.get(element_type_str, 4)
+        hex_digits_per_elem = elem_size * 2
+
+        # Strip 0x prefix and trailing whitespace
+        values_hex = value.strip()
+        if values_hex.startswith("0x"):
+            values_hex = values_hex[2:]
+
+        # Chunk by element size and reverse bytes within each element
+        values_chunk = []
+        for i in range(0, len(values_hex), hex_digits_per_elem):
+            chunk = values_hex[i : i + hex_digits_per_elem]
+            if len(chunk) == hex_digits_per_elem:
+                values_chunk.append("0x" + _mem_bytes_to_literal_hex(chunk))
+
+        values_str = ", ".join(values_chunk)
+        return f"{typedef_name} {name} = {{{values_str}}};"
+
     def get_element_type_str(self, array_type_node):
         """
         Get the base type of array type.
@@ -441,7 +489,12 @@ class ExecutableTransformer(object):
         declarations = []
 
         for type_node, name, value in zip(arg_types, arg_names, hex_values):
-            if self.is_primitive(type_node):
+            resolved = self._resolve_typedef(type_node)
+            if self.is_array(resolved):
+                decl = self.generate_typedef_array_declaration(
+                    name, type_node, resolved, value
+                )
+            elif self.is_primitive(type_node):
                 decl = self.generate_primitive_declaration(name, type_node, value)
             elif self.is_struct(type_node):
                 decl = self.generate_struct_declaration(name, type_node, value)
@@ -511,11 +564,31 @@ def generate_executable(
     with open(input_file, "r") as file:
         original_c_content = file.read()
 
+    # Remove any existing main function definition to avoid conflicts
+    import re as _re
+    main_def_pat = r'(?:^[^\n\S]*(?:int|void)\s+main\s*\([^)]*\)\s*\{)'
+    main_match = _re.search(main_def_pat, original_c_content, flags=_re.MULTILINE)
+    if main_match:
+        brace_start = original_c_content.index('{', main_match.start())
+        depth = 0
+        i = brace_start
+        while i < len(original_c_content):
+            if original_c_content[i] == '{':
+                depth += 1
+            elif original_c_content[i] == '}':
+                depth -= 1
+                if depth == 0:
+                    original_c_content = original_c_content[:main_match.start()] + original_c_content[i+1:]
+                    break
+            i += 1
+    # Also remove forward declarations of main
+    original_c_content = _re.sub(r'^[^\n\S]*int\s+main\s*\([^)]*\)\s*;\s*\n?', '', original_c_content, flags=_re.MULTILINE)
+
     # This must be included in we want to run flexpret backend (for printf)
     if include_flexpret:
         original_c_content = "#include <flexpret/flexpret.h> \n" + original_c_content
     else:
-        original_c_content = "#include <time.h> \n" + original_c_content
+        original_c_content = "#include <stdio.h>\n#include <stdint.h>\n#include <time.h>\n" + original_c_content
 
     # TODO: generate global variables, add the global timing function
     original_c_content += timing_function_body
