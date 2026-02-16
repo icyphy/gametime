@@ -2,7 +2,7 @@
 gametime-project:
   file:
     location: countnegative.c
-    analysis-function: main
+    analysis-function: countnegative_sum
     additional-files: []
     start-label: null
     end-label: null

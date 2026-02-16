@@ -138,7 +138,8 @@ class Analyzer(object):
         orig_file = self.project_config.location_orig_file
         project_temp_dir = self.project_config.location_temp_dir
         if not os.path.exists(orig_file):
-            shutil.rmtree(project_temp_dir)
+            if os.path.exists(project_temp_dir):
+                shutil.rmtree(project_temp_dir)
             err_msg = "File to analyze not found: %s" % orig_file
             raise GameTimeError(err_msg)
 
@@ -148,7 +149,8 @@ class Analyzer(object):
             for additional_file in additional_files:
                 project_temp_dir = self.project_config.location_temp_dir
                 if not os.path.exists(additional_file):
-                    shutil.rmtree(project_temp_dir)
+                    if os.path.exists(project_temp_dir):
+                        shutil.rmtree(project_temp_dir)
                     err_msg = "External File to analyze not found: %s" % additional_file
                     raise GameTimeError(err_msg)
 

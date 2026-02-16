@@ -73,9 +73,9 @@ void countnegative_initialize( matrix Array )
 {
   register int OuterIndex, InnerIndex;
 
-  _Pragma( "loopbound min 20 max 20" )
+
   for ( OuterIndex = 0; OuterIndex < MAXSIZE; OuterIndex++ )
-    _Pragma( "loopbound min 20 max 20" )
+  
     for ( InnerIndex = 0; InnerIndex < MAXSIZE; InnerIndex++ )
       Array[ OuterIndex ][ InnerIndex ] =  countnegative_randomInteger();
 }
@@ -105,9 +105,9 @@ void countnegative_sum( matrix Array )
   int Pcnt = 0;
   int Ncnt = 0;
 
-  _Pragma( "loopbound min 20 max 20" )
+
   for ( Outer = 0; Outer < MAXSIZE; Outer++ )
-    _Pragma( "loopbound min 20 max 20" )
+  
     for ( Inner = 0; Inner < MAXSIZE; Inner++ )
       if ( Array[ Outer ][ Inner ] >= 0 ) {
         Ptotal += Array[ Outer ][ Inner ];
@@ -126,7 +126,7 @@ void countnegative_sum( matrix Array )
 /*
   The main function
 */
-void _Pragma( "entrypoint" ) countnegative_main ( void )
+void countnegative_main ( void )
 {
   countnegative_sum(  countnegative_array );
 }
