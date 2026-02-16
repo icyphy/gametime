@@ -1,0 +1,21 @@
+gametime.src.backend.flexpret\_backend package
+==============================================
+
+Submodules
+----------
+
+gametime.src.backend.flexpret\_backend.flexpret\_backend module
+---------------------------------------------------------------
+
+.. automodule:: gametime.src.backend.flexpret_backend.flexpret_backend
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gametime.src.backend.flexpret_backend
+   :members:
+   :undoc-members:
+   :show-inheritance:

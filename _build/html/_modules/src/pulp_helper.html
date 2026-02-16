@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.pulp_helper &mdash; GameTime 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            GameTime
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">GameTime</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GameTime</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../src.html">src</a></li>
+      <li class="breadcrumb-item active">src.pulp_helper</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.pulp_helper</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;Exposes functions to interact with different</span>
+<span class="sd">linear programming solvers through the PuLP package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>  <span class="c1"># remove in 3.11</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">project_configuration</span> <span class="kn">import</span> <span class="n">ProjectConfiguration</span>
+    <span class="kn">from</span> <span class="nn">analyzer</span> <span class="kn">import</span> <span class="n">Analyzer</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">pulp</span>
+
+<span class="kn">from</span> <span class="nn">defaults</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">file_helper</span> <span class="kn">import</span> <span class="n">move_files</span><span class="p">,</span> <span class="n">remove_files</span>
+<span class="kn">from</span> <span class="nn">interval</span> <span class="kn">import</span> <span class="n">Interval</span>
+
+<span class="kn">from</span> <span class="nn">nx_helper</span> <span class="kn">import</span> <span class="n">Dag</span>
+
+<span class="sd">&quot;&quot;&quot;See the LICENSE file, located in the root directory of</span>
+<span class="sd">the source distribution and</span>
+<span class="sd">at http://verifun.eecs.berkeley.edu/gametime/about/LICENSE,</span>
+<span class="sd">for details on the GameTime license and authors.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Extremum"><a class="viewcode-back" href="../../src.html#src.pulp_helper.Extremum">[docs]</a><span class="k">class</span> <span class="nc">Extremum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the extremum that needs to be determined.&quot;&quot;&quot;</span>
+
+    <span class="c1">#: Find the longest path.</span>
+    <span class="n">LONGEST</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">#: Find the shortest path.</span>
+    <span class="n">SHORTEST</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<span class="c1">#: Name of the integer linear program constructed.</span>
+<span class="n">_LP_NAME</span> <span class="o">=</span> <span class="s2">&quot;gt-FindExtremePath&quot;</span>
+
+<span class="c1">#: Dictionary that maps the name of an integer linear programming solver to</span>
+<span class="c1">#: a list of the PuLP solver classes that can interface with the solver.</span>
+<span class="n">_name_ilp_solver_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Default integer linear programming solver of the PuLP package.</span>
+    <span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="p">([</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpSolverDefault</span><span class="o">.</span><span class="vm">__class__</span><span class="p">]</span> <span class="k">if</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpSolverDefault</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+         <span class="k">else</span> <span class="p">[]),</span>
+
+    <span class="c1"># CBC mixed integer linear programming solver.</span>
+    <span class="s2">&quot;cbc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">COIN</span><span class="p">],</span>
+
+    <span class="c1"># Version of CBC provided with the PuLP package.</span>
+    <span class="s2">&quot;cbc-pulp&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">PULP_CBC_CMD</span><span class="p">],</span>
+
+    <span class="c1"># IBM ILOG CPLEX Optimizer.</span>
+    <span class="s2">&quot;cplex&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">CPLEX</span><span class="p">],</span>
+
+    <span class="c1"># GNU Linear Programming Kit (GLPK).</span>
+    <span class="s2">&quot;glpk&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">GLPK</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">PYGLPK</span><span class="p">],</span>
+
+    <span class="c1"># Gurobi Optimizer.</span>
+    <span class="s2">&quot;gurobi&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">GUROBI_CMD</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">GUROBI</span><span class="p">],</span>
+
+    <span class="c1"># FICO Xpress Optimizer.</span>
+    <span class="s2">&quot;xpress&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">XPRESS</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1">#: Dictionary that maps the name of an integer linear programming solver,</span>
+<span class="c1">#: as used by GameTime, to its proper name for display purposes.</span>
+<span class="n">_proper_name_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;cbc&quot;</span><span class="p">:</span> <span class="s2">&quot;CBC&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cbc-pulp&quot;</span><span class="p">:</span> <span class="s2">&quot;CBC (provided with the PuLP package)&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;cplex&quot;</span><span class="p">:</span> <span class="s2">&quot;CPLEX&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;glpk&quot;</span><span class="p">:</span> <span class="s2">&quot;GLPK&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;gurobi&quot;</span><span class="p">:</span> <span class="s2">&quot;Gurobi&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;xpress&quot;</span><span class="p">:</span> <span class="s2">&quot;Xpress&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="is_ilp_solver_name"><a class="viewcode-back" href="../../src.html#src.pulp_helper.is_ilp_solver_name">[docs]</a><span class="k">def</span> <span class="nf">is_ilp_solver_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        name: str :  </span>
+<span class="sd">            Possible name of an integer linear programming solver</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool:</span>
+<span class="sd">            `True` if, and only if, the name provided is the name of a supported</span>
+<span class="sd">            integer linear programming solver.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span></div>
+
+
+<div class="viewcode-block" id="get_ilp_solver_names"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_ilp_solver_names">[docs]</a><span class="k">def</span> <span class="nf">get_ilp_solver_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            List of the names of the supported integer linear programming solvers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_ilp_solver"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_ilp_solver">[docs]</a><span class="k">def</span> <span class="nf">get_ilp_solver</span><span class="p">(</span><span class="n">ilp_solver_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">project_config</span><span class="p">:</span> <span class="n">ProjectConfiguration</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpSolver</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        ilp_solver_name: str :</span>
+<span class="sd">            Name of the integer linear programming solver</span>
+<span class="sd">        project_config: ProjectConfiguration :</span>
+<span class="sd">            ProjectConfiguration object that represents the configuration of a GameTime project</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PuLP solver object that can interface with the integer</span>
+<span class="sd">        linear programming solver whose name is provided, or `None`, if</span>
+<span class="sd">        no such object can be found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ilp_solver_name</span><span class="p">(</span><span class="n">ilp_solver_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">keep_ilp_solver_output</span> <span class="o">=</span> <span class="n">project_config</span><span class="o">.</span><span class="n">debug_config</span><span class="o">.</span><span class="n">KEEP_ILP_SOLVER_OUTPUT</span>
+    <span class="k">for</span> <span class="n">ilp_solver_class</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span><span class="p">[</span><span class="n">ilp_solver_name</span><span class="p">]:</span>
+        <span class="n">ilp_solver</span> <span class="o">=</span> <span class="n">ilp_solver_class</span><span class="p">(</span><span class="n">keepFiles</span><span class="o">=</span><span class="n">keep_ilp_solver_output</span><span class="p">,</span>
+                                    <span class="n">msg</span><span class="o">=</span><span class="n">keep_ilp_solver_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ilp_solver</span><span class="o">.</span><span class="n">available</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">ilp_solver</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_ilp_solver_name"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_ilp_solver_name">[docs]</a><span class="k">def</span> <span class="nf">get_ilp_solver_name</span><span class="p">(</span><span class="n">ilp_solver</span><span class="p">:</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpSolver</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        ilp_solver: pulp.LpSolver :</span>
+<span class="sd">            Object of a PuLP solver class</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str, Optional:</span>
+<span class="sd">            Name, as used by GameTime, of the integer linear programming</span>
+<span class="sd">            solver that the input PuLP solver object can interface with,</span>
+<span class="sd">            or `None`, if no such name can be found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ilp_solver_class</span> <span class="o">=</span> <span class="n">ilp_solver</span><span class="o">.</span><span class="vm">__class__</span>
+    <span class="k">for</span> <span class="n">ilp_solver_name</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">candidate_class</span> <span class="ow">in</span> <span class="n">_name_ilp_solver_map</span><span class="p">[</span><span class="n">ilp_solver_name</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">candidate_class</span> <span class="o">==</span> <span class="n">ilp_solver_class</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ilp_solver_name</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_proper_name"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_proper_name">[docs]</a><span class="k">def</span> <span class="nf">get_proper_name</span><span class="p">(</span><span class="n">ilp_solver_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        ilp_solver_name: str :</span>
+<span class="sd">            Name of an integer linear programming solver used by GameTime</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str:</span>
+<span class="sd">            Proper name of an integer linear programming solver,</span>
+<span class="sd">            for display purposes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_proper_name_map</span><span class="p">[</span><span class="n">ilp_solver_name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_ilp_solver_proper_names"><a class="viewcode-back" href="../../src.html#src.pulp_helper.get_ilp_solver_proper_names">[docs]</a><span class="k">def</span> <span class="nf">get_ilp_solver_proper_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[str]:</span>
+<span class="sd">            List of proper names of the supported integer linear programming</span>
+<span class="sd">            solvers, for display purposes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">get_proper_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">get_ilp_solver_names</span><span class="p">()]</span></div>
+
+
+<div class="viewcode-block" id="IlpProblem"><a class="viewcode-back" href="../../src.html#src.pulp_helper.IlpProblem">[docs]</a><span class="k">class</span> <span class="nc">IlpProblem</span><span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpProblem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Maintains information about an integer linear programming problem.</span>
+<span class="sd">    It is a subclass of the `~pulp.LpProblem` class of the PuLP</span>
+<span class="sd">    package, and stores additional information relevant to the GameTime</span>
+<span class="sd">    analysis, such as the value of the objective function of the problem.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IlpProblem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1">#: Value of the objective function, stored for efficiency purposes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_val</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_edge_flow_var</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span>
+                       <span class="n">edge_flow_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">],</span>
+                       <span class="n">edge</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        edge_flow_vars:</span>
+<span class="sd">            Dictionary that maps a positive integer to a PuLP variable that</span>
+<span class="sd">            represents the flow through an edge. (Each postive integer is</span>
+<span class="sd">            the position of an edge in the list of edges maintained by</span>
+<span class="sd">            the input ``Analyzer`` object.)</span>
+<span class="sd">        edge:</span>
+<span class="sd">            Edge whose corresponding PuLP variable is needed.</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PuLP variable that corresponds to the input edge.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">edge_flow_vars</span><span class="p">[</span><span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span><span class="o">.</span><span class="n">edges_indices</span><span class="p">[</span><span class="n">edge</span><span class="p">]]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span>
+                        <span class="n">edge_flow_vars</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">],</span>
+                        <span class="n">edges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        edge_flow_vars:</span>
+<span class="sd">            Dictionary that maps a positive integer to a PuLP variable</span>
+<span class="sd">            that represents the flow through an edge. (Each postive integer</span>
+<span class="sd">            is the position of an edge in the list of edges maintained by</span>
+<span class="sd">            the input analyzer.)</span>
+<span class="sd">        edges:</span>
+<span class="sd">            List of edges whose corresponding PuLP variables are needed.</span>
+<span class="sd">        </span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of the PuLP variables that correspond to each of</span>
+<span class="sd">        the edges in the input edge list.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_get_edge_flow_var</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flow_vars</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="find_least_compatible_mu_max"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_least_compatible_mu_max">[docs]</a><span class="k">def</span> <span class="nf">find_least_compatible_mu_max</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns the least dealta in the underlying graph, as</span>
+<span class="sd">    specified by &#39;analyzer&#39;, that is feasible with the given set of</span>
+<span class="sd">    measurements as specified by &#39;paths&#39;. The method does not take into</span>
+<span class="sd">    account which paths are feasible and which not; it considers all_temp_files the</span>
+<span class="sd">    paths in the graph.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float:</span>
+<span class="sd">            A floating point value---the least delta compatible with the</span>
+<span class="sd">            measurements</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">sink</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">num_edges</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span>
+    <span class="n">num_paths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+
+    <span class="n">project_config</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">project_config</span>
+
+    <span class="n">nodes_except_source_sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">nodes_except_source_sink</span>
+
+    <span class="c1"># Set up the linear programming problem.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of paths: </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num_paths</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up the integer linear programming problem...&quot;</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">IlpProblem</span><span class="p">(</span><span class="n">_LP_NAME</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating variables&quot;</span><span class="p">)</span>
+    <span class="c1"># Set up the variables that correspond to weights of each edge. </span>
+    <span class="c1"># Each edge is restricted to be a nonnegative real number</span>
+    <span class="n">edge_weights</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;we&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_edges</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># Create the variable that shall correspond to the least delta</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">(</span><span class="s2">&quot;delta&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">path_weights</span> <span class="o">=</span> \
+            <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_weights</span><span class="p">,</span> <span class="n">dag</span><span class="o">.</span><span class="n">get_edges</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">path_weights</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">delta</span> <span class="o">+</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">path_weights</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">delta</span> <span class="o">+</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LENGTH:&quot;</span><span class="p">,</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span><span class="p">)</span>
+
+    <span class="c1"># Optimize for the least delta</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">delta</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the minimum value of the objective function...&quot;</span><span class="p">)</span>
+
+    <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span>
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">obj_val_min</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum compatible delta found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_min</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">project_config</span><span class="o">.</span><span class="n">debug_config</span><span class="o">.</span><span class="n">KEEP_ILP_SOLVER_OUTPUT</span><span class="p">:</span>
+        <span class="n">_move_ilp_files</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_dir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_remove_temp_ilp_files</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">obj_val_min</span></div>
+
+
+<span class="c1"># compact</span>
+<div class="viewcode-block" id="find_longest_path_with_delta"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_longest_path_with_delta">[docs]</a><span class="k">def</span> <span class="nf">find_longest_path_with_delta</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span>
+                                 <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This functions finds the longest/shortest path compatible with the</span>
+<span class="sd">        measured lengths of paths, as given in &#39;paths&#39;, such the actual</span>
+<span class="sd">        lengths are within &#39;delta&#39; of the measured lengths</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        delta:</span>
+<span class="sd">            the maximal limit by which the length of a measured path is</span>
+<span class="sd">            allowed to differ from the measured value</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Specifies whether we are calculating Extremum.LONGEST or </span>
+<span class="sd">            Extremum.SHORTEST</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Pair consisting of the resulting path and the ILP problem used to</span>
+<span class="sd">        calculate the path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Increase delta by one percent, so that we do end up with an unsatisfiable</span>
+    <span class="c1"># ILP due to floating-point issues</span>
+    <span class="n">delta</span> <span class="o">*=</span> <span class="mf">1.01</span>
+    <span class="n">val</span><span class="p">,</span> <span class="n">result_path</span><span class="p">,</span> <span class="n">problem</span> <span class="o">=</span> <span class="n">generate_and_solve_core_problem</span><span class="p">(</span>
+        <span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span> <span class="o">+</span> <span class="n">delta</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">path</span><span class="p">:</span> <span class="n">path</span><span class="o">.</span><span class="n">measured_value</span> <span class="o">-</span> <span class="n">delta</span><span class="p">),</span>
+        <span class="kc">True</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">extremum</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result_path</span><span class="p">,</span> <span class="n">problem</span></div>
+
+
+<div class="viewcode-block" id="make_compact"><a class="viewcode-back" href="../../src.html#src.pulp_helper.make_compact">[docs]</a><span class="k">def</span> <span class="nf">make_compact</span><span class="p">(</span><span class="n">dag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to create a compact representation of the given graph</span>
+<span class="sd">    Compact means that if in the original graph, there is a simple</span>
+<span class="sd">    path without any branching between two nodes, then in the resulting</span>
+<span class="sd">    graph the entire simple path is replaced by only one edge</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        dag:</span>
+<span class="sd">            The graph that get compactified</span>
+
+<span class="sd">    Returns:  </span>
+<span class="sd">        A mapping (vertex, vertex) -&gt; edge_number so that the edge</span>
+<span class="sd">        (vertex, vertex) in the original graph &#39;dag&#39; gets mapped to</span>
+<span class="sd">        the edge with number &#39;edge_number&#39;. All edges on a simple path</span>
+<span class="sd">        without branching get mapped to the same &#39;edge_number&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">processed</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Dag</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">different_edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">edge_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">dfs</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">edge_index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">processed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">node</span>
+        <span class="n">processed</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="n">neighbors</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">neighbors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dag</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># edge get compactified</span>
+            <span class="n">edge_map</span><span class="p">[(</span><span class="n">node</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">edge_index</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">neighbors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">edge_index</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">dag</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+            <span class="c1"># start new edge</span>
+            <span class="n">new_edge</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">different_edges</span><span class="p">)</span>
+            <span class="n">different_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">edge_map</span><span class="p">[(</span><span class="n">node</span><span class="p">,</span> <span class="n">to</span><span class="p">)]</span> <span class="o">=</span> <span class="n">new_edge</span>
+            <span class="n">dfs</span><span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">new_edge</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">dfs</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">edge_map</span></div>
+
+
+<div class="viewcode-block" id="generate_and_solve_core_problem"><a class="viewcode-back" href="../../src.html#src.pulp_helper.generate_and_solve_core_problem">[docs]</a><span class="k">def</span> <span class="nf">generate_and_solve_core_problem</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">path_function_upper</span><span class="p">,</span>
+                                    <span class="n">path_function_lower</span><span class="p">,</span> <span class="n">weights_positive</span><span class="p">,</span>
+                                    <span class="n">print_problem</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function actually constructs the ILP to find the longest path</span>
+<span class="sd">    in the graph specified by &#39;analyzer&#39; using the set of measured paths given</span>
+<span class="sd">    by &#39;paths&#39;.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed. Among others, contains the underlying</span>
+<span class="sd">            DAG or the collection of infeasible paths.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        pathFunctionUpper:</span>
+<span class="sd">            Function of type: path -&gt; float that for a given path should</span>
+<span class="sd">            return the upper bound on the length of the given path. The</span>
+<span class="sd">            input &#39;path&#39; is always from &#39;paths&#39;</span>
+<span class="sd">        pathFunctionLower:</span>
+<span class="sd">            Function of type: path -&gt; float that for a given path should</span>
+<span class="sd">            return the upper bound on the length of the given path. The</span>
+<span class="sd">            input &#39;path&#39; is always from &#39;paths&#39;</span>
+<span class="sd">        weightsPositive:</span>
+<span class="sd">            Boolean value specifying whether the individual edge weight are</span>
+<span class="sd">            required to be at least 0 (if set to True) or can be arbitrary</span>
+<span class="sd">            real value (if set to False)</span>
+<span class="sd">        printProblem:</span>
+<span class="sd">            Boolean value used for debugging. If set to true, the generated</span>
+<span class="sd">            ILP is printed.</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Specifies whether we are calculating Extremum.LONGEST or </span>
+<span class="sd">            Extremum.SHORTEST</span>
+
+<span class="sd">    Returns:   </span>
+<span class="sd">        Triple consisting of the length of the longest path found, the actual</span>
+<span class="sd">        path and the ILP problem generated.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
+    <span class="n">dag</span><span class="o">.</span><span class="n">initialize_dictionaries</span><span class="p">()</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">sink</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">num_edges</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span>
+    <span class="n">num_paths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+
+    <span class="c1"># Use the compact representation of the DAG</span>
+    <span class="c1"># compact is now a mapping that for each edge of dag gives an index of an</span>
+    <span class="c1"># edge in the compact graph.</span>
+    <span class="n">compact</span> <span class="o">=</span> <span class="n">make_compact</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span>
+    <span class="n">project_config</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">project_config</span>
+
+    <span class="n">nodes_except_source_sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">nodes_except_source_sink</span>
+    <span class="n">path_exclusive_constraints</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">path_exclusive_constraints</span>
+    <span class="n">path_bundled_constraints</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">path_bundled_constraints</span>
+
+    <span class="c1"># Set up the linear programming problem.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of paths: </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num_paths</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up the integer linear programming problem...&quot;</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">IlpProblem</span><span class="p">(</span><span class="n">_LP_NAME</span><span class="p">)</span>
+
+    <span class="c1"># Take M to be the maximum edge length. Add 1.0 to make sure there are</span>
+    <span class="c1"># no problems due to rounding errors.</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">path_function_upper</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">weights_positive</span><span class="p">:</span> <span class="n">m</span> <span class="o">*=</span> <span class="n">num_edges</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using value </span><span class="si">%.2f</span><span class="s2"> for M --- the maximum edge weight&quot;</span> <span class="o">%</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating variables&quot;</span><span class="p">)</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">compact</span><span class="p">:</span>
+        <span class="n">values</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">compact</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+    <span class="n">new_edges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Set up the variables that correspond to the flow through each edge.</span>
+    <span class="c1"># Set each of the variables to be an integer binary variable.</span>
+    <span class="n">edge_flows</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;EdgeFlow&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">),</span>
+                                      <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpBinary</span><span class="p">)</span>
+    <span class="n">edge_weights</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span>
+        <span class="s2">&quot;we&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">),</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">weights_positive</span> <span class="k">else</span> <span class="o">-</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+
+    <span class="c1"># for a given &#39;path&#39; in the original DAG returns the edgeFlow variables</span>
+    <span class="c1"># corresponding to the edges along the same path in the compact DAG.</span>
+    <span class="k">def</span> <span class="nf">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">compact</span><span class="p">[</span><span class="n">edge</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+        <span class="n">path_weights</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge_flows</span><span class="p">[</span><span class="n">edge</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">edges</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">path_weights</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+        <span class="n">path_weights</span> <span class="o">=</span> \
+            <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_weights</span><span class="p">,</span> <span class="n">dag</span><span class="o">.</span><span class="n">get_edges</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">path_weights</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">path_function_upper</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">path_weights</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">path_function_lower</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c1"># Add a constraint for the flow from the source. The flow through all_temp_files of</span>
+    <span class="c1"># the edges out of the source should sum up to exactly 1.</span>
+    <span class="n">edge_flows_from_source</span> <span class="o">=</span> \
+        <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">dag</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_from_source</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Flows from source&quot;</span>
+
+    <span class="c1"># Add constraints for the rest of the nodes (except sink). The flow</span>
+    <span class="c1"># through all_temp_files of the edges into a node should equal the flow through</span>
+    <span class="c1"># all_temp_files of the edges out of the node. Hence, for node n, if e_i and e_j</span>
+    <span class="c1"># enter a node, and e_k and e_l exit a node, the corresponding flow</span>
+    <span class="c1"># equation is e_i + e_j = e_k + e_l.</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes_except_source_sink</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">dag</span><span class="o">.</span><span class="n">neighbors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">dag</span><span class="o">.</span><span class="n">predecessors</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">edge_flows_to_node</span> <span class="o">=</span> <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                             <span class="n">dag</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+        <span class="n">edge_flows_from_node</span> <span class="o">=</span> <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                               <span class="n">dag</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+        <span class="n">problem</span> <span class="o">+=</span> \
+            <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_to_node</span><span class="p">)</span> <span class="o">==</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_from_node</span><span class="p">),</span>
+             <span class="s2">&quot;Flows through </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">node</span><span class="p">)</span>
+
+    <span class="c1"># Add a constraint for the flow to the sink. The flow through all_temp_files of</span>
+    <span class="c1"># the edges into the sink should sum up to exactly 1.</span>
+    <span class="n">edge_flows_to_sink</span> <span class="o">=</span> <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                         <span class="n">dag</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">sink</span><span class="p">))</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_to_sink</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Flows to sink&quot;</span>
+
+    <span class="c1"># Add constraints for the exclusive path constraints. To ensure that</span>
+    <span class="c1"># the edges in each constraint are not taken together, the total flow</span>
+    <span class="c1"># through all_temp_files the edges should add to at least one unit less than</span>
+    <span class="c1"># the number of edges in the constraint. Hence, if a constraint</span>
+    <span class="c1"># contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.</span>
+    <span class="c1"># This way, all_temp_files three of these edges can never be taken together.</span>
+    <span class="k">for</span> <span class="n">constraint_num</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path_exclusive_constraints</span><span class="p">):</span>
+        <span class="n">edge_flows_in_constraint</span> <span class="o">=</span> <span class="n">get_new_indices</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_in_constraint</span><span class="p">)</span> <span class="o">&lt;=</span>
+                    <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edge_flows_in_constraint</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="s2">&quot;Path exclusive constraint </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">constraint_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Each product_vars[index] in the longest path should correspond to</span>
+    <span class="c1"># edge_flows[index] * edge_weights[index]</span>
+    <span class="n">product_vars</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;pe&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">),</span> <span class="o">-</span><span class="n">m</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">extremum</span> <span class="o">==</span> <span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">:</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">product_vars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">edge_weights</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">product_vars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">product_vars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">edge_weights</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">product_vars</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+
+    <span class="n">objective</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">product_vars</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">objective</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Objective function constructed.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">extremum</span> <span class="o">==</span> <span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the maximum value of the objective function...&quot;</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMaximize</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the minimum value of the objective function...&quot;</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span>
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">print_problem</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">[],</span> <span class="n">problem</span>
+
+    <span class="n">obj_val_max</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">obj_val</span> <span class="o">=</span> <span class="n">obj_val_max</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum value found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_max</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the path that corresponds to the maximum value...&quot;</span><span class="p">)</span>
+    <span class="c1"># Determine the edges along the extreme path using the solution.</span>
+    <span class="n">max_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge_num</span> <span class="ow">in</span> <span class="n">edge_flows</span>
+                <span class="k">if</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Path found.&quot;</span><span class="p">)</span>
+
+    <span class="n">total_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">product_vars</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="k">for</span> <span class="n">edge_num</span> <span class="ow">in</span> <span class="n">edge_flows</span>
+                        <span class="k">if</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Total length of the path </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">total_length</span><span class="p">)</span>
+    <span class="n">obj_val_max</span> <span class="o">=</span> <span class="n">total_length</span>
+
+    <span class="n">max_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">edge_num</span> <span class="k">for</span> <span class="n">edge_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">new_edges</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">extreme_path</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># reverse extreme_path according to the compact edgeMap</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">max_path</span><span class="p">:</span>
+        <span class="n">map_to</span> <span class="o">=</span> <span class="p">[</span><span class="n">source</span> <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">compact</span> <span class="k">if</span> <span class="n">compact</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">==</span> <span class="n">edge</span><span class="p">]</span>
+        <span class="n">extreme_path</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">map_to</span><span class="p">)</span>
+
+    <span class="c1"># Arrange the nodes along the extreme path in order of traversal</span>
+    <span class="c1"># from source to sink.</span>
+    <span class="n">result_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Arranging the nodes along the chosen extreme path &quot;</span>
+                <span class="s2">&quot;in order of traversal...&quot;</span><span class="p">)</span>
+    <span class="c1"># To do so, first construct a dictionary mapping a node along the path</span>
+    <span class="c1"># to the edge from that node.</span>
+    <span class="n">extreme_path_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">extreme_path</span><span class="p">:</span>
+        <span class="n">extreme_path_dict</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">edge</span>
+    <span class="c1"># Now, &quot;thread&quot; a path through the dictionary.</span>
+    <span class="n">curr_node</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">result_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_node</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">curr_node</span> <span class="ow">in</span> <span class="n">extreme_path_dict</span><span class="p">:</span>
+        <span class="n">new_edge</span> <span class="o">=</span> <span class="n">extreme_path_dict</span><span class="p">[</span><span class="n">curr_node</span><span class="p">]</span>
+        <span class="n">curr_node</span> <span class="o">=</span> <span class="n">new_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">result_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_node</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Nodes along the chosen extreme path arranged.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">project_config</span><span class="o">.</span><span class="n">debug_config</span><span class="o">.</span><span class="n">KEEP_ILP_SOLVER_OUTPUT</span><span class="p">:</span>
+        <span class="n">_move_ilp_files</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_dir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_remove_temp_ilp_files</span><span class="p">()</span>
+    <span class="c1"># We&#39;re done!</span>
+    <span class="k">return</span> <span class="n">obj_val_max</span><span class="p">,</span> <span class="n">result_path</span><span class="p">,</span> <span class="n">problem</span></div>
+
+
+<div class="viewcode-block" id="find_worst_expressible_path"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_worst_expressible_path">[docs]</a><span class="k">def</span> <span class="nf">find_worst_expressible_path</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">bound</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to find the longest path in the underlying graph of &#39;analyzer&#39;</span>
+<span class="sd">    assuming the lengths of all_temp_files measured paths are between -1 and 1.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths used in the measurements. Each path is a list of</span>
+<span class="sd">            edges in the order in which they are visited by the path</span>
+<span class="sd">        bound:</span>
+<span class="sd">            ???</span>
+
+<span class="sd">    Returns: </span>
+<span class="sd">        Triple consisting of the length of the longsest path, the path itself</span>
+<span class="sd">        and the ILP solved to find the path.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">generate_and_solve_core_problem</span><span class="p">(</span>
+        <span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="find_goodness_of_fit"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_goodness_of_fit">[docs]</a><span class="k">def</span> <span class="nf">find_goodness_of_fit</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">basis</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is here only for test purposes. Each path pi in `paths&#39;,</span>
+<span class="sd">    can be expressed as a linear combination</span>
+<span class="sd">    pi = a_1 b_1 + ... + a_n b_n</span>
+<span class="sd">    of paths b_i from `basis`. This function returns the least number `c`</span>
+<span class="sd">    such that every path can be expressed as a linear combination of basis</span>
+<span class="sd">    paths b_i such that the sum of absolute value of coefficients is at</span>
+<span class="sd">    most `c`: |a_1| + |a_2| + ... + |a_n| &lt;= c</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths that we want to find out how well can be</span>
+<span class="sd">            expressed as a linear combination of paths in `basis`</span>
+<span class="sd">        basis:</span>
+<span class="sd">            List of paths that are used to express `paths` as a linear</span>
+<span class="sd">            combination of</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The number `c` as described in the paragraph above.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">sink</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">num_edges</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span>
+    <span class="n">num_paths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+    <span class="n">num_basis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+    <span class="n">project_config</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">project_config</span>
+
+    <span class="c1"># Set up the linear programming problem.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of paths: </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num_paths</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of basis paths: </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num_basis</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up the integer linear programming problem...&quot;</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">IlpProblem</span><span class="p">(</span><span class="s2">&quot;BLAH&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating variables&quot;</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_basis</span><span class="p">)]</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">abs_values</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;abs&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">bound</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="p">(</span><span class="s2">&quot;bnd&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Add absolute values&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">abs_values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">abs_values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">coeffs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">):</span>
+        <span class="c1"># all_temp_files coefficients expressing path i</span>
+        <span class="n">all_coeff_expressing</span> <span class="o">=</span> <span class="p">[</span><span class="n">abs_values</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_basis</span><span class="p">)]</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">all_coeff_expressing</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">bound</span>
+        <span class="c1"># express path i as a linear combination of basis paths</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">paths_containing_edge</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_basis</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="n">basis</span><span class="p">[</span><span class="n">j</span><span class="p">])]</span>
+            <span class="n">present_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">coeffs</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">paths_containing_edge</span><span class="p">]</span>
+            <span class="n">present</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">present_coeffs</span><span class="p">)</span> <span class="o">==</span> <span class="n">present</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">bound</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span>
+
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="n">problem</span>
+    <span class="n">obj_val_min</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">bound</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_min</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj_val_min</span></div>
+
+
+<div class="viewcode-block" id="find_minimal_overcomplete_basis"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_minimal_overcomplete_basis">[docs]</a><span class="k">def</span> <span class="nf">find_minimal_overcomplete_basis</span><span class="p">(</span><span class="n">analyzer</span><span class="p">:</span> <span class="n">Analyzer</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is here only for test purposes. The functions finds the</span>
+<span class="sd">    smallest set of &#39;basis paths&#39; with the following property: Each path pi</span>
+<span class="sd">    in `paths&#39;, can be expressed as a linear combination</span>
+<span class="sd">    pi = a_1 b_1 + ... + a_n b_n</span>
+<span class="sd">    of paths b_i from `basis`. This function finds the set of basis paths</span>
+<span class="sd">    such that every path can be expressed as a linear combination of basis</span>
+<span class="sd">    paths b_i  such that the sum of absolute value of coefficients is at</span>
+<span class="sd">    most &#39;k&#39;: |a_1| + |a_2| + ... + |a_n| &lt;= k</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        paths:</span>
+<span class="sd">            List of paths that we want to find out how well can be</span>
+<span class="sd">            expressed as a linear combination of paths in `basis`</span>
+<span class="sd">        k:</span>
+<span class="sd">            bound on how well the &#39;paths&#39; can be expressed as a linear</span>
+<span class="sd">            combination of the calculated basis paths</span>
+
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of paths satisfying the condition stated above</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project_config</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">project_config</span>
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">sink</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">num_edges</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span>
+    <span class="n">num_paths</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+
+    <span class="c1"># Set up the linear programming problem.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of paths: </span><span class="si">%d</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="n">num_paths</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up the integer linear programming problem...&quot;</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">IlpProblem</span><span class="p">(</span><span class="n">_LP_NAME</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating variables&quot;</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)]</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="o">-</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">abs_values</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;abs&quot;</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">used_paths</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span>
+        <span class="s2">&quot;used&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpBinary</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Adding used_paths&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">):</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">used_paths</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">abs_values</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Add absolute values&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">abs_values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">abs_values</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">coeffs</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing path number </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">)</span>
+        <span class="c1"># all_temp_files coefficients expressing path i</span>
+        <span class="n">all_coeff_expressing</span> <span class="o">=</span> <span class="p">[</span><span class="n">abs_values</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)]</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">all_coeff_expressing</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">paths_containing_edge</span> <span class="o">=</span> \
+                <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">[</span><span class="n">j</span><span class="p">])]</span>
+            <span class="n">present_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="n">coeffs</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">paths_containing_edge</span><span class="p">]</span>
+            <span class="n">present</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">present_coeffs</span><span class="p">)</span> <span class="o">==</span> <span class="n">present</span>
+    <span class="n">objective</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">used_paths</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">objective</span>
+    <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span>
+
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="n">problem</span>
+    <span class="n">obj_val_min</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_min</span><span class="p">)</span>
+
+    <span class="n">solution_paths</span> <span class="o">=</span> \
+        <span class="p">[</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_paths</span><span class="p">)</span> <span class="k">if</span> <span class="n">used_paths</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">solution_paths</span></div>
+
+
+<div class="viewcode-block" id="find_extreme_path"><a class="viewcode-back" href="../../src.html#src.pulp_helper.find_extreme_path">[docs]</a><span class="k">def</span> <span class="nf">find_extreme_path</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines either the longest or the shortest path through the DAG</span>
+<span class="sd">    with the constraints stored in the ``Analyzer`` object provided.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        analyzer:</span>
+<span class="sd">            ``Analyzer`` object that maintains information about</span>
+<span class="sd">            the code being analyzed.</span>
+<span class="sd">        extremum:</span>
+<span class="sd">            Type of extreme path to calculate.</span>
+<span class="sd">        interval:</span>
+<span class="sd">            ``Interval`` object that represents the interval of values</span>
+<span class="sd">            that the generated paths can have. If no ``Interval`` object</span>
+<span class="sd">            is provided, the interval of values is considered to be</span>
+<span class="sd">            all_temp_files real numbers.</span>
+
+<span class="sd">    Returns:   </span>
+<span class="sd">        Tuple whose first element is the longest or the shortest path</span>
+<span class="sd">        through the DAG, as a list of nodes along the path (ordered</span>
+<span class="sd">        by traversal from source to sink), and whose second element is</span>
+<span class="sd">        the integer linear programming problem that was solved to obtain</span>
+<span class="sd">        the path, as an object of the ``IlpProblem`` class.</span>
+<span class="sd">        </span>
+<span class="sd">        If no such path is feasible, given the constraints stored in</span>
+<span class="sd">        the ``Analyzer`` object and the ``Interval`` object provided,</span>
+<span class="sd">        the first element of the tuple is an empty list, and the second</span>
+<span class="sd">        element of the tuple is an ``IlpProblem`` object whose ``obj_al``</span>
+<span class="sd">        instance variable is None.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make temporary variables for the frequently accessed</span>
+    <span class="c1"># variables from the ``Analyzer`` object provided.</span>
+    <span class="n">project_config</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">project_config</span>
+
+    <span class="n">dag</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">dag</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">source</span>
+    <span class="n">sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">sink</span>
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">num_edges</span>
+
+    <span class="n">nodes_except_source_sink</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">nodes_except_source_sink</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dag</span><span class="o">.</span><span class="n">all_edges</span><span class="p">)</span>
+    <span class="n">edge_weights</span> <span class="o">=</span> <span class="n">dag</span><span class="o">.</span><span class="n">edge_weights</span>
+
+    <span class="n">path_exclusive_constraints</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">path_exclusive_constraints</span>
+    <span class="n">path_bundled_constraints</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">path_bundled_constraints</span>
+
+    <span class="c1"># Set up the linear programming problem.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up the integer linear programming problem...&quot;</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">IlpProblem</span><span class="p">(</span><span class="n">_LP_NAME</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating the variables and adding the constraints...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Set up the variables that correspond to the flow through each edge.</span>
+    <span class="c1"># Set each of the variables to be an integer binary variable.</span>
+    <span class="n">edge_flows</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpVariable</span><span class="o">.</span><span class="n">dicts</span><span class="p">(</span><span class="s2">&quot;EdgeFlow&quot;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_edges</span><span class="p">),</span>
+                                       <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpBinary</span><span class="p">)</span>
+
+    <span class="c1"># Add a constraint for the flow from the source. The flow through all_temp_files of</span>
+    <span class="c1"># the edges out of the source should sum up to exactly 1.</span>
+    <span class="n">edge_flows_from_source</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                                 <span class="n">dag</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">source</span><span class="p">))</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_from_source</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Flows from source&quot;</span>
+
+    <span class="c1"># Add constraints for the rest of the nodes (except sink). The flow</span>
+    <span class="c1"># through all_temp_files of the edges into a node should equal the flow through</span>
+    <span class="c1"># all_temp_files of the edges out of the node. Hence, for node n, if e_i and e_j</span>
+    <span class="c1"># enter a node, and e_k and e_l exit a node, the corresponding flow</span>
+    <span class="c1"># equation is e_i + e_j = e_k + e_l.</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes_except_source_sink</span><span class="p">:</span>
+        <span class="n">edge_flows_to_node</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                                 <span class="n">dag</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+        <span class="n">edge_flows_from_node</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                                   <span class="n">dag</span><span class="o">.</span><span class="n">out_edges</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+        <span class="n">problem</span> <span class="o">+=</span> \
+            <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_to_node</span><span class="p">)</span> <span class="o">==</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_from_node</span><span class="p">),</span>
+             <span class="s2">&quot;Flows through </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">node</span><span class="p">)</span>
+
+    <span class="c1"># Add a constraint for the flow to the sink. The flow through all_temp_files of</span>
+    <span class="c1"># the edges into the sink should sum up to exactly 1.</span>
+    <span class="n">edge_flows_to_sink</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span>
+                                             <span class="n">dag</span><span class="o">.</span><span class="n">in_edges</span><span class="p">(</span><span class="n">sink</span><span class="p">))</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_to_sink</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Flows to sink&quot;</span>
+
+    <span class="c1"># Add constraints for the exclusive path constraints. To ensure that</span>
+    <span class="c1"># the edges in each constraint are not taken together, the total flow</span>
+    <span class="c1"># through all_temp_files the edges should add to at least one unit less than</span>
+    <span class="c1"># the number of edges in the constraint. Hence, if a constraint</span>
+    <span class="c1"># contains edges e_a, e_b, e_c, then e_a + e_b + e_c must be less than 3.</span>
+    <span class="c1"># This way, all_temp_files three of these edges can never be taken together.</span>
+    <span class="k">for</span> <span class="n">constraint_num</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path_exclusive_constraints</span><span class="p">):</span>
+        <span class="n">edge_flows_in_constraint</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">problem</span> <span class="o">+=</span> <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_in_constraint</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="s2">&quot;Path exclusive constraint </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">constraint_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># Add constraints for the bundled path constraints. If a constraint</span>
+    <span class="c1"># contains edges e_a, e_b, e_c, e_d, and each edge *must* be taken,</span>
+    <span class="c1"># then e_b + e_c + e_d must sum up to e_a, scaled by -3 (or one less</span>
+    <span class="c1"># than the number of edges in the path constraint). Hence, the flow</span>
+    <span class="c1"># constraint is e_b + e_c + e_d = -3 * e_a. By default, we scale</span>
+    <span class="c1"># the first edge in a constraint with this negative value.</span>
+    <span class="k">for</span> <span class="n">constraint_num</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path_bundled_constraints</span><span class="p">):</span>
+        <span class="n">first_edge</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">first_edge_flow</span> <span class="o">=</span> <span class="n">_get_edge_flow_var</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">first_edge</span><span class="p">)</span>
+        <span class="n">edge_flows_for_rest</span> <span class="o">=</span> <span class="n">_get_edge_flow_vars</span><span class="p">(</span><span class="n">analyzer</span><span class="p">,</span> <span class="n">edge_flows</span><span class="p">,</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">problem</span> <span class="o">+=</span> \
+            <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">edge_flows_for_rest</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">first_edge_flow</span><span class="p">,</span>
+             <span class="s2">&quot;Path bundled constraint </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">constraint_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="c1"># There may be bounds on the values of the paths that are generated</span>
+    <span class="c1"># by this function: we add constraints for these bounds. For this,</span>
+    <span class="c1"># we weight the PuLP variables for the edges using the list of</span>
+    <span class="c1"># edge weights provided, and then impose bounds on the sum.</span>
+    <span class="n">weighted_edge_flow_vars</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_flow_var</span> <span class="ow">in</span> <span class="n">edge_flows</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">edge_weight</span> <span class="o">=</span> <span class="n">edge_weights</span><span class="p">[</span><span class="n">edge_index</span><span class="p">]</span>
+        <span class="n">weighted_edge_flow_vars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_weight</span> <span class="o">*</span> <span class="n">edge_flow_var</span><span class="p">)</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span> <span class="ow">or</span> <span class="n">Interval</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">has_finite_lower_bound</span><span class="p">():</span>
+        <span class="n">problem</span> <span class="o">+=</span> \
+            <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">weighted_edge_flow_vars</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">interval</span><span class="o">.</span><span class="n">lower_bound</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">interval</span><span class="o">.</span><span class="n">has_finite_upper_bound</span><span class="p">():</span>
+        <span class="n">problem</span> <span class="o">+=</span> \
+            <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">weighted_edge_flow_vars</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">interval</span><span class="o">.</span><span class="n">upper_bound</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Variables created and constraints added.&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Constructing the objective function...&quot;</span><span class="p">)</span>
+    <span class="c1"># Finally, construct and add the objective function.</span>
+    <span class="c1"># We reuse the constraint (possibly) added in the last step of</span>
+    <span class="c1"># the constraint addition phase.</span>
+    <span class="n">objective</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">lpSum</span><span class="p">(</span><span class="n">weighted_edge_flow_vars</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">+=</span> <span class="n">objective</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Objective function constructed.&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the maximum value of the objective function...&quot;</span><span class="p">)</span>
+
+    <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMaximize</span>
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">get_ilp_solver</span><span class="p">(</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">,</span> <span class="n">project_config</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="n">problem</span>
+    <span class="n">obj_val_max</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Maximum value found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_max</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the path that corresponds to the maximum value...&quot;</span><span class="p">)</span>
+    <span class="c1"># Determine the edges along the extreme path using the solution.</span>
+
+    <span class="n">max_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge_num</span> <span class="ow">in</span> <span class="n">edge_flows</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="p">(</span><span class="n">edge_flows</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Path found.&quot;</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the minimum value of the objective function...&quot;</span><span class="p">)</span>
+
+    <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span>
+    <span class="n">problem_status</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">get_ilp_solver</span><span class="p">(</span><span class="n">project_config</span><span class="o">.</span><span class="n">ilp_solver</span><span class="p">,</span> <span class="n">project_config</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">problem_status</span> <span class="o">!=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpStatusOptimal</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[],</span> <span class="n">problem</span>
+    <span class="n">obj_val_min</span> <span class="o">=</span> <span class="n">pulp</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Minimum value found: </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">obj_val_min</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Finding the path that corresponds to the minimum value...&quot;</span><span class="p">)</span>
+    <span class="c1"># Determine the edges along the extreme path using the solution.</span>
+    <span class="n">min_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">edges</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span> <span class="k">for</span> <span class="n">edge_num</span> <span class="ow">in</span> <span class="n">edge_flows</span>
+                <span class="k">if</span> <span class="n">edge_flows</span><span class="p">[</span><span class="n">edge_num</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Path found.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Choose the correct extreme path based on the optimal solutions</span>
+    <span class="c1"># and the type of extreme path required.</span>
+    <span class="n">abs_max</span><span class="p">,</span> <span class="n">abs_min</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">obj_val_max</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">obj_val_min</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extremum</span> <span class="ow">is</span> <span class="n">Extremum</span><span class="o">.</span><span class="n">LONGEST</span><span class="p">:</span>
+        <span class="n">extreme_path</span> <span class="o">=</span> <span class="n">max_path</span> <span class="k">if</span> <span class="n">abs_max</span> <span class="o">&gt;=</span> <span class="n">abs_min</span> <span class="k">else</span> <span class="n">min_path</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpMaximize</span> <span class="k">if</span> <span class="n">abs_max</span> <span class="o">&gt;=</span> <span class="n">abs_min</span>
+                         <span class="k">else</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">obj_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">abs_max</span><span class="p">,</span> <span class="n">abs_min</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">extremum</span> <span class="ow">is</span> <span class="n">Extremum</span><span class="o">.</span><span class="n">SHORTEST</span><span class="p">:</span>
+        <span class="n">extreme_path</span> <span class="o">=</span> <span class="n">min_path</span> <span class="k">if</span> <span class="n">abs_max</span> <span class="o">&gt;=</span> <span class="n">abs_min</span> <span class="k">else</span> <span class="n">max_path</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">sense</span> <span class="o">=</span> <span class="p">(</span><span class="n">pulp</span><span class="o">.</span><span class="n">LpMinimize</span> <span class="k">if</span> <span class="n">abs_max</span> <span class="o">&gt;=</span> <span class="n">abs_min</span>
+                         <span class="k">else</span> <span class="n">pulp</span><span class="o">.</span><span class="n">LpMaximize</span><span class="p">)</span>
+        <span class="n">problem</span><span class="o">.</span><span class="n">obj_val</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">abs_max</span><span class="p">,</span> <span class="n">abs_min</span><span class="p">)</span>
+
+    <span class="c1"># Arrange the nodes along the extreme path in order of traversal</span>
+    <span class="c1"># from source to sink.</span>
+    <span class="n">result_path</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Arranging the nodes along the chosen extreme path &quot;</span>
+                <span class="s2">&quot;in order of traversal...&quot;</span><span class="p">)</span>
+    <span class="c1"># To do so, first construct a dictionary mapping a node along the path</span>
+    <span class="c1"># to the edge from that node.</span>
+    <span class="n">extreme_path_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">extreme_path</span><span class="p">:</span>
+        <span class="n">extreme_path_dict</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">edge</span>
+    <span class="c1"># Now, &quot;thread&quot; a path through the dictionary.</span>
+    <span class="n">curr_node</span> <span class="o">=</span> <span class="n">source</span>
+    <span class="n">result_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_node</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">curr_node</span> <span class="ow">in</span> <span class="n">extreme_path_dict</span><span class="p">:</span>
+        <span class="n">new_edge</span> <span class="o">=</span> <span class="n">extreme_path_dict</span><span class="p">[</span><span class="n">curr_node</span><span class="p">]</span>
+        <span class="n">curr_node</span> <span class="o">=</span> <span class="n">new_edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">result_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_node</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Nodes along the chosen extreme path arranged.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">project_config</span><span class="o">.</span><span class="n">debug_config</span><span class="o">.</span><span class="n">KEEP_ILP_SOLVER_OUTPUT</span><span class="p">:</span>
+        <span class="n">_move_ilp_files</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">project_config</span><span class="o">.</span><span class="n">location_temp_dir</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_remove_temp_ilp_files</span><span class="p">()</span>
+
+    <span class="c1"># We&#39;re done!</span>
+    <span class="k">return</span> <span class="n">result_path</span><span class="p">,</span> <span class="n">problem</span></div>
+
+
+<span class="k">def</span> <span class="nf">_move_ilp_files</span><span class="p">(</span><span class="n">source_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moves the files that are generated when an integer linear program</span>
+<span class="sd">    is solved, from the source directory whose location is provided</span>
+<span class="sd">    to the destination directory whose location is provided.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        source_dir : </span>
+<span class="sd">            Location of the source directory</span>
+<span class="sd">        dest_dir :</span>
+<span class="sd">            Location of the destination directory</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">move_files</span><span class="p">([</span><span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.lp&quot;</span><span class="p">,</span> <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.mps&quot;</span><span class="p">,</span>
+                <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.prt&quot;</span><span class="p">,</span> <span class="n">_LP_NAME</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;-pulp\.sol&quot;</span><span class="p">],</span>
+               <span class="n">source_dir</span><span class="p">,</span> <span class="n">dest_dir</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_remove_temp_ilp_files</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes the temporary files that are generated when an</span>
+<span class="sd">    integer linear program is solved.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">remove_files</span><span class="p">([</span><span class="sa">r</span><span class="s2">&quot;.*\.lp&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;.*\.mps&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;.*\.prt&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;.*\.sol&quot;</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Colin Cai, Abdalla Eltayeb, Shaokai Lin, Andrew Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
