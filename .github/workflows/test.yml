@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  if-statements:
-    name: if_statements (flexpret)
+  basic-tests:
+    name: Basic Tests (flexpret)
     runs-on: ubuntu-22.04
     timeout-minutes: 90
 
@@ -95,9 +95,11 @@ jobs:
           cmake -S /tmp/klee-src -B /tmp/klee-build \
             -DCMAKE_INSTALL_PREFIX=/opt/klee \
             -DLLVM_CONFIG_BINARY=/usr/bin/llvm-config-16 \
+            -DLLVM_DIR=/usr/lib/llvm-16/cmake \
             -DENABLE_SOLVER_Z3=ON \
             -DENABLE_POSIX_RUNTIME=OFF \
             -DENABLE_KLEE_UCLIBC=OFF \
+            -DENABLE_TCMALLOC=OFF \
             -DENABLE_UNIT_TESTS=OFF \
             -DENABLE_SYSTEM_TESTS=OFF
           cmake --build /tmp/klee-build -j"$(nproc)"
