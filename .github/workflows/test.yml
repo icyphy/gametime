@@ -132,17 +132,12 @@ jobs:
       - name: Build FlexPRET
         if: steps.cache-flexpret.outputs.cache-hit != 'true'
         run: |
-          git clone --recursive https://github.com/pretis/flexpret /tmp/flexpret-src
-          cd /tmp/flexpret-src
+          git clone --recursive https://github.com/pretis/flexpret /opt/flexpret
+          cd /opt/flexpret
           export RISCV_TOOL_PATH_PREFIX=/opt/xpack-riscv-none-elf-gcc-14.2.0-2
           source env.bash
           cmake -B build
           cd build && make all install
-          # Copy the built SDK and emulator to /opt/flexpret
-          mkdir -p /opt/flexpret
-          cp -a /tmp/flexpret-src/build/. /opt/flexpret/build/
-          cp -a /tmp/flexpret-src/sdk/. /opt/flexpret/sdk/
-          cp /tmp/flexpret-src/env.bash /opt/flexpret/env.bash
 
       # ── Python dependencies ────────────────────────────────────────
       - name: Set up Python
