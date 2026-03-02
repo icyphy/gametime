@@ -44,6 +44,7 @@ jobs:
           sudo ln -sf /usr/bin/llvm-config-16 /usr/local/bin/llvm-config
           sudo ln -sf /usr/bin/llvm-link-16 /usr/local/bin/llvm-link
           sudo ln -sf /usr/bin/llvm-dis-16  /usr/local/bin/llvm-dis
+          sudo ln -sf /usr/bin/llvm-as-16   /usr/local/bin/llvm-as
           sudo ln -sf /usr/bin/opt-16       /usr/local/bin/opt
           sudo ln -sf /usr/bin/llc-16       /usr/local/bin/llc
 
