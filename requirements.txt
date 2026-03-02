@@ -7,4 +7,3 @@ pycparser-fake-libc==2.21
 pygraphviz==1.13
 pyyaml==6.0.2
 scipy==1.15.1
-yaml
