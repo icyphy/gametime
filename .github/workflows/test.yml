@@ -1,0 +1,173 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  basic-tests:
+    name: Basic Tests (flexpret)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+
+    env:
+      KLEE_COMMIT: ""
+      FLEXPRET_COMMIT: ""
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── LLVM 16 + system packages ──────────────────────────────────
+      - name: Install LLVM 16 and system packages
+        run: |
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/llvm.gpg
+          echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main" \
+            | sudo tee /etc/apt/sources.list.d/llvm-16.list
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang-16 llvm-16 llvm-16-dev llvm-16-tools \
+            libz3-dev \
+            graphviz libgraphviz-dev \
+            glpk-utils libglpk-dev \
+            verilator \
+            default-jdk \
+            build-essential cmake git curl
+
+      - name: Create unversioned LLVM symlinks
+        run: |
+          sudo ln -sf /usr/bin/clang-16     /usr/local/bin/clang
+          sudo ln -sf /usr/bin/clang++-16   /usr/local/bin/clang++
+          sudo ln -sf /usr/bin/llvm-config-16 /usr/local/bin/llvm-config
+          sudo ln -sf /usr/bin/llvm-link-16 /usr/local/bin/llvm-link
+          sudo ln -sf /usr/bin/llvm-dis-16  /usr/local/bin/llvm-dis
+          sudo ln -sf /usr/bin/llvm-as-16   /usr/local/bin/llvm-as
+          sudo ln -sf /usr/bin/opt-16       /usr/local/bin/opt
+          sudo ln -sf /usr/bin/llc-16       /usr/local/bin/llc
+
+      # ── sbt (Scala build tool) ─────────────────────────────────────
+      - name: Install sbt
+        run: |
+          echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" \
+            | sudo tee /etc/apt/sources.list.d/sbt.list
+          curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" \
+            | sudo gpg --dearmor -o /usr/share/keyrings/sbt.gpg
+          echo "deb [signed-by=/usr/share/keyrings/sbt.gpg] https://repo.scala-sbt.org/scalasbt/debian all main" \
+            | sudo tee /etc/apt/sources.list.d/sbt.list
+          sudo apt-get update
+          sudo apt-get install -y sbt
+
+      # ── xPack RISC-V toolchain ─────────────────────────────────────
+      - name: Cache xPack RISC-V toolchain
+        id: cache-riscv
+        uses: actions/cache@v4
+        with:
+          path: /opt/xpack-riscv-none-elf-gcc-14.2.0-2
+          key: riscv-xpack-14.2.0-2
+
+      - name: Install xPack RISC-V toolchain
+        if: steps.cache-riscv.outputs.cache-hit != 'true'
+        run: |
+          wget -q https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v14.2.0-2/xpack-riscv-none-elf-gcc-14.2.0-2-linux-x64.tar.gz \
+            -O /tmp/gcc.tar.gz
+          sudo tar xf /tmp/gcc.tar.gz --directory=/opt
+
+      # ── KLEE from source ───────────────────────────────────────────
+      - name: Get KLEE HEAD commit hash
+        id: klee-hash
+        run: |
+          HASH=$(git ls-remote https://github.com/klee/klee HEAD | cut -f1)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
+      - name: Cache KLEE
+        id: cache-klee
+        uses: actions/cache@v4
+        with:
+          path: /opt/klee
+          key: klee-${{ steps.klee-hash.outputs.hash }}
+
+      - name: Build KLEE
+        if: steps.cache-klee.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/klee/klee /tmp/klee-src
+          cmake -S /tmp/klee-src -B /tmp/klee-build \
+            -DCMAKE_INSTALL_PREFIX=/opt/klee \
+            -DLLVM_CONFIG_BINARY=/usr/bin/llvm-config-16 \
+            -DLLVM_DIR=/usr/lib/llvm-16/cmake \
+            -DENABLE_SOLVER_Z3=ON \
+            -DENABLE_POSIX_RUNTIME=OFF \
+            -DENABLE_KLEE_UCLIBC=OFF \
+            -DENABLE_TCMALLOC=OFF \
+            -DENABLE_UNIT_TESTS=OFF \
+            -DENABLE_SYSTEM_TESTS=OFF
+          cmake --build /tmp/klee-build -j"$(nproc)"
+          cmake --install /tmp/klee-build
+
+      # ── FlexPRET ───────────────────────────────────────────────────
+      - name: Get FlexPRET HEAD commit hash
+        id: flexpret-hash
+        run: |
+          HASH=$(git ls-remote https://github.com/pretis/flexpret master | cut -f1)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
+      - name: Cache FlexPRET
+        id: cache-flexpret
+        uses: actions/cache@v4
+        with:
+          path: /opt/flexpret
+          key: flexpret-${{ steps.flexpret-hash.outputs.hash }}
+
+      - name: Cache sbt/Coursier
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/coursier
+            ~/.sbt
+          key: sbt-${{ steps.flexpret-hash.outputs.hash }}
+          restore-keys: sbt-
+
+      - name: Build FlexPRET
+        if: steps.cache-flexpret.outputs.cache-hit != 'true'
+        run: |
+          git clone --recursive https://github.com/pretis/flexpret /opt/flexpret
+          cd /opt/flexpret
+          export RISCV_TOOL_PATH_PREFIX=/opt/xpack-riscv-none-elf-gcc-14.2.0-2
+          source env.bash
+          cmake -B build
+          cd build && make all install
+
+      # ── Python dependencies ────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install -e .
+          pip install -r requirements.txt
+
+      # ── Custom LLVM pass ───────────────────────────────────────────
+      - name: Build custom LLVM pass
+        run: |
+          clang++ -shared -fPIC \
+            src/custom_passes/custom_inline_pass.cpp \
+            -o src/custom_passes/custom_inline_pass.so \
+            $(llvm-config --cxxflags --ldflags --libs) \
+            -Wl,-rpath,$(llvm-config --libdir)
+
+      # ── Run test ───────────────────────────────────────────────────
+      - name: Run if_statements test
+        run: |
+          export PATH="/opt/klee/bin:$PATH"
+          export C_INCLUDE_PATH="/opt/klee/include:${C_INCLUDE_PATH:-}"
+          export RISCV_TOOL_PATH_PREFIX=/opt/xpack-riscv-none-elf-gcc-14.2.0-2
+          # Source FlexPRET env from cache or build location
+          if [ -f /opt/flexpret/env.bash ]; then
+            cd /opt/flexpret && source env.bash && cd "$GITHUB_WORKSPACE"
+          fi
+          gametime test/if_statements --backend flexpret
